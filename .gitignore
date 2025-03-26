@@ -1,66 +1,71 @@
-# Node.js dependencies  
-node_modules/  
-npm-debug.log  
-yarn.lock  
-package-lock.json  
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Environment variables  
-.env  
-.env.local  
-.env.development.local  
-.env.test.local  
-.env.production.local  
+# Next.js
+.next/
+out/
+.next/cache/
 
-# Logs  
-logs/  
-*.log  
-npm-debug.log*  
-yarn-debug.log*  
-yarn-error.log*  
-pnpm-debug.log*  
-debug.log*  
+# Build output
+dist/
+build/
 
-# Build files  
-dist/  
-build/  
-.cache/  
+# Environment variables
+.env*
+.env.local
+.env.development
+.env.test
+.env.production
 
-# Client-specific  
-client/node_modules/  
-client/.next/  
-client/.nuxt/  
-client/.out/  
-client/build/  
-client/dist/  
-client/.cache/  
-client/.parcel-cache/  
-client/.eslintcache  
+# Cache
+.cache/
+.turbo/
 
-# Server-specific  
-server/node_modules/  
-server/dist/  
-server/build/  
-server/.cache/  
-server/.eslintcache  
+# Debug logs
+debug.log
 
-# Editor files  
-.vscode/  
-.idea/  
-*.sublime-workspace  
-*.sublime-project  
+# Dependency directories
+jspm_packages/
 
-# OS-specific files  
-.DS_Store  
-Thumbs.db  
+# Optional npm cache directory
+.npm
 
-# Compiled output  
-*.exe  
-*.dll  
-*.so  
-*.dylib  
-*.pyc  
-*.pyo  
+# Optional eslint cache
+.eslintcache
 
-# Miscellaneous  
-coverage/  
-test-output/  
+# Optional REPL history
+.node_repl_history
+
+# IDE/Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+jest-report.json
+
+# Local development files
+*.local
+
+# Debug files
+*.pdb
+*.idb
+
+# Optional lockfile
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
