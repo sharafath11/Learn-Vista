@@ -1,13 +1,12 @@
 import { userModel } from "../models/userModel";
 import { IUser } from "../types/userTypes";
+import { BaseRepository } from "./BaseRepository";
 
-class userRepository{
-    async createUser(userData:IUser):Promise<IUser> {
-        return userModel.create(userData)
+class userRepository extends BaseRepository<IUser>{
+    //pass the mode in base repo
+    constructor() {
+        super(userModel)
     }
-    async findUserByEmail(email: string): Promise<IUser | null>{
-        return userModel.findOne({email})
-    }
-
+   
 }
 export default new userRepository

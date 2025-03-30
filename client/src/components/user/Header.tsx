@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Search, User, Menu } from "lucide-react";
+import { Search} from "lucide-react";
 import MobileHeader from "./MobileView/MobileHeader";
+import Link from "next/link";
+import Image from "next/image";
 
 
 const Header = () => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navItems = ["Home", "Courses", "Live Classes", "Community"];
   const dropdownItems = [
@@ -14,6 +16,14 @@ const Header = () => {
     { label: "Settings", href: "#" },
     { label: "Logout", href: "#" },
   ];
+  
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setToken(localStorage.getItem("token"));
+      console.log("token", localStorage.getItem("token"));
+    }
+  }, []);
+
 
   return (
     <>
@@ -26,10 +36,12 @@ const Header = () => {
       <header className="hidden md:block fixed top-0 left-0 right-0 bg-white shadow-sm py-3 z-50">
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           {/* Logo */}
+          <Link href="/">
           <div className="flex items-center">
-            <img src="/images/logo.png" alt="Logo" className="w-10 h-10" />
-            <span className="ml-2 text-xl font-bold text-purple-900">Learn Vista</span>
+         <Image src="/images/logo.png" alt="Learn Vista" width={50} height={50}/>
+           <span className="ml-2 text-xl font-bold text-purple-900">Learn Vista</span>
           </div>
+          </Link>
 
           {/* Navigation Links */}
           <nav className="flex space-x-6">
@@ -55,7 +67,7 @@ const Header = () => {
 
             {/* User Profile Dropdown */}
             <div className="relative" ref={dropdownRef}>
-              <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center">
+              {/* <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center">
                 <img src="/images/ai.png" alt="User" className="w-8 h-8 rounded-full border-2 border-purple-200" />
               </button>
               {isDropdownOpen && (
@@ -66,7 +78,8 @@ const Header = () => {
                     </a>
                   ))}
                 </div>
-              )}
+              )} */}
+              <Link href="/user/login">Login</Link>
             </div>
           </div>
         </div>

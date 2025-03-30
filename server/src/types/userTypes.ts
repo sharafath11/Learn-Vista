@@ -7,6 +7,7 @@ export interface IUser extends Document {
   password: string;
   role: UserRole;
   isBlocked?: boolean;
+  isVerified: false;
   createdAt?: Date;
   updatedAt?: Date;
   enrolledCourses?: Types.ObjectId[];
@@ -14,4 +15,9 @@ export interface IUser extends Document {
 export interface LoginUser{
   email: string,
   password:string
+}
+export interface IOtp extends Document {
+  email: string;
+  otp: string;
+  expiresAt: Date;
 }

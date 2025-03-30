@@ -7,7 +7,7 @@ export const postRequest = async (url: string, body: object | FormData) => {
     const token = localStorage.getItem("token");
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
     const res = await axios.post(`${baseURL}${url}`, body, { headers });
-
+    console.log("res in services ", token)
     if (res.data.ok) {
       return res.data;
     }
