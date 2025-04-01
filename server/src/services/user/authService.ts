@@ -1,16 +1,15 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { Response } from "express";
 import { ObjectId } from "mongoose";
 
 import userRepository from "../../repositories/userRepository";
 import OtpRepository from "../../repositories/OtpRepository";
-import { IUser } from "../../types/userTypes";
+import { IDcoded, IUser } from "../../types/userTypes";
 import { generateOtp } from "../../utils/otpGenerator";
 import { sendEmailOtp } from "../../utils/emailService";
+import { decodeToken } from "../../utils/tokenDecode";
 
-const TOKEN_EXPIRATION = "1h";
-const COOKIE_MAX_AGE = 15 * 60 * 1000;
 
 class AuthService {
   async registerUser(userData: IUser): Promise<IUser> {
@@ -43,34 +42,72 @@ class AuthService {
     if (!isPasswordValid) throw new Error("Invalid credentials");
 
     const token = jwt.sign(
-      { 
-        id: user._id, 
-        userName: user.name, 
-        email: user.email, 
-        role: user.role, 
-        createdAt: user.createdAt, 
-        updatedAt: user.updatedAt, 
-        enrolledCourses: user.enrolledCourses 
-      },
-      process.env.JWT_SECRET as string,
-      { expiresIn: TOKEN_EXPIRATION }
+      { role: "user", userId: user._id }, 
+      process.env.JWT_SECRET as string, 
+      { expiresIn: "1h" }
     );
 
-    res.cookie("accessToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: COOKIE_MAX_AGE,
+    const refreshToken = jwt.sign(
+      { userId: user._id }, 
+      process.env.REFRESH_SECRET as string, 
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "strict", 
     });
 
-    res.status(200).json({ success: true, message: "Login successful", token, user });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === "production", 
+      sameSite: "strict", 
+    });
+
+    res.status(200).json({ ok: true, msg: "Login successful", token, refreshToken,user });
   }
 
-  async getUser(id: ObjectId) {
-    const user = await userRepository.findById(id.toString());
+  async refreshAccessToken(refreshToken: string, res: Response): Promise<void> {
+    if (!refreshToken) throw new Error("Refresh token is required");
+
+    try {
+      const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET as string) as JwtPayload;
+      const newToken = jwt.sign(
+        { role: "user", userId: decoded.userId }, 
+        process.env.JWT_SECRET as string, 
+        { expiresIn: "1h" }
+      );
+
+      res.cookie("token", newToken, {
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === "production", 
+        sameSite: "strict", 
+      });
+
+      res.status(200).json({ token: newToken });
+    } catch (error) {
+      throw new Error("Invalid refresh token");
+    }
+  }
+
+  async getUser(token: string) {
+    const decoded = decodeToken(token);
+    
+    if (!decoded) {
+      throw new Error("Invalid token");
+    }
+    const id = typeof decoded === "object" && "userId" in decoded ? (decoded.userId as string) : decoded;
+
+    if (!id) {
+      throw new Error("Invalid user ID");
+    }
+    const user = await userRepository.findById(id as string);
     if (!user) throw new Error("User not found");
-    return user
+
+    return user;
   }
 }
 
 export default new AuthService();
+

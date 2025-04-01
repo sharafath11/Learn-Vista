@@ -23,6 +23,7 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       const res = await postRequest("/login", data);
+      console.log("res",res)
       if (res.ok) {
         setUser(res.user);
         if (typeof window !== "undefined") {

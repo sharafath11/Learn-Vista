@@ -1,85 +1,137 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Search} from "lucide-react";
+import { Search } from "lucide-react";
 import MobileHeader from "./MobileView/MobileHeader";
 import Link from "next/link";
 import Image from "next/image";
-
+import { useUserContext } from "@/src/context/userAuthContext";
+import { useRouter } from "next/navigation";
+import { postRequest } from "@/src/services/api";
+import { showErrorToast } from "@/src/utils/Toast";
 
 const Header = () => {
-  const [token, setToken] = useState<string | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const navItems = ["Home", "Courses", "Live Classes", "Community"];
-  const dropdownItems = [
-    { label: "Dashboard", href: "#" },
-    { label: "Settings", href: "#" },
-    { label: "Logout", href: "#" },
-  ];
+  const { user, setUser } = useUserContext();
   
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "Courses", path: "/courses" },
+    { name: "Live Classes", path: "/live-classes" },
+    { name: "Community", path: "/community" }
+  ];
+
+
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setToken(localStorage.getItem("token"));
-      console.log("token", localStorage.getItem("token"));
-    }
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLogout = async() => {
+  try {
+    const res = await postRequest("/logout", {});
+    if (res.ok) {
+      router.push("/user/login");
+    }
+  } catch (error:any) {
+    showErrorToast(error.message)
+  }
+  };
 
   return (
     <>
-      {/* Mobile Header */}
       <div className="md:hidden">
-        <MobileHeader />
+        <MobileHeader user={user}  handleLogout={handleLogout} />
       </div>
 
-      {/* Desktop Header */}
       <header className="hidden md:block fixed top-0 left-0 right-0 bg-white shadow-sm py-3 z-50">
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-          {/* Logo */}
-          <Link href="/">
-          <div className="flex items-center">
-         <Image src="/images/logo.png" alt="Learn Vista" width={50} height={50}/>
-           <span className="ml-2 text-xl font-bold text-purple-900">Learn Vista</span>
-          </div>
+          <Link href="/" className="flex items-center">
+            <Image 
+              src="/images/logo.png" 
+              alt="Learn Vista" 
+              width={50} 
+              height={50} 
+              priority
+            />
+            <span className="ml-2 text-xl font-bold text-purple-900">Learn Vista</span>
           </Link>
 
-          {/* Navigation Links */}
           <nav className="flex space-x-6">
             {navItems.map((item) => (
-              <a key={item} href="#" className="text-gray-700 hover:text-purple-600">
-                {item}
-              </a>
+              <Link 
+                key={item.name} 
+                href={item.path} 
+                className="text-gray-700 hover:text-purple-600"
+              >
+                {item.name}
+              </Link>
             ))}
           </nav>
 
-          {/* Search & User Dropdown */}
           <div className="flex items-center space-x-4">
             <div className="relative">
               <input
                 type="text"
                 placeholder="Search..."
-                className="pl-4 pr-10 py-1.5 border border-gray-300 rounded-lg"
+                className="pl-4 pr-10 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-200"
               />
-              <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-600">
                 <Search size={18} />
               </button>
             </div>
 
-            {/* User Profile Dropdown */}
             <div className="relative" ref={dropdownRef}>
-              {/* <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center">
-                <img src="/images/ai.png" alt="User" className="w-8 h-8 rounded-full border-2 border-purple-200" />
-              </button>
-              {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg py-1 border rounded-lg">
-                  {dropdownItems.map((item) => (
-                    <a key={item.label} href={item.href} className="block px-4 py-2 text-gray-700 hover:bg-purple-50">
-                      {item.label}
-                    </a>
-                  ))}
-                </div>
-              )} */}
-              <Link href="/user/login">Login</Link>
+              {user ? (
+                <>
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center focus:outline-none"
+                    aria-label="User menu"
+                  >
+                    <Image
+                      src={user?.image || "/images/ai.png"}
+                      alt="User profile"
+                      width={32}
+                      height={32}
+                      className="rounded-full border-2 border-purple-200 hover:border-purple-400 transition-colors"
+                    />
+                  </button>
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg py-1 border rounded-lg z-50">
+                      <Link
+                        href="/profile"
+                        className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        Profile
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <Link 
+                  href="/user/login" 
+                  className="text-purple-600 hover:text-purple-800 font-medium px-4 py-2 rounded-md hover:bg-purple-50 transition-colors"
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
         </div>

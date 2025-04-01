@@ -1,17 +1,28 @@
 "use client";
 
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import { 
   UserContextType, 
   UserProviderProps, 
   IUser 
 } from "../types/authTypes";
+import { getRequest } from "../services/api";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
- console.log(user,"user")
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await getRequest("/get-user");
+      if (res.ok) {
+        setUser(res.user);
+      }
+    };
+
+    fetchUser();
+  }, []); 
   return (
     <UserContext.Provider
       value={{
@@ -23,6 +34,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     </UserContext.Provider>
   );
 };
+
 export const useUserContext = () => {
   const context = useContext(UserContext);
   if (!context) {
