@@ -2,13 +2,14 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
-import MobileHeader from "./MobileView/MobileHeader";
+
 import Link from "next/link";
 import Image from "next/image";
 import { useUserContext } from "@/src/context/userAuthContext";
 import { useRouter } from "next/navigation";
 import { postRequest } from "@/src/services/api";
 import { showErrorToast } from "@/src/utils/Toast";
+import MobileHeader from "./MobileView/MobileHeader";
 
 const Header = () => {
   const { user, setUser } = useUserContext();
@@ -109,7 +110,7 @@ const Header = () => {
                   {isDropdownOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg py-1 border rounded-lg z-50">
                       <Link
-                        href="/profile"
+                        href="/user/profile"
                         className="block px-4 py-2 text-gray-700 hover:bg-purple-50 transition-colors"
                         onClick={() => setIsDropdownOpen(false)}
                       >

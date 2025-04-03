@@ -1,14 +1,14 @@
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Response } from "express";
-import { ObjectId } from "mongoose";
 
-import userRepository from "../../repositories/userRepository";
-import OtpRepository from "../../repositories/OtpRepository";
-import { IDcoded, IUser } from "../../types/userTypes";
+import userRepository from "../../repositories/user/userRepository";
+
+import {  IUser } from "../../types/userTypes";
 import { generateOtp } from "../../utils/otpGenerator";
 import { sendEmailOtp } from "../../utils/emailService";
 import { decodeToken } from "../../utils/tokenDecode";
+import OtpRepository from "../../repositories/user/OtpRepository";
 
 
 class AuthService {

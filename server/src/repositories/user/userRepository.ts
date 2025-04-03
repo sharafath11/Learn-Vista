@@ -1,6 +1,7 @@
-import { userModel } from "../models/userModel";
-import { IUser } from "../types/userTypes";
-import { BaseRepository } from "./BaseRepository";
+
+import { userModel } from "../../models/user/userModel";
+import { IUser } from "../../types/userTypes";
+import { BaseRepository } from "../BaseRepository";
 
 class userRepository extends BaseRepository<IUser>{
     //pass the mode in base repo

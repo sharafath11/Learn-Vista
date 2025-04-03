@@ -86,7 +86,7 @@ const MobileHeader = ({ user, handleLogout }: MobileHeaderProps) => {
                 {isDropdownOpen && (
                   <div className="space-y-2">
                     <Link 
-                      href="/profile" 
+                      href="/user/profile" 
                       className="block text-gray-700 hover:text-purple-600"
                       onClick={() => {
                         setIsDropdownOpen(false);
