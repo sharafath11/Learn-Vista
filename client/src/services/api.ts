@@ -33,11 +33,10 @@ export const getRequest = async (url: string, params?: object) => {
     const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
     const res = await axios.get(`${baseURL}${url}`, { headers,withCredentials: true, ...(params && { params }) });
-
     if (res.data.ok) {
       return res.data;
     }
-    console.log("counttttttttttt",res)
+  
     if(res.data.msg.include("invalid")) return 
 
     showErrorToast(res.data.msg || "Something went wrong!");
@@ -53,3 +52,27 @@ export const getRequest = async (url: string, params?: object) => {
   }
 };
 
+
+export const patchRequest = async (url: string, body: object) => {
+  try {
+    const token = localStorage.getItem("token");
+    const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+    headers['Content-Type'] = 'application/json';
+
+    const res = await axios.patch(`${baseURL}${url}`, body, {
+      headers,
+      withCredentials: true,
+    });
+
+    if (res.data.ok) {
+      showSuccessToast(res.data.msg || "Updated successfully!");
+      return res.data;
+    }
+
+    showErrorToast(res.data.msg || "Something went wrong!");
+    return null;
+  } catch (error: any) {
+    showErrorToast(error?.response?.data?.msg || "Server error, try again!");
+    return null;
+  }
+};

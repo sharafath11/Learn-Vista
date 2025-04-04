@@ -11,7 +11,7 @@ route.post("/otp-verify", (req, res) => authController.verifyOtp(req, res));
 route.post("/login", (req, res) => authController.login(req, res));
 route.post("/logout", (req, res) => authController.logout(req, res));
 route.get("/get-user", authenticateToken, (req, res) => authController.getUser(req, res));
-route.post("/apply-mentor", upload.single("cv"), (req, res) => 
+route.post("/apply-mentor",authenticateToken, upload.single("cv"), (req, res) => 
     profileController.applyMentor(req, res)
   );
 export default route;

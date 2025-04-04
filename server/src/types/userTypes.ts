@@ -2,17 +2,18 @@ import mongoose, { Document, ObjectId, Types } from "mongoose";
 import { Request } from "express";
 type UserRole="user"|"mentor"
 export interface IUser extends Document {
-  _id:string
   name: string;
   email: string;
   password: string;
   role: UserRole;
-  isBlocked?: boolean;
-  isVerified: false;
+  profilePicture?: string | null;
+  isBlocked: boolean;
+  isVerified: boolean;
+  enrolledCourses: Types.ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
-  enrolledCourses?: Types.ObjectId[];
 }
+
 export interface LoginUser{
   email: string,
   password:string

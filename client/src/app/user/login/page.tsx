@@ -47,7 +47,7 @@ export default function LoginPage() {
           <div className="lg:grid lg:grid-cols-2 lg:gap-8">
             <div className="p-6 lg:p-12">
               {/* Pass the selected role to the LoginForm */}
-              <LoginForm role={role} />
+              <LoginForm  />
             </div>
             <div className="hidden lg:flex items-center justify-center bg-gradient-to-r from-purple-100 to-indigo-100">
               <img

@@ -41,7 +41,7 @@ export default function LoginForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
-
+   console.log()
   if (!isMounted) {
     return (
       <div className="max-w-md mx-auto p-4 sm:p-6">

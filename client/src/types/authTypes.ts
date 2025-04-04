@@ -16,17 +16,20 @@ export interface ILogin {
 }
 
 export interface IUser {
-  _id?: string; // Simplified to just string type
+  _id: string;
   name: string;
   email: string;
-  password: string;
+  password?: string;
   role: UserRole;
-  isBlocked?: boolean;
+  profilePicture?: string | null;
+  isBlocked: boolean;
   isVerified: boolean;
-  createdAt?: Date | string; // Can handle both Date object or ISO string
-  updatedAt?: Date | string;
-  enrolledCourses?: string[]; // Simplified to string array
+  enrolledCourses?: string[]; 
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+
 
 export interface UserContextType {
   user: IUser | null;

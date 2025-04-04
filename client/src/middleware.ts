@@ -1,16 +1,41 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token");
-  console.log(".....somthing")
-  
-    if (!token) {
+
+  const userToken = req.cookies.get("userToken");
+  const mentorToken = req.cookies.get("mentorToken");
+  const adminToken = req.cookies.get("adminToken");
+
+  const userRoutes = ["/user/profile", "/user/dashboard"];
+  const mentorRoutes = ["/mentor/dashboard", "/mentor/courses"];
+  const adminRoutes = ["/admin/dashboard", "/admin/settings"];
+
+  const currentPath = req.nextUrl.pathname;
+
+  if (userRoutes.some(route => currentPath.startsWith(route))) {
+    if (!userToken) {
       return NextResponse.redirect(new URL("/user/login", req.url));
     }
-  
-    return NextResponse.next();
+  } 
+  else if (mentorRoutes.some(route => currentPath.startsWith(route))) {
+    if (!mentorToken) {
+      return NextResponse.redirect(new URL("/mentor/login", req.url));
+    }
+  } 
+  else if (adminRoutes.some(route => currentPath.startsWith(route))) {
+    if (!adminToken) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
   }
-  export const config = {
-    matcher: ["/user/profile", "/user/profile/:path*"],
-  };
-    
+  return NextResponse.next();
+}
+
+// Apply the middleware to all relevant routes
+export const config = {
+  matcher: [
+    "/user/:path*", 
+    "/mentor/:path*", 
+    "/admin/:path*"
+  ],
+};
