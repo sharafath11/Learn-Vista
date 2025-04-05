@@ -5,7 +5,7 @@ import { decodeToken } from "../../utils/tokenDecode";
 class ProfileController {
   async applyMentor(req: Request, res: Response) {
     try {
-     
+      console.log("Uploaded file: ", req.file);
       if (!req.file) {
         res.status(400).json({ ok:false,msg: "No file uploaded" });
         return

@@ -1,8 +1,9 @@
 import express from "express";
-import authController from "../../controllers/user/authController";
+// import authController from "../../controllers/user/authController";
 import { authenticateToken } from "../../middlewares/authenticateToken";
 import upload from "../../middlewares/upload";
 import profileController from "../../controllers/user/profile.controller";
+import authController from "../../controllers/user/auth.controller";
 
 const route = express.Router();
 route.post("/signup", (req, res) => authController.signup(req, res));

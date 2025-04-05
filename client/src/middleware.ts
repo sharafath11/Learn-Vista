@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
 
-  const userToken = req.cookies.get("userToken");
+  const userToken = req.cookies.get("token");
   const mentorToken = req.cookies.get("mentorToken");
   const adminToken = req.cookies.get("adminToken");
 

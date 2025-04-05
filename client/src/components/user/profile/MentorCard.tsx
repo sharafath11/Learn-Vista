@@ -92,7 +92,7 @@ export default function MentorCard() {
       formDataToSend.append('cv', selectedFile);
 
       const res = await postRequest("/apply-mentor", formDataToSend);
-      
+     
       if (res?.ok) {
         setIsSubmitted(true);
         showSuccessToast(`We'll contact you at ${formData.email}`);

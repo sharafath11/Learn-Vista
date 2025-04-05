@@ -65,7 +65,7 @@ export const patchRequest = async (url: string, body: object) => {
     });
 
     if (res.data.ok) {
-      showSuccessToast(res.data.msg || "Updated successfully!");
+      
       return res.data;
     }
 

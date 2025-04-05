@@ -3,11 +3,12 @@ import { FC } from 'react';
 import { motion } from 'framer-motion';
 import MentorTable from './MentorTable';
 import ApplyMentorButton from './ApplyMentorButton';
+import { Mentor } from '@/src/types/adminTypes';
 
 const MotionH1 = motion('h1');
 
 interface MentorListProps {
-  mentors: any[];
+  mentors: Mentor[];
 }
 
 const MentorList: FC<MentorListProps> = ({ mentors }) => {

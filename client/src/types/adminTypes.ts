@@ -87,3 +87,38 @@ export interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
+// types.ts
+export interface SocialLinks {
+  linkedin?: string;
+  twitter?: string;
+  github?: string;
+}
+
+export interface Mentor {
+  _id: string;
+  userId: string;
+  username: string;
+  email: string;
+  profilePicture: string | null;
+  bio: string | null;
+  experience: number;
+  expertise: string[];
+  socialLinks: string[];
+  cvOrResume: string;
+  coursesCreated: any[]; // You can replace `any` with a specific Course type if available
+  liveClasses: any[];    // Replace `any` with a specific Class type if defined
+  reviews: any[];        // Replace `any` with a Review type if available
+  isVerified: boolean;
+  status: 'pending' | 'approved' | 'rejected'; // assuming these are the possible statuses
+  applicationDate: string; // ISO date string
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+
+export interface AdminContextType {
+  admin: boolean;
+  setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+  mentors: any[];
+}

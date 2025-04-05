@@ -1,6 +1,8 @@
+"use client"
 import { FC } from 'react';
 import { motion } from 'framer-motion';
-import { FiUser } from 'react-icons/fi';
+import { FiUser,FiEye,FiLock,FiUnlock } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
 
 interface MentorRowProps {
   mentor: any;
@@ -9,6 +11,12 @@ interface MentorRowProps {
 }
 
 const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
+  const route=useRouter()
+  function onView(_id: any): void {
+    route.push(`/admin/dashboard/mentor/${_id}`);
+  }
+  
+
   return (
     <motion.tr 
       initial={{ opacity: 0 }}
@@ -34,11 +42,34 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
       </td>
       <td className="p-4">{mentor.students}</td>
       <td className="p-4">{mentor.courses}</td>
-      <td className="p-4 text-right">
-        <button className="text-sm px-4 py-1 rounded bg-gray-600 text-white hover:bg-gray-700">
-          {mentor.blocked ? 'Unblock' : 'Block'}
-        </button>
-      </td>
+      <td className="p-4 text-right space-x-2">
+  {/* View button */}
+  <button
+    onClick={() => onView?.(mentor?._id)}
+    className="p-2 rounded-lg transition-all duration-200 text-blue-600 hover:bg-blue-50"
+    title="View Mentor"
+  >
+    <FiEye className="w-5 h-5" />
+  </button>
+
+  {/* Block/Unblock button */}
+  <button 
+    
+    className={`p-2 rounded-lg transition-all duration-200 ${
+      mentor.blocked 
+        ? 'text-green-600 hover:bg-green-50' 
+        : 'text-yellow-600 hover:bg-yellow-50'
+    }`}
+    title={mentor.blocked ? "Unblock Mentor" : "Block Mentor"}
+  >
+    {mentor.blocked ? (
+      <FiUnlock className="w-5 h-5" />
+    ) : (
+      <FiLock className="w-5 h-5" />
+    )}
+  </button>
+</td>
+
     </motion.tr>
   );
 };
