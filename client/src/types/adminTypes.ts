@@ -110,7 +110,7 @@ export interface Mentor {
   reviews: any[];        // Replace `any` with a Review type if available
   isVerified: boolean;
   status: 'pending' | 'approved' | 'rejected'; // assuming these are the possible statuses
-  applicationDate: string; // ISO date string
+  applicationDate: string;
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -121,4 +121,5 @@ export interface AdminContextType {
   admin: boolean;
   setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
   mentors: any[];
+  refreshMentors: () => void;
 }

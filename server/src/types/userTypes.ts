@@ -19,6 +19,7 @@ export interface LoginUser{
   password:string
 }
 export interface IOtp extends Document {
+  // status: string;
   email: string;
   otp: string;
   expiresAt: Date;

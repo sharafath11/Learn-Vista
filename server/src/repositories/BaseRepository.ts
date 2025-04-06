@@ -37,6 +37,7 @@ export class BaseRepository<T extends Document> {
   }
   async update(id: string, data: UpdateQuery<T>): Promise<T | null> {
     try {
+      console.log("repo",data)
       return await this.model.findByIdAndUpdate(id, data, { new: true });
     } catch (error) {
       throw new Error(`Error updating document: ${(error as Error).message}`);

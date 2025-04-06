@@ -10,15 +10,16 @@ const MentorSchema: Schema = new Schema(
     },
     profilePicture: { type: String, default: null },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, },
+    password: { type: String },
     username: { type: String, required: true, unique: true, trim: true },
     experience: { type: Number, min: 0, default: 0 },
     expertise: [{ type: String, trim: true }],
     status: { 
       type: String, 
-      enum: ['pending', 'active', 'inactive', 'banned', 'rejected'],
+      enum: ['pending' , 'approved' , 'rejected'],
       default: 'pending' 
     },
+    
     bio: { type: String, default: null },
     socialLinks: [
       {

@@ -10,7 +10,7 @@ class AdminMentorService {
     console.log(id,status,email)
     try {
       await AdminMentorRepo.update(id.toString(), { status }); 
-      if (status === "Approved") {
+      if (status == "approved") {
         sendMentorStatusChangeEmail(email,status)
       }
     } catch (error:any) {

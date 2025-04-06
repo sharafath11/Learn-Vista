@@ -24,12 +24,15 @@ export async function sendEmailOtp(email: string, otp: string) {
   await transporter.sendMail(mailOptions);
 }
 export async function sendMentorStatusChangeEmail(email: string, status: string) {
+  console.log("ssss");
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
     subject: "Mentor Status Updated",
     text: `Dear Mentor,\n\nYour application status has been updated to: ${status.toUpperCase()}.\n\nThank you!`,
   };
+ 
+ 
 
   await transporter.sendMail(mailOptions);
 }

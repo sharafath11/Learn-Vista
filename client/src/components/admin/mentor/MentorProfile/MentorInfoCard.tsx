@@ -1,9 +1,10 @@
 "use client";
 
+import { AdminContext } from '@/src/context/adminContext';
 import { patchRequest } from '@/src/services/api';
 import { Mentor } from '@/src/types/adminTypes';
 import { showSuccessToast } from '@/src/utils/Toast';
-import {useEffect, useState } from 'react';
+import {useContext, useEffect, useState } from 'react';
 
 interface MentorInfoCardProps {
   mentor: Mentor;
@@ -14,7 +15,7 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
   useEffect(() => {
     setCurrentStatus(mentor.status)
   })
-
+ const adminContext=useContext(AdminContext)
   const handleStatusChange = async (status: string) => {
     try {
       console.log(status)
@@ -25,7 +26,7 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
       });
       console.log(res)
       if (res.ok) {
-        
+        adminContext?.refreshMentors()
         setCurrentStatus(status); 
         showSuccessToast(res.msg)
       }

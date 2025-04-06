@@ -1,8 +1,8 @@
 import { JwtPayload } from "jsonwebtoken";
 import cloudinary from "../../config/cloudinary";
-import UserProfileRepo from "../../repositories/user/UserProfileRepo";
 import { IMentor } from "../../types/mentorTypes";
 import { Types } from "mongoose";
+import userRepository from "../../repositories/user/userRepository";
 
 class ProfileService {
   async applyMentor(
@@ -64,7 +64,7 @@ class ProfileService {
         socialLinks: []
       };
 
-      const application = await UserProfileRepo.applyMentorRepo(mentorData);
+      const application = await userRepository.applyMentorRepo(mentorData);
 
       return {
         success: true,

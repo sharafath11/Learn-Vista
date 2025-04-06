@@ -1,5 +1,10 @@
 "use client"
-import { useState } from 'react';
+import { MentorContext} from '@/src/context/mentorContext';
+import { postRequest } from '@/src/services/api';
+import { showSuccessToast } from '@/src/utils/Toast';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useContext, useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function LoginPage() {
@@ -32,13 +37,18 @@ export default function LoginPage() {
     setErrors(newErrors);
     return valid;
   };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const route=useRouter()
+  const mentorContex=useContext(MentorContext)
+  const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Handle login logic here
-      console.log('Login submitted:', { email, password, rememberMe });
-    }
+      const res = await postRequest("/mentor/login", { email, password });
+    if (res.ok) {
+      showSuccessToast(res.msg);
+      mentorContex?.setMentor(res.payload.mentor);
+      console.log(res.payload.mentor)
+      route.push("/mentor/home");
+      }
+  
   };
 
   return (
@@ -158,9 +168,9 @@ export default function LoginPage() {
             <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link href="/mentor/signup" className="font-medium text-blue-600 hover:text-blue-500">
                   Sign up
-                </a>
+                </Link>
               </p>
             </div>
           </div>
