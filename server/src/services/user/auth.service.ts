@@ -1,19 +1,23 @@
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Response } from "express";
-
 import userRepository from "../../repositories/user/userRepository";
-
 import {  IUser } from "../../types/userTypes";
 import { generateOtp } from "../../utils/otpGenerator";
 import { sendEmailOtp } from "../../utils/emailService";
 import { decodeToken } from "../../utils/tokenDecode";
 import OtpRepository from "../../repositories/user/OtpRepository";
+import { validateUserSignupInput } from "../../utils/userValidation";
 
 
 class AuthService {
   async registerUser(userData: IUser): Promise<IUser> {
+    const { name, email, password, role } = userData;
+
+    validateUserSignupInput(name, email, password, role);
     const existingUser = await userRepository.findOne({ email: userData.email });
+    const existOtp = await OtpRepository.findOne({ email });
+    if(!existOtp) throw new Error("OTP Expired... :)")
     if (existingUser) throw new Error("User already exists");
 
     userData.password = await bcrypt.hash(userData.password, 10);
@@ -23,7 +27,9 @@ class AuthService {
   async sendOtp(email: string): Promise<void> {
     const existingUser = await userRepository.findOne({ email });
     if (existingUser) throw new Error("This email is already registered");
-
+    const exitOtp = await OtpRepository.findOne({ email })
+    console.log("exist otp",exitOtp)
+    if(exitOtp) throw new Error("OTP already send it")
     const otp = generateOtp();
     await OtpRepository.create({ email, otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
     sendEmailOtp(email, otp);
@@ -105,7 +111,7 @@ class AuthService {
       throw new Error("Invalid user ID");
     }
     const user = await userRepository.findById(id as string);
-    if (!user) throw new Error("User not found");
+    if (!user||user.isBlocked) throw new Error("User not found");
 
     return user;
   }

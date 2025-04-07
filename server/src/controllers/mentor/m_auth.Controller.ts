@@ -43,6 +43,15 @@ class m_Auth {
             res.status(400).json({ ok: false, msg: error.message });
         }
     }
+    logout (req: Request, res: Response) {
+        try {
+         res.clearCookie("mentorToken");
+         res.clearCookie("mentorRefreshToken");
+         res.status(200).json({ ok: true, msg: "Logged out successfully" });
+        } catch (error :any) {
+            res.status(400).json({ ok: false, msg: "somthing wrongggg :)" });
+        }
+       }
     
     
 }

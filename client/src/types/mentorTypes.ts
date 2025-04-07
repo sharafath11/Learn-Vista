@@ -2,14 +2,19 @@
 import {  Mentor } from "./adminTypes"
 export type MentorSignupData = Partial<IMentorMentor> & {
   password?: string,
-  phoneNumber: number,
+  phoneNumber: string,
   confirmPassword: string,
   otp:string
 }
 export interface IMentorContext{
   mentor: IMentorMentor|null;
   setMentor: React.Dispatch<React.SetStateAction<IMentorMentor | null>>;
+  refreshMentor:()=>void
   
+}
+export interface SocialLink {
+  platform: "twitter" | "github" | "website";
+  url: string;
 }
 export interface IMentorMentor {
   _id: string;
@@ -20,13 +25,14 @@ export interface IMentorMentor {
   bio: string | null;
   experience: number;
   expertise: string[];
-  socialLinks: string[];
+  socialLinks: SocialLink[];
   cvOrResume: string;
-  coursesCreated: any[]; // You can replace `any` with a specific Course type if available
-  liveClasses: any[];    // Replace `any` with a specific Class type if defined
-  reviews: any[];        // Replace `any` with a Review type if available
+  phoneNumber:""
+  coursesCreated: any[]; 
+  liveClasses: any[];    
+  reviews: any[];       
   isVerified: boolean;
-  status: 'pending' | 'approved' | 'rejected'; // assuming these are the possible statuses
+  status: 'pending' | 'approved' | 'rejected';
   applicationDate: string;
   createdAt: string;
   updatedAt: string;

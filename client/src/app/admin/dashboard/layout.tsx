@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import SideBar from "@/src/components/admin/SideBar";
 import { FiBell, FiSearch, FiChevronDown, FiMenu } from "react-icons/fi";
@@ -67,9 +66,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Link href="#" className="block px-4 py-2 text-sm hover:bg-gray-100">
                     Settings
                   </Link>
-                  <Link href="#" className="block px-4 py-2 text-sm hover:bg-gray-100">
+                  <button className="block px-4 py-2 text-sm hover:bg-gray-100">
                     Logout
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>

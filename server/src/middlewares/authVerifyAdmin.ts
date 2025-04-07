@@ -8,7 +8,7 @@ interface DecodedToken {
 declare global {
   namespace Express {
     interface Request {
-      user?: DecodedToken;
+      admin?: DecodedToken;
     }
   }
 }
@@ -34,7 +34,7 @@ const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
         return
     }
 
-    req.user = decoded; 
+    req.admin = decoded; 
     next();
   } catch (error: any) {
       res.status(401).json({ ok: false, msg: "Invalid or expired token" });

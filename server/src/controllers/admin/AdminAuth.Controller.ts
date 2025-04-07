@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import AdminAuthService from "../../services/admin/auth.service";
-import AdminUsersServices from "../../services/admin/users.service"
 class AdminAuthController {
   async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;

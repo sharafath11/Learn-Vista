@@ -3,10 +3,11 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Response } from "express";
 import  MentorOtpRepo from "../../repositories/mentor/otpRepo"
 import { IMentor } from "../../types/mentorTypes";
-import { error } from "console";
 import { sendEmailOtp } from "../../utils/emailService";
 import { generateOtp } from "../../utils/otpGenerator";
 import MentorRepo from "../../repositories/mentor/MentorRepo";
+import { validateMentorSignupInput } from "../../utils/mentorValidation";
+import { error } from "console";
 
 class MentorAuthService {
   async loginMentor(
@@ -15,12 +16,11 @@ class MentorAuthService {
     res: Response
   ): Promise<{ mentor: any; token: string; refreshToken: string }> {
     const mentor = await MentorRepo.findOne({ email });
-  
+    if (mentor?.status !== "approved") throw new Error(`This user ${mentor?.status}`);
     if (!mentor) {
       throw new Error("Mentor not found");
     }
-    console.log("ps",password,"men",mentor)
-  
+    if (!mentor.isVerified) throw new Error("Please signup")
     const isPasswordValid = await bcrypt.compare(password, mentor?.password || "");
     if (!isPasswordValid) {
       throw new Error("Invalid email or password");
@@ -38,14 +38,14 @@ class MentorAuthService {
   
     const isProd = process.env.NODE_ENV === "production";
   
-    res.cookie("Mtoken", token, {
+    res.cookie("mentorToken", token, {
       httpOnly: true,
       secure: isProd,
       sameSite: "strict",
       maxAge: 60 * 60 * 1000, 
     });
   
-    res.cookie("MRefreshToken", refreshToken, {
+    res.cookie("mentorRefreshToken", refreshToken, {
       httpOnly: true,
       secure: isProd,
       sameSite: "strict",
@@ -70,6 +70,7 @@ class MentorAuthService {
       token,
       refreshToken,
     };
+    
   }
   
   
@@ -99,9 +100,11 @@ class MentorAuthService {
     }
   };
   async sendOtp(email: string): Promise<void> {
-      const existingUser = await MentorOtpRepo.findOne({ email});
-      if (existingUser) throw new Error("Already send OTP");
-  
+    const existingMentor = await MentorOtpRepo.findOne({ email });
+    const existMentorInmentor = await MentorRepo.findOne({ email, isVerified: true })
+    if( existMentorInmentor) throw new Error("This mentor already register")
+      if (existingMentor) throw new Error("Already send OTP");
+      
     const otp = generateOtp();
     sendEmailOtp(email, otp);
     await MentorOtpRepo.create({ email, otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
@@ -114,9 +117,14 @@ class MentorAuthService {
       }
    }
   async mentorSignup(data: Partial<IMentor>) {
+    const { isValid, errorMessage } = validateMentorSignupInput(data);
+
+  if (!isValid) {
+   throw new Error (errorMessage )
+  }
       const existMentor = await MentorRepo.findOne({ email: data.email });
       if (existMentor?.isVerified) {
-        throw new Error(`This mentor already register  `)
+        throw new Error(`This mentor already register `)
       }
     if (existMentor?.status!=="approved") {
       throw new Error(`This requst are ${existMentor?.status} `)

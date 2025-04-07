@@ -10,15 +10,14 @@ class ProfileController {
         res.status(400).json({ ok:false,msg: "No file uploaded" });
         return
       }
-
-      const { email, name } = req.body;
+      const { email, name,phoneNumber } = req.body;
       const decoded = decodeToken(req.cookies.token);
       if (!decoded) {
         res.status(401).json({ ok: false, msg: "please login" });
         return
       }
       const id = typeof decoded === "object" && "userId" in decoded ? (decoded.userId as string) : decoded;
-      const mentor = await profileService.applyMentor(email, name, req.file,id);
+      const mentor = await profileService.applyMentor(email, name, req.file,id,phoneNumber);
 
       res.status(201).json({ok:true ,msg: "Application submitted successfully", mentor });
     } catch (error: any) {

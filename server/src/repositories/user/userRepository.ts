@@ -9,7 +9,7 @@ class userRepository extends BaseRepository<IUser>{
     constructor() {
         super(userModel)
     }
-    async applyMentorRepo(mentorData: Partial<IMentor>) {
+    async applyMentor(mentorData: Partial<IMentor>) {
         try {
          
           const existingMentor = await MentorRepo.findOne({ email: mentorData.email });

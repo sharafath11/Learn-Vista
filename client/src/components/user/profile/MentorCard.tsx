@@ -1,7 +1,9 @@
 "use client"
 
 import { postRequest } from "@/src/services/api";
+import { MentorApplyFormData } from "@/src/types/authTypes";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
+import { validateMentorApplyForm } from "@/src/utils/user/validation";
 import { GraduationCap, X, Upload, FileText, Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -11,22 +13,25 @@ export default function MentorCard() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<MentorApplyFormData>({
     name: "",
     email: "",
+    phoneNumber: ""
   });
+  
   const [errors, setErrors] = useState({
     name: "",
     email: "",
-    file: "",
+    phoneNumber: "",
+    file: ""
   });
 
   const openModal = () => {
     setIsSubmitted(false);
     setIsLoading(false);
     setSelectedFile(null);
-    setFormData({ name: "", email: "" });
-    setErrors({ name: "", email: "", file: "" });
+    setFormData({ name: "", email: "", phoneNumber: "" });
+    setErrors({ name: "", email: "", phoneNumber: "", file: "" });
     dialogRef.current?.showModal();
   };
 
@@ -52,36 +57,13 @@ export default function MentorCard() {
       [name]: "",
     });
   };
-
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = { name: "", email: "", file: "" };
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-      valid = false;
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-      valid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email";
-      valid = false;
-    }
-
-    if (!selectedFile) {
-      newErrors.file = "Please upload your CV/resume";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm() || !selectedFile) return;
+    const { isValid, errors: validationErrors } = validateMentorApplyForm(formData, selectedFile);
+  if (!isValid) {
+    setErrors(validationErrors);
+    return;
+  }
 
     setIsLoading(true);
     
@@ -89,7 +71,8 @@ export default function MentorCard() {
       const formDataToSend = new FormData();
       formDataToSend.append('name', formData.name);
       formDataToSend.append('email', formData.email);
-      formDataToSend.append('cv', selectedFile);
+      formDataToSend.append('phoneNumber', formData.phoneNumber);
+      formDataToSend.append('cv', selectedFile||"");
 
       const res = await postRequest("/apply-mentor", formDataToSend);
      
@@ -191,6 +174,28 @@ export default function MentorCard() {
                 />
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Phone Number Field - NEW */}
+              <div>
+                <label htmlFor="phoneNumber" className="block text-sm font-medium mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleInputChange}
+                  className={`w-full px-3 py-2 border rounded-md ${
+                    errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                  } ${isLoading ? "bg-gray-100" : ""}`}
+                  placeholder="Enter your phone number"
+                  disabled={isLoading || isSubmitted}
+                />
+                {errors.phoneNumber && (
+                  <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>
                 )}
               </div>
 

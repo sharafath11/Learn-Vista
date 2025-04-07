@@ -39,3 +39,14 @@ export interface UserContextType {
 export interface UserProviderProps {
   children: React.ReactNode;
 }
+export interface MentorApplyFormData {
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+export interface MentorApplyFormErrors {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  file: string;
+}

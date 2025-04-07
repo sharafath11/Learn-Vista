@@ -8,7 +8,7 @@ export function middleware(req: NextRequest) {
   const adminToken = req.cookies.get("adminToken");
 
   const userRoutes = ["/user/profile", "/user/dashboard"];
-  const mentorRoutes = ["/mentor/dashboard", "/mentor/courses"];
+  const mentorRoutes = ["/mentor/home", "/mentor/profile"];
   const adminRoutes = ["/admin/dashboard", "/admin/settings"];
 
   const currentPath = req.nextUrl.pathname;

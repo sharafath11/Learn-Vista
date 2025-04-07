@@ -4,7 +4,7 @@ import type React from "react"
 
 import type { IUserRegistration } from "@/src/types/authTypes"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import { registrationValidation } from "@/src/utils/validation"
+import { registrationValidation } from "@/src/utils/user/validation"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -46,14 +46,18 @@ export default function SignupForm() {
       if (res && res.ok) {
         setOtpSent(true);
         showSuccessToast("OTP sent to your email");
-        }
+      } 
+      if (res && res.includes("OTP already send it")) {
+        
+        setOtpSent(true);
+      }
     } else {
         showErrorToast("Email not found");
     }
 }
 
   const handleResendOtp = async () => {
-    showSuccessToast("OTP resent to your email")
+    handleSendOtp()
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

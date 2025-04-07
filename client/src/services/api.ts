@@ -14,7 +14,7 @@ export const postRequest = async (url: string, body: object | FormData) => {
       withCredentials: true 
     });
 
-    console.log("res in services ", res);
+   
     
     if (res.data.ok) {
       return res.data;
@@ -23,7 +23,7 @@ export const postRequest = async (url: string, body: object | FormData) => {
     return null;
   } catch (error: any) {
     showErrorToast(error?.response?.data?.msg || "Server error, try again!");
-    return null;
+    return error?.response?.data?.msg;
   }
 }
 

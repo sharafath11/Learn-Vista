@@ -11,12 +11,10 @@ export interface IMentorBase {
   expertise?: string[];
   status?: 'pending' | 'approved' | 'rejected';
   bio?: string;
-  socialLinks?: Array<{
-    platform: string;
-    url: string;
-  }>;
+  socialLinks?:SocialLink[],
   liveClasses?: Types.ObjectId[];
   coursesCreated?: Types.ObjectId[];
+  isBlock:Boolean,
   reviews?: Types.ObjectId[];
   applicationDate?: Date;
   isVerified?: boolean;
@@ -25,8 +23,10 @@ export interface IMentorBase {
   cvSize?: number;
  
 }
-
-// Document interface that includes Mongoose document methods
+export interface SocialLink {
+  platform: "twitter" | "github" | "website";
+  url: string;
+}
 export interface IMentor extends IMentorBase, Document {
   phoneNumber: string;
 }

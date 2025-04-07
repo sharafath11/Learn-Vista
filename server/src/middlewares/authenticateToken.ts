@@ -16,6 +16,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
 
   try {
     const decoded = jwt.verify(accessToken, process.env.JWT_SECRET as string) as any;
+    if(decoded.role!=="user")
     req.user = decoded;
     next();
   } catch (error) {
