@@ -14,7 +14,7 @@ export interface IMentorBase {
   socialLinks?:SocialLink[],
   liveClasses?: Types.ObjectId[];
   coursesCreated?: Types.ObjectId[];
-  isBlock:Boolean,
+  isBlock:boolean,
   reviews?: Types.ObjectId[];
   applicationDate?: Date;
   isVerified?: boolean;
@@ -29,6 +29,7 @@ export interface SocialLink {
 }
 export interface IMentor extends IMentorBase, Document {
   phoneNumber: string;
+  
 }
 
 export interface IMentorModel extends Model<IMentor> {}

@@ -13,7 +13,7 @@ const SideBar: React.FC<SideBarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     { name: 'Mentors', icon: <FaChalkboardTeacher />, href: '/admin/dashboard/mentor' },
     { name: 'Courses', icon: <FiBook />, href: '/admin/courses' },
     { name: 'Settings', icon: <FiSettings />, href: '/admin/settings' },
-    { name: 'Logout', icon: <FiLogOut />, href: '/logout' },
+    
   ];
 
   return (

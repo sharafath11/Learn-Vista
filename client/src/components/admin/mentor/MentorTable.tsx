@@ -35,6 +35,7 @@ const MentorTable: FC<MentorTableProps> = ({ mentors, theme }) => {
               <th className="p-4">Status</th>
               <th className="p-4">Students</th>
               <th className="p-4">Courses</th>
+              <th className="p-4">Block</th>
               <th className="p-4 text-right">Actions</th>
             </tr>
           </thead>

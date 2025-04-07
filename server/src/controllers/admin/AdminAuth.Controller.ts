@@ -17,6 +17,15 @@ class AdminAuthController {
       res.status(500).json({ ok: false, msg: error.message});
     }
   } 
+  adminLogout(req: Request, res: Response) {
+    try {
+      res.clearCookie("adminToken");
+      res.clearCookie("adminRefreshToken");
+      res.status(200).json({ ok: true, msg: "Logged out successfully" });
+     } catch (error :any) {
+         res.status(400).json({ ok: false, msg: "somthing wrongggg :)" });
+     }
+  }
  
 }
 

@@ -38,3 +38,12 @@ export interface IMentorMentor {
   updatedAt: string;
   __v: number;
 }
+export type FormInputProps = {
+  label: string;
+  type: string;
+  id: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  placeholder?: string;
+  required?: boolean;
+};

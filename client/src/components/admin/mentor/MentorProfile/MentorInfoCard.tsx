@@ -4,35 +4,36 @@ import { AdminContext } from '@/src/context/adminContext';
 import { patchRequest } from '@/src/services/api';
 import { Mentor } from '@/src/types/adminTypes';
 import { showSuccessToast } from '@/src/utils/Toast';
-import {useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 interface MentorInfoCardProps {
   mentor: Mentor;
 }
 
 const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
-  const [currentStatus, setCurrentStatus] = useState("");
+  const adminContext = useContext(AdminContext);
+  const [currentStatus, setCurrentStatus] = useState<string | undefined>();
   useEffect(() => {
-    setCurrentStatus(mentor.status)
-  })
- const adminContext=useContext(AdminContext)
+    if (mentor?.status) {
+      setCurrentStatus(mentor.status);
+    }
+  }, [mentor]);
+  
+
   const handleStatusChange = async (status: string) => {
     try {
-      console.log(status)
       const res = await patchRequest("/admin/change-status", {
         mentorId: mentor._id,
         status,
-        email:mentor.email
+        email: mentor.email
       });
-      console.log(res)
       if (res.ok) {
-        adminContext?.refreshMentors()
-        setCurrentStatus(status); 
-        showSuccessToast(res.msg)
+        adminContext?.refreshMentors();
+        setCurrentStatus(status);
+        showSuccessToast(res.msg);
       }
     } catch (err) {
       console.error("Status update failed:", err);
-     
     }
   };
 
@@ -40,14 +41,14 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
     currentStatus === 'approved'
       ? 'bg-green-100 text-green-800'
       : currentStatus === 'pending'
-      ? 'bg-yellow-100 text-yellow-800'
-      : currentStatus === 'rejected'
-      ? 'bg-red-100 text-red-800'
-      : 'bg-gray-200 text-gray-700';
+        ? 'bg-yellow-100 text-yellow-800'
+        : currentStatus === 'rejected'
+          ? 'bg-red-100 text-red-800'
+          : 'bg-gray-200 text-gray-700';
 
   const statusLabel = currentStatus
     ? currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)
-    : 'Unknown';
+    : '';
 
   return (
     <div className="rounded-xl shadow-lg overflow-hidden bg-white">
@@ -88,11 +89,26 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
             </p>
             <div className="mt-2">
               <h4 className="font-medium text-sm mb-1">Social Media:</h4>
-              <div className="flex space-x-2">
-                <a href="#" className="text-blue-500 hover:text-blue-700">LinkedIn</a>
-                <a href="#" className="text-blue-400 hover:text-blue-600">Twitter</a>
-                <a href="#" className="text-gray-800 hover:text-gray-600">GitHub</a>
-              </div>
+              <div className="flex flex-wrap gap-2">
+    {mentor?.socialLinks?.map((link) => (
+      <a
+        key={link?.url}
+        href={link?.url || "#"}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full hover:bg-indigo-100 transition"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="M14 3v2h3.59L9 13.59 10.41 15 19 6.41V10h2V3z" />
+        </svg>
+        <span>{link?.platform}</span>
+      </a>
+    ))}
+  </div>
             </div>
           </div>
 
@@ -130,3 +146,6 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
 };
 
 export default MentorInfoCard;
+
+
+

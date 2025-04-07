@@ -72,9 +72,10 @@ export const UserTable = ({
                       title={user.isBlocked ? "Unblock User" : "Block User"}
                     >
                       {user.isBlocked ? (
-                        <FiUnlock className="w-5 h-5" />
+                         <FiLock className="w-5 h-5" />
+                       
                       ) : (
-                        <FiLock className="w-5 h-5" />
+                        <FiUnlock className="w-5 h-5" />
                       )}
                     </button>
                   </div>

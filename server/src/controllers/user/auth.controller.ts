@@ -32,11 +32,30 @@ class AuthController {
 
     async login(req: Request, res: Response) {
         try {
-            await authService.loginUser(req.body.email, req.body.password, res);
+          const { email, password } = req.body;
+          const { token, refreshToken, user } = await authService.loginUser(email, password);
+      
+          res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 15 * 60 * 1000, 
+          });
+      
+          res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, 
+          });
+        
+          res.status(200).json({ ok: true, msg: "Login successful", token, refreshToken, user });
         } catch (error: any) {
-            this.handleError(res, error);
+          console.error("Login error:", error.message);
+          res.status(401).json({ ok: false, msg: error.message });
         }
-    }
+      }
+      
     logout (req: Request, res: Response) {
        try {
         res.clearCookie("token");

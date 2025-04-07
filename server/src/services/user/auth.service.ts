@@ -40,64 +40,67 @@ class AuthService {
     if (!otpRecord) throw new Error("Invalid OTP");
   }
 
-  async loginUser(email: string, password: string, res: Response): Promise<void> {
+  async loginUser(email: string, password: string): Promise<{
+    token: string;
+    refreshToken: string;
+    user: any;
+  }> {
     const user = await userRepository.findOne({ email });
     if (!user) throw new Error("User not found");
-
+    if (user.isBlocked) throw new Error("This account is blocked");
+  
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error("Invalid credentials");
-
+  
     const token = jwt.sign(
-      { role: "user", userId: user._id }, 
-      process.env.JWT_SECRET as string, 
+      { role: "user", userId: user._id },
+      process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
     );
-
+  
     const refreshToken = jwt.sign(
-      { userId: user._id }, 
-      process.env.REFRESH_SECRET as string, 
+      { userId: user._id },
+      process.env.REFRESH_SECRET as string,
       { expiresIn: "7d" }
     );
-
-    res.cookie("token", token, {
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === "production", 
-      sameSite: "lax", 
-      maxAge: 15* 60 * 1000,
-    });
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true, 
-      secure: false,
-      sameSite: "strict", 
-      maxAge:7 * 24 * 60 * 60 * 1000,
-    });
-
-    res.status(200).json({ ok: true, msg: "Login successful", token, refreshToken,user });
-  }
-
-  async refreshAccessToken(refreshToken: string, res: Response): Promise<void> {
-    if (!refreshToken) throw new Error("Refresh token is required");
-
-    try {
-      const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET as string) as JwtPayload;
-      const newToken = jwt.sign(
-        { role: "user", userId: decoded.userId }, 
-        process.env.JWT_SECRET as string, 
-        { expiresIn: "1h" }
-      );
-
-      res.cookie("token", newToken, {
-        httpOnly: true, 
-        secure: process.env.NODE_ENV === "production", 
-        sameSite: "strict", 
-      });
-
-      res.status(200).json({ token: newToken });
-    } catch (error) {
-      throw new Error("Invalid refresh token");
+    function importendData(user: any) {
+      return {
+        
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profilePicture: user.profilePicture,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt,
+      };
     }
+    
+    return { token, refreshToken, user:importendData(user) };
   }
+  
+
+  // async refreshAccessToken(refreshToken: string, res: Response): Promise<void> {
+  //   if (!refreshToken) throw new Error("Refresh token is required");
+
+  //   try {
+  //     const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET as string) as JwtPayload;
+  //     const newToken = jwt.sign(
+  //       { role: "user", userId: decoded.userId }, 
+  //       process.env.JWT_SECRET as string, 
+  //       { expiresIn: "1h" }
+  //     );
+
+  //     res.cookie("token", newToken, {
+  //       httpOnly: true, 
+  //       secure: process.env.NODE_ENV === "production", 
+  //       sameSite: "strict", 
+  //     });
+
+  //     res.status(200).json({ token: newToken });
+  //   } catch (error) {
+  //     throw new Error("Invalid refresh token");
+  //   }
+  // }
 
   async getUser(token: string) {
     const decoded = decodeToken(token);
@@ -111,8 +114,8 @@ class AuthService {
       throw new Error("Invalid user ID");
     }
     const user = await userRepository.findById(id as string);
-    if (!user||user.isBlocked) throw new Error("User not found");
-
+    if (!user) throw new Error("User not found");
+    if (!user.isBlocked) throw new Error("Account blocked");
     return user;
   }
 }

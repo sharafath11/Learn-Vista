@@ -16,10 +16,13 @@ class MentorAuthService {
     res: Response
   ): Promise<{ mentor: any; token: string; refreshToken: string }> {
     const mentor = await MentorRepo.findOne({ email });
+    if(mentor?.isBlock) throw new Error("This account is blok")
     if (mentor?.status !== "approved") throw new Error(`This user ${mentor?.status}`);
+   
     if (!mentor) {
       throw new Error("Mentor not found");
     }
+    
     if (!mentor.isVerified) throw new Error("Please signup")
     const isPasswordValid = await bcrypt.compare(password, mentor?.password || "");
     if (!isPasswordValid) {
@@ -75,30 +78,30 @@ class MentorAuthService {
   
   
 
-  async refreshAccessToken(refreshToken: string, res: Response): Promise<void> {
-    if (!refreshToken) throw new Error("Refresh token is required");
+  // async refreshAccessToken(refreshToken: string, res: Response): Promise<void> {
+  //   if (!refreshToken) throw new Error("Refresh token is required");
 
-    try {
-      const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET as string) as JwtPayload;
+  //   try {
+  //     const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET as string) as JwtPayload;
       
-      const newToken = jwt.sign(
-        { role: "mentor", mentorId: decoded.mentorId },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "1h" }
-      );
+  //     const newToken = jwt.sign(
+  //       { role: "mentor", mentorId: decoded.mentorId },
+  //       process.env.JWT_SECRET as string,
+  //       { expiresIn: "1h" }
+  //     );
 
-      res.cookie("Mtoken", newToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 60 * 60 * 1000, 
-      });
+  //     res.cookie("Mtoken", newToken, {
+  //       httpOnly: true,
+  //       secure: process.env.NODE_ENV === "production",
+  //       sameSite: "strict",
+  //       maxAge: 60 * 60 * 1000, 
+  //     });
 
-      res.status(200).json({ token: newToken });
-    } catch (error) {
-      throw new Error("Invalid refresh token");
-    }
-  };
+  //     res.status(200).json({ token: newToken });
+  //   } catch (error) {
+  //     throw new Error("Invalid refresh token");
+  //   }
+  // };
   async sendOtp(email: string): Promise<void> {
     const existingMentor = await MentorOtpRepo.findOne({ email });
     const existMentorInmentor = await MentorRepo.findOne({ email, isVerified: true })

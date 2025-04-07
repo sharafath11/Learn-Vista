@@ -62,7 +62,6 @@ const AdminLogin = () => {
         </div>
 
         <div className="space-y-6">
-          {/* Email Input */}
           <div className="relative">
             <motion.div
               animate={{
@@ -86,7 +85,7 @@ const AdminLogin = () => {
             />
           </div>
 
-          {/* Password Input */}
+         
           <div className="relative">
             <motion.div
               animate={{
@@ -110,12 +109,6 @@ const AdminLogin = () => {
             />
           </div>
 
-          {/* Remember Me & Forgot Password */}
-          <div className="flex justify-between items-center">
-           
-          </div>
-
-          {/* Login Button */}
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}

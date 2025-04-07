@@ -21,6 +21,16 @@ class AdminMentorController {
       res.status(500).json({ ok: false, msg: "Failed to fetch mentors" });
     }
   }
+ async adminMentorBlock(req: Request, res: Response) {
+    try {
+      
+     const update= await adminMentorService.blockMentorServices(req.body.id, req.body.status);
+      res.json({ok:true,msg: `${update.username} ${update.status ? "Blocked" : "Unblocked"} successfully`})
+    } catch (error: any) {
+      console.error("Error fetching mentors:", error.message);
+      res.status(500).json({ ok: false, msg: "Failed to fetch mentors" });
+    }
+  }
   
 }
 

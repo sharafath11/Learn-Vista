@@ -3,12 +3,18 @@ import { useState } from "react";
 import SideBar from "@/src/components/admin/SideBar";
 import { FiBell, FiSearch, FiChevronDown, FiMenu } from "react-icons/fi";
 import Link from "next/link";
+import { postRequest } from "@/src/services/api";
+import { useRouter } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Dashboard");
-
+  const route=useRouter()
+  async function handleLogout() {
+    await postRequest("/admin/logout", {});
+    route.push("/admin")
+  }
   return (
     <div className="flex h-screen bg-gray-50 text-gray-800">
       <SideBar
@@ -66,7 +72,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Link href="#" className="block px-4 py-2 text-sm hover:bg-gray-100">
                     Settings
                   </Link>
-                  <button className="block px-4 py-2 text-sm hover:bg-gray-100">
+                  <button className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={handleLogout}>
                     Logout
                   </button>
                 </div>

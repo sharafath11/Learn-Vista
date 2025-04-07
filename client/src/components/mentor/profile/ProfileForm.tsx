@@ -4,7 +4,7 @@ import { MentorContext } from "@/src/context/mentorContext";
 
 export default function ProfileForm() {
   const mentorDetils = useContext(MentorContext);
-  console.log(mentorDetils?.mentor)
+ 
 
   return (
     <form className="space-y-6">

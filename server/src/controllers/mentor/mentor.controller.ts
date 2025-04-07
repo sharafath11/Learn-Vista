@@ -14,7 +14,7 @@ class MentorController {
           res.status(401).json({ ok:false ,msg: "Unauthorized: Invalid token" });
           return
       }
-      const mentor = await mentorService.getUser(decoded.mentorId);
+      const mentor = await mentorService.getMentor(decoded.mentorId);
       if (!mentor) {
           res.status(404).json({ok:false, msg: "Mentor not found" });
           return

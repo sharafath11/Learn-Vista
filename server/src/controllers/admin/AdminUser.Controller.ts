@@ -15,7 +15,6 @@ class AdminUsersController {
   async userBlock(req: Request, res: Response) {
     try {
       const { id, status } = req.body;
-      console.log(req.body)
       if (!id || typeof status !== "boolean") {
         res.status(400).json({ ok: false, msg: "Invalid request" });
         return
