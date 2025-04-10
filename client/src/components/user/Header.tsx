@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { postRequest } from "@/src/services/api";
 import { showErrorToast } from "@/src/utils/Toast";
 import MobileHeader from "./MobileView/MobileHeader";
+import { signOut } from "next-auth/react";
 
 const Header = () => {
   const { user, setUser } = useUserContext();
@@ -38,10 +39,12 @@ const Header = () => {
   }, []);
 
   const handleLogout = async() => {
-  try {
+    try {
+      await signOut({ redirect: false });
     const res = await postRequest("/logout", {});
     if (res.ok) {
       router.push("/user/login");
+      window.location.reload()
     }
   } catch (error:any) {
     showErrorToast(error.message)
@@ -100,7 +103,7 @@ const Header = () => {
                     aria-label="User menu"
                   >
                     <Image
-                      src={user?.image || "/images/ai.png"}
+                      src={user?.profilePicture || "/images/ai.png"}
                       alt="User profile"
                       width={32}
                       height={32}

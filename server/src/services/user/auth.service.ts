@@ -10,19 +10,21 @@ import OtpRepository from "../../repositories/user/OtpRepository";
 import { validateUserSignupInput } from "../../utils/userValidation";
 
 
-class AuthService {
-  async registerUser(userData: IUser): Promise<IUser> {
-    const { name, email, password, role } = userData;
 
-    validateUserSignupInput(name, email, password, role);
+class AuthService {
+  async registerUser(userData: IUser): Promise<Partial<IUser>> {
+    const { username, email, password, role } = userData;
+    console.log(userData)
+    
+    validateUserSignupInput(username, email, password, role);
     const existingUser = await userRepository.findOne({ email: userData.email });
     const existOtp = await OtpRepository.findOne({ email });
     if(!existOtp) throw new Error("OTP Expired... :)")
     if (existingUser) throw new Error("User already exists");
-
     userData.password = await bcrypt.hash(userData.password, 10);
     return userRepository.create(userData);
   }
+ 
 
   async sendOtp(email: string): Promise<void> {
     const existingUser = await userRepository.findOne({ email });
@@ -40,15 +42,38 @@ class AuthService {
     if (!otpRecord) throw new Error("Invalid OTP");
   }
 
-  async loginUser(email: string, password: string): Promise<{
+  async loginUser(email: string, password: string, googleId: string): Promise<{
     token: string;
     refreshToken: string;
     user: any;
   }> {
+    console.log(email)
     const user = await userRepository.findOne({ email });
     if (!user) throw new Error("User not found");
     if (user.isBlocked) throw new Error("This account is blocked");
+    if (user.googleId === googleId && user.email === email) {
+      console.log("✅ Google login successful — skipping password check");
   
+      const token = jwt.sign(
+        { role: "user", userId: user._id },
+        process.env.JWT_SECRET as string,
+        { expiresIn: "1h" }
+      );
+  
+      const refreshToken = jwt.sign(
+        { userId: user._id },
+        process.env.REFRESH_SECRET as string,
+        { expiresIn: "7d" }
+      );
+  
+      return {
+        token,
+        refreshToken,
+        user: this.extractUserData(user),
+      };
+    }
+  
+    // 🔒 If not a Google login, check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error("Invalid credentials");
   
@@ -63,20 +88,26 @@ class AuthService {
       process.env.REFRESH_SECRET as string,
       { expiresIn: "7d" }
     );
-    function importendData(user: any) {
-      return {
-        
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        profilePicture: user.profilePicture,
-        isVerified: user.isVerified,
-        createdAt: user.createdAt,
-      };
-    }
-    
-    return { token, refreshToken, user:importendData(user) };
+  
+    return {
+      token,
+      refreshToken,
+      user: this.extractUserData(user),
+    };
   }
+  
+  // Helper to format user data
+   extractUserData(user: any) {
+    return {
+      username: user.name,
+      email: user.email,
+      role: user.role,
+      profilePicture: user.profilePicture,
+      isVerified: user.isVerified,
+      createdAt: user.createdAt,
+    };
+  }
+  
   
 
   // async refreshAccessToken(refreshToken: string, res: Response): Promise<void> {
@@ -115,7 +146,7 @@ class AuthService {
     }
     const user = await userRepository.findById(id as string);
     if (!user) throw new Error("User not found");
-    if (!user.isBlocked) throw new Error("Account blocked");
+    if (user.isBlocked) throw new Error("Account blocked");
     return user;
   }
 }

@@ -1,11 +1,11 @@
 import { IUserRegistration, MentorApplyFormData, MentorApplyFormErrors } from "../../types/authTypes";
-import { showInfoToast } from "../Toast";
+import { showErrorToast, showInfoToast } from "../Toast";
 
 export function registrationValidation(userData: IUserRegistration): boolean {
-  const { name, email, password, confirmPassword, role } = userData;
+  const { username, email, password, confirmPassword, role } = userData;
   const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
-  if (!name || name.trim().length === 0) {
+   console.log(userData)
+  if (!username || username.trim().length === 0) {
     showInfoToast("Name is required");
     return false;
   }
@@ -69,9 +69,11 @@ export const validateMentorApplyForm = (
   }
 
   if (!selectedFile) {
+    
     newErrors.file = "Please upload your CV/resume";
     isValid = false;
   } else if (selectedFile.type !== "application/pdf") {
+    showErrorToast("Only PDF files are allowed");
     newErrors.file = "Only PDF files are allowed";
     isValid = false;
   }

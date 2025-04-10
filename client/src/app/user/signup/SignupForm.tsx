@@ -11,10 +11,12 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"
 import { FormOTP } from "./FormOTP"
+import { signIn } from "next-auth/react"
 
 export default function SignupForm() {
+  const route=useRouter()
   const [userData, setUserData] = useState<IUserRegistration>({
-    name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -27,6 +29,7 @@ export default function SignupForm() {
   const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.id)
     setUserData({ ...userData, [e.target.id]: e.target.value })
   }
 
@@ -37,8 +40,20 @@ export default function SignupForm() {
   const handleOtpVerified = () => {
     setUserData({ ...userData, isVerified: true });
     setOtpVerified(true);
+  };
+  
+const googleSignup = async () => {
+  try {
+    const res = await signIn("google", { callbackUrl: "/user" }); 
+    if (res) {
+      showSuccessToast("Login Succes");
+      route.push("/")
+    }
+  } catch (error) {
+    console.error("Google signup error:", error);
+    showErrorToast("Signup failed, please try again.");
+  }
 };
-
 
   const handleSendOtp = async () => {
     if (userData?.email) {
@@ -67,7 +82,7 @@ export default function SignupForm() {
       showSuccessToast("Please verify your OTP first")
       return
     }
-    
+    console.log(userData)
     const res = await postRequest("/signup", userData)
     if (res?.ok) {
       showSuccessToast("Signup successful")
@@ -88,7 +103,7 @@ export default function SignupForm() {
           <p className="mt-1 text-gray-500 text-sm">Please enter your details</p>
 
           <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-            <FormInput label="Full Name" type="text" id="name" onChange={handleChange} />
+            <FormInput label="Full Name" type="text" id="username" onChange={handleChange} />
             <FormInput label="Email Address" type="email" id="email" onChange={handleChange} />
             <FormInput label="Password" type="password" id="password" onChange={handleChange} />
             <FormInput label="Confirm Password" type="password" id="confirmPassword" onChange={handleChange} />
@@ -130,7 +145,7 @@ export default function SignupForm() {
             <div className="flex-grow border-t border-gray-200" />
           </div>
 
-          <button
+          <button onClick={googleSignup}
             type="button"
             className="mt-4 flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white py-1.5 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all"
           >
@@ -163,7 +178,8 @@ function FormInput({
   type: string
   id: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-}) {
+  }) {
+  console.log("dddd",id)
   return (
     <div className="mb-2">
       <label htmlFor={id} className="block text-sm font-medium text-gray-700">

@@ -6,9 +6,9 @@ import { UserRole } from "@/src/types/authTypes";
 
 export default function LoginPage() {
   const [role, setRole] = useState<UserRole>("user");
-  const router = useRouter(); // Initialize router
+  const router = useRouter(); 
 
-  // Function to navigate based on role
+
   const handleRoleSelection = (selectedRole: UserRole) => {
     setRole(selectedRole);
     router.push(`/${selectedRole}/login`); 

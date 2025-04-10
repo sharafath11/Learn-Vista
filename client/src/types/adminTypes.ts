@@ -10,7 +10,7 @@ export type dropDown = 'All' | 'admin' | 'mentor' | 'user';
 
 export interface AdminUser extends IUser {
   _id: string;
-  name: string;
+  username: string;
   email: string;
   role: UserRole;
   isBlocked: boolean;

@@ -7,6 +7,7 @@ import authController from "../../controllers/user/auth.controller";
 
 const route = express.Router();
 route.post("/signup", (req, res) => authController.signup(req, res));
+route.post("/google/signup",authController.googleAuth)
 route.post("/otp", (req, res) => authController.sendOtp(req, res));
 route.post("/otp-verify", (req, res) => authController.verifyOtp(req, res));
 route.post("/login", (req, res) => authController.login(req, res));

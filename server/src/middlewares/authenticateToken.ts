@@ -9,6 +9,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   const accessToken = req.cookies?.token;
   const refreshToken = req.cookies?.refreshToken;
 
+
   if (!accessToken) {
     res.status(401).json({ ok: false, msg: "Unauthorized - No access token" });
     return;

@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
-
+ 
   const userToken = req.cookies.get("token");
   const mentorToken = req.cookies.get("mentorToken");
   const adminToken = req.cookies.get("adminToken");
-
+  console.log("gvfuhguyguigiuyergvuyewrgvervhbewhvbehiowhgbvouwerbvouhwerbvjhefbvjhiefvihjfvgbivefubhdvvhbhbjhefghewqfwefgghioefbhjfehiwefqgqh")
   const userRoutes = ["/user/profile", "/user/dashboard"];
   const mentorRoutes = ["/mentor/home", "/mentor/profile"];
   const adminRoutes = ["/admin/dashboard", "/admin/settings"];

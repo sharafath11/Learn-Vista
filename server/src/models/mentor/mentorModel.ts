@@ -15,6 +15,9 @@ const MentorSchema: Schema = new Schema(
     username: { type: String, required: true, unique: true, trim: true },
     experience: { type: Number, min: 0, default: 0 },
     expertise: [{ type: String, trim: true }],
+    googleMentor: { type: Boolean, default: false }, 
+    role:{type:String,default:"mentor"},
+    googleId: { type: String, default: null, unique: true }, 
     status: { 
       type: String, 
       enum: ['pending' , 'approved' , 'rejected'],

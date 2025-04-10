@@ -2,6 +2,7 @@ import { Document, Types, Model } from 'mongoose';
 
 // Base interface without Document methods
 export interface IMentorBase {
+  _id: string
   userId: Types.ObjectId;
   profilePicture?: string;
   email: string;
@@ -29,6 +30,9 @@ export interface SocialLink {
 }
 export interface IMentor extends IMentorBase, Document {
   phoneNumber: string;
+  googleMentor: boolean;
+  googleId: string;
+  role:"mentor"
   
 }
 

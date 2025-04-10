@@ -8,16 +8,16 @@ import {
 } from "../types/authTypes";
 import { getRequest } from "../services/api";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const route=useRouter()
-
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await getRequest("/get-user");
+      const res = await getRequest(`/get-user`);
       if (res.ok) {
         setUser(res.user);
       }

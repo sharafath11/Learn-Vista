@@ -28,14 +28,14 @@ export const UserTable = ({
                     <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden mr-3">
                       <img 
                         src={user?.profilePicture ?? ""} 
-                        alt={user.name} 
+                        alt={user?.username} 
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = 'none';
                         }}
                       />
                     </div>
-                    <span className="font-medium">{user.name}</span>
+                    <span className="font-medium">{user.username}</span>
                   </div>
                 </td>
                 <td className="p-4">{user.email}</td>

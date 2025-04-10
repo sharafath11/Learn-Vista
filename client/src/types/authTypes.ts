@@ -1,7 +1,7 @@
 export type UserRole = "user" | "mentor";
 
 export interface IUserRegistration {
-  name: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -13,11 +13,14 @@ export interface IUserRegistration {
 export interface ILogin {
   email: string;
   password: string;
+  googleId: string,
+  
 }
 
 export interface IUser {
+  
   _id: string;
-  name: string;
+  username: string;
   email: string;
   password?: string;
   role: UserRole;
@@ -49,4 +52,30 @@ export interface MentorApplyFormErrors {
   email: string;
   phoneNumber: string;
   file: string;
+}
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      role?: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    };
+  }
+
+  interface User extends IUser {
+    id: string;
+    role?: string;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    role?: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  }
 }

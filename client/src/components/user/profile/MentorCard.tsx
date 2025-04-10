@@ -60,6 +60,7 @@ export default function MentorCard() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const { isValid, errors: validationErrors } = validateMentorApplyForm(formData, selectedFile);
+    console.log("eerr",errors)
   if (!isValid) {
     setErrors(validationErrors);
     return;

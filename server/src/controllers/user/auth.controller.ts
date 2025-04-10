@@ -1,10 +1,14 @@
 import { Request, Response } from "express";
 import authService from "../../services/user/auth.service";
 import { AuthenticatedRequest } from "../../types/userTypes";
+import { handleGoogleSignup } from "../../utils/googleAuth";
+import { generateTokens } from "../../utils/generateToken";
+import jwt from "jsonwebtoken"
 
 class AuthController {
     async signup(req: Request, res: Response) {
         try {
+            console.log("body",req.body)
             await authService.registerUser(req.body);
             res.status(201).json({ ok: true, msg: "User registration successful" });
         } catch (error: any) {
@@ -32,8 +36,8 @@ class AuthController {
 
     async login(req: Request, res: Response) {
         try {
-          const { email, password } = req.body;
-          const { token, refreshToken, user } = await authService.loginUser(email, password);
+          const { email, password,googleId } = req.body;
+          const { token, refreshToken, user } = await authService.loginUser(email, password,googleId as string);
       
           res.cookie("token", token, {
             httpOnly: true,
@@ -54,7 +58,55 @@ class AuthController {
           console.error("Login error:", error.message);
           res.status(401).json({ ok: false, msg: error.message });
         }
-      }
+    }
+    async googleAuth(req: Request, res: Response) {
+        try {
+            const result = await handleGoogleSignup(req.body);
+            const token = jwt.sign(
+                { 
+                  role: "user", 
+                  userId: result.user._id,
+                  email: result.user.email
+                },
+                process.env.JWT_SECRET as string,
+                { expiresIn: "15m" } // Short-lived access token
+              );
+          
+              const refreshToken = jwt.sign(
+                { userId: result.user._id },
+                process.env.REFRESH_SECRET as string,
+                { expiresIn: "7d" }
+              );
+              
+              // 4. Set HTTP-only cookies
+              res.cookie("token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                maxAge: 15 * 60 * 1000, // 15 minutes
+                path: "/",
+              });
+              
+              res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                path: "/"
+              });         
+            res.status(200).json({
+                ok: true,
+                msg: "Google authentication successful",
+                user: result.user,
+            });
+        } catch (error: any) {
+            console.error("Google Auth Error:", error);
+            res.status(500).json({
+                ok: false,
+                msg: error.message || "Google authentication failed"
+            });
+        }
+    }
       
     logout (req: Request, res: Response) {
        try {

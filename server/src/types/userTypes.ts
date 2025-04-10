@@ -2,7 +2,7 @@ import mongoose, { Document, ObjectId, Types } from "mongoose";
 import { Request } from "express";
 type UserRole="user"|"mentor"
 export interface IUser extends Document {
-  name: string;
+  username: string;
   email: string;
   password: string;
   role: UserRole;
@@ -12,6 +12,8 @@ export interface IUser extends Document {
   enrolledCourses: Types.ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
+  googleUser: boolean
+  googleId:string
 }
 
 export interface LoginUser{
