@@ -1,0 +1,41 @@
+[33mcommit cfaef8ffacd2a15f79fd97c451681890b402944a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mstd-way[m[33m)[m
+Author: sharafath11 <abisharfath@gmail.com>
+Date:   Fri Apr 11 18:37:37 2025 +0530
+
+    admin mentor compolete i think so
+
+[33mcommit e5703728b1742158939946d7685b7307563afba6[m
+Author: sharafath11 <abisharfath@gmail.com>
+Date:   Fri Apr 11 16:51:35 2025 +0530
+
+    mentor all clearn ennn njan viswasikunnui  will wyt and seee
+
+[33mcommit 3f515560f94668748c87254d5ab2b26b91f3e75d[m
+Author: sharafath11 <abisharfath@gmail.com>
+Date:   Fri Apr 11 11:25:21 2025 +0530
+
+    mentor service lyer clear
+
+[33mcommit 464e8ce7a057d7ced26dc79db2500fc979badaf5[m
+Author: sharafath11 <abisharfath@gmail.com>
+Date:   Fri Apr 11 11:06:41 2025 +0530
+
+    some error clear in dipendcy injection and repostry mentor repostry
+
+[33mcommit 04453324f43b3c20d89ac6123137dfe8557be6a5[m
+Author: sharafath11 <abisharfath@gmail.com>
+Date:   Thu Apr 10 19:12:46 2025 +0530
+
+    restart
+
+[33mcommit 8593e04577963c88e156b80ac681a58c5037d6dc[m
+Author: sharafath11 <abisharfath@gmail.com>
+Date:   Thu Apr 10 18:27:00 2025 +0530
+
+    test bracnh concept
+
+[33mcommit 629db6f06028a8dc844a5779968b19d3b2eeda2c[m[33m ([m[1;32msingup-user[m[33m, [m[1;32mrestart[m[33m, [m[1;32mmain[m[33m)[m
+Author: sharafath11 <abisharfath@gmail.com>
+Date:   Thu Apr 10 17:02:25 2025 +0530
+
+    singup error now clrear i going to main branch

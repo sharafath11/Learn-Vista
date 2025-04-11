@@ -31,7 +31,7 @@ export const verifyMentor = (
       return;
     }
 
-    req.user = decoded;
+    // req.user = decoded;
     next();
   } catch (error: any) {
     res.status(401).json({ ok: false, msg: 'Invalid token' });

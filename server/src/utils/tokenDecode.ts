@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 
 export interface DecodedToken extends jwt.JwtPayload {
-  mentorId: string;
-  role: string;
+  id: string;
+  role: 'admin' | 'user' | 'mentor';
 }
 
 export const decodeToken = (token: string): DecodedToken => {

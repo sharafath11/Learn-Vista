@@ -24,6 +24,11 @@ import { IAdminMentorRepository } from '../interfaces/repositories/admin/IAdminM
 // import { AdminMentorRepository } from '../../repositories/admin/AdminMentorRepository';
 import { AdminMentorRepository } from '../../repositories/admin/AdminMentorRepo';
 import AdminMentorController from '../../controllers/admin/AdminMentor.Controller';
+import { IAdminUsersRepository } from '../interfaces/repositories/admin/IAdminUsersRepository';
+import AdminUsersServices from '../../services/admin/AdminUsers.Service';
+import { AdminUsersRepo } from '../../repositories/admin/AdminUsersRepo';
+// import { AdminUsersController } from '../../controllers/admin/AdminUser.Controller';
+import AdminUserController from '../../controllers/admin/AdminUser.Controller';
 // import { AdminMentorController } from "../../controllers/admin/AdminMentor.Controller";
 const container = new Container();
 
@@ -64,5 +69,14 @@ container.bind<IAdminMentorRepository>(TYPES.AdminMentorRepository)
   container.bind<AdminMentorController>(TYPES.AdminMentorController)
   .to(AdminMentorController)
   .inSingletonScope();
+  container.bind<IAdminUsersRepository>(TYPES.AdminUsersRepository)
+  .to(AdminUsersRepo)
+  .inSingletonScope();
 
+container.bind<AdminUsersServices>(TYPES.AdminUsersService)
+  .to(AdminUsersServices)
+  .inSingletonScope();
+  container.bind<AdminUserController>(TYPES.AdminUserController)
+  .to(AdminUserController)
+  .inSingletonScope();
 export default container;

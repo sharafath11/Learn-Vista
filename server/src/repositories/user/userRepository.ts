@@ -1,34 +1,36 @@
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../core/types';
-import { IMentorRepository } from '../../core/interfaces/repositories/IMentorRepository';
-import { userModel } from '../../models/user/userModel';
-import { BaseRepository } from '../BaseRepository';
-import { IUser } from '../../types/userTypes';
-import { IMentor } from '../../core/models/Mentor';
+import { injectable } from "inversify";
+
+import { BaseRepository } from "../BaseRepository";
+
+import { FilterQuery, UpdateQuery } from "mongoose";
+import { Document } from "mongoose";
+import { IUser } from "../../types/userTypes";
+import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
+import { userModel } from "../../models/user/userModel";
 
 @injectable()
-export class UserRepository extends BaseRepository<IUser> {
-  constructor(
-    @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository
-  ) {
+export class UserRepository extends BaseRepository<IUser> implements IUserRepository {
+  model: any;
+  constructor() {
     super(userModel);
   }
 
-  async applyMentor(mentorData: Partial<IMentor>): Promise<IMentor> {
+  async applyMentor(mentorData: any): Promise<any> {
+    // Implementation from your existing code
     try {
-      const existingMentor = await this.mentorRepo.findOne({ email: mentorData.email });
+      const existingMentor = await this.model.findOne({ email: mentorData.email });
       if (existingMentor) {
         throw new Error("Mentor application already submitted");
       }
       
-      const processedData: Partial<IMentor> = {
+      const processedData = {
         ...mentorData,
         socialLinks: mentorData.socialLinks ? 
-          mentorData.socialLinks.map(link => typeof link === 'string' ? link : JSON.stringify(link)) : 
+          mentorData.socialLinks.map((link: any) => typeof link === 'string' ? link : JSON.stringify(link)) : 
           []
       };
 
-      const mentor = await this.mentorRepo.create(processedData);
+      const mentor = await this.model.create(processedData);
       return mentor;
     } catch (error) {
       console.error("Error applying as mentor:", error);

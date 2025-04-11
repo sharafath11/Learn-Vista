@@ -17,7 +17,7 @@ export class MentorController {
 
   async getMentor(req: Request, res: Response): Promise<void> {
     try {
-      const decoded = decodeToken(req.cookies.mentorToken) as MentorTokenPayload;
+      const decoded = decodeToken(req.cookies.mentorToken) as unknown as MentorTokenPayload;
       if (!decoded?.mentorId) {
         res.status(401).json({ ok: false, msg: "Unauthorized: Invalid token" });
         return;

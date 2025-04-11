@@ -1,8 +1,10 @@
-// import { IMentor } from '../../models/Mentor';
-
-import { IMentor } from "../../../models/Mentor";
+import { IUser } from "../../../types/userTypes";
+import { Document } from "mongoose";
 
 export interface IUserRepository {
-  applyMentor(mentorData: Partial<IMentor>): Promise<IMentor>;
-  // Add other user repository methods as needed
+  create(user: Partial<IUser>): Promise<Partial<IUser> & Document>;
+  findOne(query: object): Promise<(IUser & Document) | null>;
+  findById(id: string): Promise<(IUser & Document) | null>;
+  applyMentor(mentorData: any): Promise<any>;
+  update(id: string, data: UpdateQuery<IUser>): Promise<(IUser & Document) | null>;
 }
