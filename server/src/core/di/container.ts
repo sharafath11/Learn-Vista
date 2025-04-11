@@ -29,6 +29,14 @@ import AdminUsersServices from '../../services/admin/AdminUsers.Service';
 import { AdminUsersRepo } from '../../repositories/admin/AdminUsersRepo';
 // import { AdminUsersController } from '../../controllers/admin/AdminUser.Controller';
 import AdminUserController from '../../controllers/admin/AdminUser.Controller';
+import { IUserRepository } from '../interfaces/repositories/user/IUserRepository';
+import { AuthController } from '../../controllers/user/auth.controller';
+import { UserRepository } from '../../repositories/user/userRepository';
+import { OtpRepository } from '../../repositories/user/OtpRepository';
+import { IAuthService } from '../interfaces/services/user/IAuthService';
+import { AuthService } from '../../services/user/auth.service';
+import { ProfileService } from '../../services/user/profile.service';
+import { ProfileController } from '../../controllers/user/profile.controller';
 // import { AdminMentorController } from "../../controllers/admin/AdminMentor.Controller";
 const container = new Container();
 
@@ -79,4 +87,10 @@ container.bind<AdminUsersServices>(TYPES.AdminUsersService)
   container.bind<AdminUserController>(TYPES.AdminUserController)
   .to(AdminUserController)
   .inSingletonScope();
+  container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
+  container.bind<typeof OtpRepository>(TYPES.OtpRepository).toConstantValue(OtpRepository);
+  container.bind<AuthService>(TYPES.AuthService).to(AuthService).inSingletonScope();
+  container.bind<ProfileService>(TYPES.ProfileService).to(ProfileService).inSingletonScope();
+  container.bind<AuthController>(TYPES.AuthController).to(AuthController).inSingletonScope();
+  container.bind<ProfileController>(TYPES.ProfileController).to(ProfileController).inSingletonScope();
 export default container;

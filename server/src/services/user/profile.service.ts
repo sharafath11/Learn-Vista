@@ -1,12 +1,12 @@
-import { inject, injectable } from 'inversify';
-import { JwtPayload } from 'jsonwebtoken';
-import cloudinary from '../../config/cloudinary';
-import { IMentor } from '../../core/models/Mentor';
-import { Types } from 'mongoose';
-import { validateMentorApplyInput } from '../../utils/userValidation';
-import { UserRepository } from '../../repositories/user/userRepository';
-import { TYPES } from '../../core/types';
-import { IUserRepository } from '../../core/interfaces/repositories/IUserRepository';
+// src/services/user/profile.service.ts
+import { injectable, inject } from "inversify";
+import { JwtPayload } from "jsonwebtoken";
+import cloudinary from "../../config/cloudinary";
+import { IMentor } from "../../core/models/Mentor";
+import { Types } from "mongoose";
+import { validateMentorApplyInput } from "../../utils/userValidation";
+import { TYPES } from "../../core/types";
+import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 
 @injectable()
 export class ProfileService {

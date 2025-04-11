@@ -17,5 +17,10 @@ export const TYPES = {
   MentorRepository: Symbol.for('MentorRepository'),
   MentorOtpRepository: Symbol.for('MentorOtpRepository'),
   AdminMentorRepository: Symbol.for('AdminMentorRepository'),
-  AdminUsersRepository: Symbol.for('AdminUsersRepository') // Plural "Users" for repository
+  AdminUsersRepository: Symbol.for('AdminUsersRepository'), // Plural "Users" for repository,
+  UserRepository: Symbol.for("UserRepository"),
+  OtpRepository: Symbol.for("OtpRepository"),
+  AuthService: Symbol.for("AuthService"),
+  AuthController: Symbol.for("AuthController"),
+  ProfileController: Symbol.for("ProfileController"),
 };

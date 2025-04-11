@@ -20,7 +20,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ ok: false, msg: 'Something went wrong!' });
 });
 app.use(cookieParser());
-// app.use("/", userRoutes);
+app.use("/", userRoutes);
 app.use("/mentor", mentorRoutes);
 app.use("/admin",adminRoutes)
 const PORT = process.env.PORT || 4000;
