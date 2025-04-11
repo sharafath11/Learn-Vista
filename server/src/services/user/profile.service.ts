@@ -1,11 +1,19 @@
-import { JwtPayload } from "jsonwebtoken";
-import cloudinary from "../../config/cloudinary";
-import { IMentor } from "../../types/mentorTypes";
-import { Types } from "mongoose";
-import userRepository from "../../repositories/user/userRepository";
-import { validateMentorApplyInput } from "../../utils/userValidation";
+import { inject, injectable } from 'inversify';
+import { JwtPayload } from 'jsonwebtoken';
+import cloudinary from '../../config/cloudinary';
+import { IMentor } from '../../core/models/Mentor';
+import { Types } from 'mongoose';
+import { validateMentorApplyInput } from '../../utils/userValidation';
+import { UserRepository } from '../../repositories/user/userRepository';
+import { TYPES } from '../../core/types';
+import { IUserRepository } from '../../core/interfaces/repositories/IUserRepository';
 
-class ProfileService {
+@injectable()
+export class ProfileService {
+  constructor(
+    @inject(TYPES.UserRepository) private userRepository: IUserRepository
+  ) {}
+
   async applyMentor(
     email: string,
     username: string,
@@ -14,11 +22,11 @@ class ProfileService {
     phoneNumber: string
   ) {
     try {
-    
       const { isValid, errorMessage } = validateMentorApplyInput(email, username, phoneNumber, file);
       if (!isValid) throw new Error(errorMessage);
 
       if (!userId) throw new Error("Please login");
+      
       const uploadResult = await new Promise<{
         secure_url: string;
         public_id: string;
@@ -54,7 +62,8 @@ class ProfileService {
         expertise: [],
         socialLinks: [],
       };
-      const application = await userRepository.applyMentor(mentorData);
+
+      const application = await this.userRepository.applyMentor(mentorData);
 
       return {
         success: true,
@@ -82,5 +91,3 @@ class ProfileService {
     }
   }
 }
-
-export default new ProfileService();

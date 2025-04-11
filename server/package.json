@@ -12,7 +12,7 @@
     "@types/nodemailer": "^6.4.17",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "name": "server",
   "version": "1.0.0",
@@ -42,6 +42,7 @@
     "glob-parent": "^5.1.2",
     "has-flag": "^3.0.0",
     "ignore-by-default": "^1.0.1",
+    "inversify": "^7.5.0",
     "is-binary-path": "^2.1.0",
     "is-extglob": "^2.1.1",
     "is-glob": "^4.0.3",

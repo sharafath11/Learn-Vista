@@ -1,13 +1,22 @@
-import express from "express";
-import m_authController from "../../controllers/mentor/m_auth.Controller";
-import mentorController from "../../controllers/mentor/mentor.controller";
-import verifyMentor from "../../middlewares/mentorVerify";
-const route = express.Router();
-route.post("/signup", m_authController.signupController);
-route.post("/otp", m_authController.mentorOtpControler);
-route.post("/otp/verify", m_authController.verifyOtp);
-route.post("/login", m_authController.login);
-route.post("/logout",m_authController.logout)
-route.get("/get-mentor",verifyMentor,mentorController.getMentor)
+import express from 'express';
+import { TYPES } from '../../core/types';
+import { verifyMentor } from '../../middlewares/mentorVerify';
+import { IMentorController } from '../../core/interfaces/controllers/mentor/IMentor.Controller';
+import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
+import container from '../../core/di/container';
+const router = express.Router();
+const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
+const mentorController = container.get<IMentorController>(TYPES.MentorController);
 
-export default route
+// Auth Routes
+router.post('/signup', (req, res) => mentorAuthController.signupController(req, res));
+router.post('/otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
+router.post('/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
+router.post('/login', (req, res) => mentorAuthController.login(req, res));
+router.post('/logout', (req, res) => mentorAuthController.logout(req, res));
+
+// Protected Routes
+router.get('/get-mentor', verifyMentor, (req, res, next) => {
+    mentorController.getMentor(req, res).catch(next);
+  });
+export default router;

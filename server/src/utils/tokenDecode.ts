@@ -1,9 +1,18 @@
-import jwt from "jsonwebtoken";
-export const decodeToken = (token: string)=> {
+import jwt from 'jsonwebtoken';
+
+export interface DecodedToken extends jwt.JwtPayload {
+  mentorId: string;
+  role: string;
+}
+
+export const decodeToken = (token: string): DecodedToken => {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET as string);
-  } catch (error:any) {
-    console.error("Invalid token:", error.message);
-    return null;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    if (typeof decoded === 'string' || !decoded) {
+      throw new Error('Invalid token format');
+    }
+    return decoded as DecodedToken;
+  } catch (error) {
+    throw new Error('Invalid token');
   }
 };

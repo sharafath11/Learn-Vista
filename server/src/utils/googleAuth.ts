@@ -1,5 +1,5 @@
 import userRepository from "../repositories/user/userRepository";
-import MentorRepo from "../repositories/mentor/MentorRepo";
+import MentorRepo from "../repositories/mentor/MentorRepository";
 
 interface GoogleSignupPayload {
   username: string;

@@ -1,43 +1,39 @@
-import { Request, Response, NextFunction } from "express";
-import { decodeToken } from "../utils/tokenDecode";
+import { Request, Response, NextFunction } from 'express';
+import { decodeToken } from '../utils/tokenDecode';
 
-type Role = "mentor";
-
-interface DecodedToken {
-  id: string;
-  role: Role;
-}
-
+// Extend the Express Request type
 declare global {
   namespace Express {
     interface Request {
-      mentor?: DecodedToken; 
+      user?: {
+        mentorId: string;
+        role: string;
+      };
     }
   }
 }
 
-const verifyMentor = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies?.mentorToken;
-  if (!token) {
-    res.status(401).json({ ok: false, msg: "No token provided in cookies" });
-    return
-  }
-
+export const verifyMentor = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
   try {
-    const decoded = decodeToken(token) as DecodedToken;
-
-    if (!decoded?.role || decoded.role !== "mentor") {
-      console.log("cece",decoded)
-      res.status(403).json({ ok: false, msg: "Access denied. Mentors only." });
-      return
+    const token = req.cookies.mentorToken;
+    if (!token) {
+      res.status(401).json({ ok: false, msg: 'No token provided' });
+      return;
     }
 
-    req.mentor = decoded; 
+    const decoded = decodeToken(token);
+    if (!decoded.mentorId || decoded.role !== 'mentor') {
+      res.status(401).json({ ok: false, msg: 'Unauthorized' });
+      return;
+    }
+
+    req.user = decoded;
     next();
   } catch (error: any) {
-    res.status(401).json({ ok: false, msg: "Invalid or expired token" });
-    return
+    res.status(401).json({ ok: false, msg: 'Invalid token' });
   }
 };
-
-export default verifyMentor;

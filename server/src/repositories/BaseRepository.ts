@@ -1,46 +1,61 @@
 import { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
 
-export class BaseRepository<T extends Document> {
-  private model: Model<T>;
+export abstract class BaseRepository<T extends Document, U> {
+  protected model: Model<T>;
 
-    constructor(model: Model<T>) {
-      //this acces the model
+  constructor(model: Model<T>) {
     this.model = model;
   }
-  async create(data: Partial<T>): Promise<T> {
+
+  protected toDTO(document: T): U {
+    const { _id, __v, ...rest } = document.toObject();
+    return { id: _id.toString(), ...rest } as unknown as U;
+  }
+
+  async create(data: Partial<T>): Promise<U> {
     try {
-      return await this.model.create(data);
+      const document = await this.model.create(data);
+      return this.toDTO(document);
     } catch (error) {
-      throw new Error(`Error creating document: ${(error as Error).message}`);
+      throw this.handleError(error, 'Error creating document');
     }
   }
-  async findAll(): Promise<T[]> {
+
+  async findAll(): Promise<U[]> {
     try {
-      return await this.model.find();
+      const documents = await this.model.find().lean();
+      return documents.map(doc => this.toDTO(doc as unknown as T));
     } catch (error) {
-      throw new Error(`Error fetching documents: ${(error as Error).message}`);
+      throw this.handleError(error, 'Error fetching documents');
     }
   }
-  async findById(id: string): Promise<T | null> {
+
+  async findById(id: string): Promise<U | null> {
     try {
-      return await this.model.findById(id);
+      const document = await this.model.findById(id).lean();
+      return document ? this.toDTO(document as unknown as T) : null;
     } catch (error) {
-      throw new Error(`Error finding document by ID: ${(error as Error).message}`);
+      throw this.handleError(error, 'Error finding document by ID');
     }
   }
-  async findOne(condition: FilterQuery<T>): Promise<T | null> {
+
+  async findOne(condition: FilterQuery<T>): Promise<U | null> {
     try {
-      return await this.model.findOne(condition);
+      const document = await this.model.findOne(condition).lean();
+      return document ? this.toDTO(document as unknown as T) : null;
     } catch (error) {
-      throw new Error(`Error finding document: ${(error as Error).message}`);
+      throw this.handleError(error, 'Error finding document');
     }
   }
-  async update(id: string, data: UpdateQuery<T>): Promise<T | null> {
+
+  async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
     try {
-      console.log("repo",data)
-      return await this.model.findByIdAndUpdate(id, data, { new: true });
+      const document = await this.model.findByIdAndUpdate(id, data, { 
+        new: true 
+      }).lean();
+      return document ? this.toDTO(document as unknown as T) : null;
     } catch (error) {
-      throw new Error(`Error updating document: ${(error as Error).message}`);
+      throw this.handleError(error, 'Error updating document');
     }
   }
 
@@ -49,7 +64,12 @@ export class BaseRepository<T extends Document> {
       const result = await this.model.findByIdAndDelete(id);
       return result !== null;
     } catch (error) {
-      throw new Error(`Error deleting document: ${(error as Error).message}`);
+      throw this.handleError(error, 'Error deleting document');
     }
+  }
+
+  private handleError(error: unknown, message: string): Error {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new Error(`${message}: ${errorMessage}`);
   }
 }
