@@ -2,91 +2,80 @@ import { injectable } from 'inversify';
 import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMentorRepository';
 import mentorModel from '../../models/mentor/mentorModel';
 import { IMentor, SafeMentor } from '../../core/models/Mentor';
-// import { BaseRepository } from '../../core/repositories/core';
-import { BaseRepository } from '../../core/interfaces/repositories/BaseRepository';
-import { Types } from 'mongoose';
+import { FilterQuery, UpdateQuery, Types } from 'mongoose';
 
 @injectable()
-export class MentorRepository extends BaseRepository<IMentor, SafeMentor> implements IMentorRepository {
-  constructor() {
-    super(mentorModel);
+export class MentorRepository implements IMentorRepository {
+  async create(data: Partial<IMentor>): Promise<SafeMentor> {
+    const mentor = await mentorModel.create(data);
+    return this.toSafeMentor(mentor);
+  }
+
+  async findAll(): Promise<SafeMentor[]> {
+    const mentors = await mentorModel.find().lean();
+    return mentors.map(mentor => this.toSafeMentor(mentor));
+  }
+
+  async findById(id: string): Promise<SafeMentor | null> {
+    const mentor = await mentorModel.findById(id).lean();
+    return mentor ? this.toSafeMentor(mentor) : null;
+  }
+
+  async findOne(condition: FilterQuery<IMentor>): Promise<SafeMentor | null> {
+    const mentor = await mentorModel.findOne(condition).lean();
+    return mentor ? this.toSafeMentor(mentor) : null;
+  }
+
+  async update(id: string, data: UpdateQuery<IMentor>): Promise<SafeMentor | null> {
+    const mentor = await mentorModel.findByIdAndUpdate(id, data, { new: true }).lean();
+    return mentor ? this.toSafeMentor(mentor) : null;
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const result = await mentorModel.findByIdAndDelete(id);
+    return result !== null;
   }
 
   async findByEmail(email: string): Promise<SafeMentor | null> {
-    try {
-      const mentor = await this.model.findOne({ email }).select('-password').lean();
-      return mentor ? this.toDTO(mentor) : null;
-    } catch (error) {
-      throw this.handleError(error, 'Error finding mentor by email');
-    }
+    const mentor = await mentorModel.findOne({ email }).lean();
+    return mentor ? this.toSafeMentor(mentor) : null;
   }
 
-  async findWithPassword(condition: any): Promise<IMentor | null> {
-    try {
-      const mentor = await this.model.findOne(condition).lean();
-      return mentor ? mentor as unknown as IMentor : null;
-    } catch (error) {
-      throw this.handleError(error, 'Error finding mentor with password');
-    }
+  async findWithPassword(condition: FilterQuery<IMentor>): Promise<IMentor | null> {
+    const mentor = await mentorModel.findOne(condition).lean();
+    return mentor as IMentor | null;
   }
 
   async updateStatus(
     id: string, 
     status: 'pending' | 'approved' | 'rejected'
   ): Promise<SafeMentor | null> {
-    try {
-      const mentor = await this.model.findByIdAndUpdate(
-        id,
-        { status },
-        { new: true }
-      ).select('-password').lean();
-      return mentor ? this.toDTO(mentor) : null;
-    } catch (error) {
-      throw this.handleError(error, 'Error updating mentor status');
-    }
+    const mentor = await mentorModel.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    ).lean();
+    return mentor ? this.toSafeMentor(mentor) : null;
   }
 
   async blockMentor(id: string, isBlock: boolean): Promise<SafeMentor | null> {
-    try {
-      const mentor = await this.model.findByIdAndUpdate(
-        id,
-        { isBlock },
-        { new: true }
-      ).select('-password').lean();
-      return mentor ? this.toDTO(mentor) : null;
-    } catch (error) {
-      throw this.handleError(error, 'Error blocking/unblocking mentor');
-    }
+    const mentor = await mentorModel.findByIdAndUpdate(
+      id,
+      { isBlock },
+      { new: true }
+    ).lean();
+    return mentor ? this.toSafeMentor(mentor) : null;
   }
 
-  protected toDTO(document: IMentor): SafeMentor {
-    const obj = document.toObject ? document.toObject() : document;
-    const { _id, password, __v, ...rest } = obj;
-    
+  private toSafeMentor(mentor: any): SafeMentor {
+    const { _id, __v, ...rest } = mentor;
     return {
       id: _id.toString(),
-      userId: rest.userId.toString(),
-      profilePicture: rest.profilePicture,
-      email: rest.email,
-      phoneNumber: rest.phoneNumber,
-      username: rest.username,
-      experience: rest.experience,
-      expertise: rest.expertise,
-      googleMentor: rest.googleMentor,
-      role: rest.role,
-      googleId: rest.googleId,
-      status: rest.status,
-      isBlock: rest.isBlock,
-      bio: rest.bio,
-      socialLinks: rest.socialLinks,
-      liveClasses: rest.liveClasses?.map(id => id.toString()) || [],
-      coursesCreated: rest.coursesCreated?.map(id => id.toString()) || [],
-      reviews: rest.reviews?.map(id => id.toString()) || [],
-      applicationDate: rest.applicationDate,
-      isVerified: rest.isVerified,
-      cvOrResume: rest.cvOrResume,
-      createdAt: rest.createdAt,
-      updatedAt: rest.updatedAt
+      ...rest,
+      userId: rest.userId?.toString(),
+      liveClasses: rest.liveClasses?.map((id: Types.ObjectId) => id.toString()) || [],
+      coursesCreated: rest.coursesCreated?.map((id: Types.ObjectId) => id.toString()) || [],
+      reviews: rest.reviews?.map((id: Types.ObjectId) => id.toString()) || []
     };
   }
 }
