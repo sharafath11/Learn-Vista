@@ -12,13 +12,19 @@ import { IMentorAuthService } from '../interfaces/services/mentor/IMentorAuth.Se
 import { MentorAuthService } from '../../services/mentor/MentorAuth.Service';
 import { IMentorService } from '../interfaces/services/mentor/IMentor.Service';
 import { MentorService } from '../../services/mentor/Mentor.Service';
+// import { AdminMentorService } from '../../services/admin/AdminMentorService';
+import { AdminMentorService } from '../../services/admin/adminMentor.service';
 
 // Repositories
 import { IMentorRepository } from '../interfaces/repositories/mentor/IMentorRepository';
 import { MentorRepository } from '../../repositories/mentor/MentorRepository';
 import { IMentorOtpRepository } from '../interfaces/repositories/mentor/IMentorOtpRepository';
 import { MentorOtpRepository } from '../../repositories/mentor/otpRepo';
-
+import { IAdminMentorRepository } from '../interfaces/repositories/admin/IAdminMentorRepository';
+// import { AdminMentorRepository } from '../../repositories/admin/AdminMentorRepository';
+import { AdminMentorRepository } from '../../repositories/admin/AdminMentorRepo';
+import AdminMentorController from '../../controllers/admin/AdminMentor.Controller';
+// import { AdminMentorController } from "../../controllers/admin/AdminMentor.Controller";
 const container = new Container();
 
 // Bind Controllers
@@ -39,6 +45,10 @@ container.bind<IMentorService>(TYPES.MentorService)
   .to(MentorService)
   .inSingletonScope();
 
+container.bind<AdminMentorService>(TYPES.AdminMentorService)
+  .to(AdminMentorService)
+  .inSingletonScope();
+
 // Bind Repositories
 container.bind<IMentorRepository>(TYPES.MentorRepository)
   .to(MentorRepository)
@@ -46,6 +56,13 @@ container.bind<IMentorRepository>(TYPES.MentorRepository)
 
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository)
   .to(MentorOtpRepository)
+  .inSingletonScope();
+
+container.bind<IAdminMentorRepository>(TYPES.AdminMentorRepository)
+  .to(AdminMentorRepository)
+  .inSingletonScope();
+  container.bind<AdminMentorController>(TYPES.AdminMentorController)
+  .to(AdminMentorController)
   .inSingletonScope();
 
 export default container;
