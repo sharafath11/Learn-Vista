@@ -4,14 +4,11 @@ import jwt from 'jsonwebtoken';
 import { Response } from 'express';
 import { TYPES } from '../../core/types';
 import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMentorAuth.Service';
-// import { IMentorRepository } from '../../core/interfaces/repositories/IMentorRepository';
 import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMentorRepository';
 import { IMentorOtpRepository } from '../../core/interfaces/repositories/mentor/IMentorOtpRepository';
-import { IMentor } from '../../core/models/Mentor';
+import { IMentor, SafeMentor } from '../../core/models/Mentor';
 import { generateOtp } from '../../utils/otpGenerator';
 import { sendEmailOtp } from '../../utils/emailService';
-import { validateMentorSignupInput } from '../../utils/mentorValidation';
-
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {
@@ -24,17 +21,16 @@ export class MentorAuthService implements IMentorAuthService {
     email: string,
     password: string,
     res: Response
-  ): Promise<{ mentor: Partial<IMentor>; token: string; refreshToken: string }> {
-    const mentor = await this.mentorRepo.findOne({ email });
+  ): Promise<{ mentor: SafeMentor; token: string; refreshToken: string }> {
+    // Use findWithPassword to get the mentor with password
+    const mentor = await this.mentorRepo.findWithPassword({ email });
     
     if (!mentor) throw new Error('Mentor not found');
     if (mentor.isBlock) throw new Error('This account is blocked');
     if (mentor.status !== 'approved') throw new Error(`This user is ${mentor.status}`);
     if (!mentor.isVerified) throw new Error('Please complete signup first');
 
-    const isPasswordValid = mentor.password 
-    ? await bcrypt.compare(password, mentor.password)
-    : false;
+    const isPasswordValid = await bcrypt.compare(password, mentor.password);
     if (!isPasswordValid) throw new Error('Invalid email or password');
 
     const payload = { role: 'mentor', mentorId: mentor._id };
@@ -43,6 +39,7 @@ export class MentorAuthService implements IMentorAuthService {
 
     this.setCookies(res, token, refreshToken);
 
+    // Return the sanitized mentor without password
     return {
       mentor: this.sanitizeMentor(mentor),
       token,
@@ -77,27 +74,26 @@ export class MentorAuthService implements IMentorAuthService {
     if (!data.password) throw new Error('Password is required');
     if (!data.experience) throw new Error('Experience is required');
 
-    const existingMentor = await this.mentorRepo.findOne({ email: data.email });
+    const existingMentor = await this.mentorRepo.findWithPassword({ email: data.email });
     if (!existingMentor) throw new Error('Mentor not found');
     if (existingMentor.isVerified) throw new Error('Mentor already registered');
     if (existingMentor.status !== 'approved') throw new Error(`Request is ${existingMentor.status}`);
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const updatedData = { 
-        ...data, 
-        password: hashedPassword,
-        experience: Number(data.experience),
-        isVerified: true
+      ...data, 
+      password: hashedPassword,
+      experience: Number(data.experience),
+      isVerified: true
     };
 
     await this.mentorRepo.update(existingMentor._id.toString(), updatedData);
-}
+  }
 
-  // Helper Methods
   private generateToken(payload: object, secret: string, expiresIn: string): string {
     if (!secret) throw new Error('JWT secret is not defined');
     return jwt.sign(payload, secret, { expiresIn } as jwt.SignOptions);
-}
+  }
 
   private setCookies(res: Response, token: string, refreshToken: string): void {
     const isProd = process.env.NODE_ENV === 'production';
@@ -118,8 +114,8 @@ export class MentorAuthService implements IMentorAuthService {
     });
   }
 
-  private sanitizeMentor(mentor: IMentor): Partial<IMentor> {
-    const { password, ...mentorWithoutPassword } = mentor.toObject ? mentor.toObject() : mentor;
-    return mentorWithoutPassword;
+  private sanitizeMentor(mentor: IMentor): SafeMentor {
+    const { password, ...mentorWithoutPassword } = mentor;
+    return mentorWithoutPassword as SafeMentor;
   }
 }

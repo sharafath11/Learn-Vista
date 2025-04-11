@@ -1,126 +1,92 @@
 import { injectable } from 'inversify';
 import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMentorRepository';
-
-import { IMentor, IMentorDTO, SafeMentor } from '../../core/models/Mentor';
+import mentorModel from '../../models/mentor/mentorModel';
+import { IMentor, SafeMentor } from '../../core/models/Mentor';
+// import { BaseRepository } from '../../core/repositories/core';
+import { BaseRepository } from '../../core/interfaces/repositories/BaseRepository';
 import { Types } from 'mongoose';
-import MentorModel from '../../models/mentor/mentorModel';
-
 
 @injectable()
-export class MentorRepository implements IMentorRepository {
-  async create(data: Partial<IMentor>): Promise<IMentorDTO> {
-    try {
-      const mentor = await MentorModel.create(data);
-      return this.toDTO(mentor.toObject());
-    } catch (error) {
-      throw new Error(`Error creating mentor: ${error instanceof Error ? error.message : String(error)}`);
-    }
+export class MentorRepository extends BaseRepository<IMentor, SafeMentor> implements IMentorRepository {
+  constructor() {
+    super(mentorModel);
   }
 
-  async findAll(): Promise<IMentorDTO[]> {
+  async findByEmail(email: string): Promise<SafeMentor | null> {
     try {
-      const mentors = await MentorModel.find().lean();
-      return mentors.map(mentor => this.toDTO(mentor));
-    } catch (error) {
-      throw new Error(`Error fetching mentors: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  async findById(id: string): Promise<IMentorDTO | null> {
-    try {
-      const mentor = await MentorModel.findById(id).lean();
+      const mentor = await this.model.findOne({ email }).select('-password').lean();
       return mentor ? this.toDTO(mentor) : null;
     } catch (error) {
-      throw new Error(`Error finding mentor by ID: ${error instanceof Error ? error.message : String(error)}`);
+      throw this.handleError(error, 'Error finding mentor by email');
     }
   }
 
-  async findOne(condition: any): Promise<IMentorDTO | null> {
+  async findWithPassword(condition: any): Promise<IMentor | null> {
     try {
-      const mentor = await MentorModel.findOne(condition).lean();
-      return mentor ? this.toDTO(mentor) : null;
+      const mentor = await this.model.findOne(condition).lean();
+      return mentor ? mentor as unknown as IMentor : null;
     } catch (error) {
-      throw new Error(`Error finding mentor: ${error instanceof Error ? error.message : String(error)}`);
+      throw this.handleError(error, 'Error finding mentor with password');
     }
   }
 
-  async update(id: string, data: any): Promise<IMentorDTO | null> {
-    try {
-      const mentor = await MentorModel.findByIdAndUpdate(id, data, { new: true }).lean();
-      return mentor ? this.toDTO(mentor) : null;
-    } catch (error) {
-      throw new Error(`Error updating mentor: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  async delete(id: string): Promise<boolean> {
-    try {
-      const result = await MentorModel.findByIdAndDelete(id);
-      return result !== null;
-    } catch (error) {
-      throw new Error(`Error deleting mentor: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  async findByEmail(email: string): Promise<IMentorDTO | null> {
-    try {
-      const mentor = await MentorModel.findOne({ email }).lean();
-      return mentor ? this.toDTO(mentor) : null;
-    } catch (error) {
-      throw new Error(`Error finding mentor by email: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  async findSafeMentorById(id: string): Promise<SafeMentor | null> {
-    try {
-      const mentor = await MentorModel.findById(id).select('-password').lean();
-      return mentor as unknown as SafeMentor;
-    } catch (error) {
-      throw new Error(`Error finding safe mentor: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
-
-  async updateMentorStatus(
+  async updateStatus(
     id: string, 
     status: 'pending' | 'approved' | 'rejected'
-  ): Promise<IMentorDTO | null> {
+  ): Promise<SafeMentor | null> {
     try {
-      const mentor = await MentorModel.findByIdAndUpdate(
+      const mentor = await this.model.findByIdAndUpdate(
         id,
         { status },
         { new: true }
-      ).lean();
+      ).select('-password').lean();
       return mentor ? this.toDTO(mentor) : null;
     } catch (error) {
-      throw new Error(`Error updating mentor status: ${error instanceof Error ? error.message : String(error)}`);
+      throw this.handleError(error, 'Error updating mentor status');
     }
   }
 
-  private toDTO(mentor: any): IMentorDTO {
+  async blockMentor(id: string, isBlock: boolean): Promise<SafeMentor | null> {
+    try {
+      const mentor = await this.model.findByIdAndUpdate(
+        id,
+        { isBlock },
+        { new: true }
+      ).select('-password').lean();
+      return mentor ? this.toDTO(mentor) : null;
+    } catch (error) {
+      throw this.handleError(error, 'Error blocking/unblocking mentor');
+    }
+  }
+
+  protected toDTO(document: IMentor): SafeMentor {
+    const obj = document.toObject ? document.toObject() : document;
+    const { _id, password, __v, ...rest } = obj;
+    
     return {
-      id: mentor._id.toString(),
-      userId: mentor.userId.toString(),
-      profilePicture: mentor.profilePicture,
-      email: mentor.email,
-      phoneNumber: mentor.phoneNumber,
-      username: mentor.username,
-      experience: mentor.experience,
-      expertise: mentor.expertise,
-      googleMentor: mentor.googleMentor,
-      role: mentor.role,
-      googleId: mentor.googleId,
-      status: mentor.status,
-      isBlock: mentor.isBlock,
-      bio: mentor.bio,
-      socialLinks: mentor.socialLinks,
-      liveClasses: mentor.liveClasses?.map((id: Types.ObjectId) => id.toString()) || [],
-      coursesCreated: mentor.coursesCreated?.map((id: Types.ObjectId) => id.toString()) || [],
-      reviews: mentor.reviews?.map((id: Types.ObjectId) => id.toString()) || [],
-      applicationDate: mentor.applicationDate,
-      isVerified: mentor.isVerified,
-      cvOrResume: mentor.cvOrResume,
-      createdAt: mentor.createdAt,
-      updatedAt: mentor.updatedAt
+      id: _id.toString(),
+      userId: rest.userId.toString(),
+      profilePicture: rest.profilePicture,
+      email: rest.email,
+      phoneNumber: rest.phoneNumber,
+      username: rest.username,
+      experience: rest.experience,
+      expertise: rest.expertise,
+      googleMentor: rest.googleMentor,
+      role: rest.role,
+      googleId: rest.googleId,
+      status: rest.status,
+      isBlock: rest.isBlock,
+      bio: rest.bio,
+      socialLinks: rest.socialLinks,
+      liveClasses: rest.liveClasses?.map(id => id.toString()) || [],
+      coursesCreated: rest.coursesCreated?.map(id => id.toString()) || [],
+      reviews: rest.reviews?.map(id => id.toString()) || [],
+      applicationDate: rest.applicationDate,
+      isVerified: rest.isVerified,
+      cvOrResume: rest.cvOrResume,
+      createdAt: rest.createdAt,
+      updatedAt: rest.updatedAt
     };
   }
 }
