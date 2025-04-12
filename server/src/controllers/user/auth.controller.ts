@@ -109,8 +109,8 @@ export class AuthController {
             throw new Error("User not authenticated");
           }
           
-          const user = await this.authService.getUser(req.user.id);
-          res.status(200).json({ ok: true, msg: "", user });
+        //   const user = await this.authService.getUser(req.user.id);
+        //   res.status(200).json({ ok: true, msg: "", user });
         } catch (error: any) {
           res.status(500).json({ ok: false, msg: error.message });
         }

@@ -96,12 +96,6 @@ export class AuthService implements IAuthService {
       }
     };
   }
-
-  async getUser(token: string): Promise<IUser> {
-    // Implement user retrieval logic
-    throw new Error("Method not implemented");
-  }
-
   async logout(): Promise<void> {
     // Implement logout logic
     throw new Error("Method not implemented");

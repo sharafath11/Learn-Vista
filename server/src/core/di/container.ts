@@ -93,4 +93,5 @@ container.bind<AdminUsersServices>(TYPES.AdminUsersService)
   container.bind<ProfileService>(TYPES.ProfileService).to(ProfileService).inSingletonScope();
   container.bind<AuthController>(TYPES.AuthController).to(AuthController).inSingletonScope();
   container.bind<ProfileController>(TYPES.ProfileController).to(ProfileController).inSingletonScope();
+  
 export default container;

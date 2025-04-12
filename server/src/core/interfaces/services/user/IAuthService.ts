@@ -12,7 +12,6 @@ export interface IAuthService {
     refreshToken: string;
     user: any;
   }>;
-  getUser(token: string): Promise<IUser>;
   logout(): Promise<void>;
   googleAuth(profile: any): Promise<{
     token: string;

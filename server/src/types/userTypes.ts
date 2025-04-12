@@ -17,7 +17,19 @@ export interface IUser extends Document {
   googleUser: boolean
   googleId:string
 }
-
+export interface ISafeUser {
+  username: string;
+  email: string;
+  role: UserRole;
+  profilePicture?: string | null;
+  isBlocked: boolean;
+  isVerified: boolean;
+  enrolledCourses: string[]; 
+  createdAt?: Date;
+  updatedAt?: Date;
+  googleUser: boolean;
+  googleId: string;
+}
 export interface LoginUser{
   email: string,
   password:string
@@ -50,7 +62,6 @@ declare global {
   }
 }
 
-// For routes that definitely have authenticated users
 export interface AuthenticatedRequest extends Request {
   user: {
     id: string;
