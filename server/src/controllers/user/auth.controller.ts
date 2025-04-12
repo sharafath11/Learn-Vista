@@ -105,16 +105,16 @@ export class AuthController {
 
     async getUser(req: AuthenticatedRequest, res: Response) {
         try {
-            if (!req.cookies.token) {
-                throw new Error("User not valid");
-            }
-            
-            const user = await this.authService.getUser(req.cookies.token);
-            res.status(200).json({ ok: true, msg: "", user });
+          if (!req.user?.id) {
+            throw new Error("User not authenticated");
+          }
+          
+          const user = await this.authService.getUser(req.user.id);
+          res.status(200).json({ ok: true, msg: "", user });
         } catch (error: any) {
-            res.status(500).json({ ok: false, msg: error.message });
+          res.status(500).json({ ok: false, msg: error.message });
         }
-    }
+      }
 }
 
 export default AuthController;

@@ -1,3 +1,4 @@
+// src/services/user/auth.service.ts
 import { inject, injectable } from "inversify";
 import { IAuthService } from "../../core/interfaces/services/user/IAuthService";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
@@ -8,12 +9,13 @@ import { IUser } from "../../types/userTypes";
 import { generateTokens } from "../../utils/generateToken";
 import { decodeToken } from "../../utils/tokenDecode";
 import { validateUserSignupInput } from "../../utils/userValidation";
+import { OtpRepository } from "../../repositories/user/OtpRepository";
 
 @injectable()
 export class AuthService implements IAuthService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-    @inject(TYPES.OtpRepository) private otpRepository: typeof OtpRepository
+    @inject(TYPES.OtpRepository) private otpRepository: OtpRepository
   ) {}
 
   async registerUser(userData: IUser): Promise<Partial<IUser>> {
@@ -30,6 +32,16 @@ export class AuthService implements IAuthService {
     return this.userRepository.create(userData);
   }
 
+  async sendOtp(email: string): Promise<void> {
+    // Implement OTP sending logic
+    throw new Error("Method not implemented");
+  }
+
+  async verifyOtp(email: string, otp: string): Promise<void> {
+    // Implement OTP verification logic
+    throw new Error("Method not implemented");
+  }
+
   async loginUser(email: string, password: string, googleId?: string): Promise<{
     token: string;
     refreshToken: string;
@@ -40,7 +52,20 @@ export class AuthService implements IAuthService {
     if (user.isBlocked) throw new Error("This account is blocked");
     
     if (googleId && user.googleId === googleId) {
-      return generateTokens(user);
+      const tokens = generateTokens({
+        id: user._id.toString(),
+        email: user.email,
+        role: user.role
+      });
+      return {
+        token: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        user: {
+          id: user._id,
+          email: user.email,
+          role: user.role
+        }
+      };
     }
     
     if (!user.password) throw new Error("Password not set for this account");
@@ -48,10 +73,37 @@ export class AuthService implements IAuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error("Invalid credentials");
     
-    return generateTokens(user);
+    const tokens = generateTokens({
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role
+    });
+    return {
+      token: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    };
   }
 
-  async googleAuth(profile: any): Promise<any> {
+  async getUser(token: string): Promise<IUser> {
+    // Implement user retrieval logic
+    throw new Error("Method not implemented");
+  }
+
+  async logout(): Promise<void> {
+    // Implement logout logic
+    throw new Error("Method not implemented");
+  }
+
+  async googleAuth(profile: any): Promise<{
+    token: string;
+    refreshToken: string;
+    user: any;
+  }> {
     let user = await this.userRepository.findByGoogleId(profile.id);
     
     if (!user) {
@@ -66,8 +118,19 @@ export class AuthService implements IAuthService {
       });
     }
     
-    return generateTokens(user);
+    const tokens = generateTokens({
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role
+    });
+    return {
+      token: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      }
+    };
   }
-
-  // ... (other methods remain similar to previous implementation)
 }

@@ -1,7 +1,9 @@
 import mongoose, { Document, ObjectId, Types } from "mongoose";
 import { Request } from "express";
+
 type UserRole="user"|"mentor"
 export interface IUser extends Document {
+  _id: Types.ObjectId;
   username: string;
   email: string;
   password: string;
@@ -33,6 +35,26 @@ export interface IDcoded{
   iat: number,
   exp:number
 }
+
+
+// src/types/userTypes.ts
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        role?: string;
+        mentorId?: string;
+      };
+    }
+  }
+}
+
+// For routes that definitely have authenticated users
 export interface AuthenticatedRequest extends Request {
-    user?: { id: string };  
+  user: {
+    id: string;
+    role?: string;
+    mentorId?: string;
+  };
 }

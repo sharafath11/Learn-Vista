@@ -1,17 +1,6 @@
+// src/middlewares/mentorVerify.ts
 import { Request, Response, NextFunction } from 'express';
 import { decodeToken } from '../utils/tokenDecode';
-
-// Extend the Express Request type
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        mentorId: string;
-        role: string;
-      };
-    }
-  }
-}
 
 export const verifyMentor = (
   req: Request,
@@ -31,7 +20,11 @@ export const verifyMentor = (
       return;
     }
 
-    // req.user = decoded;
+    // req.user = {
+    //   mentorId: decoded.mentorId,
+    //   role: decoded.role
+    // };
+    
     next();
   } catch (error: any) {
     res.status(401).json({ ok: false, msg: 'Invalid token' });

@@ -3,9 +3,13 @@ import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRe
 import { userModel } from "../../models/user/userModel";
 import { IUser } from "../../types/userTypes";
 import { FilterQuery, UpdateQuery, Document, Types } from "mongoose";
+import { IMentor } from "../../core/models/Mentor";
 
 @injectable()
 export class UserRepository implements IUserRepository {
+  applyMentor(mentorData: Partial<IMentor>): unknown {
+    throw new Error("Method not implemented.");
+  }
   async create(user: Partial<IUser>): Promise<IUser & Document> {
     return await userModel.create(user);
   }

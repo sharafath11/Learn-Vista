@@ -1,26 +1,28 @@
+// src/core/di/types.ts
 export const TYPES = {
   // Controllers
   MentorAuthController: Symbol.for('MentorAuthController'),
   MentorController: Symbol.for('MentorController'),
   AdminMentorController: Symbol.for('AdminMentorController'),
-  AdminUserController: Symbol.for('AdminUserController'), // Singular "User"
+  AdminUserController: Symbol.for('AdminUserController'),
   AdminAuthController: Symbol.for('AdminAuthController'),
+  AuthController: Symbol.for('AuthController'),
+  ProfileController: Symbol.for('ProfileController'),
   
   // Services
   MentorAuthService: Symbol.for('MentorAuthService'),
   MentorService: Symbol.for('MentorService'),
   AdminMentorService: Symbol.for('AdminMentorService'),
-  AdminUsersService: Symbol.for('AdminUsersService'), // Plural "Users" for service
+  AdminUsersService: Symbol.for('AdminUsersService'),
   AdminAuthService: Symbol.for('AdminAuthService'),
+  AuthService: Symbol.for('AuthService'),
+  ProfileService: Symbol.for('ProfileService'), // Add this line
   
   // Repositories
   MentorRepository: Symbol.for('MentorRepository'),
   MentorOtpRepository: Symbol.for('MentorOtpRepository'),
   AdminMentorRepository: Symbol.for('AdminMentorRepository'),
-  AdminUsersRepository: Symbol.for('AdminUsersRepository'), // Plural "Users" for repository,
-  UserRepository: Symbol.for("UserRepository"),
-  OtpRepository: Symbol.for("OtpRepository"),
-  AuthService: Symbol.for("AuthService"),
-  AuthController: Symbol.for("AuthController"),
-  ProfileController: Symbol.for("ProfileController"),
+  AdminUsersRepository: Symbol.for('AdminUsersRepository'),
+  UserRepository: Symbol.for('UserRepository'),
+  OtpRepository: Symbol.for('OtpRepository'),
 };
