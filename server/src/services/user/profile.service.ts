@@ -2,11 +2,12 @@
 import { injectable, inject } from "inversify";
 import { JwtPayload } from "jsonwebtoken";
 import cloudinary from "../../config/cloudinary";
-import { IMentor } from "../../core/models/Mentor";
+
 import { Types } from "mongoose";
 import { validateMentorApplyInput } from "../../utils/userValidation";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
+import { IMentor } from "../../types/mentorTypes";
 
 @injectable()
 export class ProfileService {

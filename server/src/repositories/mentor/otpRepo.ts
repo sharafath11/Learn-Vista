@@ -1,8 +1,9 @@
 import { injectable } from 'inversify';
 import { Model } from 'mongoose';
 import { IMentorOtpRepository } from '../../core/interfaces/repositories/mentor/IMentorOtpRepository';
-import { IMentorOtp } from '../../core/models/MentorOtp';
+
 import { MentorOtpModel } from '../../models/mentor/mentorOtp';
+import { IMentorOtp } from '../../types/mentorTypes';
 
 @injectable()
 export class MentorOtpRepository implements IMentorOtpRepository {

@@ -3,7 +3,8 @@ import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRe
 import { userModel } from "../../models/user/userModel";
 import { IUser } from "../../types/userTypes";
 import { FilterQuery, UpdateQuery, Document, Types } from "mongoose";
-import { IMentor } from "../../core/models/Mentor";
+import { IMentor } from "../../types/mentorTypes";
+
 
 @injectable()
 export class UserRepository implements IUserRepository {

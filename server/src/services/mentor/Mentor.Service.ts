@@ -4,7 +4,7 @@ import { inject, injectable } from 'inversify';
 import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMentorRepository';
 import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Service';
 import { TYPES } from '../../core/types';
-import { IMentor } from '../../core/models/Mentor';
+import { IMentor } from '../../types/mentorTypes';
 
 @injectable()
 export class MentorService implements IMentorService {

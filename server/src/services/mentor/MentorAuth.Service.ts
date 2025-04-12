@@ -6,9 +6,10 @@ import { TYPES } from '../../core/types';
 import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMentorAuth.Service';
 import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMentorRepository';
 import { IMentorOtpRepository } from '../../core/interfaces/repositories/mentor/IMentorOtpRepository';
-import { IMentor, SafeMentor } from '../../core/models/Mentor';
+
 import { generateOtp } from '../../utils/otpGenerator';
 import { sendEmailOtp } from '../../utils/emailService';
+import { IMentor, SafeMentor } from '../../types/mentorTypes';
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {

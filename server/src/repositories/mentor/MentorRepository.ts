@@ -1,8 +1,9 @@
 import { injectable } from 'inversify';
 import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMentorRepository';
 import mentorModel from '../../models/mentor/mentorModel';
-import { IMentor, SafeMentor } from '../../core/models/Mentor';
+
 import { FilterQuery, UpdateQuery, Types } from 'mongoose';
+import { IMentor, SafeMentor } from '../../types/mentorTypes';
 
 @injectable()
 export class MentorRepository implements IMentorRepository {

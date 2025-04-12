@@ -1,5 +1,5 @@
 import { Schema, model, Document, Types } from 'mongoose';
-import { IMentor, ISocialLink } from '../../core/models/Mentor';
+import { IMentor, ISocialLink } from '../../types/mentorTypes';
 
 const socialLinkSchema = new Schema<ISocialLink>({
   platform: { 

@@ -2,7 +2,8 @@ import { injectable } from "inversify";
 import mentorModel from "../../models/mentor/mentorModel";
 // import { IAdminMentorRepository } from "../../core/interfaces/admin/IAdminMentorRepository";
 import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
-import { IMentor } from "../../core/models/Mentor";
+import { IMentor } from "../../types/mentorTypes";
+
 
 @injectable()
 export class AdminMentorRepository implements IAdminMentorRepository {
