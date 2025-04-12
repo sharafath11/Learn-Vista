@@ -1,6 +1,4 @@
 import { inject, injectable } from 'inversify';
-// import { IMentorService } from '../../core/interfaces/services/mentor/IMentorService';
-// import { IMentorRepository } from '../../core/interfaces/repositories/IMentorRepository';
 import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMentorRepository';
 import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Service';
 import { TYPES } from '../../core/types';

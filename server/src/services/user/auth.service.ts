@@ -22,14 +22,22 @@ export class AuthService implements IAuthService {
     const { username, email, password, role } = userData;
     
     validateUserSignupInput(username, email, password, role);
-    const existingUser = await this.userRepository.findByEmail(email);
+    // const user = await this.userRepository.findOne({ email });
+    const existingUser = await this.userRepository.findOne({email});
     const existOtp = await this.otpRepository.findOne({ email });
     
     if(!existOtp) throw new Error("OTP Expired");
     if (existingUser) throw new Error("User already exists");
     
     userData.password = await bcrypt.hash(userData.password, 10);
-    return this.userRepository.create(userData);
+    const userToCreate = {
+      ...userData,
+      password: await bcrypt.hash(userData.password, 10),
+      isVerified: userData.isVerified,
+      
+    };
+    
+    return this.userRepository.create(userToCreate);
   }
 
   async sendOtp(email: string): Promise<void> {
@@ -47,7 +55,7 @@ export class AuthService implements IAuthService {
     refreshToken: string;
     user: any;
   }> {
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.userRepository.findOne({email});
     if (!user) throw new Error("User not found");
     if (user.isBlocked) throw new Error("This account is blocked");
     
@@ -104,7 +112,7 @@ export class AuthService implements IAuthService {
     refreshToken: string;
     user: any;
   }> {
-    let user = await this.userRepository.findByGoogleId(profile.id);
+    let user = await this.userRepository.findOne(profile.id);
     
     if (!user) {
       user = await this.userRepository.create({

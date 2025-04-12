@@ -1,45 +1,28 @@
+// src/repositories/user/UserRepository.ts
 import { injectable } from "inversify";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { userModel } from "../../models/user/userModel";
-import { IUser } from "../../types/userTypes";
-import { FilterQuery, UpdateQuery, Document, Types } from "mongoose";
 import { IMentor } from "../../types/mentorTypes";
-
+import { BaseRepository } from "../BaseRepository";
+import { IUser } from "../../types/userTypes";
+import { Document } from "mongoose";
 
 @injectable()
-export class UserRepository implements IUserRepository {
-  applyMentor(mentorData: Partial<IMentor>): unknown {
-    throw new Error("Method not implemented.");
-  }
-  async create(user: Partial<IUser>): Promise<IUser & Document> {
-    return await userModel.create(user);
+export class UserRepository extends BaseRepository<IUser & Document, IUser> implements IUserRepository {
+  constructor() {
+    super(userModel);
   }
 
-  async findOne(query: FilterQuery<IUser>): Promise<(IUser & Document) | null> {
-    return await userModel.findOne(query).populate('enrolledCourses');
-  }
-
-  async findById(id: string): Promise<(IUser & Document) | null> {
-    return await userModel.findById(id).populate('enrolledCourses');
-  }
-
-  async update(id: string, data: UpdateQuery<IUser>): Promise<(IUser & Document) | null> {
-    return await userModel.findByIdAndUpdate(id, data, { new: true });
-  }
-
-  async findByEmail(email: string): Promise<(IUser & Document) | null> {
-    return await userModel.findOne({ email });
-  }
-
-  async findByGoogleId(googleId: string): Promise<(IUser & Document) | null> {
-    return await userModel.findOne({ googleId });
-  }
-
-  async enrollInCourse(userId: string, courseId: Types.ObjectId): Promise<IUser | null> {
-    return await userModel.findByIdAndUpdate(
-      userId,
-      { $addToSet: { enrolledCourses: courseId } },
-      { new: true }
-    );
+  async applyMentor(mentorData: Partial<IMentor>): Promise<unknown> {
+    try {
+      const updatedUser = await this.model.findByIdAndUpdate(
+        mentorData.userId,
+        { $set: { mentorApplication: mentorData } },
+        { new: true }
+      );
+      return updatedUser ? this.toDTO(updatedUser) : null;
+    } catch (error) {
+      throw this.handleError(error, 'Error applying as mentor');
+    }
   }
 }

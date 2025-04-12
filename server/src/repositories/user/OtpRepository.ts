@@ -1,18 +1,13 @@
+// src/repositories/user/OtpRepository.ts
 import { injectable } from "inversify";
-import { IOtp } from "../../types/userTypes";
 import { OtpModel } from "../../models/user/otpModel";
+import { BaseRepository } from "../BaseRepository";
+import { IOtp } from "../../types/userTypes";
 
 @injectable()
-export class OtpRepository {
-  async findOne(query: object): Promise<IOtp | null> {
-    return await OtpModel.findOne(query);
+export class OtpRepository extends BaseRepository<IOtp, IOtp> {
+  constructor() {
+    super(OtpModel);
   }
 
-  async create(data: Partial<IOtp>): Promise<IOtp> {
-    return await OtpModel.create(data);
-  }
-
-  async delete(query: object): Promise<void> {
-    await OtpModel.deleteOne(query);
-  }
 }
