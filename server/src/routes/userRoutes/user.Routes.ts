@@ -8,12 +8,14 @@ import container from "../../core/di/container";
 import { ProfileController } from "../../controllers/user/profile.controller";
 import { TYPES } from "../../core/types";
 import { AuthenticatedRequest } from "../../types/userTypes";
+import { UserController } from "../../controllers/user/user.controller";
 
 const router = express.Router();
 
 // Get instances from DI container
 const authController = container.get<AuthController>(TYPES.AuthController);
 const profileController = container.get<ProfileController>(TYPES.ProfileController);
+const userController=container.get<UserController>(TYPES.UserController)
 
 // Auth Routes
 router.post("/signup", (req, res) => authController.signup(req, res));
@@ -22,10 +24,7 @@ router.post("/otp", (req, res) => authController.sendOtp(req, res));
 router.post("/otp-verify", (req, res) => authController.verifyOtp(req, res));
 router.post("/login", (req, res) => authController.login(req, res));
 router.post("/logout", (req, res) => authController.logout(req, res));
-router.get("/get-user",authenticated(authenticateToken), 
-    (req, res) => authController.getUser(req as AuthenticatedRequest, res)
-  );
-  
+router.get("/user",(req,res)=>userController.getUser(req,res))
   router.post("/apply-mentor", 
     authenticated(authenticateToken), 
     upload.single("cv"),

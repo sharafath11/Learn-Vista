@@ -89,6 +89,7 @@ export class AuthController {
             
             res.status(200).json({ ok: true, msg: "Login successful", user });
         } catch (error: any) {
+            console.error(error.message)
             res.status(401).json({ ok: false, msg: error.message });
         }
     }
@@ -102,19 +103,6 @@ export class AuthController {
             res.status(500).json({ ok: false, msg: error.message });
         }
     }
-
-    async getUser(req: AuthenticatedRequest, res: Response) {
-        try {
-          if (!req.user?.id) {
-            throw new Error("User not authenticated");
-          }
-          
-        //   const user = await this.authService.getUser(req.user.id);
-        //   res.status(200).json({ ok: true, msg: "", user });
-        } catch (error: any) {
-          res.status(500).json({ ok: false, msg: error.message });
-        }
-      }
 }
 
 export default AuthController;

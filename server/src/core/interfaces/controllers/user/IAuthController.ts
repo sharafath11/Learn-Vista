@@ -6,6 +6,6 @@ export interface IAuthController {
   logout(req: Request, res: Response): Promise<void>;
   sendOtp(req: Request, res: Response): Promise<void>;
   verifyOtp(req: Request, res: Response): Promise<void>;
-  getUser(req: Request, res: Response): Promise<void>;
+  // getUser(req: Request, res: Response): Promise<void>;
   googleAuth(req: Request, res: Response): Promise<void>;
 }

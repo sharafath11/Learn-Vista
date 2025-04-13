@@ -17,7 +17,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const route=useRouter()
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await getRequest(`/get-user`);
+      const res = await getRequest(`/user`);
       if (res.ok) {
         setUser(res.user);
       }

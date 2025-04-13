@@ -55,7 +55,9 @@ export class AuthService implements IAuthService {
     refreshToken: string;
     user: any;
   }> {
-    const user = await this.userRepository.findOne({email});
+    console.log("hgggggggggggggggggggggggggggggggggg")
+    const user = await this.userRepository.findOne({email})
+    
     if (!user) throw new Error("User not found");
     if (user.isBlocked) throw new Error("This account is blocked");
     
@@ -75,14 +77,13 @@ export class AuthService implements IAuthService {
         }
       };
     }
-    
+    console.log(user)
     if (!user.password) throw new Error("Password not set for this account");
-    
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error("Invalid credentials");
     
     const tokens = generateTokens({
-      id: user._id.toString(),
+      id: user._id as unknown as string,
       email: user.email,
       role: user.role
     });

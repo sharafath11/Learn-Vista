@@ -1,3 +1,5 @@
+import { UserController } from "../controllers/user/user.controller";
+
 // src/core/di/types.ts
 export const TYPES = {
   // Controllers
@@ -8,7 +10,7 @@ export const TYPES = {
   AdminAuthController: Symbol.for('AdminAuthController'),
   AuthController: Symbol.for('AuthController'),
   ProfileController: Symbol.for('ProfileController'),
-  
+  UserController:Symbol.for("IUserController"),
   // Services
   MentorAuthService: Symbol.for('MentorAuthService'),
   MentorService: Symbol.for('MentorService'),
@@ -16,7 +18,8 @@ export const TYPES = {
   AdminUsersService: Symbol.for('AdminUsersService'),
   AdminAuthService: Symbol.for('AdminAuthService'),
   AuthService: Symbol.for('AuthService'),
-  ProfileService: Symbol.for('ProfileService'), // Add this line
+  ProfileService: Symbol.for('ProfileService'),
+  UserService:Symbol.for('UserService'),
   
   // Repositories
   MentorRepository: Symbol.for('MentorRepository'),

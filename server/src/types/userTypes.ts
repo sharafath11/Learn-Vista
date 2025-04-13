@@ -23,12 +23,11 @@ export interface ISafeUser {
   role: UserRole;
   profilePicture?: string | null;
   isBlocked: boolean;
-  isVerified: boolean;
-  enrolledCourses: string[]; 
+  // isVerified: boolean;
+  enrolledCourses: Types.ObjectId[]; 
   createdAt?: Date;
   updatedAt?: Date;
-  googleUser: boolean;
-  googleId: string;
+  
 }
 export interface LoginUser{
   email: string,

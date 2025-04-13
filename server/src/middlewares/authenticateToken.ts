@@ -18,6 +18,8 @@ export const authenticateToken = (
   res: Response,
   next: NextFunction
 ) => {
+
+
   const token = req.cookies.token;
   
   if (!token) {
@@ -37,7 +39,7 @@ export const authenticateToken = (
       role: decoded.role,
       mentorId: decoded.mentorId
     };
-
+    // console.log("hyyyy")
     next();
   } catch (error) {
     res.status(403).json({ ok: false, msg: "Invalid token" });

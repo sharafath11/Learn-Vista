@@ -37,6 +37,10 @@ import { IAuthService } from '../interfaces/services/user/IAuthService';
 import { AuthService } from '../../services/user/auth.service';
 import { ProfileService } from '../../services/user/profile.service';
 import { ProfileController } from '../../controllers/user/profile.controller';
+import { IUserService } from '../interfaces/services/user/IUserService';
+import { UserService } from '../../services/user/User.service';
+import { IUserController } from '../interfaces/controllers/user/IUserController';
+import { UserController } from '../../controllers/user/user.controller';
 // import { AdminMentorController } from "../../controllers/admin/AdminMentor.Controller";
 const container = new Container();
 
@@ -48,6 +52,7 @@ container.bind<IMentorAuthController>(TYPES.MentorAuthController)
 container.bind<IMentorController>(TYPES.MentorController)
   .to(MentorController)
   .inSingletonScope();
+container.bind<IUserController>(TYPES.UserController).to(UserController)
 
 // Bind Services
 container.bind<IMentorAuthService>(TYPES.MentorAuthService)
@@ -92,6 +97,6 @@ container.bind<AdminUsersServices>(TYPES.AdminUsersService)
   container.bind<AuthService>(TYPES.AuthService).to(AuthService).inSingletonScope();
   container.bind<ProfileService>(TYPES.ProfileService).to(ProfileService).inSingletonScope();
   container.bind<AuthController>(TYPES.AuthController).to(AuthController).inSingletonScope();
-  container.bind<ProfileController>(TYPES.ProfileController).to(ProfileController).inSingletonScope();
-  
+container.bind<ProfileController>(TYPES.ProfileController).to(ProfileController).inSingletonScope();
+container.bind<IUserService>(TYPES.UserService).to(UserService).inSingletonScope();
 export default container;

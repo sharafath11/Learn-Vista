@@ -1,4 +1,3 @@
-// src/repositories/BaseRepository.ts
 import { Model, Document, FilterQuery, UpdateQuery, Types } from "mongoose";
 import { IBaseRepository } from "../core/interfaces/repositories/IBaseRepository";
 
@@ -9,10 +8,10 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
     this.model = model;
   }
 
-  public toDTO(document: T): U {
+  // Modified to optionally include password
+  public toDTO(document: T, includePassword = false): U {
     const obj = document.toObject();
-    const { _id, __v, password, ...rest } = obj;
-    
+    const { _id, __v, ...rest } = obj;
     // Convert all ObjectIds to strings
     const converted = Object.entries(rest).reduce((acc, [key, value]) => {
       if (value instanceof Types.ObjectId) {
@@ -25,7 +24,7 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
       return acc;
     }, {} as any);
 
-    return { id: _id.toString(), ...converted } as unknown as U;
+    return { id: _id as string, ...converted } as unknown as U;
   }
 
   public handleError(error: unknown, message: string): Error {
@@ -33,6 +32,7 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
     return new Error(`${message}: ${errorMessage}`);
   }
 
+  // Regular methods (password excluded by default)
   async create(data: Partial<T>): Promise<U> {
     try {
       const document = await this.model.create(data);
@@ -44,8 +44,8 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
 
   async findAll(filter: FilterQuery<T> = {}): Promise<U[]> {
     try {
-      const documents = await this.model.find(filter).lean();
-      return documents.map(doc => this.toDTO(doc as unknown as T));
+      const documents = await this.model.find(filter);
+      return documents.map(doc => this.toDTO(doc));
     } catch (error) {
       throw this.handleError(error, 'Error fetching documents');
     }
@@ -53,8 +53,8 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
 
   async findById(id: string): Promise<U | null> {
     try {
-      const document = await this.model.findById(id).lean();
-      return document ? this.toDTO(document as unknown as T) : null;
+      const document = await this.model.findById(id);
+      return document ? this.toDTO(document) : null;
     } catch (error) {
       throw this.handleError(error, 'Error finding document by ID');
     }
@@ -62,10 +62,27 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
 
   async findOne(condition: FilterQuery<T>): Promise<U | null> {
     try {
-      const document = await this.model.findOne(condition).lean();
-      return document ? this.toDTO(document as unknown as T) : null;
+      const document = await this.model.findOne(condition);
+      return document ? this.toDTO(document) : null;
     } catch (error) {
       throw this.handleError(error, 'Error finding document');
+    }
+  }
+
+  // Special methods that include password
+  async findWithPassword(email: string): Promise<T | null> {
+    try {
+      return await this.model.findOne({ email }).select('+password').exec();
+    } catch (error) {
+      throw this.handleError(error, 'Error finding user with password');
+    }
+  }
+
+  async findOneWithPassword(condition: FilterQuery<T>): Promise<T | null> {
+    try {
+      return await this.model.findOne(condition).select('+password').exec();
+    } catch (error) {
+      throw this.handleError(error, 'Error finding document with password');
     }
   }
 
@@ -75,8 +92,8 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
         id, 
         data, 
         { new: true }
-      ).lean();
-      return document ? this.toDTO(document as unknown as T) : null;
+      );
+      return document ? this.toDTO(document) : null;
     } catch (error) {
       throw this.handleError(error, 'Error updating document');
     }
@@ -90,7 +107,4 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
       throw this.handleError(error, 'Error deleting document');
     }
   }
-
-  
-   
 }
