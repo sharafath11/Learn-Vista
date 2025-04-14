@@ -4,7 +4,6 @@ import { IUserService } from "../../core/interfaces/services/user/IUserService";
 import { IUserController } from "../../core/interfaces/controllers/user/IUserController";
 import { ISafeUser } from "../../types/userTypes";
 import { Request, Response } from "express";
-import { decodeToken } from "../../utils/tokenDecode";
 
 export class UserController implements IUserController {
     constructor(
@@ -13,13 +12,7 @@ export class UserController implements IUserController {
 
     async getUser(req: Request, res: Response): Promise<void> {
         try {
-           
-            if (!req.cookies?.token) {
-                
-                res.status(401).json({ ok: false, message: "Authentication token missing" });
-                return;
-            }
-            const user = await this.userService.getUser(req.cookies.token);
+            const user = await this.userService.getUser(req.user?.id as string);
             if (!user) {
                 res.status(404).json({ ok: false, message: "User not found" });
                 return;

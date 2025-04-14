@@ -6,7 +6,6 @@ export const validateUserSignupInput = (
     password: string,
     role: string
 ): void => {
-  console.log("dddddddddd",username)
     if (!username || username.trim().length === 0) {
       throw new Error("Name is required");
     }

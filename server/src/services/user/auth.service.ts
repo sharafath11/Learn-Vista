@@ -55,7 +55,6 @@ export class AuthService implements IAuthService {
     refreshToken: string;
     user: any;
   }> {
-    console.log("hgggggggggggggggggggggggggggggggggg")
     const user = await this.userRepository.findOne({email})
     
     if (!user) throw new Error("User not found");
@@ -64,7 +63,6 @@ export class AuthService implements IAuthService {
     if (googleId && user.googleId === googleId) {
       const tokens = generateTokens({
         id: user._id.toString(),
-        email: user.email,
         role: user.role
       });
       return {
@@ -72,7 +70,6 @@ export class AuthService implements IAuthService {
         refreshToken: tokens.refreshToken,
         user: {
           id: user._id,
-          email: user.email,
           role: user.role
         }
       };
@@ -85,7 +82,7 @@ export class AuthService implements IAuthService {
     userId = (user._id || user.id).toString();
     const tokens = generateTokens({
       id:  userId,
-      email: user.email,
+      
       role: user.role
     });
     return {
@@ -93,7 +90,7 @@ export class AuthService implements IAuthService {
       refreshToken: tokens.refreshToken,
       user: {
         id: user._id,
-        email: user.email,
+        
         role: user.role
       }
     };
@@ -124,7 +121,7 @@ export class AuthService implements IAuthService {
     
     const tokens = generateTokens({
       id: user._id.toString(),
-      email: user.email,
+     
       role: user.role
     });
     return {
@@ -132,7 +129,7 @@ export class AuthService implements IAuthService {
       refreshToken: tokens.refreshToken,
       user: {
         id: user._id,
-        email: user.email,
+      
         role: user.role
       }
     };

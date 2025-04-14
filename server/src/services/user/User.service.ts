@@ -2,16 +2,13 @@ import { inject } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { ISafeUser } from "../../types/userTypes";
-import { decodeToken } from "../../utils/tokenDecode";
-
 export class UserService {
     constructor(
         @inject(TYPES.UserRepository) private userRepository: IUserRepository,
     ) { }
 
-    async getUser(token: string): Promise<ISafeUser> {
-        const userDetiels=decodeToken(token)
-        const user = await this.userRepository.findById(userDetiels.id);
+    async getUser(id: string): Promise<ISafeUser> {
+        const user = await this.userRepository.findById(id);
         
         if (!user) {
             throw new Error("User not found");
