@@ -1,6 +1,6 @@
 // src/core/interfaces/services/user/IAuthService.ts
 
-import { IUser,ISafeUser } from "../../../../types/userTypes";
+import { IUser } from "../../../../types/userTypes";
 
 
 export interface IAuthService {
@@ -12,8 +12,6 @@ export interface IAuthService {
     refreshToken: string;
     user: any;
   }>;
-  
-  logout(): Promise<void>;
   googleAuth(profile: any): Promise<{
     token: string;
     refreshToken: string;

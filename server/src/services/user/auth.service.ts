@@ -4,25 +4,26 @@ import { IAuthService } from "../../core/interfaces/services/user/IAuthService";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { TYPES } from "../../core/types";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { IUser } from "../../types/userTypes";
 import { generateTokens } from "../../utils/generateToken";
 import { decodeToken } from "../../utils/tokenDecode";
 import { validateUserSignupInput } from "../../utils/userValidation";
 import { OtpRepository } from "../../repositories/user/OtpRepository";
+import { generateOtp } from "../../utils/otpGenerator";
+import { sendEmailOtp } from "../../utils/emailService";
+import { IOtpRepository } from "../../core/interfaces/repositories/user/IOtpRepository";
 
 @injectable()
 export class AuthService implements IAuthService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-    @inject(TYPES.OtpRepository) private otpRepository: OtpRepository
+    @inject(TYPES.OtpRepository) private otpRepository: IOtpRepository
   ) {}
 
   async registerUser(userData: IUser): Promise<Partial<IUser>> {
     const { username, email, password, role } = userData;
     
     validateUserSignupInput(username, email, password, role);
-    // const user = await this.userRepository.findOne({ email });
     const existingUser = await this.userRepository.findOne({email});
     const existOtp = await this.otpRepository.findOne({ email });
     
@@ -41,13 +42,18 @@ export class AuthService implements IAuthService {
   }
 
   async sendOtp(email: string): Promise<void> {
-    // Implement OTP sending logic
-    throw new Error("Method not implemented");
+    const existingUser = await this.userRepository.findOne({ email });
+    if (existingUser) throw new Error("This email is already registered");
+    const exitOtp = await this.otpRepository.findOne({ email })
+    if(exitOtp) throw new Error("OTP already send it")
+    const otp = generateOtp();
+    await this.otpRepository.create({ email, otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
+    sendEmailOtp(email, otp);
   }
 
   async verifyOtp(email: string, otp: string): Promise<void> {
-    // Implement OTP verification logic
-    throw new Error("Method not implemented");
+    const otpRecord = await this.otpRepository.findOne({ email, otp });
+   if (!otpRecord) throw new Error("Invalid OTP");
   }
 
   async loginUser(email: string, password: string, googleId?: string): Promise<{
@@ -74,7 +80,7 @@ export class AuthService implements IAuthService {
         }
       };
     }
-    console.log(user)
+   
     if (!user.password) throw new Error("Password not set for this account");
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error("Invalid credentials");
@@ -95,10 +101,7 @@ export class AuthService implements IAuthService {
       }
     };
   }
-  async logout(): Promise<void> {
-    // Implement logout logic
-    throw new Error("Method not implemented");
-  }
+
 
   async googleAuth(profile: any): Promise<{
     token: string;

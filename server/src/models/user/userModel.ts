@@ -8,7 +8,7 @@ const userSchema: Schema<IUser> = new Schema(
     password: { type: String, required: false,default:null },
     role: { type: String, required: true },
     googleUser: { type: Boolean, default: false }, 
-    googleId: { type: String, default: null, unique: true }, 
+    googleId: { type: String, default: "", }, 
     profilePicture: { type: String, default: null }, 
     isBlocked: { type: Boolean, required: true, default: false },
     isVerified: { type: Boolean, default: false },

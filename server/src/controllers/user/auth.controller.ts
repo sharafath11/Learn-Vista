@@ -12,9 +12,12 @@ export class AuthController {
 
     async signup(req: Request, res: Response) {
         try {
+
+            
             await this.authService.registerUser(req.body);
             res.status(201).json({ ok: true, msg: "User registration successful" });
         } catch (error: any) {
+            console.error(error.message)
             res.status(400).json({ ok: false, msg: error.message });
         }
     }
@@ -93,7 +96,6 @@ export class AuthController {
             res.status(401).json({ ok: false, msg: error.message });
         }
     }
-
     async logout(req: Request, res: Response) {
         try {
             res.clearCookie("token");

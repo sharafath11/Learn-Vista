@@ -9,5 +9,4 @@ export class OtpRepository extends BaseRepository<IOtp, IOtp> {
   constructor() {
     super(OtpModel);
   }
-
 }

@@ -6,13 +6,10 @@ import { IMentorAuthController } from '../interfaces/controllers/mentor/IMentorA
 import { MentorAuthController } from '../../controllers/mentor/MentorAuth.Controller';
 import { IMentorController } from '../interfaces/controllers/mentor/IMentor.Controller';
 import { MentorController } from '../../controllers/mentor/mentor.controller';
-
-// Services
 import { IMentorAuthService } from '../interfaces/services/mentor/IMentorAuth.Service';
 import { MentorAuthService } from '../../services/mentor/MentorAuth.Service';
 import { IMentorService } from '../interfaces/services/mentor/IMentor.Service';
 import { MentorService } from '../../services/mentor/Mentor.Service';
-// import { AdminMentorService } from '../../services/admin/AdminMentorService';
 import { AdminMentorService } from '../../services/admin/adminMentor.service';
 
 // Repositories
@@ -32,7 +29,6 @@ import AdminUserController from '../../controllers/admin/AdminUser.Controller';
 import { IUserRepository } from '../interfaces/repositories/user/IUserRepository';
 import { AuthController } from '../../controllers/user/auth.controller';
 import { UserRepository } from '../../repositories/user/userRepository';
-import { OtpRepository } from '../../repositories/user/OtpRepository';
 import { IAuthService } from '../interfaces/services/user/IAuthService';
 import { AuthService } from '../../services/user/auth.service';
 import { ProfileService } from '../../services/user/profile.service';
@@ -41,6 +37,8 @@ import { IUserService } from '../interfaces/services/user/IUserService';
 import { UserService } from '../../services/user/User.service';
 import { IUserController } from '../interfaces/controllers/user/IUserController';
 import { UserController } from '../../controllers/user/user.controller';
+import { IOtpRepository } from '../interfaces/repositories/user/IOtpRepository';
+import { OtpRepository } from '../../repositories/user/OtpRepository';
 // import { AdminMentorController } from "../../controllers/admin/AdminMentor.Controller";
 const container = new Container();
 
@@ -93,10 +91,12 @@ container.bind<AdminUsersServices>(TYPES.AdminUsersService)
   .to(AdminUserController)
   .inSingletonScope();
   container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
-  container.bind<typeof OtpRepository>(TYPES.OtpRepository).toConstantValue(OtpRepository);
-  container.bind<AuthService>(TYPES.AuthService).to(AuthService).inSingletonScope();
+container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpRepository);
+  //container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpgetRepository);
+  container.bind<IAuthService>(TYPES.AuthService).to(AuthService)
   container.bind<ProfileService>(TYPES.ProfileService).to(ProfileService).inSingletonScope();
   container.bind<AuthController>(TYPES.AuthController).to(AuthController).inSingletonScope();
 container.bind<ProfileController>(TYPES.ProfileController).to(ProfileController).inSingletonScope();
 container.bind<IUserService>(TYPES.UserService).to(UserService).inSingletonScope();
+console.log("continerrrrrrrrrrrrrr..........:)",container)
 export default container;
