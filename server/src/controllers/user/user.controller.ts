@@ -19,13 +19,7 @@ export class UserController implements IUserController {
                 res.status(401).json({ ok: false, message: "Authentication token missing" });
                 return;
             }
-            const decoded = decodeToken(req.cookies.token);
-            console.log("jjj",decoded)
-            if (!decoded?.id) {
-                res.status(401).json({ ok: false, message: "Invalid or expired token" });
-                return;
-            }
-            const user = await this.userService.getUser(decoded.id);
+            const user = await this.userService.getUser(req.cookies.token);
             if (!user) {
                 res.status(404).json({ ok: false, message: "User not found" });
                 return;

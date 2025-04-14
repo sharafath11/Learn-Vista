@@ -10,15 +10,12 @@ export class UserService {
     ) { }
 
     async getUser(token: string): Promise<ISafeUser> {
-        console.log('fgbnjnljsbpburtnjbsn pub     ')
-        const decode = decodeToken(token);
-        console.log("fgngf",decode)
-        const user = await this.userRepository.findById(decode.userId);
+        const userDetiels=decodeToken(token)
+        const user = await this.userRepository.findById(userDetiels.id);
         
         if (!user) {
             throw new Error("User not found");
         }
-
         return {
             username: user.username,
             email: user.email,

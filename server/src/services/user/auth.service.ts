@@ -81,9 +81,10 @@ export class AuthService implements IAuthService {
     if (!user.password) throw new Error("Password not set for this account");
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error("Invalid credentials");
-    
+    let userId: string;
+    userId = (user._id || user.id).toString();
     const tokens = generateTokens({
-      id: user._id as unknown as string,
+      id:  userId,
       email: user.email,
       role: user.role
     });
