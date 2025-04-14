@@ -4,7 +4,7 @@ import { IAuthService } from "../../core/interfaces/services/user/IAuthService";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { TYPES } from "../../core/types";
 import bcrypt from "bcryptjs";
-import { IUser } from "../../types/userTypes";
+import { GooglePayload, IUser } from "../../types/userTypes";
 import { generateTokens } from "../../utils/generateToken";
 import { decodeToken } from "../../utils/tokenDecode";
 import { validateUserSignupInput } from "../../utils/userValidation";
@@ -61,6 +61,7 @@ export class AuthService implements IAuthService {
     refreshToken: string;
     user: any;
   }> {
+    console.log("fdjbvjhfbhbjhfdskjbbkjbbjkvbn                     rdfgr")
     const user = await this.userRepository.findOne({email})
     
     if (!user) throw new Error("User not found");
@@ -103,36 +104,48 @@ export class AuthService implements IAuthService {
   }
 
 
-  async googleAuth(profile: any): Promise<{
+  async googleAuth(profile: GooglePayload): Promise<{
     token: string;
     refreshToken: string;
     user: any;
   }> {
-    let user = await this.userRepository.findOne(profile.id);
     
+    let user = await this.userRepository.findOne({ email: profile.email });
     if (!user) {
       user = await this.userRepository.create({
-        username: profile.displayName,
-        email: profile.emails[0].value,
-        googleId: profile.id,
-        profilePicture: profile.photos[0]?.value,
+        username: profile.username,
+        email: profile.email,
+        googleId: profile.googleId,
+        profilePicture: profile?.image,
         role: "user",
-        googleUser: true,
+        googleUser: profile.googleUser,
+        isVerified: true
+      });
+    } else if (!user.googleUser) {
+      user = await this.userRepository.update(user.id, {
+        username: profile.username,
+        email: profile.email,
+        googleId: profile.googleId,
+        profilePicture: profile?.image,
+        role: "user",
+        googleUser: profile.googleUser,
         isVerified: true
       });
     }
-    
+    if (!user) {
+      throw new Error("User creation/update failed");
+    }
+    const userId=user.id as string
     const tokens = generateTokens({
-      id: user._id.toString(),
-     
+      id: userId,
       role: user.role
     });
+  
     return {
       token: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       user: {
         id: user._id,
-      
         role: user.role
       }
     };

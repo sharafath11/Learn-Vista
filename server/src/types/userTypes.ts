@@ -68,3 +68,11 @@ export interface AuthenticatedRequest extends Request {
     mentorId?: string;
   };
 }
+export interface GooglePayload {
+  googleUser: boolean;
+  googleId: string;
+  username: string;
+  email: string;
+  image: string;
+  role: string;
+}

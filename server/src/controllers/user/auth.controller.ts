@@ -24,6 +24,7 @@ export class AuthController {
 
     async googleAuth(req: Request, res: Response) {
         try {
+            
             const result = await this.authService.googleAuth(req.body);
             
             res.cookie("token", result.token, {
@@ -45,7 +46,10 @@ export class AuthController {
                 msg: "Google authentication successful",
                 user: result.user 
             });
+            
         } catch (error: any) {
+            console.log("succee)_")
+            console.log(error.message)
             res.status(500).json({ 
                 ok: false, 
                 msg: error.message || "Google authentication failed" 

@@ -29,14 +29,10 @@ export default function LoginForm() {
     }
   }, [session]);
 
-  useEffect(() => {
-    if (autoSubmit && data.email && data.googleId) {
-      handleSubmit();
-    }
-  }, [autoSubmit, data]);
 
-  function handleGoogleAuth() {
-    signIn("google");
+  async function handleGoogleAuth() {
+    const res = await signIn("google");
+    console.log("googleeee",res)
   }
 
   useEffect(() => {
