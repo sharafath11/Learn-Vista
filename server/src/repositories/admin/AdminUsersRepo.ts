@@ -11,6 +11,5 @@ export class AdminUsersRepo extends BaseRepository<IUser, IUser> implements IAdm
   constructor() {
     super(userModel);
   }
-  
-  // Additional admin-specific methods can be added here
+
 }

@@ -20,7 +20,7 @@ const User = () => {
   }, []);
 
   async function getUsers() {
-    const res = await getRequest("/admin/getAllUsers");
+    const res = await getRequest("/admin/users");
     if (res.ok) {
       setUsers(res.users);
     }

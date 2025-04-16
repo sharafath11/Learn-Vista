@@ -5,7 +5,7 @@ import { Types } from "mongoose";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { IMentor } from "../../types/mentorTypes";
-import { DecodedToken } from "../../utils/tokenDecode";
+
 
 @injectable()
 export class ProfileService {

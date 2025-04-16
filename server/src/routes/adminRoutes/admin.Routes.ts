@@ -1,19 +1,18 @@
 import express from "express";
-import AdminAuthController from "../../controllers/admin/AdminAuth.Controller";
-import AdminUserController from "../../controllers/admin/AdminUser.Controller";
 import verifyAdmin from "../../middlewares/authVerifyAdmin";
 import AdminMentorController from "../../controllers/admin/AdminMentor.Controller";
 import container from "../../core/di/container";
 import { TYPES } from "../../core/types";
-
+import { IAdminUserController } from "../../core/interfaces/controllers/admin/IAdminUser.controller";
+import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IAdminAuth.Controller";
 const route = express.Router();
 
 const adminMentorController = container.get<AdminMentorController>(TYPES.AdminMentorController);
-const adminUsersController = container.get<AdminUserController>(TYPES.AdminUserController); // ✅ fixed
+const adminUsersController = container.get<IAdminUserController>(TYPES.AdminUserController); 
+const adminAuthController=container.get<IAdminAuthController>(TYPES.AdminAuthController)
 
-// Auth routes
-route.post("/login", AdminAuthController.login);
-route.post("/logout", verifyAdmin, AdminAuthController.adminLogout);
+route.post("/login", adminAuthController.login.bind(adminAuthController));
+route.post("/logout", verifyAdmin, adminAuthController.logout.bind(adminAuthController));
 
 // User management routes
 route.get("/users", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));

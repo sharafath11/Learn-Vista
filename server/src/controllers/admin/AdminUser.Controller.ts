@@ -1,22 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
-import AdminUsersServices from "../../services/admin/AdminUsers.Service";
+
+import { IAdminUserServices } from "../../core/interfaces/services/admin/IAdminUserServices";
+import { IAdminUserController } from "../../core/interfaces/controllers/admin/IAdminUser.controller";
 
 @injectable()
-export class AdminUserController {
-  static getAllUsers: any;
-  static userBlock(arg0: string, verifyAdmin: (req: Request, res: Response, next: NextFunction) => void, userBlock: any) {
-      throw new Error("Method not implemented.");
-  }
+export class AdminUserController implements IAdminUserController{
   constructor(
-    @inject(TYPES.AdminUsersService)
-    private adminUsersServices: AdminUsersServices
-  ) {}
-
+     @inject(TYPES.AdminUsersService) private adminUserService: IAdminUserServices
+   ) {}
   async getAllUsers(req: Request, res: Response) {
     try {
-      const result = await this.adminUsersServices.getAllUsers();
+      const result = await this.adminUserService.getAllUsers()
       res.json(result);
     } catch (error: any) {
       console.error("Error in getAllUsers:", error.message);
@@ -32,7 +28,7 @@ export class AdminUserController {
          return
       }
   
-      const result = await this.adminUsersServices.blockUserServices(id, status);
+      const result = await this.adminUserService.blockUserServices(id, status);
        res.status(200).json(result);
        return
     } catch (error: any) {

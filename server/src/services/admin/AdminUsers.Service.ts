@@ -3,6 +3,7 @@ import { ObjectId } from "mongoose";
 // import { IAdminUsersRepository } from "../../core/interfaces/admin/IAdminUsersRepository";
 import { IAdminUsersRepository } from "../../core/interfaces/repositories/admin/IAdminUsersRepository";
 import { TYPES } from "../../core/types";
+import { IUser } from "../../types/userTypes";
 
 @injectable()
 export class AdminUsersServices {
@@ -13,8 +14,8 @@ export class AdminUsersServices {
 
   async getAllUsers() {
     try {
-      const users = await this.adminUsersRepo.findAll();
-      return { ok: true, msg: "Successfully fetched all users", users };
+      const users:IUser[] = await this.adminUsersRepo.findAll();
+      return users;
     } catch (error: any) {
       throw new Error(error.message);
     }

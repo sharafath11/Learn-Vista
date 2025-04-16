@@ -1,8 +1,7 @@
 import { FilterQuery } from "mongoose";
 import { IUser } from "../../../../types/userTypes";
+import { IBaseRepository } from "../IBaseRepository";
 
-export interface IAdminUsersRepository {
-  findAll(filter?: FilterQuery<IUser>): Promise<IUser[]>;
-  update(id: string, data: any): Promise<IUser | null>;
-  // Add other methods as needed
+export interface IAdminUsersRepository extends  IBaseRepository <IUser, IUser> {
+  
 }

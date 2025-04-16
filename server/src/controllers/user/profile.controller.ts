@@ -4,9 +4,10 @@ import { ProfileService } from "../../services/user/profile.service";
 import { TYPES } from "../../core/types";
 import { decodeToken } from "../../utils/tokenDecode";
 import { validateMentorApplyInput } from "../../utils/userValidation";
+import { IProfileController } from "../../core/interfaces/controllers/user/IProfileController";
 
 @injectable()
-export class ProfileController {
+export class ProfileController implements IProfileController{
   constructor(
     @inject(TYPES.ProfileService) private profileService: ProfileService
   ) {}

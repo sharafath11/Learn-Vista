@@ -3,9 +3,10 @@ import { Request, Response } from "express";
 import { IAuthService } from "../../core/interfaces/services/user/IAuthService";
 import { TYPES } from "../../core/types";
 import { AuthenticatedRequest } from "../../types/userTypes";
+import { IAuthController } from "../../core/interfaces/controllers/user/IAuthController";
 
 @injectable()
-export class AuthController {
+export class AuthController implements IAuthController{
     constructor(
         @inject(TYPES.AuthService) private authService: IAuthService
     ) {}
