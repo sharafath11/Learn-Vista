@@ -1,5 +1,4 @@
 "use client";
-import { postRequest } from "@/src/services/api";
 import { useState, useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { ILogin } from "@/src/types/authTypes";
@@ -7,6 +6,7 @@ import { useUserContext } from "@/src/context/userAuthContext";
 import { showSuccessToast } from "@/src/utils/Toast";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
+import { UserAPIMethods } from "@/src/services/APImethods";
 
 export default function LoginForm() {
   const [data, setData] = useState<ILogin>({ email: "", password: "", googleId: "" });
@@ -15,46 +15,46 @@ export default function LoginForm() {
   const [autoSubmit, setAutoSubmit] = useState(false);
   const { setUser } = useUserContext();
   const router = useRouter();
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    if (session?.user?.email && session?.user?.id) {
-      setData((prev) => ({
-        ...prev,
-        email: session?.user?.email ?? "",
-        googleId:session?.user?.id ?? "",
-      }));
-      
-      setAutoSubmit(true);
-    }
-  }, [session]);
-
-
-  async function handleGoogleAuth() {
-    const res = await signIn("google");
-    console.log("googleeee",res)
-  }
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (session?.user?.email && session?.user?.id && !data.googleId) {
+      setData({
+        email: session.user.email,
+        password: "",
+        googleId: session.user.id,
+      });
+      setAutoSubmit(true);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (autoSubmit) {
+      handleSubmit();
+    }
+  }, [autoSubmit]);
+
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await postRequest("/login", data);
+      const res = await UserAPIMethods.loginUser(data);
       if (res.ok) {
         setUser(res.user);
-        if (typeof window !== "undefined") {
-          window.localStorage.setItem("token", res.token);
-        }
         showSuccessToast(res.msg);
         router.push("/");
       }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleAuth = async () => {
+    await signIn("google");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,9 +111,11 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full bg-purple-600 py-2.5 text-sm font-medium text-white rounded-lg shadow-md hover:bg-purple-700 transition ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
+          className={`w-full bg-purple-600 py-2.5 text-sm font-medium text-white rounded-lg shadow-md hover:bg-purple-700 transition ${
+            isLoading ? "opacity-75 cursor-not-allowed" : ""
+          }`}
         >
-          {isLoading ? 'Signing in...' : 'Sign in'}
+          {isLoading ? "Signing in..." : "Sign in"}
         </button>
       </form>
 
@@ -124,14 +126,17 @@ export default function LoginForm() {
 
       <button
         type="button"
-        className="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
         onClick={handleGoogleAuth}
+        className="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
       >
         <FcGoogle className="mr-2 h-4 w-4" /> Sign in with Google
       </button>
 
       <p className="mt-6 text-center text-xs text-gray-500">
-        Don't have an account? <a href="/user/signup" className="text-purple-600 font-medium hover:underline">Sign up</a>
+        Don't have an account?{" "}
+        <a href="/user/signup" className="text-purple-600 font-medium hover:underline">
+          Sign up
+        </a>
       </p>
     </div>
   );
@@ -142,7 +147,7 @@ function FormInput({
   type,
   id,
   onChange,
-  value
+  value,
 }: {
   label: string;
   type: string;
@@ -152,7 +157,9 @@ function FormInput({
 }) {
   return (
     <div className="mb-4">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">{label}</label>
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+        {label}
+      </label>
       <input
         type={type}
         id={id}

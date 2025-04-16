@@ -43,7 +43,7 @@ const handler = NextAuth({
           role: "user"
         };
 
-        console.log("Attempting to register user with backend:", payload);
+      
 
         const response = await axios.post(
           ` http://localhost:4000/google/signup`,

@@ -6,27 +6,27 @@ import {
   UserProviderProps, 
   IUser 
 } from "../types/authTypes";
-import { getRequest } from "../services/api";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { UserAPIMethods } from "../services/APImethods";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
-  const route=useRouter()
-  useEffect(() => {
-    const fetchUser = async () => {
-      const res = await getRequest(`/user`);
-      if (res.ok) {
-        setUser(res.user);
-      }
-      else {
-        route.push("/user/login")
-      }
-    };
+  const route = useRouter()
 
-    fetchUser();
+  useEffect(() => {
+    const fetchUserData = async () => {
+        const res = await UserAPIMethods.fetchUser();
+        if (res.ok) {
+          setUser(res.user);
+        }
+        else {
+          route.push("/user/login")
+        }
+    };
+  
+    fetchUserData();
   }, []); 
   return (
     <UserContext.Provider

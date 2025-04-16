@@ -61,22 +61,28 @@ export class AuthService implements IAuthService {
     refreshToken: string;
     user: any;
   }> {
-    console.log("fdjbvjhfbhbjhfdskjbbkjbbjkvbn                     rdfgr")
-    const user = await this.userRepository.findOne({email})
+    let user
+    if (googleId) {
+      user=await this.userRepository.findOne({googleId})
+    } else {
+      user = await this.userRepository.findOne({email})
+    }
+    let userId=user?.id as string
     
     if (!user) throw new Error("User not found");
     if (user.isBlocked) throw new Error("This account is blocked");
     
     if (googleId && user.googleId === googleId) {
+      
       const tokens = generateTokens({
-        id: user._id.toString(),
+        id: userId,
         role: user.role
       });
       return {
         token: tokens.accessToken,
         refreshToken: tokens.refreshToken,
         user: {
-          id: user._id,
+          id: userId,
           role: user.role
         }
       };
@@ -85,8 +91,7 @@ export class AuthService implements IAuthService {
     if (!user.password) throw new Error("Password not set for this account");
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error("Invalid credentials");
-    let userId: string;
-    userId = (user._id || user.id).toString();
+    
     const tokens = generateTokens({
       id:  userId,
       
@@ -96,7 +101,7 @@ export class AuthService implements IAuthService {
       token: tokens.accessToken,
       refreshToken: tokens.refreshToken,
       user: {
-        id: user._id,
+        id: userId,
         
         role: user.role
       }

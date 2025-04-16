@@ -28,23 +28,26 @@ export class AuthController {
             const result = await this.authService.googleAuth(req.body);
             
             res.cookie("token", result.token, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
                 maxAge: 15 * 60 * 1000,
             });
             
             res.cookie("refreshToken", result.refreshToken, {
-                httpOnly: true,
+                httpOnly: false,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
+             console.log("i love you")
             
             res.status(200).json({ 
                 ok: true, 
                 msg: "Google authentication successful",
-                user: result.user 
+                user: result.user,
+                token: result.token,
+                refreshToken:result.refreshToken
             });
             
         } catch (error: any) {
@@ -77,6 +80,7 @@ export class AuthController {
 
     async login(req: Request, res: Response) {
         try {
+            console.log("hyloooooooooooooooooooooooooooooooooooooooooooooooooossssssssssssss")
             const { email, password, googleId } = req.body;
             const { token, refreshToken, user } = await this.authService.loginUser(email, password, googleId);
             

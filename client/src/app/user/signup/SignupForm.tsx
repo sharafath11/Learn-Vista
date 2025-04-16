@@ -12,6 +12,7 @@ import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"
 import { FormOTP } from "./FormOTP"
 import { signIn } from "next-auth/react"
+import { UserAPIMethods } from "@/src/services/APImethods"
 
 export default function SignupForm() {
   const route=useRouter()
@@ -57,7 +58,7 @@ const googleSignup = async () => {
 
   const handleSendOtp = async () => {
     if (userData?.email) {
-        const res = await postRequest("/otp", { email: userData.email });
+        const res = await UserAPIMethods.sendOtp( userData.email);
       if (res && res.ok) {
         setOtpSent(true);
         showSuccessToast("OTP sent to your email");
@@ -83,7 +84,7 @@ const googleSignup = async () => {
       return
     }
     console.log(userData)
-    const res = await postRequest("/signup", userData)
+    const res = await UserAPIMethods.signUp( userData)
     if (res?.ok) {
       showSuccessToast("Signup successful")
       router.push("/user/login")
