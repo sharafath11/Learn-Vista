@@ -1,5 +1,6 @@
 import { Response } from 'express';
-import { IMentor } from '../../../models/Mentor';
+import { IMentor } from '../../../../types/mentorTypes';
+
 
 
 export interface IMentorAuthService {

@@ -1,36 +1,38 @@
 "use client"
-import { postRequest } from "@/src/services/api"
 import type React from "react"
-
-import type { IUserRegistration } from "@/src/types/authTypes"
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import { registrationValidation } from "@/src/utils/user/validation"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"
+import { signIn, useSession } from "next-auth/react"
+
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
+import { registrationValidation } from "@/src/utils/user/validation"
+import type { ILogin, IUserRegistration } from "@/src/types/authTypes"
 import { FormOTP } from "./FormOTP"
-import { signIn } from "next-auth/react"
 import { UserAPIMethods } from "@/src/services/APImethods"
 
 export default function SignupForm() {
-  const route=useRouter()
+  const router = useRouter()
+  const { data: session } = useSession()
+
   const [userData, setUserData] = useState<IUserRegistration>({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    isVerified:false,
+    isVerified: false,
     role: "user",
     otp: "",
   })
+  const [loginData,setLoginData]=useState<ILogin>()
+
   const [otpVerified, setOtpVerified] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
-  const router = useRouter()
+  const [autoSubmit, setAutoSubmit] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.id)
     setUserData({ ...userData, [e.target.id]: e.target.value })
   }
 
@@ -39,38 +41,58 @@ export default function SignupForm() {
   }
 
   const handleOtpVerified = () => {
-    setUserData({ ...userData, isVerified: true });
-    setOtpVerified(true);
-  };
-  
-const googleSignup = async () => {
-  try {
-    const res = await signIn("google", { callbackUrl: "/user" }); 
-    if (res) {
-      showSuccessToast("Login Succes");
-      route.push("/")
-    }
-  } catch (error) {
-    console.error("Google signup error:", error);
-    showErrorToast("Signup failed, please try again.");
+    setUserData({ ...userData, isVerified: true })
+    setOtpVerified(true)
   }
-};
+
+  useEffect(() => {
+    if (session?.user?.email && session?.user?.id && !userData.isVerified) {
+      setLoginData({ email: session.user.email , googleId: session.user.id ,password:"" })
+      setAutoSubmit(true)
+    }
+  }, [session])
+
+  useEffect(() => {
+    const autoLogin = async () => {
+      if (autoSubmit) {
+        const res = await UserAPIMethods.loginUser(loginData as ILogin)
+        if (res.ok) {
+          showSuccessToast(res.msg)
+          router.push("/")
+        }
+      }
+    }
+    autoLogin()
+  }, [autoSubmit, router, userData])
+
+  const googleSignup = async () => {
+    try {
+      const res = await signIn("google", { callbackUrl: "/user" })
+      if (res) {
+        showSuccessToast("Login Success")
+        router.push("/")
+      }
+    } catch (error) {
+      console.error("Google signup error:", error)
+      showErrorToast("Signup failed, please try again.")
+    }
+  }
 
   const handleSendOtp = async () => {
     if (userData?.email) {
-        const res = await UserAPIMethods.sendOtp( userData.email);
+      const res = await UserAPIMethods.sendOtp(userData.email)
       if (res && res.ok) {
-        setOtpSent(true);
-        showSuccessToast("OTP sent to your email");
-      } 
-      if (res && res.includes("OTP already send it")) {
-        
-        setOtpSent(true);
+        setOtpSent(true)
+        showSuccessToast("OTP sent to your email")
+      } else if (res && typeof res === "string" && res.includes("OTP already send it")) {
+        setOtpSent(true)
+      } else {
+        showErrorToast("Failed to send OTP")
       }
     } else {
-        showErrorToast("Email not found");
+      showErrorToast("Email not found")
     }
-}
+  }
 
   const handleResendOtp = async () => {
     handleSendOtp()
@@ -83,8 +105,8 @@ const googleSignup = async () => {
       showSuccessToast("Please verify your OTP first")
       return
     }
-    console.log(userData)
-    const res = await UserAPIMethods.signUp( userData)
+
+    const res = await UserAPIMethods.signUp(userData)
     if (res?.ok) {
       showSuccessToast("Signup successful")
       router.push("/user/login")
@@ -124,10 +146,8 @@ const googleSignup = async () => {
                 label="Verification Code"
                 onChange={handleOtpChange}
                 onVerified={handleOtpVerified}
-                  onResend={handleResendOtp}
-                  email={userData.email}
-                 
-                
+                onResend={handleResendOtp}
+                email={userData.email}
               />
             )}
 
@@ -146,7 +166,8 @@ const googleSignup = async () => {
             <div className="flex-grow border-t border-gray-200" />
           </div>
 
-          <button onClick={googleSignup}
+          <button
+            onClick={googleSignup}
             type="button"
             className="mt-4 flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white py-1.5 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all"
           >
@@ -179,22 +200,19 @@ function FormInput({
   type: string
   id: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  }) {
-  console.log("dddd",id)
+}) {
   return (
-    <div className="mb-2">
+    <div>
       <label htmlFor={id} className="block text-sm font-medium text-gray-700">
         {label}
       </label>
-      <div className="relative mt-1">
-        <input
-          type={type}
-          id={id}
-          onChange={onChange}
-          className="block w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100 transition-colors"
-        />
-      </div>
+      <input
+        id={id}
+        type={type}
+        onChange={onChange}
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+        required
+      />
     </div>
   )
 }
-

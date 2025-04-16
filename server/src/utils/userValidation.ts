@@ -30,12 +30,33 @@ export const validateUserSignupInput = (
     email: string,
     username: string,
     phoneNumber: string,
-    file: Express.Multer.File | null
+    file: Express.Multer.File | null,
+    expertise: string 
   ): { isValid: boolean; errorMessage?: string } => {
     if (!file) return { isValid: false, errorMessage: "No file uploaded" };
   
     if (!email?.trim() || !username?.trim() || !phoneNumber?.trim()) {
       return { isValid: false, errorMessage: "Email, username, and phone number are required" };
+    }
+  
+    // Parse the expertise string to an array
+    let parsedExpertise: string[];
+    try {
+      parsedExpertise = JSON.parse(expertise); // This converts the string into an array
+    } catch (error) {
+      return { isValid: false, errorMessage: "Invalid expertise format" };
+    }
+  
+    // Expertise validation: Must be an array and not empty
+    if (!Array.isArray(parsedExpertise) || parsedExpertise.length === 0) {
+      return { isValid: false, errorMessage: "At least one area of expertise is required" };
+    }
+  
+    // Validate that all expertise items are non-empty strings
+    for (const expert of parsedExpertise) {
+      if (typeof expert !== 'string' || expert.trim().length === 0) {
+        return { isValid: false, errorMessage: "Each area of expertise must be a non-empty string" };
+      }
     }
   
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -50,7 +71,7 @@ export const validateUserSignupInput = (
       return { isValid: false, errorMessage: "Only PDF files are accepted" };
     }
   
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; 
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
       return { isValid: false, errorMessage: "File must be smaller than 5MB" };
     }

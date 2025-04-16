@@ -34,6 +34,7 @@ export interface IMentor extends Document {
   updatedAt: Date;
 }
 
+
 export type SafeMentor = Omit<IMentor, 'password'>;
 
 // Add this new interface that was missing

@@ -6,12 +6,13 @@ import { ProfileController } from "../../controllers/user/profile.controller";
 import { UserController } from "../../controllers/user/user.controller";
 import { authenticateToken } from "../../middlewares/authenticateToken";
 import upload from "../../middlewares/upload";
+import { IUserController } from "../../core/interfaces/controllers/user/IUserController";
 
 const router = express.Router();
 
 const authController = container.get<AuthController>(TYPES.AuthController);
 const profileController = container.get<ProfileController>(TYPES.ProfileController);
-const userController = container.get<UserController>(TYPES.UserController);
+const userController = container.get<IUserController>(TYPES.UserController);
 
 router.post("/signup", authController.signup.bind(authController));
 router.post("/google/signup", authController.googleAuth.bind(authController));

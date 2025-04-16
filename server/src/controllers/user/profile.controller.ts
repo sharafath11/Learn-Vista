@@ -1,9 +1,9 @@
-// src/controllers/user/profile.controller.ts
 import { injectable, inject } from "inversify";
 import { Request, Response } from "express";
 import { ProfileService } from "../../services/user/profile.service";
 import { TYPES } from "../../core/types";
 import { decodeToken } from "../../utils/tokenDecode";
+import { validateMentorApplyInput } from "../../utils/userValidation";
 
 @injectable()
 export class ProfileController {
@@ -13,30 +13,25 @@ export class ProfileController {
 
   async applyMentor(req: Request, res: Response) {
     try {
-      console.log("Uploaded file: ", req.file);
+      const { email, username, phoneNumber, expertise } = req.body;
+      const { isValid, errorMessage } = validateMentorApplyInput(
+        email, username, phoneNumber, req.file || null, expertise
+      );
+
+      if (!isValid) throw new Error(errorMessage);
       if (!req.file) {
         res.status(400).json({ ok: false, msg: "No file uploaded" });
-        return;
+        return
       }
-      
-      const { email, name, phoneNumber } = req.body;
+
       const decoded = decodeToken(req.cookies.token);
-      
       if (!decoded) {
         res.status(401).json({ ok: false, msg: "Please login" });
-        return;
+        return
       }
-      
-      const id = typeof decoded === "object" && "userId" in decoded 
-        ? (decoded.userId as string) 
-        : decoded;
-      
+      const id = typeof decoded === "object" && "userId" in decoded ? decoded.userId : decoded;
       const mentor = await this.profileService.applyMentor(
-        email, 
-        name, 
-        req.file,
-        id,
-        phoneNumber
+        email, username, req.file, expertise, id, phoneNumber
       );
 
       res.status(201).json({ ok: true, msg: "Application submitted successfully", mentor });

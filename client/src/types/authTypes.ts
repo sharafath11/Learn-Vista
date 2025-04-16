@@ -43,10 +43,12 @@ export interface UserProviderProps {
   children: React.ReactNode;
 }
 export interface MentorApplyFormData {
-  name: string;
+  username: string;
   email: string;
   phoneNumber: string;
+  expertise: string[];
 }
+
 export interface MentorApplyFormErrors {
   name: string;
   email: string;

@@ -47,7 +47,7 @@ export const validateMentorApplyForm = (
     file: "",
   };
 
-  if (!formData.name.trim()) {
+  if (!formData.username.trim()) {
     newErrors.name = "Name is required";
     isValid = false;
   }

@@ -26,7 +26,7 @@ import AdminUsersServices from '../../services/admin/AdminUsers.Service';
 import { AdminUsersRepo } from '../../repositories/admin/AdminUsersRepo';
 // import { AdminUsersController } from '../../controllers/admin/AdminUser.Controller';
 import AdminUserController from '../../controllers/admin/AdminUser.Controller';
-import { IUserRepository } from '../interfaces/repositories/user/IUserRepository';
+
 import { AuthController } from '../../controllers/user/auth.controller';
 import { UserRepository } from '../../repositories/user/userRepository';
 import { IAuthService } from '../interfaces/services/user/IAuthService';
@@ -39,6 +39,7 @@ import { IUserController } from '../interfaces/controllers/user/IUserController'
 import { UserController } from '../../controllers/user/user.controller';
 import { IOtpRepository } from '../interfaces/repositories/user/IOtpRepository';
 import { OtpRepository } from '../../repositories/user/OtpRepository';
+import { IUserRepository } from '../interfaces/repositories/user/IUserRepository';
 // import { AdminMentorController } from "../../controllers/admin/AdminMentor.Controller";
 const container = new Container();
 
@@ -68,7 +69,7 @@ container.bind<AdminMentorService>(TYPES.AdminMentorService)
 // Bind Repositories
 container.bind<IMentorRepository>(TYPES.MentorRepository)
   .to(MentorRepository)
-  .inSingletonScope();
+
 
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository)
   .to(MentorOtpRepository)
@@ -90,7 +91,7 @@ container.bind<AdminUsersServices>(TYPES.AdminUsersService)
   container.bind<AdminUserController>(TYPES.AdminUserController)
   .to(AdminUserController)
   .inSingletonScope();
-  container.bind<UserRepository>(TYPES.UserRepository).to(UserRepository).inSingletonScope();
+  container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository)
 container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpRepository);
   //container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpgetRepository);
   container.bind<IAuthService>(TYPES.AuthService).to(AuthService)
@@ -98,5 +99,5 @@ container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpRepository);
   container.bind<AuthController>(TYPES.AuthController).to(AuthController).inSingletonScope();
 container.bind<ProfileController>(TYPES.ProfileController).to(ProfileController).inSingletonScope();
 container.bind<IUserService>(TYPES.UserService).to(UserService).inSingletonScope();
-console.log("continerrrrrrrrrrrrrr..........:)",container)
+
 export default container;
