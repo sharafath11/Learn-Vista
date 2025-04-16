@@ -1,5 +1,6 @@
 import { FilterQuery } from "mongoose";
-import { IMentor } from "../../../models/Mentor";
+import { IMentor } from "../../../../types/mentorTypes";
+
 
 
 export interface IAdminMentorRepository {

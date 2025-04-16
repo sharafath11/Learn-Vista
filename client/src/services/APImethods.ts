@@ -8,3 +8,8 @@ export const UserAPIMethods = {
   signUp: async (userData: IUserRegistration) => await postRequest("/signup", userData),
   applyMentor:async(data:FormData)=>await postRequest("/apply-mentor",data)
 }
+
+export const AdminAPIMethods = {
+  fetchUser: async () => await getRequest("/admin/users"),
+  fetchMentor: async () => await getRequest("/admin/mentors"),
+}

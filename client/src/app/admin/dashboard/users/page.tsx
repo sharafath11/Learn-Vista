@@ -3,6 +3,7 @@
 import { SearchAndFilterBar } from "@/src/components/admin/users/SearchAndFilterBar";
 import { UserTable } from "@/src/components/admin/users/UserTable";
 import { getRequest, patchRequest } from "@/src/services/api";
+import { AdminAPIMethods } from "@/src/services/APImethods";
 import { UserRole } from "@/src/types/adminTypes";
 import { IUser } from "@/src/types/authTypes";
 import { useEffect, useState } from "react";
@@ -20,7 +21,8 @@ const User = () => {
   }, []);
 
   async function getUsers() {
-    const res = await getRequest("/admin/users");
+    const res = await AdminAPIMethods.fetchUser();
+    console.log(res)
     if (res.ok) {
       setUsers(res.users);
     }

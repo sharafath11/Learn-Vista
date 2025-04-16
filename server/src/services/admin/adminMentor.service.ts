@@ -3,37 +3,20 @@ import { inject, injectable } from "inversify";
 import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
 import { TYPES } from "../../core/types";
 import { sendMentorStatusChangeEmail } from "../../utils/emailService";
+import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";
 
 @injectable()
-export class AdminMentorService {
+export class AdminMentorService implements IAdminMentorServices{
   constructor(
     @inject(TYPES.AdminMentorRepository) 
     private adminMentorRepo: IAdminMentorRepository
   ) {}
 
-  async getAllMentors(page = 1, limit = 10, search = '') {
-    const skip = (page - 1) * limit;
-    const filter = {
-      $or: [
-        { email: { $regex: search, $options: 'i' } },
-        { username: { $regex: search, $options: 'i' } }
-      ]
-    };
+  async getAllMentors() {
+    
 
-    const [mentors, total] = await Promise.all([
-      this.adminMentorRepo.findAllMentors({ ...filter, $skip: skip, $limit: limit }),
-      this.adminMentorRepo.countMentors(filter)
-    ]);
-
-    return {
-      data: mentors,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit)
-      }
-    };
+    
+    
   }
 
   async changeMentorStatus(id: string, status: string, email: string) {
@@ -41,10 +24,10 @@ export class AdminMentorService {
     if (status === 'approved') {
       await sendMentorStatusChangeEmail(email, status);
     }
-    return mentor;
+   
   }
 
   async toggleMentorBlock(id: string, isBlock: boolean) {
-    return this.adminMentorRepo.blockMentor(id, isBlock);
+     this.adminMentorRepo.blockMentor(id, isBlock);
   }
 }

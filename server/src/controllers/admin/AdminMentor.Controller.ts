@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { AdminMentorService } from "../../services/admin/adminMentor.service";
-import { error } from "console";
+import { IAdminMentorController } from "../../core/interfaces/controllers/admin/IAdminMentor.Controller";
 
 @injectable()
-export class AdminMentorController {
+export class AdminMentorController implements IAdminMentorController{
   constructor(
     @inject(TYPES.AdminMentorService)
     private adminMentorService: AdminMentorService
@@ -15,14 +15,12 @@ export class AdminMentorController {
     try {
       const { page = 1, limit = 10, search = '' } = req.query;
       const result = await this.adminMentorService.getAllMentors(
-        Number(page),
-        Number(limit),
-        String(search)
+       
       );
       res.status(200).json({ 
         ok: true, 
-        data: result.data,
-        pagination: result.pagination,
+        data: result,
+        pagination: result
         msg: "Mentors fetched successfully" 
       });
     } catch (error: any) {

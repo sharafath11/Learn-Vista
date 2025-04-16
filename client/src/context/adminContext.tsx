@@ -2,6 +2,7 @@
 import { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import { getRequest } from "../services/api";
 import { AdminContextType } from "../types/adminTypes";
+import { AdminAPIMethods } from "../services/APImethods";
 
 export const AdminContext = createContext<AdminContextType | null>(null);
 
@@ -15,7 +16,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
 
   async function getAllMentors() {
     try {
-      const res = await getRequest("/admin/get-allMentor");
+      const res = await AdminAPIMethods.fetchMentor();
       if (res.ok) {
         setMentors(res.mentors);
       } else {

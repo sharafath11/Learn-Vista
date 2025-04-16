@@ -10,8 +10,7 @@ export const TYPES = {
   AdminAuthController: Symbol.for('AdminAuthController'),
   AuthController: Symbol.for('AuthController'),
   ProfileController: Symbol.for('ProfileController'),
-  UserController: Symbol.for("IUserController"),
-  
+  UserController: Symbol.for("UserController"),  
   // Services
   MentorAuthService: Symbol.for('MentorAuthService'),
   MentorService: Symbol.for('MentorService'),
