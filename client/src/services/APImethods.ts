@@ -13,5 +13,6 @@ export const UserAPIMethods = {
 export const AdminAPIMethods = {
   fetchUser: async () => await getRequest("/admin/users"),
   fetchMentor: async () => await getRequest("/admin/mentors"),
+  getSingleMentor: async (id: string) => await getRequest(`/admin/mentor/${id}`),
   blockUser:async(data:userBlock)=>await patchRequest("/admin/users/block",{data})
 }

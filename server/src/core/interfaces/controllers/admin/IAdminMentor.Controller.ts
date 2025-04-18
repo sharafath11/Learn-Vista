@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { SafeMentor } from "../../../../types/mentorTypes";
+import { IMentor, SafeMentor } from "../../../../types/mentorTypes";
 
 
 export interface IAdminMentorController{
     getAllMentors(req: Request, res: Response): void;
-    changeStatus(req:Request,res:Response):void 
+    changeStatus(req: Request, res: Response): void 
+    mentorDetils(req:Request,res:Response):void
 }

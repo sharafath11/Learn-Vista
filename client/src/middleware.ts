@@ -2,11 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
+ 
   const userToken = req.cookies.get("token");
   const mentorToken = req.cookies.get("mentorToken");
   const adminToken = req.cookies.get("adminToken");
-  const adminRefreshToken = req.cookies.get("adminRefreshToken");
-
   const userRoutes = ["/user/profile", "/user/dashboard"];
   const mentorRoutes = ["/mentor/home", "/mentor/profile"];
   const adminRoutes = ["/admin/dashboard", "/admin/settings"];
@@ -24,14 +23,14 @@ export function middleware(req: NextRequest) {
     }
   } 
   else if (adminRoutes.some(route => currentPath.startsWith(route))) {
-    if (!adminToken && !adminRefreshToken) {
+    if (!adminToken) {
       return NextResponse.redirect(new URL("/admin", req.url));
     }
   }
-
   return NextResponse.next();
 }
 
+// Apply the middleware to all relevant routes
 export const config = {
   matcher: [
     "/user/:path*", 

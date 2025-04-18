@@ -17,6 +17,7 @@ route.post("/logout", verifyAdmin, adminAuthController.logout.bind(adminAuthCont
 route.get("/users", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));
 route.patch("/users/block", verifyAdmin, adminUsersController.userBlock.bind(adminUsersController));
 route.get("/mentors", verifyAdmin, adminMentorController.getAllMentors.bind(adminMentorController));
+route.get("/mentor/:id",verifyAdmin,adminMentorController.mentorDetils.bind(adminMentorController))
 route.patch("/mentors/status", verifyAdmin, adminMentorController.changeStatus.bind(adminMentorController));
 // route.patch("/mentors/block", verifyAdmin, adminMentorController.blockMentor.bind(adminMentorController));
 

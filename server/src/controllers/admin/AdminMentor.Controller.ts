@@ -17,7 +17,7 @@ export class AdminMentorController implements IAdminMentorController{
     try {
       
       const result = await this.adminMentorService.getAllMentors();
-      console.log("resfdjgnjfib in mentor get all mentor",result)
+  
       res.status(200).json({ 
         ok: true, 
         mentors: result,
@@ -67,6 +67,16 @@ export class AdminMentorController implements IAdminMentorController{
     } catch (error: any) {
       console.error("Error blocking mentor:", error.message);
       res.status(500).json({ ok: false, msg: error.message });
+    }
+  }
+  mentorDetils(req:Request,res:Response) {
+    try {
+      const id=req.params.id
+      const mentor = this.adminMentorService.mentorDetils(id)
+      if (!mentor) throw new Error("Error fetching mentors")
+      res.status(200).json({ok:true,msg:"Mentor fetching succes fully",mentor})
+    } catch (error:any) {
+      res.status(500).json({ok:false,msg:error.message})
     }
   }
 }

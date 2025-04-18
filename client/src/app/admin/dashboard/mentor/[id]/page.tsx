@@ -7,12 +7,13 @@ import { useContext, useEffect } from "react";
 const MentorProfile = () => {
     const params = useParams();
   const id = params?.id;
+  console.log(id)
   const adminContext = useContext(AdminContext);
   useEffect(() => {
     adminContext?.refreshMentors()
    },[])
 
-    const mentor = adminContext?.mentors.filter((i) => i._id === id)
+    const mentor = adminContext?.mentors.filter((i) => i.id === id)
     
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">

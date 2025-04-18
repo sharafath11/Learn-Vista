@@ -101,7 +101,7 @@ export interface SocialLink {
   url: string;
 }
 export interface Mentor {
-  _id: string;
+  id: string;
   userId: string;
   username: string;
   email: string;

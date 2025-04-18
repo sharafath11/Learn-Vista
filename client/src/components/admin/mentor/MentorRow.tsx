@@ -17,12 +17,12 @@ interface MentorRowProps {
 const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
   const route = useRouter();
   const adminDetil=useContext(AdminContext)
-  function onView(_id: any): void {
-    route.push(`/admin/dashboard/mentor/${_id}`);
+  function onView(id: string): void {
+    route.push(`/admin/dashboard/mentor/${id}`);
   }
   async function handleBlock() {
     const res = await patchRequest("/admin/block-mentor", {
-      id: mentor._id,
+      id: mentor.id,
       status: !mentor.isBlock, 
     });
   
@@ -31,7 +31,7 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
   
       if (adminDetil?.mentors && adminDetil?.setMentors) {
         const updatedMentors = adminDetil.mentors.map((m) =>
-          m._id === mentor._id ? { ...m, isBlock: !mentor.isBlock } : m
+          m.id === mentor.id ? { ...m, isBlock: !mentor.isBlock } : m
         );
         adminDetil.setMentors(updatedMentors);
       }
@@ -66,7 +66,7 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
       <td className="p-4 text-right space-x-2">
   {/* View button */}
   <button
-    onClick={() => onView?.(mentor?._id)}
+    onClick={() => onView?.(mentor?.id)}
     className="p-2 rounded-lg transition-all duration-200 text-blue-600 hover:bg-blue-50"
     title="View Mentor"
   >

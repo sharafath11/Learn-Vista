@@ -18,6 +18,7 @@ export interface SocialLink {
 }
 export interface IMentorMentor {
   _id: string;
+  id:string
   userId: string;
   username: string;
   email: string;

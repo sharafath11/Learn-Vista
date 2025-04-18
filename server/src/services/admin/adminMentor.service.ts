@@ -47,4 +47,10 @@ export class AdminMentorService implements IAdminMentorServices {
       throw error;
     }
   }
+  async mentorDetils(id: string):Promise<IMentor> {
+    const mentor = await this.adminMentorRepo.findById(id);
+    if (!mentor) throw new Error(" Server Error ann mwone");
+    return mentor
+
+  }
 }
