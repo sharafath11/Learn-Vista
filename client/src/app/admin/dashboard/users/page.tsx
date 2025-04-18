@@ -2,9 +2,8 @@
 
 import { SearchAndFilterBar } from "@/src/components/admin/users/SearchAndFilterBar";
 import { UserTable } from "@/src/components/admin/users/UserTable";
-import { getRequest, patchRequest } from "@/src/services/api";
+import { patchRequest } from "@/src/services/api";
 import { AdminAPIMethods } from "@/src/services/APImethods";
-import { UserRole } from "@/src/types/adminTypes";
 import { IUser } from "@/src/types/authTypes";
 import { useEffect, useState } from "react";
 
@@ -22,7 +21,7 @@ const User = () => {
 
   async function getUsers() {
     const res = await AdminAPIMethods.fetchUser();
-    console.log(res)
+   
     if (res.ok) {
       setUsers(res.users);
     }
@@ -48,14 +47,15 @@ const User = () => {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+ 
 
   async function onBlockToggle(id: string, status: boolean) {
-    const res = await patchRequest("/admin/block-user", { id, status });
+    const res = await AdminAPIMethods.blockUser({ id, status })
+    console.log("fhjfjfyjjjfy",res)
     if (res.ok) {
       setUsers(prev =>
         prev.map(user =>
-          user._id === id ? { ...user, isBlocked: status } : user
+          user.id === id ? { ...user, isBlocked: status } : user
         )
       );
     }

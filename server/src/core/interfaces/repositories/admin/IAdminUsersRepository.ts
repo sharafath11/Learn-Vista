@@ -1,4 +1,4 @@
-import { FilterQuery } from "mongoose";
+
 import { IUser } from "../../../../types/userTypes";
 import { IBaseRepository } from "../IBaseRepository";
 

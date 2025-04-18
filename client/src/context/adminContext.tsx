@@ -17,6 +17,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   async function getAllMentors() {
     try {
       const res = await AdminAPIMethods.fetchMentor();
+      console.log(res)
       if (res.ok) {
         setMentors(res.mentors);
       } else {

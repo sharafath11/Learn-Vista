@@ -1,5 +1,6 @@
-import { ILogin, IUserRegistration, MentorApplyFormData } from "../types/authTypes";
-import { getRequest, postRequest } from "./api";
+import { userBlock } from "../types/adminTypes";
+import { ILogin, IUserRegistration } from "../types/authTypes";
+import { getRequest, patchRequest, postRequest } from "./api";
 
 export const UserAPIMethods = {
   fetchUser: async () => await getRequest('/user'),
@@ -12,4 +13,5 @@ export const UserAPIMethods = {
 export const AdminAPIMethods = {
   fetchUser: async () => await getRequest("/admin/users"),
   fetchMentor: async () => await getRequest("/admin/mentors"),
+  blockUser:async(data:userBlock)=>await patchRequest("/admin/users/block",{data})
 }

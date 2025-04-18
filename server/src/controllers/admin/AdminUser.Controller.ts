@@ -13,7 +13,7 @@ export class AdminUserController implements IAdminUserController{
   async getAllUsers(req: Request, res: Response) {
     try {
       const result = await this.adminUserService.getAllUsers()
-      res.json(result);
+      res.json({ok:true,msg:"Get user succes fully",users:result});
     } catch (error: any) {
       console.error("Error in getAllUsers:", error.message);
       res.status(500).json({ ok: false, msg: error.message });
@@ -22,16 +22,19 @@ export class AdminUserController implements IAdminUserController{
 
   async userBlock(req: Request, res: Response) {
     try {
-      const { id, status } = req.body;
+      const { id, status } = req.body.data;
+      
       if (!id || typeof status !== "boolean") {
          res.status(400).json({ ok: false, msg: "Invalid request" });
          return
       }
   
-      const result = await this.adminUserService.blockUserServices(id, status);
-       res.status(200).json(result);
+      await this.adminUserService.blockUserServices(id, status);
+     
+       res.status(200).json({ok:true,msg:`status changed`});
        return
     } catch (error: any) {
+      
       console.error("Error in userBlock:", error.message);
        res.status(500).json({ ok: false, msg: error.message });
        return

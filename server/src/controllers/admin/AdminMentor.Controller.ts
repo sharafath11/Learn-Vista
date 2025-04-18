@@ -3,24 +3,25 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { AdminMentorService } from "../../services/admin/adminMentor.service";
 import { IAdminMentorController } from "../../core/interfaces/controllers/admin/IAdminMentor.Controller";
+import { SafeMentor } from "../../types/mentorTypes";
+import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";
 
 @injectable()
 export class AdminMentorController implements IAdminMentorController{
   constructor(
     @inject(TYPES.AdminMentorService)
-    private adminMentorService: AdminMentorService
+    private adminMentorService: IAdminMentorServices
   ) {}
 
   async getAllMentors(req: Request, res: Response) {
     try {
-      const { page = 1, limit = 10, search = '' } = req.query;
-      const result = await this.adminMentorService.getAllMentors(
-       
-      );
+      
+      const result = await this.adminMentorService.getAllMentors();
+      console.log("resfdjgnjfib in mentor get all mentor",result)
       res.status(200).json({ 
         ok: true, 
-        data: result,
-        pagination: result
+        mentors: result,
+        
         msg: "Mentors fetched successfully" 
       });
     } catch (error: any) {
@@ -32,14 +33,14 @@ export class AdminMentorController implements IAdminMentorController{
   async changeStatus(req: Request, res: Response) {
     try {
       const { mentorId, status, email } = req.body;
-      const result = await this.adminMentorService.changeMentorStatus(
+      await this.adminMentorService.changeMentorStatus(
         mentorId, 
         status,
         email
       );
       res.status(200).json({ 
         ok: true, 
-        data: result,
+       
         msg: `Mentor status changed to ${status}` 
       });
     } catch (error: any) {

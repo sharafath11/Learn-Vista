@@ -6,6 +6,7 @@ export const UserTable = ({
   getRoleColor,
   onBlockToggle 
 }: UserTableProps) => {
+ 
   return (
     <div className="overflow-x-auto">
       <table className="w-full">
@@ -22,6 +23,7 @@ export const UserTable = ({
         <tbody>
           {currentUsers.length > 0 ? (
             currentUsers.map((user) => (
+              
               <tr key={user._id} className="border-t border-gray-200 hover:bg-gray-50">
                 <td className="p-4">
                   <div className="flex items-center">
@@ -63,7 +65,7 @@ export const UserTable = ({
                       <FiEye className="w-5 h-5" />
                     </button>
                     <button 
-                      onClick={() => onBlockToggle?.(user?._id, !user.isBlocked)}
+                      onClick={() => onBlockToggle?.(user?.id, !user.isBlocked)}
                       className={`p-2 rounded-lg transition-all duration-200 ${
                         user.isBlocked 
                           ? 'text-green-600 hover:bg-green-50' 

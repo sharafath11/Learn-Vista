@@ -30,7 +30,10 @@ export interface UserTableProps {
   getRoleColor: (role: string) => string; 
   onBlockToggle?: (userId: string, newStatus: boolean) => void;
 }
-
+export interface userBlock{
+  id: string,
+  status:boolean
+}
 
 
 export type UserStatus = 'All' | 'Active' | 'Blocked';

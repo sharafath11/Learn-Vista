@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { decodeToken } from "../utils/tokenDecode";
-import { AdmindecodeToken } from "../utils/adminDecoded";
+import jwt from "jsonwebtoken";
 
 type Role = "admin" | "user" | "mentor";
 
@@ -8,7 +7,6 @@ interface DecodedToken {
   id: string;
   role: Role;
 }
-
 
 declare global {
   namespace Express {
@@ -20,34 +18,56 @@ declare global {
 
 const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies?.adminToken;
-  console.log("Token from cookies:", token);
+  const refreshToken = req.cookies?.adminRefreshToken;
+  const ADMIN_SECRET = process.env.JWT_SECRET || "your_admin_secret";
+  const ADMIN_REFRESH_SECRET = process.env.REFRESH_SECRET || "your_admin_refresh_secret";
 
-  if (!token) {
-    res.status(401).json({ ok: false, msg: "No token provided in cookies" });
-    return
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, ADMIN_SECRET) as DecodedToken;
+      if (decoded && decoded.role === "admin") {
+        req.admin = decoded;
+        next();
+        return
+      }
+    } catch (err) {
+      console.log("Access token error");
+    }
   }
 
-  try {
-    const decoded = AdmindecodeToken(token) as DecodedToken;
-    console.log("Decoded token:", decoded);
+  if (refreshToken) {
+    try {
+      const decodedRefresh = jwt.verify(refreshToken, ADMIN_REFRESH_SECRET) as DecodedToken;
+      if (decodedRefresh && decodedRefresh.role === "admin") {
+        const newAccessToken = jwt.sign(
+          { id: decodedRefresh.id, role: decodedRefresh.role },
+          ADMIN_SECRET,
+          { expiresIn: "15m" }
+        );
 
-    if (!decoded || !decoded.role || !decoded.id) {
-      res.status(403).json({ ok: false, msg: "Token is missing required fields" });
+        res.cookie("adminToken", newAccessToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict",
+          maxAge: 15 * 60 * 1000
+        });
+
+        req.admin = decodedRefresh;
+        next();
+        return
+      } else {
+        res.status(403).json({ ok: false, msg: "Invalid role" });
+        return
+      }
+    } catch (err: any) {
+      console.log("Refresh token error:", err.message);
+      res.status(401).json({ ok: false, msg: "Refresh token invalid or expired" });
       return
     }
-
-    if (decoded.role !== "admin") {
-      res.status(403).json({ ok: false, msg: "Access denied. Admins only." });
-      return
-    }
-
-    req.admin = decoded;
-    next();
-  } catch (error: any) {
-    console.error("Token decode error:", error.message);
-    res.status(401).json({ ok: false, msg: "Invalid or expired token" });
-    return
   }
+
+  res.status(401).json({ ok: false, msg: "Authentication required" });
+  return
 };
 
 export default verifyAdmin;

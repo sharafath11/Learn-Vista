@@ -32,7 +32,6 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
     return new Error(`${message}: ${errorMessage}`);
   }
 
-  // Regular methods (password excluded by default)
   async create(data: Partial<T>): Promise<U> {
     try {
       const document = await this.model.create(data);

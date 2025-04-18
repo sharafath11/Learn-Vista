@@ -1,11 +1,7 @@
 import { FilterQuery } from "mongoose";
 import { IMentor } from "../../../../types/mentorTypes";
+import { IBaseRepository } from "../IBaseRepository";
 
-
-
-export interface IAdminMentorRepository {
-  findAllMentors(filter?: FilterQuery<IMentor>): Promise<IMentor[]>;
-  updateMentorStatus(id: string, status: string): Promise<IMentor | null>;
-  blockMentor(id: string, isBlock: boolean): Promise<IMentor | null>;
-  countMentors(filter?: FilterQuery<IMentor>): Promise<number>;
+export interface IAdminMentorRepository extends  IBaseRepository <IMentor, IMentor> {
+  
 }
