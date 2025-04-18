@@ -37,7 +37,7 @@ export default function MentorCard() {
     file: "",
     socialLink: ""
   });
-
+//kkko
   const openModal = () => {
     setIsSubmitted(false);
     setIsLoading(false);
