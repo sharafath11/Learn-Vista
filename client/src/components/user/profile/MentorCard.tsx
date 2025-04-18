@@ -1,12 +1,14 @@
-"use client"
+"use client";
 
-import { postRequest } from "@/src/services/api";
+
 import { UserAPIMethods } from "@/src/services/APImethods";
 import { MentorApplyFormData } from "@/src/types/authTypes";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 import { validateMentorApplyForm } from "@/src/utils/user/validation";
-import { GraduationCap, X, Upload, FileText, Loader2 } from "lucide-react";
+import { GraduationCap, X, Upload, FileText, Loader2, Github, Linkedin, Globe, Link2 } from "lucide-react";
 import { useRef, useState } from "react";
+
+
 
 export default function MentorCard() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -15,19 +17,25 @@ export default function MentorCard() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [expertiseInput, setExpertiseInput] = useState("");
+  const [socialLinkInput, setSocialLinkInput] = useState({
+    platform: "LinkedIn",
+    url: ""
+  });
 
   const [formData, setFormData] = useState<MentorApplyFormData>({
     username: "",
     email: "",
     phoneNumber: "",
-    expertise: []
+    expertise: [],
+    socialLinks: []
   });
 
   const [errors, setErrors] = useState({
     name: "",
     email: "",
     phoneNumber: "",
-    file: ""
+    file: "",
+    socialLink: ""
   });
 
   const openModal = () => {
@@ -35,8 +43,9 @@ export default function MentorCard() {
     setIsLoading(false);
     setSelectedFile(null);
     setExpertiseInput("");
-    setFormData({ username: "", email: "", phoneNumber: "", expertise: [] });
-    setErrors({ name: "", email: "", phoneNumber: "", file: "" });
+    setSocialLinkInput({ platform: "LinkedIn", url: "" });
+    setFormData({ username: "", email: "", phoneNumber: "", expertise: [], socialLinks: [] });
+    setErrors({ name: "", email: "", phoneNumber: "", file: "", socialLink: "" });
     dialogRef.current?.showModal();
   };
 
@@ -88,12 +97,42 @@ export default function MentorCard() {
     }));
   };
 
+  const handleSocialLinkAdd = () => {
+    const { platform, url } = socialLinkInput;
+    if (!url.trim()) {
+      setErrors(prev => ({ ...prev, socialLink: "URL is required" }));
+      return;
+    }
+
+  
+    try {
+      new URL(url);
+    } catch {
+      setErrors(prev => ({ ...prev, socialLink: "Please enter a valid URL" }));
+      return;
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      socialLinks: [...prev.socialLinks, { platform, url }]
+    }));
+    setSocialLinkInput(prev => ({ ...prev, url: "" }));
+    setErrors(prev => ({ ...prev, socialLink: "" }));
+  };
+
+  const removeSocialLink = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      socialLinks: prev.socialLinks.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { isValid, errors: validationErrors } = validateMentorApplyForm(formData, selectedFile);
+    const { isValid, errors } = validateMentorApplyForm(formData, selectedFile);
     if (!isValid) {
-      setErrors(validationErrors);
+      setErrors(errors);
       return;
     }
 
@@ -105,15 +144,18 @@ export default function MentorCard() {
       formDataToSend.append("phoneNumber", formData.phoneNumber);
       formDataToSend.append("cv", selectedFile || "");
       formDataToSend.append("expertise", JSON.stringify(formData.expertise));
+      formDataToSend.append("socialLinks", JSON.stringify(formData.socialLinks));
 
       const res = await UserAPIMethods.applyMentor(formDataToSend);
 
       if (res?.ok) {
         setIsSubmitted(true);
+        closeModal()
         showSuccessToast(`We'll contact you at ${formData.email}`);
       }
     } catch (error) {
       console.error("Submission error:", error);
+
       showErrorToast("An error occurred during submission");
     } finally {
       setIsLoading(false);
@@ -126,6 +168,19 @@ export default function MentorCard() {
       fileInputRef.current.value = "";
     }
     setErrors(prev => ({ ...prev, file: "" }));
+  };
+
+  const getPlatformIcon = (platform: string) => {
+    switch (platform) {
+      case "LinkedIn":
+        return <Linkedin className="h-4 w-4" />;
+      case "GitHub":
+        return <Github className="h-4 w-4" />;
+      case "Portfolio":
+        return <Globe className="h-4 w-4" />;
+      default:
+        return <Link2 className="h-4 w-4" />;
+    }
   };
 
   return (
@@ -218,13 +273,15 @@ export default function MentorCard() {
                     value={expertiseInput}
                     onChange={(e) => setExpertiseInput(e.target.value)}
                     onKeyDown={handleExpertiseKeyDown}
+                    disabled={isLoading || isSubmitted}
                     placeholder="Add expertise and press Enter"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   />
                   <button
                     type="button"
                     onClick={handleExpertiseAdd}
-                    className="bg-indigo-600 text-white px-3 py-2 rounded-md"
+                    disabled={isLoading || isSubmitted}
+                    className="bg-indigo-600 text-white px-3 py-2 rounded-md disabled:opacity-50"
                   >
                     Add
                   </button>
@@ -234,10 +291,77 @@ export default function MentorCard() {
                     {formData.expertise.map((item, idx) => (
                       <span key={idx} className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full flex items-center">
                         {item}
-                        <button type="button" onClick={() => removeExpertise(item)} className="ml-1 text-red-500">
+                        <button 
+                          type="button" 
+                          onClick={() => removeExpertise(item)} 
+                          disabled={isLoading || isSubmitted}
+                          className="ml-1 text-red-500 disabled:opacity-50"
+                        >
                           <X className="h-4 w-4" />
                         </button>
                       </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Social Links */}
+              <div>
+                <label className="block text-sm font-medium mb-1">Social Links</label>
+                <div className="flex gap-2 mb-2">
+                  <select
+                    value={socialLinkInput.platform}
+                    onChange={(e) => setSocialLinkInput(prev => ({ ...prev, platform: e.target.value }))}
+                    disabled={isLoading || isSubmitted}
+                    className="px-3 py-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="LinkedIn">LinkedIn</option>
+                    <option value="GitHub">GitHub</option>
+                    <option value="Portfolio">Portfolio</option>
+                  </select>
+                  <input
+                    type="url"
+                    value={socialLinkInput.url}
+                    onChange={(e) => setSocialLinkInput(prev => ({ ...prev, url: e.target.value }))}
+                    disabled={isLoading || isSubmitted}
+                    placeholder={`Enter ${socialLinkInput.platform} URL`}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSocialLinkAdd}
+                    disabled={isLoading || isSubmitted}
+                    className="bg-indigo-600 text-white px-3 py-2 rounded-md disabled:opacity-50"
+                  >
+                    Add
+                  </button>
+                </div>
+                {errors.socialLink && <p className="mt-1 text-sm text-red-600">{errors.socialLink}</p>}
+                {formData.socialLinks.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {formData.socialLinks.map((link, idx) => (
+                      <div key={idx} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                        <div className="flex items-center gap-2">
+                          {getPlatformIcon(link.platform)}
+                          <span className="text-sm">{link.platform}:</span>
+                          <a 
+                            href={link.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 text-sm hover:underline truncate max-w-xs"
+                          >
+                            {link.url}
+                          </a>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeSocialLink(idx)}
+                          disabled={isLoading || isSubmitted}
+                          className="text-red-500 disabled:opacity-50"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -259,7 +383,12 @@ export default function MentorCard() {
                   <div className="mt-2 flex items-center gap-2">
                     <FileText className="h-5 w-5 text-green-600" />
                     <span>{selectedFile.name}</span>
-                    <button type="button" onClick={removeFile} className="text-red-500">
+                    <button 
+                      type="button" 
+                      onClick={removeFile} 
+                      disabled={isLoading || isSubmitted}
+                      className="text-red-500 disabled:opacity-50"
+                    >
                       <X className="h-4 w-4" />
                     </button>
                   </div>

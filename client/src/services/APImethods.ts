@@ -14,5 +14,7 @@ export const AdminAPIMethods = {
   fetchUser: async () => await getRequest("/admin/users"),
   fetchMentor: async () => await getRequest("/admin/mentors"),
   getSingleMentor: async (id: string) => await getRequest(`/admin/mentor/${id}`),
-  blockUser:async(data:userBlock)=>await patchRequest("/admin/users/block",{data})
+  blockUser: async (data: userBlock) => await patchRequest("/admin/users/block", { data }),
+  mentorChangeStatus: async (mentorId: string, status: string, email: string) => await patchRequest("/admin/mentor/change-status", { mentorId, status, email }),
+  blockMentor:async(mentorId:string,isBlock:boolean)=>await patchRequest("/admin/mentor/block",{mentorId,isBlock})
 }

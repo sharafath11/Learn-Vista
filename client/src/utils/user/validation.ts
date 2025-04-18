@@ -1,57 +1,26 @@
-import { IUserRegistration, MentorApplyFormData, MentorApplyFormErrors } from "../../types/authTypes";
-import { showErrorToast, showInfoToast } from "../Toast";
+import { MentorApplyFormData, MentorApplyFormErrors } from "@/src/types/authTypes";
 
-export function registrationValidation(userData: IUserRegistration): boolean {
-  const { username, email, password, confirmPassword, role } = userData;
-  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-   console.log(userData)
-  if (!username || username.trim().length === 0) {
-    showInfoToast("Name is required");
-    return false;
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email || !emailRegex.test(email)) {
-    showInfoToast("Please enter a valid email address");
-    return false;
-  }
-
-  if (!password || !strongPasswordRegex.test(password)) {
-    showInfoToast(
-      "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character"
-    );
-    return false;
-  }
-
-  if (confirmPassword !== password) {
-    showInfoToast("Passwords do not match");
-    return false;
-  }
-
-  if (role !== "user") {
-    showInfoToast("Invalid role");
-    return false;
-  }
-
-  return true;
-}
 export const validateMentorApplyForm = (
   formData: MentorApplyFormData,
   selectedFile: File | null
 ): { isValid: boolean; errors: MentorApplyFormErrors } => {
-  let isValid = true;
   const newErrors: MentorApplyFormErrors = {
     name: "",
     email: "",
     phoneNumber: "",
     file: "",
+    socialLink: ""
   };
 
+  let isValid = true;
+
+  // Name validation
   if (!formData.username.trim()) {
     newErrors.name = "Name is required";
     isValid = false;
   }
 
+  // Email validation
   if (!formData.email.trim()) {
     newErrors.email = "Email is required";
     isValid = false;
@@ -60,6 +29,7 @@ export const validateMentorApplyForm = (
     isValid = false;
   }
 
+  // Phone validation
   if (!formData.phoneNumber.trim()) {
     newErrors.phoneNumber = "Phone number is required";
     isValid = false;
@@ -68,16 +38,33 @@ export const validateMentorApplyForm = (
     isValid = false;
   }
 
+  // File validation
   if (!selectedFile) {
-    
     newErrors.file = "Please upload your CV/resume";
     isValid = false;
   } else if (selectedFile.type !== "application/pdf") {
-    showErrorToast("Only PDF files are allowed");
     newErrors.file = "Only PDF files are allowed";
     isValid = false;
   }
-  
+
+  // Social links validation - Only strict validation for LinkedIn
+  if (formData.socialLinks && formData.socialLinks.length > 0) {
+    for (const link of formData.socialLinks) {
+      try {
+        // Basic URL validation for all links
+        new URL(link.url);
+        
+        // Strict validation only for LinkedIn
+        if (link.platform === 'LinkedIn' && !link.url.includes('linkedin.com')) {
+          newErrors.socialLink = "Please enter a valid LinkedIn URL (should contain linkedin.com)";
+          isValid = false;
+        }
+      } catch (e) {
+        newErrors.socialLink = "Please enter a valid URL";
+        isValid = false;
+      }
+    }
+  }
 
   return { isValid, errors: newErrors };
 };

@@ -26,6 +26,7 @@ export class AdminMentorService implements IAdminMentorServices {
   async changeMentorStatus(id: string, status: boolean, email: string): Promise<IMentor|null> {
     try {
       const statusString = status ? 'approved' : 'rejected';
+      console.log("andi status",status)
       const updated = await this.adminMentorRepo.update(id, {status:statusString});
       
       if (updated && status) {
@@ -39,9 +40,13 @@ export class AdminMentorService implements IAdminMentorServices {
     }
   }
 
-  async toggleMentorBlock(id: string, isBlock: boolean): Promise<IMentor|null> {
+  async toggleMentorBlock(id: string, isBlock: boolean): Promise<IMentor | null> {
+    
     try {
-      return await this.adminMentorRepo.update(id, {isBlock:isBlock});
+      console.log("reeeees serv",id,isBlock)
+      const updated = await this.adminMentorRepo.update(id, { isBlock: isBlock });
+      
+      return updated
     } catch (error) {
       console.error(`Error toggling block status for mentor ${id}:`, error);
       throw error;

@@ -9,5 +9,6 @@ import { BaseRepository } from "../BaseRepository";
 export class AdminMentorRepository extends BaseRepository <IMentor,IMentor> implements IAdminMentorRepository {
   constructor() {
      super(mentorModel);
-   }
+  }
+  
 }

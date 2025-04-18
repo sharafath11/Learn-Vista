@@ -48,6 +48,10 @@ export interface MentorApplyFormData {
   email: string;
   phoneNumber: string;
   expertise: string[];
+  socialLinks: {
+    platform: string;
+    url: string;
+  }[];
 }
 
 export interface MentorApplyFormErrors {
@@ -55,6 +59,7 @@ export interface MentorApplyFormErrors {
   email: string;
   phoneNumber: string;
   file: string;
+  socialLink:string
 }
 declare module "next-auth" {
   interface Session {

@@ -5,8 +5,9 @@ import { FiUser,FiEye,FiLock,FiUnlock } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import { Mentor } from '@/src/types/adminTypes';
 import { patchRequest } from '@/src/services/api';
-import { showSuccessToast } from '@/src/utils/Toast';
+import { showInfoToast, showSuccessToast } from '@/src/utils/Toast';
 import { AdminContext } from '@/src/context/adminContext';
+import { AdminAPIMethods } from '@/src/services/APImethods';
 
 interface MentorRowProps {
   mentor: Mentor;
@@ -21,13 +22,11 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
     route.push(`/admin/dashboard/mentor/${id}`);
   }
   async function handleBlock() {
-    const res = await patchRequest("/admin/block-mentor", {
-      id: mentor.id,
-      status: !mentor.isBlock, 
-    });
+    const res = await AdminAPIMethods.blockMentor( mentor.id,!mentor.isBlock)
   
     if (res.ok) {
-      showSuccessToast(res.msg);
+      if (res.msg.includes("Unblocked")) showSuccessToast(res.msg);
+      else showInfoToast(res.msg)
   
       if (adminDetil?.mentors && adminDetil?.setMentors) {
         const updatedMentors = adminDetil.mentors.map((m) =>
