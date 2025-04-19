@@ -8,7 +8,6 @@ export const validateMentorSignupInput = (
   }
 
   const {
-    username = "",
     email = "",
     password = "",
     experience = 0,
@@ -16,18 +15,13 @@ export const validateMentorSignupInput = (
     phoneNumber = "",
   } = data;
 
-  // Validate username
-  if (!username.trim()) {
-    return { isValid: false, errorMessage: "Username is required" };
-  }
+  
 
-  // Validate email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email.trim() || !emailRegex.test(email)) {
     return { isValid: false, errorMessage: "Valid email is required" };
   }
 
-  // Validate phone number
   const phoneRegex = /^\d{10}$/;
   if (!phoneNumber.trim() || !phoneRegex.test(phoneNumber)) {
     return {
@@ -36,7 +30,6 @@ export const validateMentorSignupInput = (
     };
   }
 
-  // Validate password
   const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
   if (!password || !strongPasswordRegex.test(password)) {
     return {
@@ -45,7 +38,6 @@ export const validateMentorSignupInput = (
     };
   }
 
-  // Validate experience
   if (isNaN(experience) || experience < 0 || experience > 50) {
     return {
       isValid: false,
@@ -53,7 +45,6 @@ export const validateMentorSignupInput = (
     };
   }
 
-  // Validate bio
   if (!bio?.trim() || bio.length < 20) {
     return {
       isValid: false,

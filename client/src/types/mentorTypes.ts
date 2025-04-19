@@ -1,7 +1,6 @@
 
 import {  Mentor } from "./adminTypes"
 export interface MentorSignupData {
-  username: string;
   email: string;
   password: string;
   confirmPassword: string;

@@ -5,7 +5,7 @@ export const validateMentorSignup = (data?: MentorSignupData) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const {
-    username = "",
+    
     email = "",
     password = "",
     confirmPassword = "",
@@ -14,7 +14,7 @@ export const validateMentorSignup = (data?: MentorSignupData) => {
     phoneNumber = "",
   } = data;
 
-  if (!username.trim()) return "Username is required";
+  
   if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Valid email is required";
   if (!phoneNumber.trim() || !/^\d{10}$/.test(phoneNumber)) return "Valid 10-digit phone number is required";
   

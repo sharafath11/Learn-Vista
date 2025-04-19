@@ -38,7 +38,7 @@ export class MentorAuthController implements IMentorAuthController {
       await this.authService.verifyOtp(req.body.email, req.body.otp);
       res.status(200).json({ ok: true, msg: 'Verification successful' });
     } catch (error: any) {
-      res.status(400).json({ ok: false, msg:"Server eroor " });
+      res.status(400).json({ ok: false, msg:error.message });
     }
   }
 

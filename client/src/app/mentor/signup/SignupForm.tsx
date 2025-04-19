@@ -13,7 +13,6 @@ import { MentorAPIMenthods } from "@/src/services/APImethods";
 
 export default function MentorSignupForm() {
   const [mentorData, setMentorData] = useState({
-    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -51,7 +50,6 @@ export default function MentorSignupForm() {
       if (res && res.ok) {
         setOtpSent(true);
         showSuccessToast("OTP sent to your email");
-
       }
     } else {
       showErrorToast("Email not found");
@@ -75,7 +73,6 @@ export default function MentorSignupForm() {
       return;
     }
     
-    
     const res = await MentorAPIMenthods.signup(mentorData)
     if (res?.ok) {
       showSuccessToast("Mentor registration successful");
@@ -96,14 +93,6 @@ export default function MentorSignupForm() {
           <p className="mt-1 text-gray-500 text-sm">Share your knowledge and guide learners</p>
 
           <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-            <FormInput 
-              label="Full Name" 
-              type="text" 
-              id="username" 
-              onChange={handleChange} 
-              value={mentorData.username}
-              required
-            />
             <FormInput 
               label="Email Address" 
               type="email" 

@@ -98,9 +98,9 @@ export class MentorAuthService implements IMentorAuthService {
     const hashedPassword = await bcrypt.hash(data.password!, await bcrypt.genSalt(10));
   
     const allowedUpdates: Partial<IMentor> = {
-      username: data.username,
       phoneNumber: data.phoneNumber,
       experience: data.experience ? Number(data.experience) : undefined,
+      bio:data.bio,
       password: hashedPassword
     };
     
