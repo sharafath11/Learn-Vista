@@ -47,6 +47,7 @@ import { IProfileController } from '../interfaces/controllers/user/IProfileContr
 import { IAdminAuthService } from '../interfaces/services/admin/IAdminAuthService';
 import AdminAuthService from '../../services/admin/auth.service';
 import { IAdminMentorController } from '../interfaces/controllers/admin/IAdminMentor.Controller';
+import { IProfileService } from '../interfaces/services/user/IUserProfileService';
 
 const container = new Container();
 
@@ -65,7 +66,7 @@ container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
 container.bind<IAdminUserServices>(TYPES.AdminUsersService).to(AdminUsersServices);
 container.bind<AdminMentorService>(TYPES.AdminMentorService).to(AdminMentorService);
 container.bind<IAuthService>(TYPES.AuthService).to(AuthService);
-container.bind<ProfileService>(TYPES.ProfileService).to(ProfileService);
+container.bind<IProfileService>(TYPES.ProfileService).to(ProfileService);
 container.bind<IUserService>(TYPES.UserService).to(UserService);
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService)
 

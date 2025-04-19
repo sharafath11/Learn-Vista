@@ -1,6 +1,6 @@
 import { Document, Types } from 'mongoose';
 
-type SocialPlatform = 'twitter' | 'github' | 'website';
+type SocialPlatform = 'LinkedIn' | 'GitHub' | 'Portfolio';
 
 export interface ISocialLink {
   platform: SocialPlatform;
@@ -23,7 +23,7 @@ export interface IMentor extends Document {
   status: 'pending' | 'approved' | 'rejected';
   isBlock: boolean;
   bio?: string;
-  socialLinks: ISocialLink[];
+  socialLinks: ISocialLink[] |string;
   liveClasses: Types.ObjectId[];
   coursesCreated: Types.ObjectId[];
   reviews: Types.ObjectId[];

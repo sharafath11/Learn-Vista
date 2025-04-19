@@ -19,19 +19,8 @@ export class UserRepository extends BaseRepository<IUser , IUser> implements IUs
     super(userModel);
   }
 
-  async applyMentor(mentorData: Partial<IMentor>): Promise<void> {
-    const existingMentor = await this.mentorRepo.findOne({ 
-      email: mentorData.email 
-    });
-  
-    if (existingMentor) {
-      throw new Error("Mentor application already submitted");
-    }
-    console.log(mentorData.userId)
-    const existingMentorAtSameUser = await this.mentorRepo.findOne({ userId: mentorData.userId });
-    if (existingMentorAtSameUser) {
-      throw new Error("You already applied :)");
-    }
+  async applyMentor(mentorData: Partial<IMentor>): Promise<IMentor> {
+    
   
     let expertise = mentorData.expertise;
     if (typeof expertise === "string") {
@@ -40,7 +29,9 @@ export class UserRepository extends BaseRepository<IUser , IUser> implements IUs
   
     const applyData = { ...mentorData, experties: expertise };
   
-    await this.mentorRepo.create(applyData as Partial<IMentor>);
+    const result = await this.mentorRepo.create(applyData as Partial<IMentor>);
+    return result
+    
   }
   
   

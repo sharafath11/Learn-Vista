@@ -39,20 +39,15 @@ export const validateUserSignupInput = (
       return { isValid: false, errorMessage: "Email, username, and phone number are required" };
     }
   
-    // Parse the expertise string to an array
     let parsedExpertise: string[];
     try {
-      parsedExpertise = JSON.parse(expertise); // This converts the string into an array
+      parsedExpertise = JSON.parse(expertise); 
     } catch (error) {
       return { isValid: false, errorMessage: "Invalid expertise format" };
     }
-  
-    // Expertise validation: Must be an array and not empty
     if (!Array.isArray(parsedExpertise) || parsedExpertise.length === 0) {
       return { isValid: false, errorMessage: "At least one area of expertise is required" };
     }
-  
-    // Validate that all expertise items are non-empty strings
     for (const expert of parsedExpertise) {
       if (typeof expert !== 'string' || expert.trim().length === 0) {
         return { isValid: false, errorMessage: "Each area of expertise must be a non-empty string" };

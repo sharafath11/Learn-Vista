@@ -4,12 +4,12 @@ import { IMentor, ISocialLink } from '../../types/mentorTypes';
 const socialLinkSchema = new Schema<ISocialLink>({
   platform: {
     type: String,
-    enum: ['LinkedIn', 'github', 'website'],
-    required: true,
+    enum: ['LinkedIn', 'GitHub', 'Portfolio'],
+   
   },
   url: {
     type: String,
-    required: true,
+   
   },
 });
 

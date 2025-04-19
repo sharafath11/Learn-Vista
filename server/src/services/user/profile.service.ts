@@ -4,21 +4,38 @@ import cloudinary from "../../config/cloudinary";
 import { Types } from "mongoose";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import { IMentor } from "../../types/mentorTypes";
-
+import { IMentor, ISocialLink } from "../../types/mentorTypes";
+import { IProfileService } from "../../core/interfaces/services/user/IUserProfileService";
+import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
 
 @injectable()
-export class ProfileService {
+export class ProfileService implements IProfileService {
   constructor(
-    @inject(TYPES.UserRepository) private userRepository: IUserRepository
+    @inject(TYPES.UserRepository) private userRepository: IUserRepository,
+    @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
   ) {}
 
   async applyMentor(
-    email: string, username: string, file: Express.Multer.File, expertise: string[],
-    userId: string | JwtPayload, phoneNumber: string
+    email: string, 
+    username: string, 
+    file: Express.Multer.File, 
+    expertise: string[],
+    userId: string | JwtPayload, 
+    phoneNumber: string,
+    socialLinks: ISocialLink[]|string
   ) {
     if (!userId) throw new Error("Please login");
+    const existingMentor = await this.mentorRepo.findOne({ 
+      email 
+    });
   
+    if (existingMentor) {
+      throw new Error("Mentor application already submitted");
+    }
+    const existingMentorAtSameUser = await this.mentorRepo.findOne({ userId });
+    if (existingMentorAtSameUser) {
+      throw new Error("You already applied :)");
+    }
     const uploadResult = await new Promise<{
       secure_url: string;
       public_id: string;
@@ -51,7 +68,7 @@ export class ProfileService {
       userId: new Types.ObjectId(userId as string),
       status: "pending",
       expertise: expertise,
-      socialLinks: [],
+      socialLinks: socialLinks ,  
     };
   
     const application = await this.userRepository.applyMentor(mentorData);
@@ -62,5 +79,4 @@ export class ProfileService {
       cvUrl: uploadResult.secure_url,
     };
   }
-  
 }
