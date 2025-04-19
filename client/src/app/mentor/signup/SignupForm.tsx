@@ -8,25 +8,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { FormOTP } from "./FormOTP";
-
-import type { MentorSignupData, SocialLink } from "@/src/types/mentorTypes";
 import { FormInput } from "@/src/components/mentor/signup/FormInput";
-import { ExpertiseInput } from "@/src/components/mentor/signup/ExpertiseInput";
-import { SocialLinksInput } from "@/src/components/mentor/signup/SocialLinksInput";
+import { MentorAPIMenthods } from "@/src/services/APImethods";
 
 export default function MentorSignupForm() {
-  const [mentorData, setMentorData] = useState<MentorSignupData>({
+  const [mentorData, setMentorData] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    expertise: [],
     experience: 0,
     bio: "",
     isVerified: false,
     otp: "",
-    phoneNumber: "",
-    socialLinks: []
+    phoneNumber: ""
   });
   const [otpVerified, setOtpVerified] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
@@ -37,38 +32,6 @@ export default function MentorSignupForm() {
     setMentorData({ 
       ...mentorData, 
       [name]: value 
-    });
-  };
-
-  const handleAddExpertise = (newExpertise: string[]) => {
-    setMentorData({
-      ...mentorData,
-      expertise: [...mentorData.expertise||[], ...newExpertise]
-    });
-  };
-
-  const handleRemoveExpertise = (index: number) => {
-    const updatedExpertise = [...mentorData.expertise||[]];
-    updatedExpertise.splice(index, 1);
-    setMentorData({
-      ...mentorData,
-      expertise: updatedExpertise
-    });
-  };
-
-  const handleAddSocialLink = (newLink: SocialLink) => {
-    setMentorData({
-      ...mentorData,
-      socialLinks: [...mentorData.socialLinks||[], newLink]
-    });
-  };
-
-  const handleRemoveSocialLink = (index: number) => {
-    const updatedLinks = [...mentorData.socialLinks||[]];
-    updatedLinks.splice(index, 1);
-    setMentorData({
-      ...mentorData,
-      socialLinks: updatedLinks
     });
   };
 
@@ -83,10 +46,12 @@ export default function MentorSignupForm() {
 
   const handleSendOtp = async () => {
     if (mentorData?.email) {
-      setOtpSent(true);
-      const res = await postRequest("/mentor/otp", { email: mentorData.email });
+      setOtpSent(true)
+      const res = await MentorAPIMenthods.otpSend( mentorData.email )
       if (res && res.ok) {
+        setOtpSent(true);
         showSuccessToast("OTP sent to your email");
+
       }
     } else {
       showErrorToast("Email not found");
@@ -109,8 +74,9 @@ export default function MentorSignupForm() {
       showSuccessToast("Please verify your OTP first");
       return;
     }
-
-    const res = await postRequest("/mentor/signup", mentorData);
+    
+    
+    const res = await MentorAPIMenthods.signup(mentorData)
     if (res?.ok) {
       showSuccessToast("Mentor registration successful");
       router.push("/mentor/login");
@@ -136,7 +102,7 @@ export default function MentorSignupForm() {
               id="username" 
               onChange={handleChange} 
               value={mentorData.username}
-              
+              required
             />
             <FormInput 
               label="Email Address" 
@@ -144,7 +110,7 @@ export default function MentorSignupForm() {
               id="email" 
               onChange={handleChange} 
               value={mentorData.email}
-              
+              required
             />
             <FormInput 
               label="Password" 
@@ -152,7 +118,7 @@ export default function MentorSignupForm() {
               id="password" 
               onChange={handleChange} 
               value={mentorData.password}
-              
+              required
             />
             <FormInput 
               label="Confirm Password" 
@@ -160,7 +126,7 @@ export default function MentorSignupForm() {
               id="confirmPassword" 
               onChange={handleChange} 
               value={mentorData.confirmPassword}
-              
+              required
             />
             <FormInput 
               label="Phone Number" 
@@ -169,13 +135,7 @@ export default function MentorSignupForm() {
               onChange={handleChange} 
               value={mentorData.phoneNumber}
               placeholder="+1234567890"
-              
-            />
-
-            <ExpertiseInput 
-              mentorData={mentorData}
-              onAddExpertise={handleAddExpertise}
-              onRemoveExpertise={handleRemoveExpertise}
+              required
             />
 
             <FormInput 
@@ -183,8 +143,8 @@ export default function MentorSignupForm() {
               type="number" 
               id="experience" 
               onChange={handleChange} 
-              value={mentorData.experience&&mentorData.experience.toString()||""}
-              
+              value={mentorData.experience.toString()}
+              required
             />
 
             <div className="mb-2">
@@ -195,19 +155,13 @@ export default function MentorSignupForm() {
                 id="bio"
                 name="bio"
                 onChange={handleChange}
-                value={mentorData.bio||""}
+                value={mentorData.bio}
                 rows={3}
                 className="block w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100 transition-colors mt-1"
                 placeholder="Tell us about your professional background..."
-                
+                required
               />
             </div>
-
-            <SocialLinksInput 
-              mentorData={mentorData}
-              onAddSocialLink={handleAddSocialLink}
-              onRemoveSocialLink={handleRemoveSocialLink}
-            />
 
             {!otpSent ? (
               <div className="mt-2">

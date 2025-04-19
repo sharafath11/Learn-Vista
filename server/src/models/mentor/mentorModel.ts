@@ -55,7 +55,7 @@ const mentorSchema = new Schema<IMentor>({
     type: Boolean,
     default: false,
   },
-  bio: String,
+  bio: {type:String},
   socialLinks: {
     type: [socialLinkSchema],
     default: [],

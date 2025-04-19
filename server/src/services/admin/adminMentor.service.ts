@@ -27,7 +27,7 @@ export class AdminMentorService implements IAdminMentorServices {
     try {
       const statusString = status ? 'approved' : 'rejected';
       console.log("andi status",status)
-      const updated = await this.adminMentorRepo.update(id, {status:statusString});
+      const updated = await this.adminMentorRepo.update(id, {status});
       
       if (updated && status) {
         await sendMentorStatusChangeEmail(email, statusString);

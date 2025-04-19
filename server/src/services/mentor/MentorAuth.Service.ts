@@ -11,6 +11,7 @@ import { generateOtp } from '../../utils/otpGenerator';
 import { sendEmailOtp } from '../../utils/emailService';
 import { IMentor, SafeMentor } from '../../types/mentorTypes';
 import { validateMentorSignupInput } from '../../utils/mentorValidation';
+import { ObjectId, Types } from 'mongoose';
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {
@@ -22,7 +23,6 @@ export class MentorAuthService implements IMentorAuthService {
   async loginMentor(
     email: string,
     password: string,
-    res: Response
   ): Promise<{ mentor: any; token: string; refreshToken: string }> {
     const mentor = await this.mentorRepo.findOne({ email });
     if (mentor?.isBlock) throw new Error("This account is blok")
@@ -48,22 +48,6 @@ export class MentorAuthService implements IMentorAuthService {
       expiresIn: "7d",
     });
   
-    const isProd = process.env.NODE_ENV === "production";
-  
-    res.cookie("mentorToken", token, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: "strict",
-      maxAge: 60 * 60 * 1000,
-    });
-  
-    res.cookie("mentorRefreshToken", refreshToken, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-  
     return {
       mentor: {
         _id: mentor._id,
@@ -84,45 +68,49 @@ export class MentorAuthService implements IMentorAuthService {
     };
   }
   async sendOtp(email: string): Promise<void> {
-    const existingMentor = await this.mentorRepo.findOne({ email });
+    const existingMentor = await this.mentorOtpRepo.findOne({ email });
     const existMentorInmentor = await this.mentorRepo.findOne({ email, isVerified: true })
     if( existMentorInmentor) throw new Error("This mentor already register")
       if (existingMentor) throw new Error("Already send OTP");
       
     const otp = generateOtp();
     sendEmailOtp(email, otp);
-    await this.mentorOtpRepo.create({ email, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
+    console.log(otp)
+    await this.mentorOtpRepo.create({ email,otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
      
   }
   async verifyOtp(email: string, otp: string): Promise<void> {
-    const otpRecord = await this.mentorRepo.findOne({ email, otp } );
+    
+    const otpRecord = await this.mentorOtpRepo.findOne({ email, otp } );
     if (!otpRecord) {
       throw new Error("Invalid OTP");
-      }
+    }
    }
-  async mentorSignup(data: Partial<IMentor>) {
+   async mentorSignup(data: Partial<IMentor>) {
     const { isValid, errorMessage } = validateMentorSignupInput(data);
-
-  if (!isValid) {
-   throw new Error (errorMessage )
-  }
-      const existMentor = await this.mentorRepo.findOne({ email: data.email });
-      if (existMentor?.isVerified) {
-        throw new Error(`This mentor already register `)
-      }
-    if (existMentor?.status!=="approved") {
-      throw new Error(`This requst are ${existMentor?.status} `)
-      
+    if (!isValid) throw new Error(errorMessage);
+  
+    const existMentor = await this.mentorRepo.findOne({ email: data.email });
+    if (!existMentor) throw new Error("Please apply to be a mentor");
+    if (existMentor.isVerified) throw new Error("This mentor is already registered");
+    if (existMentor.status !== "approved") throw new Error(`This request is ${existMentor.status}`);
+  
+    const hashedPassword = await bcrypt.hash(data.password!, await bcrypt.genSalt(10));
+  
+    const allowedUpdates: Partial<IMentor> = {
+      username: data.username,
+      phoneNumber: data.phoneNumber,
+      experience: data.experience ? Number(data.experience) : undefined,
+      expertise: data.expertise,
+      password: hashedPassword
     };
-    
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(data.password!, salt);
-    console.log(hashedPassword)
-    const newMentorData = { ...data, password: hashedPassword,experience:Number(data.experience) };
-    const mentorId=existMentor._id.toString()
-    await this.mentorRepo.update(mentorId, {...newMentorData });
-}
+  
+    const mentorId:string= existMentor._id
 
+
+    await this.mentorRepo.update(mentorId, { ...allowedUpdates, isVerified: true });
+  }
+  
 
   
 }

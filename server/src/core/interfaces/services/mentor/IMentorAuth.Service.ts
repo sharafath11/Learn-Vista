@@ -7,7 +7,6 @@ export interface IMentorAuthService {
   loginMentor(
     email: string,
     password: string,
-    res: Response
   ): Promise<{ mentor: Partial<IMentor>; token: string; refreshToken: string }>;
   
   sendOtp(email: string): Promise<void>;

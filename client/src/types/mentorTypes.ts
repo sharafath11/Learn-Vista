@@ -1,10 +1,15 @@
 
 import {  Mentor } from "./adminTypes"
-export type MentorSignupData = Partial<IMentorMentor> & {
-  password?: string,
-  phoneNumber: string,
-  confirmPassword: string,
-  otp:string
+export interface MentorSignupData {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  experience: number;
+  bio: string;
+  isVerified: boolean;
+  otp: string;
+  phoneNumber: string;
 }
 export interface IMentorContext{
   mentor: IMentorMentor|null;

@@ -10,7 +10,7 @@ const mentorController = container.get<IMentorController>(TYPES.MentorController
 
 // Auth Routes
 router.post('/signup', (req, res) => mentorAuthController.signupController(req, res));
-router.post('/otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
+router.post('/send-otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
 router.post('/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
 router.post('/login', (req, res) => mentorAuthController.login(req, res));
 router.post('/logout', (req, res) => mentorAuthController.logout(req, res));

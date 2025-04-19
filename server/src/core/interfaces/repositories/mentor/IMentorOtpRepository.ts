@@ -1,12 +1,8 @@
 import { FilterQuery } from 'mongoose';
+import { IBaseRepository } from '../IBaseRepository';
+import { IMentorOtp } from '../../../../types/mentorTypes';
 
-export interface IMentorOtp {
-  email: string;
-  otp: string;
-  expiresAt: Date;
-}
 
-export interface IMentorOtpRepository {
-  create(data: Partial<IMentorOtp>): Promise<IMentorOtp>;
-  findOne(condition: FilterQuery<IMentorOtp>): Promise<IMentorOtp | null>;
+export interface IMentorOtpRepository extends IBaseRepository <IMentorOtp,IMentorOtp> {
+ 
 }

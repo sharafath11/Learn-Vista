@@ -9,7 +9,6 @@ export const validateMentorSignup = (data?: MentorSignupData) => {
     email = "",
     password = "",
     confirmPassword = "",
-    expertise = [],
     experience = 0,
     bio = "",
     phoneNumber = "",
@@ -18,14 +17,19 @@ export const validateMentorSignup = (data?: MentorSignupData) => {
   if (!username.trim()) return "Username is required";
   if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Valid email is required";
   if (!phoneNumber.trim() || !/^\d{10}$/.test(phoneNumber)) return "Valid 10-digit phone number is required";
-  if (password.length < 6) return "Password must be at least 6 characters long";
+  
+  if (password.length < 8) return "Password must be at least 8 characters long";
   if (!passwordRegex.test(password)) {
-    return "Password must be at least 8 characters long, include uppercase, lowercase, number, and special character";
+    return "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character";
   }
-  if (!Array.isArray(expertise) || expertise.length === 0) return "At least one area of expertise is required";
-  if (isNaN(experience) || experience < 0 || experience > 50) return "Experience must be a number between 0 and 50";
-  if (!bio?.trim() || (bio?.length ?? 0) < 10) {
-    return "Bio must be at least 10 characters long";
+  if (password !== confirmPassword) return "Passwords do not match";
+  
+  if (isNaN(experience) || experience < 0 || experience > 50) {
+    return "Experience must be a number between 0 and 50 years";
+  }
+  
+  if (!bio?.trim() || bio.length < 20) {
+    return "Bio must be at least 20 characters long";
   }
   
   return null;

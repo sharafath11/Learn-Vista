@@ -29,7 +29,7 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
     try {
       const res = await AdminAPIMethods.mentorChangeStatus(
         mentor.id,
-        currentStatus ?? "", 
+        status ?? "", 
         mentor.email
       );
       console.log(res)
