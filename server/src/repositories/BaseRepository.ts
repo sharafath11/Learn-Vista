@@ -87,6 +87,7 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
 
   async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
     try {
+
       const document = await this.model.findByIdAndUpdate(
         id, 
         data, 

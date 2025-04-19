@@ -101,14 +101,11 @@ export class MentorAuthService implements IMentorAuthService {
       username: data.username,
       phoneNumber: data.phoneNumber,
       experience: data.experience ? Number(data.experience) : undefined,
-      expertise: data.expertise,
       password: hashedPassword
     };
-  
-    const mentorId:string= existMentor._id
-
-
-    await this.mentorRepo.update(mentorId, { ...allowedUpdates, isVerified: true });
+    
+    await this.mentorRepo.update(existMentor.id , { ...allowedUpdates, isVerified: true });
+    
   }
   
 
