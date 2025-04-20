@@ -19,14 +19,14 @@ class AdminAuthController implements IAdminAuthController{
   
     try {
       const { accessToken, refreshToken } = this.adminAuthServices.login(email, password);
-      res.cookie("adminToken", accessToken, {
+      res.cookie("token", accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
         maxAge: 60 * 60 * 1000, 
       });
   
-      res.cookie("adminRefreshToken", refreshToken, {
+      res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",

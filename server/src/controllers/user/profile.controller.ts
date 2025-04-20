@@ -2,11 +2,12 @@ import { injectable, inject } from "inversify";
 import { Request, Response } from "express";
 import { ProfileService } from "../../services/user/profile.service";
 import { TYPES } from "../../core/types";
-import { decodeToken } from "../../utils/tokenDecode";
+
 import { validateMentorApplyInput } from "../../utils/userValidation";
 import { IProfileController } from "../../core/interfaces/controllers/user/IProfileController";
 import { IProfileService } from "../../core/interfaces/services/user/IUserProfileService";
 import { ISocialLink } from "../../types/mentorTypes";
+import { decodeToken } from "../../utils/JWTtoken";
 
 @injectable()
 export class ProfileController implements IProfileController{
@@ -59,7 +60,7 @@ export class ProfileController implements IProfileController{
         return;
       }
   
-      const id = typeof decoded === "object" && "userId" in decoded ? decoded.userId : decoded; 
+      const id = typeof decoded === "object" && "userId" in decoded ? decoded.id : decoded; 
       const mentor = await this.profileService.applyMentor(
         email,
         username,

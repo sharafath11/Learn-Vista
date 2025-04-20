@@ -5,13 +5,13 @@ import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRe
 import { TYPES } from "../../core/types";
 import bcrypt from "bcryptjs";
 import { GooglePayload, IUser } from "../../types/userTypes";
-import { generateTokens } from "../../utils/generateToken";
-import { decodeToken } from "../../utils/tokenDecode";
+
 import { validateUserSignupInput } from "../../utils/userValidation";
 import { OtpRepository } from "../../repositories/user/OtpRepository";
 import { generateOtp } from "../../utils/otpGenerator";
 import { sendEmailOtp } from "../../utils/emailService";
 import { IOtpRepository } from "../../core/interfaces/repositories/user/IOtpRepository";
+import { generateAccessToken, generateRefreshToken } from "../../utils/JWTtoken";
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -74,13 +74,14 @@ export class AuthService implements IAuthService {
     
     if (googleId && user.googleId === googleId) {
       
-      const tokens = generateTokens({
-        id: userId,
-        role: user.role
-      });
+      const token = generateAccessToken(
+         userId,
+         user.role
+      );
+      const refreshToken=generateRefreshToken(userId,user.role)
       return {
-        token: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
+        token,
+        refreshToken,
         user: {
           id: userId,
           role: user.role
@@ -92,14 +93,14 @@ export class AuthService implements IAuthService {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error("Invalid credentials");
     
-    const tokens = generateTokens({
-      id:  userId,
-      
-      role: user.role
-    });
+    const token = generateAccessToken(
+      userId,
+      user.role
+   );
+   const refreshToken=generateRefreshToken(userId,user.role)
     return {
-      token: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
+      token,
+      refreshToken,
       user: {
         id: userId,
         
@@ -141,14 +142,15 @@ export class AuthService implements IAuthService {
       throw new Error("User creation/update failed");
     }
     const userId=user.id as string
-    const tokens = generateTokens({
-      id: userId,
-      role: user.role
-    });
+    const token = generateAccessToken(
+      userId,
+      user.role
+   );
+   const refreshToken=generateRefreshToken(userId,user.role)
   
     return {
-      token: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
+      token,
+      refreshToken,
       user: {
         id: user._id,
         role: user.role

@@ -1,6 +1,7 @@
 // src/middlewares/mentorVerify.ts
 import { Request, Response, NextFunction } from 'express';
-import {  mentorDecodeToken } from '../utils/tokenDecode';
+import { decodeToken } from '../utils/JWTtoken';
+
 
 export const verifyMentor = (
   req: Request,
@@ -14,9 +15,13 @@ export const verifyMentor = (
       return;
     }
  
-    const decoded = mentorDecodeToken(token);
-    console.log(decoded,"gd")
-    if (!decoded.mentorId || decoded.role !== 'mentor') {
+    const decoded = decodeToken(token);
+    if (!decoded) {
+      res.status(401).json({ ok: false, msg: 'Unauthorized' });
+      return 
+    }
+    
+    if (!decoded.id || decoded.role !== 'mentor') {
       res.status(401).json({ ok: false, msg: 'Unauthorized' });
       return;
     }

@@ -11,7 +11,7 @@ import { generateOtp } from '../../utils/otpGenerator';
 import { sendEmailOtp } from '../../utils/emailService';
 import { IMentor, SafeMentor } from '../../types/mentorTypes';
 import { validateMentorSignupInput } from '../../utils/mentorValidation';
-import { ObjectId, Types } from 'mongoose';
+import { generateAccessToken, generateRefreshToken } from '../../utils/JWTtoken';
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {
@@ -38,15 +38,8 @@ export class MentorAuthService implements IMentorAuthService {
       throw new Error("Invalid email or password");
     }
   
-    const payload = { role: "mentor", mentorId: mentor.id };
-  
-    const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
-      expiresIn: "1h",
-    });
-  
-    const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET as string, {
-      expiresIn: "7d",
-    });
+    const token = generateAccessToken(mentor.id, "mentor");
+    const refreshToken = generateRefreshToken(mentor.id, "mentor");
   
     return {
       mentor: {

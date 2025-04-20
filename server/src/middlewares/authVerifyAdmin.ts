@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { decodeToken, verifyAccessToken } from "../utils/JWTtoken";
 
 type Role = "admin" | "user" | "mentor";
 
@@ -24,9 +25,8 @@ const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
 
   if (token) {
     try {
-      const decoded = jwt.verify(token, ADMIN_SECRET) as DecodedToken;
-      if (decoded && decoded.role === "admin") {
-        req.admin = decoded;
+      const decoded = decodeToken(token)
+      if (decoded?.id && decoded.role === "admin") {
         next();
         return
       }
@@ -37,7 +37,7 @@ const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
 
   if (refreshToken) {
     try {
-      const decodedRefresh = jwt.verify(refreshToken, ADMIN_REFRESH_SECRET) as DecodedToken;
+      const decodedRefresh =decodeToken(token)
       if (decodedRefresh && decodedRefresh.role === "admin") {
         const newAccessToken = jwt.sign(
           { id: decodedRefresh.id, role: decodedRefresh.role },
@@ -52,7 +52,7 @@ const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
           maxAge: 15 * 60 * 1000
         });
 
-        req.admin = decodedRefresh;
+       
         next();
         return
       } else {

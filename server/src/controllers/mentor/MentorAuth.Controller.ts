@@ -19,13 +19,13 @@ export class MentorAuthController implements IMentorAuthController {
         return;
       }
       const result = await this.authService.loginMentor(req.body.email, req.body.password);
-      res.cookie('mentorToken', result.token, {
+      res.cookie('token', result.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 30 * 24 * 60 * 60 * 1000, 
       });
-      res.cookie('menorRefreshToken', result.refreshToken, {
+      res.cookie('refreshToken', result.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',

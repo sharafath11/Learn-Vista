@@ -3,11 +3,8 @@ import { Request, Response } from 'express';
 // import { IMentorService } from '../../core/interfaces/services/mentor/IMentorService';
 import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Service';
 import { TYPES } from '../../core/types';
-import {  mentorDecodeToken } from '../../utils/tokenDecode';
+import { decodeToken } from '../../utils/JWTtoken';
 
-interface MentorTokenPayload {
-  mentorId: string;
-}
 
 @injectable()
 export class MentorController {
@@ -18,13 +15,13 @@ export class MentorController {
   async getMentor(req: Request, res: Response): Promise<void> {
     try {
       
-      const decoded = mentorDecodeToken(req.cookies.mentorToken) as unknown as MentorTokenPayload;
-      if (!decoded?.mentorId) {
+      const decoded = decodeToken(req.cookies.mentorToken) 
+      if (!decoded?.id) {
         res.status(401).json({ ok: false, msg: "Unauthorized: Invalid token" });
         return;
       }
 
-      const mentor = await this.mentorService.getMentor(decoded.mentorId);
+      const mentor = await this.mentorService.getMentor(decoded.id);
       if (!mentor) {
         res.status(404).json({ ok: false, msg: "Mentor not found" });
         return;
