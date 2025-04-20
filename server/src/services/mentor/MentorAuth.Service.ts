@@ -38,7 +38,7 @@ export class MentorAuthService implements IMentorAuthService {
       throw new Error("Invalid email or password");
     }
   
-    const payload = { role: "mentor", mentorId: mentor._id };
+    const payload = { role: "mentor", mentorId: mentor.id };
   
     const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
       expiresIn: "1h",
@@ -50,7 +50,7 @@ export class MentorAuthService implements IMentorAuthService {
   
     return {
       mentor: {
-        _id: mentor._id,
+        id: mentor.id,
         username: mentor.username,
         email: mentor.email,
         expertise: mentor.expertise,

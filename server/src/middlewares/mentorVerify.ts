@@ -1,6 +1,6 @@
 // src/middlewares/mentorVerify.ts
 import { Request, Response, NextFunction } from 'express';
-import { decodeToken } from '../utils/tokenDecode';
+import {  mentorDecodeToken } from '../utils/tokenDecode';
 
 export const verifyMentor = (
   req: Request,
@@ -13,12 +13,14 @@ export const verifyMentor = (
       res.status(401).json({ ok: false, msg: 'No token provided' });
       return;
     }
-
-    const decoded = decodeToken(token);
+ 
+    const decoded = mentorDecodeToken(token);
+    console.log(decoded,"gd")
     if (!decoded.mentorId || decoded.role !== 'mentor') {
       res.status(401).json({ ok: false, msg: 'Unauthorized' });
       return;
     }
+    console.log(decoded)
 
     // req.user = {
     //   mentorId: decoded.mentorId,
@@ -27,6 +29,7 @@ export const verifyMentor = (
     
     next();
   } catch (error: any) {
+    console.error(error.message)
     res.status(401).json({ ok: false, msg: 'Invalid token' });
   }
 };

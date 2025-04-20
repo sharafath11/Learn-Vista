@@ -21,5 +21,6 @@ export const AdminAPIMethods = {
 }
 export const MentorAPIMenthods = {
   signup: async (mentorData: MentorSignupData) => await postRequest("/mentor/signup", mentorData),
-  otpSend: async (email: string) => await postRequest("/mentor/send-otp", {email})
+  otpSend: async (email: string) => await postRequest("/mentor/send-otp", { email }),
+  login:async(email:string,password:string)=>await postRequest("/mentor/login",{email:email,password:password})
 }
