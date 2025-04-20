@@ -14,7 +14,6 @@ export const UserContext = createContext<UserContextType | null>(null);
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const route = useRouter()
-
   useEffect(() => {
     const fetchUserData = async () => {
         const res = await UserAPIMethods.fetchUser();
@@ -23,7 +22,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         }
         else {
           route.push("/user/login")
-        }
+      }
     };
   
     fetchUserData();

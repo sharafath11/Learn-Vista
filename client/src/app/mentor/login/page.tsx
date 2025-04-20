@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useContext, useState, useCallback, useEffect } from 'react';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { generateEncodedKey } from '@/src/utils/GenerateEncodedKey';
 
 interface FormErrors {
   email: string;
@@ -73,6 +74,7 @@ export default function LoginPage() {
         console.log(res)
         showSuccessToast(res.msg);
         mentorContext?.setMentor(res.payload.mentor);
+        generateEncodedKey("mentor")
         router.push("/mentor/home");
       }
     } catch (error) {
