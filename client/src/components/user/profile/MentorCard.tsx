@@ -1,14 +1,18 @@
 "use client";
 
-
 import { UserAPIMethods } from "@/src/services/APImethods";
 import { MentorApplyFormData } from "@/src/types/authTypes";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 import { validateMentorApplyForm } from "@/src/utils/user/validation";
 import { GraduationCap, X, Upload, FileText, Loader2, Github, Linkedin, Globe, Link2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback, useMemo } from "react";
 
-
+const PLATFORM_ICONS = {
+  LinkedIn: <Linkedin className="h-4 w-4" />,
+  GitHub: <Github className="h-4 w-4" />,
+  Portfolio: <Globe className="h-4 w-4" />,
+  default: <Link2 className="h-4 w-4" />
+};
 
 export default function MentorCard() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -37,8 +41,8 @@ export default function MentorCard() {
     file: "",
     socialLink: ""
   });
-//kkko
-  const openModal = () => {
+
+  const resetForm = useCallback(() => {
     setIsSubmitted(false);
     setIsLoading(false);
     setSelectedFile(null);
@@ -46,65 +50,57 @@ export default function MentorCard() {
     setSocialLinkInput({ platform: "LinkedIn", url: "" });
     setFormData({ username: "", email: "", phoneNumber: "", expertise: [], socialLinks: [] });
     setErrors({ name: "", email: "", phoneNumber: "", file: "", socialLink: "" });
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }, []);
+
+  const openModal = useCallback(() => {
+    resetForm();
     dialogRef.current?.showModal();
-  };
+  }, [resetForm]);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     dialogRef.current?.close();
-  };
+  }, []);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
       setSelectedFile(e.target.files[0]);
-      setErrors({ ...errors, file: "" });
+      setErrors(prev => ({ ...prev, file: "" }));
     }
-  };
+  }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
-    setErrors(prev => ({
-      ...prev,
-      [name]: "",
-    }));
-  };
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: "" }));
+  }, []);
 
-  const handleExpertiseAdd = () => {
+  const handleExpertiseAdd = useCallback(() => {
     const trimmed = expertiseInput.trim();
     if (trimmed && !formData.expertise.includes(trimmed)) {
-      setFormData(prev => ({
-        ...prev,
-        expertise: [...prev.expertise, trimmed]
-      }));
+      setFormData(prev => ({ ...prev, expertise: [...prev.expertise, trimmed] }));
       setExpertiseInput("");
     }
-  };
+  }, [expertiseInput, formData.expertise]);
 
-  const handleExpertiseKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleExpertiseKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleExpertiseAdd();
     }
-  };
+  }, [handleExpertiseAdd]);
 
-  const removeExpertise = (item: string) => {
-    setFormData(prev => ({
-      ...prev,
-      expertise: prev.expertise.filter(e => e !== item)
-    }));
-  };
+  const removeExpertise = useCallback((item: string) => {
+    setFormData(prev => ({ ...prev, expertise: prev.expertise.filter(e => e !== item) }));
+  }, []);
 
-  const handleSocialLinkAdd = () => {
+  const handleSocialLinkAdd = useCallback(() => {
     const { platform, url } = socialLinkInput;
     if (!url.trim()) {
       setErrors(prev => ({ ...prev, socialLink: "URL is required" }));
       return;
     }
 
-  
     try {
       new URL(url);
     } catch {
@@ -112,22 +108,29 @@ export default function MentorCard() {
       return;
     }
 
-    setFormData(prev => ({
-      ...prev,
-      socialLinks: [...prev.socialLinks, { platform, url }]
-    }));
+    setFormData(prev => ({ ...prev, socialLinks: [...prev.socialLinks, { platform, url }] }));
     setSocialLinkInput(prev => ({ ...prev, url: "" }));
     setErrors(prev => ({ ...prev, socialLink: "" }));
-  };
+  }, [socialLinkInput]);
 
-  const removeSocialLink = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      socialLinks: prev.socialLinks.filter((_, i) => i !== index)
+  const removeSocialLink = useCallback((index: number) => {
+    setFormData(prev => ({ 
+      ...prev, 
+      socialLinks: prev.socialLinks.filter((_, i) => i !== index) 
     }));
-  };
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const removeFile = useCallback(() => {
+    setSelectedFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setErrors(prev => ({ ...prev, file: "" }));
+  }, []);
+
+  const getPlatformIcon = useCallback((platform: string) => {
+    return PLATFORM_ICONS[platform as keyof typeof PLATFORM_ICONS] || PLATFORM_ICONS.default;
+  }, []);
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
     const { isValid, errors } = validateMentorApplyForm(formData, selectedFile);
@@ -142,7 +145,7 @@ export default function MentorCard() {
       formDataToSend.append("username", formData.username);
       formDataToSend.append("email", formData.email);
       formDataToSend.append("phoneNumber", formData.phoneNumber);
-      formDataToSend.append("cv", selectedFile || "");
+      if (selectedFile) formDataToSend.append("cv", selectedFile);
       formDataToSend.append("expertise", JSON.stringify(formData.expertise));
       formDataToSend.append("socialLinks", JSON.stringify(formData.socialLinks));
 
@@ -150,38 +153,18 @@ export default function MentorCard() {
 
       if (res?.ok) {
         setIsSubmitted(true);
-        closeModal()
+        closeModal();
         showSuccessToast(`We'll contact you at ${formData.email}`);
       }
     } catch (error) {
       console.error("Submission error:", error);
-
       showErrorToast("An error occurred during submission");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [formData, selectedFile, closeModal]);
 
-  const removeFile = () => {
-    setSelectedFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-    setErrors(prev => ({ ...prev, file: "" }));
-  };
-
-  const getPlatformIcon = (platform: string) => {
-    switch (platform) {
-      case "LinkedIn":
-        return <Linkedin className="h-4 w-4" />;
-      case "GitHub":
-        return <Github className="h-4 w-4" />;
-      case "Portfolio":
-        return <Globe className="h-4 w-4" />;
-      default:
-        return <Link2 className="h-4 w-4" />;
-    }
-  };
+  const isFormDisabled = useMemo(() => isLoading || isSubmitted, [isLoading, isSubmitted]);
 
   return (
     <>
@@ -225,7 +208,7 @@ export default function MentorCard() {
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  disabled={isLoading || isSubmitted}
+                  disabled={isFormDisabled}
                   className={`w-full px-3 py-2 border rounded-md ${errors.name ? "border-red-500" : "border-gray-300"} ${isLoading ? "bg-gray-100" : ""}`}
                   placeholder="Enter your full name"
                 />
@@ -241,7 +224,7 @@ export default function MentorCard() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  disabled={isLoading || isSubmitted}
+                  disabled={isFormDisabled}
                   className={`w-full px-3 py-2 border rounded-md ${errors.email ? "border-red-500" : "border-gray-300"} ${isLoading ? "bg-gray-100" : ""}`}
                   placeholder="Enter your email"
                 />
@@ -257,7 +240,7 @@ export default function MentorCard() {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
-                  disabled={isLoading || isSubmitted}
+                  disabled={isFormDisabled}
                   className={`w-full px-3 py-2 border rounded-md ${errors.phoneNumber ? "border-red-500" : "border-gray-300"} ${isLoading ? "bg-gray-100" : ""}`}
                   placeholder="Enter your phone number"
                 />
@@ -273,14 +256,14 @@ export default function MentorCard() {
                     value={expertiseInput}
                     onChange={(e) => setExpertiseInput(e.target.value)}
                     onKeyDown={handleExpertiseKeyDown}
-                    disabled={isLoading || isSubmitted}
+                    disabled={isFormDisabled}
                     placeholder="Add expertise and press Enter"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   />
                   <button
                     type="button"
                     onClick={handleExpertiseAdd}
-                    disabled={isLoading || isSubmitted}
+                    disabled={isFormDisabled}
                     className="bg-indigo-600 text-white px-3 py-2 rounded-md disabled:opacity-50"
                   >
                     Add
@@ -289,12 +272,12 @@ export default function MentorCard() {
                 {formData.expertise.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {formData.expertise.map((item, idx) => (
-                      <span key={idx} className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full flex items-center">
+                      <span key={`${item}-${idx}`} className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full flex items-center">
                         {item}
                         <button 
                           type="button" 
                           onClick={() => removeExpertise(item)} 
-                          disabled={isLoading || isSubmitted}
+                          disabled={isFormDisabled}
                           className="ml-1 text-red-500 disabled:opacity-50"
                         >
                           <X className="h-4 w-4" />
@@ -312,25 +295,25 @@ export default function MentorCard() {
                   <select
                     value={socialLinkInput.platform}
                     onChange={(e) => setSocialLinkInput(prev => ({ ...prev, platform: e.target.value }))}
-                    disabled={isLoading || isSubmitted}
+                    disabled={isFormDisabled}
                     className="px-3 py-2 border border-gray-300 rounded-md"
                   >
-                    <option value="LinkedIn">LinkedIn</option>
-                    <option value="GitHub">GitHub</option>
-                    <option value="Portfolio">Portfolio</option>
+                    {Object.keys(PLATFORM_ICONS).filter(k => k !== 'default').map(platform => (
+                      <option key={platform} value={platform}>{platform}</option>
+                    ))}
                   </select>
                   <input
                     type="url"
                     value={socialLinkInput.url}
                     onChange={(e) => setSocialLinkInput(prev => ({ ...prev, url: e.target.value }))}
-                    disabled={isLoading || isSubmitted}
+                    disabled={isFormDisabled}
                     placeholder={`Enter ${socialLinkInput.platform} URL`}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   />
                   <button
                     type="button"
                     onClick={handleSocialLinkAdd}
-                    disabled={isLoading || isSubmitted}
+                    disabled={isFormDisabled}
                     className="bg-indigo-600 text-white px-3 py-2 rounded-md disabled:opacity-50"
                   >
                     Add
@@ -340,7 +323,7 @@ export default function MentorCard() {
                 {formData.socialLinks.length > 0 && (
                   <div className="mt-2 space-y-2">
                     {formData.socialLinks.map((link, idx) => (
-                      <div key={idx} className="flex items-center justify-between bg-gray-100 p-2 rounded">
+                      <div key={`${link.platform}-${idx}`} className="flex items-center justify-between bg-gray-100 p-2 rounded">
                         <div className="flex items-center gap-2">
                           {getPlatformIcon(link.platform)}
                           <span className="text-sm">{link.platform}:</span>
@@ -356,7 +339,7 @@ export default function MentorCard() {
                         <button
                           type="button"
                           onClick={() => removeSocialLink(idx)}
-                          disabled={isLoading || isSubmitted}
+                          disabled={isFormDisabled}
                           className="text-red-500 disabled:opacity-50"
                         >
                           <X className="h-4 w-4" />
@@ -375,18 +358,18 @@ export default function MentorCard() {
                   ref={fileInputRef}
                   accept=".pdf,.doc,.docx"
                   onChange={handleFileChange}
-                  disabled={isLoading || isSubmitted}
+                  disabled={isFormDisabled}
                   className="w-full text-sm text-gray-500"
                 />
                 {errors.file && <p className="mt-1 text-sm text-red-600">{errors.file}</p>}
                 {selectedFile && (
                   <div className="mt-2 flex items-center gap-2">
                     <FileText className="h-5 w-5 text-green-600" />
-                    <span>{selectedFile.name}</span>
+                    <span className="truncate max-w-xs">{selectedFile.name}</span>
                     <button 
                       type="button" 
                       onClick={removeFile} 
-                      disabled={isLoading || isSubmitted}
+                      disabled={isFormDisabled}
                       className="text-red-500 disabled:opacity-50"
                     >
                       <X className="h-4 w-4" />
@@ -399,7 +382,7 @@ export default function MentorCard() {
             <button
               type="submit"
               className="mt-6 w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
-              disabled={isLoading || isSubmitted}
+              disabled={isFormDisabled}
             >
               {isLoading ? (
                 <span className="flex items-center justify-center gap-2">

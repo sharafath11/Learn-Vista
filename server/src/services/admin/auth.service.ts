@@ -23,6 +23,7 @@ class AdminAuthService implements IAdminAuthService {
       throw new Error("Invalid credentials");
     }
   }
+  
 }
 
 export default AdminAuthService;

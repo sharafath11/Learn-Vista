@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { IAuthService } from "../../core/interfaces/services/user/IAuthService";
 import { TYPES } from "../../core/types";
 import { IAuthController } from "../../core/interfaces/controllers/user/IAuthController";
-import { setTokensInCookies } from "../../utils/JWTtoken";
+import { clearTokens, setTokensInCookies } from "../../utils/JWTtoken";
 
 @injectable()
 export class AuthController implements IAuthController{
@@ -82,9 +82,8 @@ export class AuthController implements IAuthController{
     }
     async logout(req: Request, res: Response) {
         try {
-            res.clearCookie("token");
-            res.clearCookie("refreshToken");
-            res.status(200).json({ ok: true, msg: "Logged out successfully" });
+            clearTokens(res);
+                   
         } catch (error: any) {
             res.status(500).json({ ok: false, msg: error.message });
         }

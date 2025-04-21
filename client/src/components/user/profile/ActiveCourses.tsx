@@ -1,6 +1,6 @@
-import Image from "next/image"
-import Link from "next/link"
-import { Clock, BookOpen, ChevronRight } from "lucide-react"
+import Image from "next/image";
+import Link from "next/link";
+import { Clock, BookOpen, ChevronRight } from "lucide-react";
 
 const courses = [
   {
@@ -12,8 +12,72 @@ const courses = [
     progress: 75,
     image: "/placeholder.svg?height=200&width=400",
   },
-  // ... other courses
-]
+  // Add more courses...
+];
+
+const CourseCard = ({ course }: { course: typeof courses[0] }) => {
+  const {
+    title = "Untitled Course",
+    instructor = "Unknown",
+    category = "General",
+    duration = "N/A",
+    lessons = 0,
+    progress = 0,
+    image = "/placeholder.svg",
+  } = course;
+
+  const completedLessons = Math.round((lessons * progress) / 100);
+
+  return (
+    <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-all">
+      <div className="relative h-40">
+        <Image
+          src={image}
+          alt={title}
+          width={400}
+          height={200}
+          className="h-full w-full object-cover"
+        />
+        <span className="absolute top-3 right-3 bg-white/90 rounded-full px-2 py-1 text-xs font-medium shadow-sm">
+          {category}
+        </span>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+          <h3 className="text-white font-medium">{title}</h3>
+          <p className="text-xs text-white/90">{instructor}</p>
+        </div>
+      </div>
+      <div className="p-4">
+        <div className="flex justify-between text-sm text-gray-500 mb-3">
+          <div className="flex items-center">
+            <Clock className="h-4 w-4 mr-1" />
+            <span>{duration}</span>
+          </div>
+          <div className="flex items-center">
+            <BookOpen className="h-4 w-4 mr-1" />
+            <span>{lessons} lessons</span>
+          </div>
+        </div>
+        <div className="mb-3">
+          <div className="flex justify-between text-xs mb-1">
+            <span className="font-medium">{progress}% Complete</span>
+            <span className="text-gray-500">
+              {completedLessons}/{lessons} lessons
+            </span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-indigo-600 h-2 rounded-full"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+        <button className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors">
+          Continue Learning
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default function ActiveCourses() {
   return (
@@ -24,58 +88,12 @@ export default function ActiveCourses() {
           View all <ChevronRight className="h-4 w-4 ml-1" />
         </Link>
       </div>
-      
+
       <div className="grid gap-6 sm:grid-cols-2">
         {courses.map((course, index) => (
-          <div key={index} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-all">
-            <div className="relative h-40">
-              <Image
-                src={course.image || "/placeholder.svg"}
-                alt={course.title}
-                width={400}
-                height={200}
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute top-3 right-3 bg-white/90 rounded-full px-2 py-1 text-xs font-medium shadow-sm">
-                {course.category}
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                <h3 className="text-white font-medium">{course.title}</h3>
-                <p className="text-xs text-white/90">{course.instructor}</p>
-              </div>
-            </div>
-            <div className="p-4">
-              <div className="flex justify-between text-sm text-gray-500 mb-3">
-                <div className="flex items-center">
-                  <Clock className="h-4 w-4 mr-1" />
-                  <span>{course.duration}</span>
-                </div>
-                <div className="flex items-center">
-                  <BookOpen className="h-4 w-4 mr-1" />
-                  <span>{course.lessons} lessons</span>
-                </div>
-              </div>
-              <div className="mb-3">
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="font-medium">{course.progress}% Complete</span>
-                  <span className="text-gray-500">
-                    {Math.round((course.lessons * course.progress) / 100)}/{course.lessons} lessons
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-indigo-600 h-2 rounded-full" 
-                    style={{ width: `${course.progress}%` }}
-                  ></div>
-                </div>
-              </div>
-              <button className="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-colors">
-                Continue Learning
-              </button>
-            </div>
-          </div>
+          <CourseCard key={index} course={course} />
         ))}
       </div>
     </div>
-  )
+  );
 }

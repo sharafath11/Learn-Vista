@@ -1,6 +1,7 @@
 "use client";
 import { MentorContext } from "@/src/context/mentorContext";
 import { postRequest } from "@/src/services/api";
+import { MentorAPIMenthods } from "@/src/services/APImethods";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
@@ -19,7 +20,7 @@ const Header = () => {
   ];
 
   const handleLogout = async () => {
-    const res = await postRequest("/mentor/logout", {});
+    const res = await MentorAPIMenthods.logout()
     if (res.ok) {
       router.push("/mentor/login")
     }

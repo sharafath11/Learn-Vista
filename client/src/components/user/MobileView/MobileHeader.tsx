@@ -4,36 +4,46 @@ import React, { useState } from "react";
 import { Menu, X, Search, User } from "lucide-react";
 import { IUser } from "@/src/types/authTypes";
 import Link from "next/link";
+import Image from "next/image";
 
 interface MobileHeaderProps {
   user: IUser | null;
   handleLogout: () => void;
 }
 
+const NAV_ITEMS = ["Home", "Courses", "Live Classes", "Community"];
+
 const MobileHeader = ({ user, handleLogout }: MobileHeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-    document.body.style.overflow = isMobileMenuOpen ? "auto" : "hidden";
+    setIsMobileMenuOpen((prev) => !prev);
+    document.body.style.overflow = !isMobileMenuOpen ? "hidden" : "auto";
+    if (isDropdownOpen) setIsDropdownOpen(false);
   };
 
-  const navItems = ["Home", "Courses", "Live Classes", "Community"];
+  const handleProfileClick = () => setIsDropdownOpen((prev) => !prev);
+
+  const handleLogoutClick = () => {
+    handleLogout();
+    setIsDropdownOpen(false);
+    toggleMobileMenu();
+  };
 
   return (
-    <header className="md:hidden fixed top-0 left-0 right-0 bg-white shadow-md z-50 p-3 flex justify-between items-center">
-      <Link href="/">
-        <div className="flex items-center">
-          <img src="/images/logo.png" alt="Logo" className="w-8 h-8" />
-          <span className="ml-2 text-lg font-bold text-purple-900">Learn Vista</span>
-        </div>
+    <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white shadow-md p-3 flex justify-between items-center">
+      <Link href="/" className="flex items-center">
+        <Image src="/images/logo.png" alt="Logo" width={32} height={32} />
+        <span className="ml-2 text-lg font-bold text-purple-900">Learn Vista</span>
       </Link>
+
       <button onClick={toggleMobileMenu} className="text-gray-600">
         {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
+
       <div
-        className={`fixed inset-0 bg-white z-40 transition-transform ${
+        className={`fixed inset-0 bg-white z-40 transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -43,8 +53,9 @@ const MobileHeader = ({ user, handleLogout }: MobileHeaderProps) => {
             <X size={24} />
           </button>
         </div>
+
         <nav className="p-4 space-y-4">
-          {navItems.map((item) => (
+          {NAV_ITEMS.map((item) => (
             <a
               key={item}
               href="#"
@@ -55,6 +66,7 @@ const MobileHeader = ({ user, handleLogout }: MobileHeaderProps) => {
             </a>
           ))}
         </nav>
+
         <div className="p-4">
           <div className="relative">
             <input
@@ -67,51 +79,49 @@ const MobileHeader = ({ user, handleLogout }: MobileHeaderProps) => {
             </button>
           </div>
         </div>
+
         <div className="p-4 border-t">
           {user ? (
             <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center"
-              >
+              <button onClick={handleProfileClick} className="flex items-center">
                 <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
-                  {user?.image ? (
-                    <img src={user.image} alt="User" className="w-full h-full object-cover" />
+                  {user.profilePicture ? (
+                    <Image
+                      src={user.profilePicture
+                        
+                      }
+                      alt="User"
+                      width={40}
+                      height={40}
+                      className="object-cover w-full h-full"
+                    />
                   ) : (
                     <User size={20} className="text-gray-500" />
                   )}
                 </div>
               </button>
-              <div className="flex flex-col">
-                {isDropdownOpen && (
-                  <div className="space-y-2">
-                    <Link 
-                      href="/user/profile" 
-                      className="block text-gray-700 hover:text-purple-600"
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        toggleMobileMenu();
-                      }}
-                    >
-                      Profile
-                    </Link>
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        setIsDropdownOpen(false);
-                        toggleMobileMenu();
-                      }}
-                      className="block text-left text-gray-700 hover:text-purple-600"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
+
+              {isDropdownOpen && (
+                <div className="flex flex-col space-y-2">
+                  <Link
+                    href="/user/profile"
+                    className="text-gray-700 hover:text-purple-600"
+                    onClick={toggleMobileMenu}
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleLogoutClick}
+                    className="text-left text-gray-700 hover:text-purple-600"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
-            <Link 
-              href="/user/login" 
+            <Link
+              href="/user/login"
               className="block text-gray-700 hover:text-purple-600 p-2"
               onClick={toggleMobileMenu}
             >

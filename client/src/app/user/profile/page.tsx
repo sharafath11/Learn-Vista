@@ -3,10 +3,11 @@ import Header from "@/src/components/user/Header"
 import ProfileCard from "@/src/components/user/profile/ProfileCard"
 import BioCard from "@/src/components/user/profile/BioCard"
 import StatsCard from "@/src/components/user/profile/StatsCard"
-import MentorCard from "@/src/components/user/profile/MentorCard"
+
 import ActiveCourses from "@/src/components/user/profile/ActiveCourses"
 import ProgressOverview from "@/src/components/user/profile/ProgressOverview"
 import Recommendations from "@/src/components/user/profile/Recommendations"
+import MentorCard from "@/src/components/user/profile/MentorCard"
 
 export default function ProfilePage() {
   return (

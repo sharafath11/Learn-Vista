@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { TYPES } from '../../core/types';
 import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
 import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMentorAuth.Service';
-import { setTokensInCookies } from '../../utils/JWTtoken';
+import { clearTokens, setTokensInCookies } from '../../utils/JWTtoken';
 
 
 @injectable()
@@ -61,9 +61,8 @@ export class MentorAuthController implements IMentorAuthController {
 
   async logout(req: Request, res: Response): Promise<void> {
     try {
-      res.clearCookie('mentorToken');
-      res.clearCookie('mentorRefreshToken');
-      res.status(200).json({ ok: true, msg: 'Logged out successfully' });
+     clearTokens(res)
+     
     } catch (error: any) {
       res.status(400).json({ ok: false, msg: 'Logout failed' });
     }

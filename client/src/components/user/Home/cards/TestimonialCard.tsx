@@ -10,27 +10,34 @@ interface TestimonialCardProps {
   onClick?: () => void;
 }
 
-export default function TestimonialCard({ name, role, content, avatar, active, onClick }: TestimonialCardProps) {
+export default function TestimonialCard({
+  name,
+  role,
+  content,
+  avatar,
+  active,
+  onClick,
+}: TestimonialCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: active ? 1 : 0, y: active ? 0 : 20 }}
-      transition={{ duration: 0.5 }}
-      className={`absolute inset-0 bg-gray-50 p-8 rounded-xl shadow-md flex flex-col justify-center ${
-        !active && "pointer-events-none"
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className={`absolute inset-0 bg-gray-50 p-6 sm:p-8 rounded-xl shadow transition-opacity duration-300 ${
+        !active ? "pointer-events-none" : ""
       }`}
       onClick={onClick}
     >
-      <div className="flex items-center mb-6">
-        <div className="relative h-16 w-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-2xl font-bold mr-6">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
           {avatar}
         </div>
         <div>
-          <h4 className="text-xl font-semibold text-gray-900">{name}</h4>
-          <p className="text-gray-600">{role}</p>
+          <h4 className="text-base sm:text-lg font-semibold text-gray-900">{name}</h4>
+          <p className="text-sm text-gray-600">{role}</p>
         </div>
       </div>
-      <p className="text-gray-700 text-lg italic">"{content}"</p>
+      <p className="text-gray-700 text-sm sm:text-lg italic">"{content}"</p>
     </motion.div>
   );
 }

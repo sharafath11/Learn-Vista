@@ -4,7 +4,7 @@ import { inject, injectable } from "inversify";
 import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IAdminAuth.Controller";
 import { TYPES } from "../../core/types";
 import { IAdminAuthService } from "../../core/interfaces/services/admin/IAdminAuthService";
-import { setTokensInCookies } from "../../utils/JWTtoken";
+import { clearTokens, setTokensInCookies } from "../../utils/JWTtoken";
 @injectable()
 class AdminAuthController implements IAdminAuthController{
   constructor(
@@ -31,9 +31,7 @@ class AdminAuthController implements IAdminAuthController{
   
   logout(req: Request, res: Response):void {
     try {
-      res.clearCookie("adminToken");
-      res.clearCookie("adminRefreshToken");
-      res.status(200).json({ ok: true, msg: "Logged out successfully" });
+     clearTokens(res)
      } catch (error :any) {
          res.status(400).json({ ok: false, msg: "somthing wrongggg :)" });
      }

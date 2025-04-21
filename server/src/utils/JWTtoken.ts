@@ -76,5 +76,5 @@ export const clearTokens = (res: Response) => {
     sameSite: 'lax', 
    
   });
-  return res.status(200).json({ message: 'Logged out successfully' });
+  return res.status(200).json({ ok:true,msg: 'Logged out successfully' });
 };
