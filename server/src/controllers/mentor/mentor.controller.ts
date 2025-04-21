@@ -17,7 +17,7 @@ export class MentorController {
       
       const decoded = decodeToken(req.cookies.mentorToken) 
       if (!decoded?.id) {
-        res.status(401).json({ ok: false, msg: "Unauthorized: Invalid token" });
+        res.status(401).json({ ok: false, msg: "Unauthorized: Invalid token",role:"mentor" });
         return;
       }
 

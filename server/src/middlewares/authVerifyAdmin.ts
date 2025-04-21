@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { decodeToken, verifyAccessToken } from "../utils/JWTtoken";
+import { clearTokens, decodeToken, verifyAccessToken } from "../utils/JWTtoken";
 
 type Role = "admin" | "user" | "mentor";
 
@@ -18,56 +18,28 @@ declare global {
 }
 
 const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies?.adminToken;
-  const refreshToken = req.cookies?.adminRefreshToken;
-  const ADMIN_SECRET = process.env.JWT_SECRET || "your_admin_secret";
-  const ADMIN_REFRESH_SECRET = process.env.REFRESH_SECRET || "your_admin_refresh_secret";
-
-  if (token) {
-    try {
-      const decoded = decodeToken(token)
-      if (decoded?.id && decoded.role === "admin") {
-        next();
-        return
-      }
-    } catch (err) {
-      console.log("Access token error");
-    }
+  const accessToken = req.cookies?.token;
+  console.log(1)
+  if (!accessToken) {
+    console.log(2)
+     res
+      .status(401)
+       .json({ ok: false, msg: "Authentication required" });
+       return
   }
-
-  if (refreshToken) {
-    try {
-      const decodedRefresh =decodeToken(token)
-      if (decodedRefresh && decodedRefresh.role === "admin") {
-        const newAccessToken = jwt.sign(
-          { id: decodedRefresh.id, role: decodedRefresh.role },
-          ADMIN_SECRET,
-          { expiresIn: "15m" }
-        );
-
-        res.cookie("adminToken", newAccessToken, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "strict",
-          maxAge: 15 * 60 * 1000
-        });
-
-       
-        next();
-        return
-      } else {
-        res.status(403).json({ ok: false, msg: "Invalid role" });
-        return
-      }
-    } catch (err: any) {
-      console.log("Refresh token error:", err.message);
-      res.status(401).json({ ok: false, msg: "Refresh token invalid or expired" });
-      return
-    }
+  console.log(3)
+ 
+  const decoded = verifyAccessToken(accessToken);
+  console.log(decoded)
+  if (decoded?.id == "admin11Sharafath" && decoded.role === "admin") {
+    console.log(4)
+    next();
+    return
   }
+  console.log(5)
+   clearTokens(res)
+ res.json({ok:false,msg:"please loginf"})
 
-  res.status(401).json({ ok: false, msg: "Authentication required" });
-  return
 };
 
 export default verifyAdmin;

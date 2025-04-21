@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import AdminAuthService from "../../services/admin/auth.service";
+
 import { inject, injectable } from "inversify";
 import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IAdminAuth.Controller";
 import { TYPES } from "../../core/types";
 import { IAdminAuthService } from "../../core/interfaces/services/admin/IAdminAuthService";
+import { setTokensInCookies } from "../../utils/JWTtoken";
 @injectable()
 class AdminAuthController implements IAdminAuthController{
   constructor(
@@ -19,19 +20,7 @@ class AdminAuthController implements IAdminAuthController{
   
     try {
       const { accessToken, refreshToken } = this.adminAuthServices.login(email, password);
-      res.cookie("token", accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 60 * 60 * 1000, 
-      });
-  
-      res.cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
+      setTokensInCookies(res,accessToken,refreshToken)
   
       res.status(200).json({ ok: true, msg: "Login successful" });
     } catch (error: any) {

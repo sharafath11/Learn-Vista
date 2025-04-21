@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { TYPES } from '../../core/types';
 import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
 import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMentorAuth.Service';
+import { setTokensInCookies } from '../../utils/JWTtoken';
 
 
 @injectable()
@@ -19,23 +20,11 @@ export class MentorAuthController implements IMentorAuthController {
         return;
       }
       const result = await this.authService.loginMentor(req.body.email, req.body.password);
-      res.cookie('token', result.token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 30 * 24 * 60 * 60 * 1000, 
-      });
-      res.cookie('refreshToken', result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-     
+      setTokensInCookies(res,result.token,result.refreshToken)
       res.status(200).json({ ok: true, msg: 'Login successful', payload: result });
     } catch (error: any) {
       console.error(error.message)
-      res.status(401).json({ ok: false, msg:error.message });
+      res.status(401).json({ ok: false, msg:error.message ,role:"mentor"});
     }
   }
 

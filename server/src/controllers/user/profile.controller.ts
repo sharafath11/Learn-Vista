@@ -1,13 +1,12 @@
 import { injectable, inject } from "inversify";
 import { Request, Response } from "express";
-import { ProfileService } from "../../services/user/profile.service";
 import { TYPES } from "../../core/types";
 
 import { validateMentorApplyInput } from "../../utils/userValidation";
 import { IProfileController } from "../../core/interfaces/controllers/user/IProfileController";
 import { IProfileService } from "../../core/interfaces/services/user/IUserProfileService";
 import { ISocialLink } from "../../types/mentorTypes";
-import { decodeToken } from "../../utils/JWTtoken";
+import { decodeToken, verifyAccessToken } from "../../utils/JWTtoken";
 
 @injectable()
 export class ProfileController implements IProfileController{
@@ -54,19 +53,19 @@ export class ProfileController implements IProfileController{
       console.log("Parsed socialLinks:", parsedSocialLinks);
   
     
-      const decoded = decodeToken(req.cookies.token);
-      if (!decoded) {
-        res.status(401).json({ ok: false, msg: "Please login" });
+      const decoded = verifyAccessToken(req.cookies.token);
+      if (!decoded||!decoded.id||decoded.role!=="user") {
+        res.status(401).json({ ok: false, msg: "Please login",role:"user" });
         return;
       }
   
-      const id = typeof decoded === "object" && "userId" in decoded ? decoded.id : decoded; 
+      // const id = typeof decoded === "object" && "userId" in decoded ? decoded.id : decoded; 
       const mentor = await this.profileService.applyMentor(
         email,
         username,
         req.file,
         parsedExpertise,
-        id,
+        decoded.id,
         phoneNumber,
         parsedSocialLinks
       );

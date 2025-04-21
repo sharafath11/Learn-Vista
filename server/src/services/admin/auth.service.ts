@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { injectable } from "inversify";
 import { IAdminAuthService } from "../../core/interfaces/services/admin/IAdminAuthService";
+import { generateAccessToken, generateRefreshToken } from "../../utils/JWTtoken";
 
 @injectable()
 class AdminAuthService implements IAdminAuthService {
@@ -9,17 +10,8 @@ class AdminAuthService implements IAdminAuthService {
       process.env.ADMIN_USERNAME === email &&
       process.env.ADMIN_PASSWORD === password
     ) {
-      const accessToken = jwt.sign(
-        { id: "admin@123", role: "admin" },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "1h" }
-      );
-      
-      const refreshToken = jwt.sign(
-        { id: "admin@123", role: "admin" },
-        process.env.REFRESH_SECRET as string,
-        { expiresIn: "7d" }
-      );
+      const accessToken = generateAccessToken("admin11Sharafath", "admin");
+      const refreshToken=generateRefreshToken("admin11Sharafath","admin")
       
 
      

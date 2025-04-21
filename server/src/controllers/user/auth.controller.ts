@@ -2,8 +2,8 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { IAuthService } from "../../core/interfaces/services/user/IAuthService";
 import { TYPES } from "../../core/types";
-import { AuthenticatedRequest } from "../../types/userTypes";
 import { IAuthController } from "../../core/interfaces/controllers/user/IAuthController";
+import { setTokensInCookies } from "../../utils/JWTtoken";
 
 @injectable()
 export class AuthController implements IAuthController{
@@ -28,20 +28,7 @@ export class AuthController implements IAuthController{
             
             const result = await this.authService.googleAuth(req.body);
             
-            res.cookie("token", result.token, {
-                httpOnly: false,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                maxAge: 15 * 60 * 1000,
-            });
-            
-            res.cookie("refreshToken", result.refreshToken, {
-                httpOnly: false,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-            });
-             console.log("i love you")
+            setTokensInCookies(res,result.token,result.refreshToken)
             
             res.status(200).json({ 
                 ok: true, 
@@ -81,28 +68,16 @@ export class AuthController implements IAuthController{
 
     async login(req: Request, res: Response) {
         try {
-            console.log("hyloooooooooooooooooooooooooooooooooooooooooooooooooossssssssssssss")
+          
             const { email, password, googleId } = req.body;
             const { token, refreshToken, user } = await this.authService.loginUser(email, password, googleId);
             
-            res.cookie("token", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                maxAge: 15 * 60 * 1000,
-            });
-            
-            res.cookie("refreshToken", refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-            });
+            setTokensInCookies(res,token,refreshToken)
             
             res.status(200).json({ ok: true, msg: "Login successful", user });
         } catch (error: any) {
             console.error(error.message)
-            res.status(401).json({ ok: false, msg: error.message });
+            res.status(401).json({ ok: false, msg: error.message,role:"user" });
         }
     }
     async logout(req: Request, res: Response) {

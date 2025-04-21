@@ -141,7 +141,8 @@ export class AuthService implements IAuthService {
     if (!user) {
       throw new Error("User creation/update failed");
     }
-    const userId=user.id as string
+    const userId = user.id as string
+    
     const token = generateAccessToken(
       userId,
       user.role

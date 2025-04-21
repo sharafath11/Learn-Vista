@@ -24,7 +24,6 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-// Response interceptor to handle 401 errors
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -48,6 +47,7 @@ axiosInstance.interceptors.response.use(
           //original reqst
         return axiosInstance(originalRequest);
       } catch (refreshError) {
+        console.log("abscddddvrgv")
         processQueue(refreshError, null);
         showInfoToast("Session expired. Please log in again.");
         return Promise.reject(refreshError);

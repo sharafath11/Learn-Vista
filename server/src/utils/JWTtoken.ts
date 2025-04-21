@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'yourAccessSecret';
@@ -18,7 +19,7 @@ export const generateRefreshToken = (id: string, role: string): string => {
 };
 export const verifyAccessToken = (token: string): TokenPayload | null => {
   try {
-    return jwt.verify(token, SECRET_KEY) as TokenPayload;
+    return jwt.verify(token,SECRET_KEY  ) as TokenPayload;
   } catch (error) {
     return null;
   }
@@ -38,4 +39,42 @@ export const decodeToken = (token: string): TokenPayload | null => {
   } catch (error) {
     return null;
   }
+};
+export const refreshAccessToken = (refreshToken: string) => {
+  const decoded = verifyRefreshToken(refreshToken);
+  if (!decoded) return null;
+
+  const newAccessToken = generateAccessToken(decoded.id, decoded.role);
+  const newRefreshToken = generateRefreshToken(decoded.id, decoded.role);
+
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+};
+export const setTokensInCookies = (res: Response, accessToken: string, refreshToken: string) => {
+  res.cookie("token", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax", 
+    maxAge: 15 * 60 * 1000,
+  });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", 
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, 
+  });
+};
+export const clearTokens = (res: Response) => {
+  res.clearCookie('token', {
+    httpOnly: true,  
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'lax', 
+  });
+
+  res.clearCookie('refreshToken', {
+    httpOnly: true,  
+    secure: process.env.NODE_ENV === 'production',  
+    sameSite: 'lax', 
+   
+  });
+  return res.status(200).json({ message: 'Logged out successfully' });
 };
