@@ -27,5 +27,5 @@ export const verifyMentor = (
    }
    console.log(5)
     clearTokens(res)
-  res.json({ok:false,msg:"please loginf"})
+  
 };

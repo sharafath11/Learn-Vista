@@ -15,6 +15,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const route = useRouter()
   useEffect(() => {
+    // alert("andi mook")
     const fetchUserData = async () => {
         const res = await UserAPIMethods.fetchUser();
         if (res.ok) {

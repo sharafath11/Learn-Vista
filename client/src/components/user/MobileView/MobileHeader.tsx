@@ -6,6 +6,7 @@ import { IUser } from "@/src/types/authTypes";
 import Link from "next/link";
 import Image from "next/image";
 
+
 interface MobileHeaderProps {
   user: IUser | null;
   handleLogout: () => void;

@@ -18,4 +18,5 @@ import { IMentor, ISocialLink } from "../../../../types/mentorTypes";
       application: IMentor;
       cvUrl: string;
     }>;
+    editProfileService(username:string,imageBuffer:Buffer|undefined,id:string):Promise<{username:string,image:string}>
   }

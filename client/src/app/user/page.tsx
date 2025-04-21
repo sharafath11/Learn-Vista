@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { BookOpen, Award, Users, Clock, ChevronRight } from "lucide-react";
-
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Header from "@/src/components/user/Header";
@@ -10,9 +9,6 @@ import CategoryCard from "@/src/components/user/Home/cards/CategoryCard";
 import CourseCard from "@/src/components/user/Home/cards/CourseCard";
 import FeatureCard from "@/src/components/user/Home/cards/FeatureCard";
 import TestimonialCard from "@/src/components/user/Home/cards/TestimonialCard";
-import Footer from "@/src/components/user/Footer";
-
-
 export default function Home() {
   // Animation controls
   const controls = useAnimation();
@@ -69,10 +65,7 @@ export default function Home() {
    
     <div className="min-h-screen bg-white overflow-x-hidden">
       <Header />
-
-      {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-indigo-50 relative overflow-hidden">
-        {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
           <div className="absolute top-20 left-10 w-64 h-64 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
           <div className="absolute top-40 right-20 w-80 h-80 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
@@ -125,8 +118,6 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
-      {/* Stats Section */}
       <motion.section 
         ref={ref}
         initial="hidden"
@@ -411,8 +402,6 @@ export default function Home() {
           </div>
         </div>
       </motion.section>
-
-      <Footer />
     </div>
   );
 }

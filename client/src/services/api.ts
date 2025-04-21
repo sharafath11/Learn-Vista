@@ -9,7 +9,7 @@ export const postRequest = async (url: string, body: object | FormData) => {
 
     const res = await axiosInstance.post(url, body, { headers });
     if (res.data.ok) return res.data;
-
+    console.log(res)
     showErrorToast(res.data.msg || "Something went wrong!");
     return null;
   } catch (error: any) {
@@ -22,6 +22,7 @@ export const getRequest = async (url: string, params?: object) => {
   try {
     const res = await axiosInstance.get(url, params ? { params } : {});
     if (res.data.ok) return res.data;
+    console.log("5444erf",res)
 
     showErrorToast(res.data.msg || "Something went wrong!");
     return null;

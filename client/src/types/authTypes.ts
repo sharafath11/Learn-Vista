@@ -87,3 +87,8 @@ declare module "next-auth/jwt" {
     image?: string | null;
   }
 }
+export interface EditProfilePayload {
+  username: string;
+  image: File | null;
+}
+

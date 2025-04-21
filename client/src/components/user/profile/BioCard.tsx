@@ -23,7 +23,7 @@ export default function BioCard() {
         {bioDetails.map(({ icon: Icon, text }, index) => (
           <div key={index} className="flex items-center text-sm text-gray-500">
             <Icon className="h-4 w-4 mr-2" />
-            <span>{text}</span>
+            <span>{text} </span>
           </div>
         ))}
       </div>

@@ -1,17 +1,40 @@
-// upload.ts
 import multer from "multer";
 
 const storage = multer.memoryStorage();
 
-const upload = multer({
+// Valid file types
+const PDF_MIME_TYPES = ['application/pdf'];
+const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+// Common upload configuration
+const commonConfig = {
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, 
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+};
+
+// PDF upload middleware
+export const upload = multer({
+  ...commonConfig,
   fileFilter: (req, file, cb) => {
-    if (!file.mimetype.startsWith("application/pdf")) {
-      return cb(new Error("Only PDF files are allowed!"));
+    if (PDF_MIME_TYPES.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are allowed!'));
     }
-    cb(null, true);
-  },
+  }
 });
 
+// Image upload middleware
+export const uploadImage = multer({
+  ...commonConfig,
+  fileFilter: (req, file, cb) => {
+    if (IMAGE_MIME_TYPES.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`Only image files are allowed (${IMAGE_MIME_TYPES.join(', ')})`));
+    }
+  }
+});
+
+// Default export (can be removed if not needed)
 export default upload;

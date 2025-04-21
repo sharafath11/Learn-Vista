@@ -1,5 +1,5 @@
 import { userBlock } from "../types/adminTypes";
-import { ILogin, IUserRegistration } from "../types/authTypes";
+import { EditProfilePayload, ILogin, IUserRegistration } from "../types/authTypes";
 import { MentorSignupData } from "../types/mentorTypes";
 import { getRequest, patchRequest, postRequest } from "./api";
 
@@ -9,6 +9,7 @@ export const UserAPIMethods = {
   sendOtp: async (email: string) => await postRequest("/otp", { email: email }),
   signUp: async (userData: IUserRegistration) => await postRequest("/signup", userData),
   applyMentor: async (data: FormData) => await postRequest("/apply-mentor", data),
+  editProfile:async(data:FormData)=>await postRequest("/edit-profile",data),
   logout:async()=>await postRequest("/logout",{})
 }
 

@@ -11,6 +11,7 @@ import { useUserContext } from "@/src/context/userAuthContext";
 import { showErrorToast } from "@/src/utils/Toast";
 import { UserAPIMethods } from "@/src/services/APImethods";
 import MobileHeader from "./MobileView/MobileHeader";
+// import CloudinaryImage from "../CloudinaryImage";
 
 const Header = () => {
   const { user, setUser } = useUserContext();

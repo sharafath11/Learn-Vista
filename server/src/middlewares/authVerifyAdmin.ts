@@ -38,7 +38,6 @@ const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
   }
   console.log(5)
    clearTokens(res)
- res.json({ok:false,msg:"please loginf"})
 
 };
 

@@ -5,6 +5,7 @@ import { UserTable } from "@/src/components/admin/users/UserTable";
 import { patchRequest } from "@/src/services/api";
 import { AdminAPIMethods } from "@/src/services/APImethods";
 import { IUser } from "@/src/types/authTypes";
+import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
 import { useEffect, useState } from "react";
 
 const User = () => {
@@ -51,13 +52,14 @@ const User = () => {
 
   async function onBlockToggle(id: string, status: boolean) {
     const res = await AdminAPIMethods.blockUser({ id, status })
-    console.log("fhjfjfyjjjfy",res)
+    
     if (res.ok) {
       setUsers(prev =>
         prev.map(user =>
           user.id === id ? { ...user, isBlocked: status } : user
         )
       );
+      status?showInfoToast(`User blocked`):showSuccessToast("user Unblock")
     }
   }
 

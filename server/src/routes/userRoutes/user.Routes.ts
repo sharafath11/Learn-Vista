@@ -3,9 +3,8 @@ import container from "../../core/di/container";
 import AuthController from "../../controllers/user/auth.controller";
 import { TYPES } from "../../core/types";
 import { ProfileController } from "../../controllers/user/profile.controller";
-import { UserController } from "../../controllers/user/user.controller";
 import { authenticateToken } from "../../middlewares/authenticateToken";
-import upload from "../../middlewares/upload";
+import upload, { uploadImage } from "../../middlewares/upload";
 import { IUserController } from "../../core/interfaces/controllers/user/IUserController";
 
 const router = express.Router();
@@ -26,5 +25,6 @@ router.post("/apply-mentor",
   upload.single("cv"),
   profileController.applyMentor.bind(profileController)
 );
+router.post('/edit-profile',authenticateToken, uploadImage.single('image'),profileController.editProfile.bind(profileController) )
 
 export default router;

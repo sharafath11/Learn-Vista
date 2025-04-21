@@ -36,7 +36,7 @@ export class ProfileController implements IProfileController{
           throw new Error("Invalid expertise format");
         }
       } else {
-        parsedExpertise = expertise; // Already an array
+        parsedExpertise = expertise; 
       }
       let parsedSocialLinks: ISocialLink[] = [];
       if (typeof socialLinks === "string") {
@@ -74,6 +74,36 @@ export class ProfileController implements IProfileController{
     } catch (error: any) {
       console.error(error);
       res.status(500).json({ ok: false, msg: error.message || "Server error" });
+    }
+  }
+   async  editProfile(req: Request, res: Response) {
+    try {
+      const { username } = req.body;
+      const image = req.file?.buffer;
+      
+      // if (!username || !image) {
+      //   res.status(400).json({ ok:false,msg: "Username and image are required." });
+      //   return
+      // }
+  
+      const decoded = decodeToken(req.cookies.token);
+      if (!decoded?.id) {
+        res.status(401).json({ok:false, msg: "Invalid token." });
+        return
+      }
+  
+      const result = await this.profileService.editProfileService(username, image || undefined, decoded.id);
+  
+       res.status(200).json({
+         ok: true,
+         msg:"Profile updated Succesfull",
+        data: result,
+       });
+       return
+    } catch (error) {
+      console.error("Edit profile error:", error);
+      res.status(500).json({ ok:false,msg: "Internal server error." });
+      return
     }
   }
 }

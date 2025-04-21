@@ -12,7 +12,7 @@ const courses = [
     progress: 75,
     image: "/placeholder.svg?height=200&width=400",
   },
-  // Add more courses...
+  
 ];
 
 const CourseCard = ({ course }: { course: typeof courses[0] }) => {
