@@ -100,9 +100,9 @@ export class ProfileController implements IProfileController{
         data: result,
        });
        return
-    } catch (error) {
+    } catch (error:any) {
       console.error("Edit profile error:", error);
-      res.status(500).json({ ok:false,msg: "Internal server error." });
+      res.status(500).json({ ok:false,msg: error.message });
       return
     }
   }

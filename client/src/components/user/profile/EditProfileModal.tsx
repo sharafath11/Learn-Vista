@@ -44,10 +44,18 @@ export default function EditProfileModal({
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
-      setImagePreview(URL.createObjectURL(file));
+    
+    if (!file) return;
+  
+    // Simple image type check
+    if (!file.type.includes('image')) {
+      showErrorToast('Only image files are allowed');
+      return;
     }
+  
+    // If valid image, set the state
+    setSelectedImage(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleForgotPassword = async () => {

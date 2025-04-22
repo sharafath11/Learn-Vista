@@ -31,6 +31,7 @@ export const uploadImage = multer({
     if (IMAGE_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
+      
       cb(new Error(`Only image files are allowed (${IMAGE_MIME_TYPES.join(', ')})`));
     }
   }
