@@ -19,6 +19,8 @@ router.post("/otp", authController.sendOtp.bind(authController));
 router.post("/otp-verify", authController.verifyOtp.bind(authController));
 router.post("/login", authController.login.bind(authController));
 router.post("/logout", authController.logout.bind(authController));
+router.post("/forgot-password", userController.forgotPasword.bind(userController));
+router.post("/reset-password",userController.resetPassword.bind(userController))
 router.get("/user", authenticateToken, userController.getUser.bind(userController));
 router.post("/apply-mentor", 
   authenticateToken,

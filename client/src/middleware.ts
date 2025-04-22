@@ -11,6 +11,8 @@ export async function middleware(req: NextRequest) {
     "/mentor/login", 
     "/admin/login",
     "/user/signup",
+    "/user/forgot-password",
+    "/user/reset-password",
     "/api/auth"
   ];
   if (publicRoutes.some(route => path.startsWith(route))) {

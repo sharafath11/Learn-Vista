@@ -1,5 +1,5 @@
 import { userBlock } from "../types/adminTypes";
-import { EditProfilePayload, ILogin, IUserRegistration } from "../types/authTypes";
+import {  ILogin, IUserRegistration } from "../types/authTypes";
 import { MentorSignupData } from "../types/mentorTypes";
 import { getRequest, patchRequest, postRequest } from "./api";
 
@@ -12,7 +12,8 @@ export const UserAPIMethods = {
   applyMentor: async (data: FormData) => await postRequest("/apply-mentor", data),
   editProfile:async(data:FormData)=>await postRequest("/edit-profile",data),
   logout: async () => await postRequest("/logout", {}),
-  // forgotPassword:async()=>await postRequest("/forgotPassword",)
+  forgotPassword: async (email: string) => await postRequest("/forgot-password", { email: email }),
+  resetPassword:async (token:string,password:string)=>await postRequest("/reset-password",{token:token,password:password})
 }
 
 export const AdminAPIMethods = {

@@ -36,3 +36,35 @@ export async function sendMentorStatusChangeEmail(email: string, status: string)
 
   await transporter.sendMail(mailOptions);
 }
+
+export const sendPasswordResetEmail = async (to: string, resetLink: string) => {
+  try {
+    const mailOptions = {
+      from: `"Your App" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: "Password Reset Request",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px;">
+          <h2 style="color: #2563eb;">Password Reset</h2>
+          <p>Click the button below to reset your password:</p>
+          <a href="${resetLink}" 
+             style="display: inline-block; padding: 10px 20px; 
+                    background: #2563eb; color: white; 
+                    text-decoration: none; border-radius: 5px;">
+            Reset Password
+          </a>
+          <p style="margin-top: 20px; color: #6b7280;">
+            This link expires in <strong>1 hour</strong>.
+          </p>
+        </div>
+      `,
+      text: `Password Reset Link: ${resetLink}\n\nThis link expires in 1 hour.`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    return { success: true };
+  } catch (error) {
+    console.error('📧 Email send error:', error);
+    return { success: false, error: 'Failed to send email' };
+  }
+};

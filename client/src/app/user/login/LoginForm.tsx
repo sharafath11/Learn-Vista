@@ -4,10 +4,11 @@ import { FcGoogle } from "react-icons/fc";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { ILogin } from "@/src/types/authTypes";
 import { useUserContext } from "@/src/context/userAuthContext";
-import { showSuccessToast } from "@/src/utils/Toast";
+import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { UserAPIMethods } from "@/src/services/APImethods";
+import Link from "next/link";
 
 export default function LoginForm() {
   const [data, setData] = useState<ILogin>({ email: "", password: "", googleId: "" });
@@ -51,6 +52,7 @@ export default function LoginForm() {
         showSuccessToast(res.msg);
         router.push("/");
       }
+      setIsLoading(false);
     } finally {
       setIsLoading(false);
     }
@@ -110,7 +112,7 @@ export default function LoginForm() {
           <label className="flex items-center">
             <input type="checkbox" className="mr-2" /> Remember me
           </label>
-          <a href="#" className="text-purple-600 hover:underline">Forgot password?</a>
+          <Link href="/user/forgot-password" className="text-purple-600 hover:underline">Forgot password?</Link>
         </div>
 
         <button

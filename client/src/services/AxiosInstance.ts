@@ -49,8 +49,8 @@ axiosInstance.interceptors.response.use(
     
     const originalRequest = error.config;
    
-    //   showErrorToast(error.response.data.msg);
-    //  console.log(error.response.data.msg);
+      showErrorToast(error.response.data.msg);
+     console.log(error.response.data.msg);
      
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
