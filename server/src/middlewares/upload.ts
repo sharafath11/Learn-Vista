@@ -36,5 +36,5 @@ export const uploadImage = multer({
   }
 });
 
-// Default export (can be removed if not needed)
+
 export default upload;

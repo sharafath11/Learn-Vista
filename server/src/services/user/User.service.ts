@@ -13,6 +13,8 @@ export class UserService {
         if (!user) {
             throw new Error("User not found");
         }
+        if (user.isBlocked) throw new Error("User was blocked")
+        // console.log("andi")
         return {
             username: user.username,
             email: user.email,

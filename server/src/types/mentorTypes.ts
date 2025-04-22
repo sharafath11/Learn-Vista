@@ -36,8 +36,6 @@ export interface IMentor extends Document {
 
 
 export type SafeMentor = Omit<IMentor, 'password'>;
-
-// Add this new interface that was missing
 export interface IMentorDTO {
   id: string;
   userId: string;

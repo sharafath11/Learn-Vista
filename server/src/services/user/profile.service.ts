@@ -94,24 +94,17 @@ export class ProfileService implements IProfileService {
     try {
       const user = await this.userRepository.findById(id);
       if (!user) throw new Error("User not found");
-  
-      // If the username is the same, don't update it
+      if(user.isBlocked) throw new Error("THis user was Blocked")
       const updatedUsername = username !== user.username ? username : user.username;
-  
-      // If no image is provided, keep the existing image
       const imageUrl = imageBuffer ? await uploadToCloudinary(imageBuffer) : user.profilePicture;
-  
-      // If the profile picture exists and is from Cloudinary, delete the old image
       if (imageBuffer && user.profilePicture?.includes('cloudinary')) {
         await deleteFromCloudinary(user.profilePicture).catch(err =>
           console.error("Failed to delete old profile picture:", err)
         );
       }
   
-      // Ensure the image is always a string (fallback to an empty string if null or undefined)
-      const safeImageUrl = imageUrl || ''; // Fallback to an empty string if no image URL
-  
-      // Update the user data
+   
+      const safeImageUrl = imageUrl || ''; 
       await this.userRepository.update(id, {
         username: updatedUsername,
         profilePicture: safeImageUrl,
@@ -119,7 +112,7 @@ export class ProfileService implements IProfileService {
   
       return {
         username: updatedUsername,
-        image: safeImageUrl,  // Always a string
+        image: safeImageUrl, 
       };
     } catch (error) {
       console.error('Profile update failed:', error);

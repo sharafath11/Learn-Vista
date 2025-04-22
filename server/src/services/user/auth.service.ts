@@ -70,7 +70,7 @@ export class AuthService implements IAuthService {
     let userId=user?.id as string
     
     if (!user) throw new Error("User not found");
-    if (user.isBlocked) throw new Error("This account is blocked");
+   
     
     if (googleId && user.googleId === googleId) {
       
@@ -92,6 +92,7 @@ export class AuthService implements IAuthService {
     if (!user.password) throw new Error("Password not set for this account");
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw new Error("Invalid credentials");
+    if (user.isBlocked) throw new Error("This account is blocked");
     
     const token = generateAccessToken(
       userId,
@@ -141,6 +142,7 @@ export class AuthService implements IAuthService {
     if (!user) {
       throw new Error("User creation/update failed");
     }
+    if(user.isBlocked) throw new Error("This user blocked ");
     const userId = user.id as string
     
     const token = generateAccessToken(

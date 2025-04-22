@@ -20,6 +20,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         const res = await UserAPIMethods.fetchUser();
         if (res.ok) {
           setUser(res.user);
+         
         }
         else {
           route.push("/user/login")

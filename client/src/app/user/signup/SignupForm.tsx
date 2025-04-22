@@ -7,11 +7,12 @@ import { useRouter } from "next/navigation"
 import { FcGoogle } from "react-icons/fc"
 import { signIn, useSession } from "next-auth/react"
 
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import { registrationValidation } from "@/src/utils/user/validation"
+import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast"
+// import { registrationValidation } from "@/src/utils/user/validation"npm
 import type { ILogin, IUserRegistration } from "@/src/types/authTypes"
 import { FormOTP } from "./FormOTP"
 import { UserAPIMethods } from "@/src/services/APImethods"
+import { validateSignup } from "@/src/utils/user/validation"
 
 export default function SignupForm() {
   const router = useRouter()
@@ -87,7 +88,7 @@ export default function SignupForm() {
       } else if (res && typeof res === "string" && res.includes("OTP already send it")) {
         setOtpSent(true)
       } else {
-        showErrorToast("Failed to send OTP")
+        // showErrorToast("Failed to send OTP")
       }
     } else {
       showErrorToast("Email not found")
@@ -100,7 +101,11 @@ export default function SignupForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!registrationValidation(userData)) return
+    const validation = validateSignup(userData);
+if (!validation.isValid) {
+  showErrorToast(validation.message);
+  return;
+}
     if (!otpVerified) {
       showSuccessToast("Please verify your OTP first")
       return

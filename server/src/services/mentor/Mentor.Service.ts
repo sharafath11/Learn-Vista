@@ -14,7 +14,10 @@ export class MentorService implements IMentorService {
     const mentor = await this.mentorRepo.findById(id);
     console.log(mentor)
     if (!mentor) throw new Error("Please login");
-    if (mentor.isBlock) throw new Error("Your account was blocked. Please contact support");
+    if (mentor.isBlock) {
+      throw new Error("Your account was blocked. Please contact support")
+    };
+    
 
     return {
       username: mentor.username,

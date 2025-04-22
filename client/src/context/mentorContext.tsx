@@ -17,7 +17,10 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   async function getMentorDetils() {
     const res = await getRequest("/mentor/get-mentor");
     console.log(res)
-    if (res?.ok) setMentor(res?.mentor)
+    if (res?.ok) {
+      if(res.msg.includes("Logged out successfully")) route.push("/mentor/login")
+      setMentor(res?.mentor)
+    }
     else route.push("/mentor/login")
   }
   return (

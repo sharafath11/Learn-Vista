@@ -2,11 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { X, ChevronLeft, Mail, Lock, User, Camera, CheckCircle } from "lucide-react";
+import { X, ChevronLeft, Mail, Lock, User, Camera, CheckCircle, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserAPIMethods } from "@/src/services/APImethods";
 import { useUserContext } from "@/src/context/userAuthContext";
-import { showSuccessToast } from "@/src/utils/Toast";
+import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 
 type View = "profile" | "forgotPassword" | "resetSent";
 
@@ -15,7 +15,6 @@ interface EditProfileModalProps {
   onClose: () => void;
   username?: string;
   email?: string;
- 
 }
 
 export default function EditProfileModal({
@@ -23,13 +22,13 @@ export default function EditProfileModal({
   onClose,
   username = "",
   email = "",
- 
 }: EditProfileModalProps) {
   const [name, setName] = useState(username);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<View>("profile");
   const [emailInput] = useState(email);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { setUser } = useUserContext();
 
@@ -39,6 +38,7 @@ export default function EditProfileModal({
       setCurrentView("profile");
       setSelectedImage(null);
       setImagePreview(null);
+      setIsLoading(false);
     }
   }, [isOpen, username]);
 
@@ -52,27 +52,41 @@ export default function EditProfileModal({
 
   const handleForgotPassword = async () => {
     if (!emailInput) return;
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setCurrentView("resetSent");
+    
+    setIsLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setCurrentView("resetSent");
+    } catch (error) {
+      showErrorToast("Failed to send reset link");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSaveChanges = async () => {
-    const formData = new FormData();
-    formData.append("username", name);
-    if (selectedImage) formData.append("image", selectedImage);
+    setIsLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("username", name);
+      if (selectedImage) formData.append("image", selectedImage);
 
-    const res = await UserAPIMethods.editProfile(formData);
-    
-    if (res.ok) {
-      setUser(prev => prev ? { 
-        ...prev, 
-        username: res.data.username, 
-        profilePicture: res.data.image 
-      } : null);
-      showSuccessToast(res.msg)
+      const res = await UserAPIMethods.editProfile(formData);
+      
+      if (res.ok) {
+        setUser(prev => prev ? { 
+          ...prev, 
+          username: res.data.username, 
+          profilePicture: res.data.image 
+        } : null);
+        showSuccessToast(res.msg);
+        onClose();
+      }
+    } catch (error) {
+      showErrorToast("Failed to save changes");
+    } finally {
+      setIsLoading(false);
     }
-    
-    onClose();
   };
 
   if (!isOpen) return null;
@@ -130,8 +144,8 @@ export default function EditProfileModal({
             Forgot Password?
           </button>
 
-          <Button onClick={handleSaveChanges} gradient>
-            Save Changes
+          <Button onClick={handleSaveChanges} gradient loading={isLoading}>
+            {isLoading ? <Loader2 className="animate-spin" /> : "Save Changes"}
           </Button>
         </div>
       </>
@@ -145,8 +159,8 @@ export default function EditProfileModal({
         <p className="text-sm text-gray-500">
           We'll send a password reset link to your email.
         </p>
-        <Button onClick={handleForgotPassword}>
-          Send Reset Link
+        <Button onClick={handleForgotPassword} loading={isLoading}>
+          {isLoading ? <Loader2 className="animate-spin" /> : "Send Reset Link"}
         </Button>
       </div>
     ),
@@ -178,6 +192,7 @@ export default function EditProfileModal({
           <button
             onClick={onClose}
             className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 transition-colors"
+            disabled={isLoading}
           >
             <X size={24} />
           </button>
@@ -187,6 +202,7 @@ export default function EditProfileModal({
               <button
                 onClick={() => setCurrentView("profile")}
                 className="absolute top-4 left-4 text-white hover:text-indigo-200 transition-colors"
+                disabled={isLoading}
               >
                 <ChevronLeft size={24} />
               </button>
@@ -247,20 +263,23 @@ const Button = ({
   children, 
   onClick, 
   gradient = false, 
+  loading = false,
   className = "" 
 }: {
   children: React.ReactNode;
   onClick: () => void;
   gradient?: boolean;
+  loading?: boolean;
   className?: string;
 }) => (
   <button
     onClick={onClick}
-    className={`w-full text-white py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg ${
+    disabled={loading}
+    className={`w-full text-white py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 ${
       gradient 
         ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700" 
         : `bg-indigo-600 hover:bg-indigo-700 ${className}`
-    }`}
+    } ${loading ? "opacity-80 cursor-not-allowed" : ""}`}
   >
     {children}
   </button>

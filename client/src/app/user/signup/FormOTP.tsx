@@ -1,5 +1,6 @@
 "use client"
-import { postRequest } from "@/src/services/api"
+
+import { UserAPIMethods } from "@/src/services/APImethods"
 import { useState, useEffect, useRef } from "react"
 import type React from "react"
 
@@ -52,7 +53,6 @@ export const FormOTP = ({ label, onChange, onVerified, onResend,email }: FormOTP
       inputsRef.current[index - 1]?.focus()
     }
   }
-
   const handleVerify = async () => {
     if (otp.join("").length !== 6) return;
     
@@ -62,7 +62,7 @@ export const FormOTP = ({ label, onChange, onVerified, onResend,email }: FormOTP
     setIsVerifying(true);
 
     try {
-        const res = await postRequest("/otp-verify", { email, otp: sendOtp });
+        const res = await UserAPIMethods.otpVerify(email,sendOtp)
 
         if (res.ok) {
             setIsVerified(true);

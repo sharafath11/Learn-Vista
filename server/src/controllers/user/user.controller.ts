@@ -16,14 +16,14 @@ export class UserController implements IUserController {
             const decoded = verifyAccessToken(req.cookies.token);
             const user = await this.userService.getUser(decoded?.id as string);
             if (!user) {
-                res.status(404).json({ ok: false, message: "User not found" });
+                res.status(404).json({ ok: false, msg: "User not found" });
                 return;
             }
-            res.status(200).json({ ok: true, message: "Success", user });
+            res.status(200).json({ ok: true, msg: "Success", user });
             return 
         } catch (error:any) {
             console.error("UserController.getUser error:", error);
-            res.status(500).json({ ok: false, message: error.message });
+            res.status(500).json({ ok: false, msg: error.message });
         }
     }
 }

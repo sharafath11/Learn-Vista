@@ -8,6 +8,7 @@ export const UserAPIMethods = {
   loginUser: async (data: ILogin) => await postRequest("/login", data),
   sendOtp: async (email: string) => await postRequest("/otp", { email: email }),
   signUp: async (userData: IUserRegistration) => await postRequest("/signup", userData),
+  otpVerify:async(email:string,otp:string)=>await postRequest("/otp-verify",{email:email,otp:otp}),
   applyMentor: async (data: FormData) => await postRequest("/apply-mentor", data),
   editProfile:async(data:FormData)=>await postRequest("/edit-profile",data),
   logout:async()=>await postRequest("/logout",{})

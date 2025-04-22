@@ -28,14 +28,32 @@ export async function uploadToCloudinary(imageBuffer: Buffer, folder = 'profile_
 export async function deleteFromCloudinary(url: string): Promise<void> {
   const parts = url.split('/');
   const fileName = parts.pop()?.split('.')[0];
-  const folder = parts.slice(parts.indexOf('upload') + 1).join('/');
+
+  if (!fileName) {
+    console.warn('Filename could not be determined from the URL.');
+    return;
+  }
+
+  const folderParts = parts.slice(parts.indexOf('upload') + 1);
+
+  if (folderParts[0]?.startsWith('v') && !isNaN(Number(folderParts[0].substring(1)))) {
+    folderParts.shift();
+  }
+
+  const folder = folderParts.join('/');
   const publicId = `${folder}/${fileName}`;
 
-  if (!fileName) return;
+
 
   try {
-    await cloudinary.uploader.destroy(publicId);
+    const result = await cloudinary.uploader.destroy(publicId, { invalidate: true });
+  
+
+    if (result.result !== 'ok') {
+      console.warn(' Cloudinary did not delete the image. Result:', result);
+    }
   } catch (error) {
-    console.error('Error deleting Cloudinary asset:', error);
+    console.error(' Error deleting Cloudinary asset:', error);
   }
 }
+
