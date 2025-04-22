@@ -44,8 +44,10 @@ const Header = () => {
       await signOut({ redirect: false });
       const res = await UserAPIMethods.logout();
       if (res.ok) {
+
         setUser(null);
         router.push("/user/login");
+       
       }
     } catch (error: any) {
       showErrorToast(error.message);

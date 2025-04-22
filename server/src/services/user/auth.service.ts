@@ -12,6 +12,7 @@ import { generateOtp } from "../../utils/otpGenerator";
 import { sendEmailOtp } from "../../utils/emailService";
 import { IOtpRepository } from "../../core/interfaces/repositories/user/IOtpRepository";
 import { generateAccessToken, generateRefreshToken } from "../../utils/JWTtoken";
+import { throwError } from "../../utils/ResANDError";
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -27,7 +28,7 @@ export class AuthService implements IAuthService {
     const existingUser = await this.userRepository.findOne({email});
     const existOtp = await this.otpRepository.findOne({ email });
     
-    if(!existOtp) throw new Error("OTP Expired");
+    if(!existOtp) throwError("OTP Expired");
     if (existingUser) throw new Error("User already exists");
     
     userData.password = await bcrypt.hash(userData.password, 10);

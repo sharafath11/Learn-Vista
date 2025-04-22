@@ -14,38 +14,53 @@ export class UserController implements IUserController {
     async getUser(req: Request, res: Response): Promise<void> {
         try {
             const decoded = verifyAccessToken(req.cookies.token);
-            const user = await this.userService.getUser(decoded?.id as string);
-            if (!user) {
-                res.status(404).json({ ok: false, msg: "User not found" });
-                return;
+            if (!decoded?.id) {
+                return sendResponse(res, 401, "Unauthorized - Invalid token", false);
             }
-            sendResponse(res,200,"succes",true,user)
-            return 
-        } catch (error:any) {
-            console.error("UserController.getUser error:", error);
-            res.status(500).json({ ok: false, msg: error.message });
-        }
-    }
-    async forgotPasword(req: Request, res: Response): Promise<void> {
-         try {
-             await this.userService.forgetPassword(req.body.email);
-             res.status(200).json({ok:true})
-         } catch (error: any) {
-            console.error("UserController forget password error:", error);
-            res.status(500).json({ ok: false, msg: error.message });
-         }
-    }
-    async resetPassword(req: Request, res: Response): Promise<void> {
-        try {
-            const decoded = decodeToken(req.body.token)
-            if(!decoded) sendResponse(res,404,"User not found",false)
-            await this.userService.resetPassword(decoded?.id as string, req.body.password)
-            sendResponse(res, 200, "Password reset", true)
-            return
-        } catch (error:any) {
-            sendResponse(res, 500, error.message, false)
-            return 
+
+            const user = await this.userService.getUser(decoded.id);
+            if (!user) {
+                return sendResponse(res, 404, "User not found", false);
+            }
+
+            sendResponse(res, 200, "User retrieved successfully", true, user);
+        } catch (error: any) {
+            sendResponse(res, 500, error.message, false);
         }
     }
 
+    async forgotPasword(req: Request, res: Response): Promise<void> {
+        try {
+            const { email } = req.body;
+            if (!email) {
+                return sendResponse(res, 400, "Email is required", false);
+            }
+
+            await this.userService.forgetPassword(email);
+            sendResponse(res, 200, "Password reset email sent if account exists", true);
+        } catch (error: any) {
+            sendResponse(res, 500, error.message, false);
+        }
+    }
+
+    async resetPassword(req: Request, res: Response): Promise<void> {
+        try {
+            const { token, password } = req.body;
+            
+            if (!token || !password) {
+                return sendResponse(res, 400, "Token and password are required", false);
+            }
+
+            const decoded = decodeToken(token);
+            if (!decoded?.id) {
+                return sendResponse(res, 401, "Invalid or expired token", false);
+                
+            }
+
+            await this.userService.resetPassword(decoded.id, password);
+            sendResponse(res, 200, "Password reset successfully", true);
+        } catch (error: any) {
+            sendResponse(res, 500, error.message, false);
+        }
+    }
 }

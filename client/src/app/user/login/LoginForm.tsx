@@ -48,7 +48,7 @@ export default function LoginForm() {
     try {
       const res = await UserAPIMethods.loginUser(data);
       if (res.ok) {
-        setUser(res.user);
+        setUser(res.data);
         showSuccessToast(res.msg);
         router.push("/");
       }
@@ -117,7 +117,7 @@ export default function LoginForm() {
 
         <button
           type="submit"
-          disabled={isLoading}
+          // disabled={isLoading}
           className={`w-full bg-purple-600 py-3 text-white rounded-lg font-medium shadow-md hover:bg-purple-700 transition duration-200 ${
             isLoading ? "opacity-60 cursor-not-allowed" : ""
           }`}
