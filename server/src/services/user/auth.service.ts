@@ -29,7 +29,7 @@ export class AuthService implements IAuthService {
     const existOtp = await this.otpRepository.findOne({ email });
     
     if(!existOtp) throwError("OTP Expired");
-    if (existingUser) throw new Error("User already exists");
+    if (existingUser) throwError("User already exists");
     
     userData.password = await bcrypt.hash(userData.password, 10);
     const userToCreate = {
@@ -44,9 +44,9 @@ export class AuthService implements IAuthService {
 
   async sendOtp(email: string): Promise<void> {
     const existingUser = await this.userRepository.findOne({ email });
-    if (existingUser) throw new Error("This email is already registered");
+    if (existingUser) throwError("This email is already registered");
     const exitOtp = await this.otpRepository.findOne({ email })
-    if(exitOtp) throw new Error("OTP already send it")
+    if(exitOtp) throwError("OTP already send it")
     const otp = generateOtp();
     await this.otpRepository.create({ email, otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
     sendEmailOtp(email, otp);
@@ -54,7 +54,7 @@ export class AuthService implements IAuthService {
 
   async verifyOtp(email: string, otp: string): Promise<void> {
     const otpRecord = await this.otpRepository.findOne({ email, otp });
-   if (!otpRecord) throw new Error("Invalid OTP");
+   if (!otpRecord) throwError("Invalid OTP");
   }
 
   async loginUser(email: string, password: string, googleId?: string): Promise<{
@@ -90,10 +90,10 @@ export class AuthService implements IAuthService {
       };
     }
    
-    if (!user.password) throw new Error("Password not set for this account");
+    if (!user.password) throwError("Password not set for this account");
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) throw new Error("Invalid credentials");
-    if (user.isBlocked) throw new Error("This account is blocked");
+    if (!isPasswordValid) throwError("Invalid credentials");
+    if (user.isBlocked) throwError("This account is blocked");
     
     const token = generateAccessToken(
       userId,
@@ -143,7 +143,7 @@ export class AuthService implements IAuthService {
     if (!user) {
       throw new Error("User creation/update failed");
     }
-    if(user.isBlocked) throw new Error("This user blocked ");
+    if(user.isBlocked) throwError("This user blocked ");
     const userId = user.id as string
     
     const token = generateAccessToken(

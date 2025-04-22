@@ -1,41 +1,46 @@
 "use client";
 
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { UserAPIMethods } from "../services/APImethods";
 import { 
   UserContextType, 
   UserProviderProps, 
   IUser 
 } from "../types/authTypes";
-import { useRouter } from "next/navigation";
-import { UserAPIMethods } from "../services/APImethods";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
-  const route = useRouter()
-  useEffect(() => {
-    const fetchUserData = async () => {
-        const res = await UserAPIMethods.fetchUser();
+  const router = useRouter();
+
+  const fetchUserData = useCallback(async () => {
+    try {
+      const res = await UserAPIMethods.fetchUser();
+      
       if (res.ok) {
-          console.log(res)
-          setUser(res.data);
-         
-        }
-        else {
-          route.push("/user/login")
+        setUser(res.data);
+      } else {
+        router.push("/user/login");
       }
-    };
-  
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+      router.push("/user/login");
+    }
+  }, [router]);
+
+  useEffect(() => {
     fetchUserData();
-  }, []); 
+  }, [fetchUserData]);
+
+  const contextValue = {
+    user,
+    setUser,
+  };
+
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        setUser,
-      }}
-    >
+    <UserContext.Provider value={contextValue}>
       {children}
     </UserContext.Provider>
   );
@@ -43,8 +48,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
 export const useUserContext = () => {
   const context = useContext(UserContext);
+  
   if (!context) {
     throw new Error("useUserContext must be used within a UserProvider");
   }
+
   return context;
 };

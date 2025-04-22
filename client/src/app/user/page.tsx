@@ -340,6 +340,7 @@ export default function Home() {
                 avatar="A"
                 active={activeTestimonial === 0}
                 onClick={() => setActiveTestimonial(0)}
+                key={"ee"}
               />
               <TestimonialCard
                 name="Jessica Lee"
@@ -348,6 +349,7 @@ export default function Home() {
                 avatar="J"
                 active={activeTestimonial === 1}
                 onClick={() => setActiveTestimonial(1)}
+                key={"dfsd"}
               />
               <TestimonialCard
                 name="David Wilson"
@@ -356,6 +358,7 @@ export default function Home() {
                 avatar="D"
                 active={activeTestimonial === 2}
                 onClick={() => setActiveTestimonial(2)}
+                key={"dfdsre"}
               />
             </AnimatePresence>
           </div>

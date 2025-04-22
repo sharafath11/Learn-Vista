@@ -68,6 +68,7 @@ export class AuthController implements IAuthController {
                 password, 
                 googleId
             );
+            // if(!token||!refreshToken||!user) return 
             
             setTokensInCookies(res, token, refreshToken);
             return sendResponse(res, 200, "Login successful", true,  user );

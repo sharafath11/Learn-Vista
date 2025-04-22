@@ -24,13 +24,13 @@ export default function ProfileCard() {
         <div className="relative h-32 bg-gradient-to-r from-indigo-500 to-purple-600">
           <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
             <div className="relative h-32 w-32 rounded-full border-4 border-white shadow-lg">
-              <Image
-                src={user?.profilePicture||""}
-                alt="User Avatar"
-                width={128}
-                height={128}
-                className="object-cover rounded-full"
-              />
+            <Image
+  src={user?.profilePicture || '/default-avatar.png'}
+  alt="User Avatar"
+  width={128}
+  height={128}
+  className="object-cover rounded-full"
+/>
               <div className="absolute bottom-0 right-0 bg-green-500 rounded-full p-1 border-2 border-white">
                 <div className="h-4 w-4" />
               </div>
@@ -74,6 +74,7 @@ export default function ProfileCard() {
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         username={user?.username}
+        email={user?.email}
         
       />
     </>

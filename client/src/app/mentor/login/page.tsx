@@ -1,6 +1,6 @@
 "use client"
 import { MentorContext } from '@/src/context/mentorContext';
-import { MentorAPIMenthods } from '@/src/services/APImethods';
+
 import { showSuccessToast } from '@/src/utils/Toast';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -8,6 +8,7 @@ import { useContext, useState, useCallback, useEffect } from 'react';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { generateEncodedKey } from '@/src/utils/GenerateEncodedKey';
+import { MentorAPIMethods } from '@/src/services/APImethods';
 
 interface FormErrors {
   email: string;
@@ -69,7 +70,7 @@ export default function LoginPage() {
 
     setIsSubmitting(true);
     try {
-      const res = await MentorAPIMenthods.login(formData.email, formData.password);
+      const res = await MentorAPIMethods.login(formData.email, formData.password);
       if (res.ok) {
         console.log(res)
         showSuccessToast(res.msg);

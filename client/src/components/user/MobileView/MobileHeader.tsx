@@ -88,9 +88,7 @@ const MobileHeader = ({ user, handleLogout }: MobileHeaderProps) => {
                 <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
                   {user.profilePicture ? (
                     <Image
-                      src={user.profilePicture
-                        
-                      }
+                      src={user.profilePicture||""}
                       alt="User"
                       width={40}
                       height={40}

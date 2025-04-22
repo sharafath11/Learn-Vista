@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback, memo, JSX } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, Mail, Lock, User, Camera, CheckCircle, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,6 +17,71 @@ interface EditProfileModalProps {
   email?: string;
 }
 
+const maskEmail = (email: string): string => {
+  if (!email) return "";
+  
+  const [username, domain] = email.split('@');
+  if (!username || !domain) return email;
+  
+  return `${username[0]}${'*'.repeat(Math.max(0, username.length - 1))}@${domain}`;
+};
+
+const InputField = memo(({ 
+  icon, 
+  value, 
+  onChange, 
+  placeholder, 
+  readOnly, 
+  className = "" 
+}: {
+  icon: React.ReactNode;
+  value: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  readOnly?: boolean;
+  className?: string;
+}) => (
+  <div className="relative">
+    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      {icon}
+    </div>
+    <input
+      type="text"
+      value={value}
+      onChange={onChange}
+      readOnly={readOnly}
+      className={`w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${className}`}
+      placeholder={placeholder}
+    />
+  </div>
+));
+
+const Button = memo(({ 
+  children, 
+  onClick, 
+  gradient = false, 
+  loading = false,
+  className = "" 
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  gradient?: boolean;
+  loading?: boolean;
+  className?: string;
+}) => (
+  <button
+    onClick={onClick}
+    disabled={loading}
+    className={`w-full text-white py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 ${
+      gradient 
+        ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700" 
+        : `bg-indigo-600 hover:bg-indigo-700 ${className}`
+    } ${loading ? "opacity-80 cursor-not-allowed" : ""}`}
+  >
+    {loading ? <Loader2 className="animate-spin" size={20} /> : children}
+  </button>
+));
+
 export default function EditProfileModal({
   isOpen,
   onClose,
@@ -27,52 +92,54 @@ export default function EditProfileModal({
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [currentView, setCurrentView] = useState<View>("profile");
-  const [emailInput] = useState(email);
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { setUser } = useUserContext();
+  const { setUser ,user} = useUserContext();
+
+  const resetState = useCallback(() => {
+    setName(username);
+    setCurrentView("profile");
+    setSelectedImage(null);
+    setImagePreview(null);
+    setIsLoading(false);
+  }, [username]);
 
   useEffect(() => {
-    if (isOpen) {
-      setName(username);
-      setCurrentView("profile");
-      setSelectedImage(null);
-      setImagePreview(null);
-      setIsLoading(false);
-    }
-  }, [isOpen, username]);
+    if (isOpen) resetState();
+  }, [isOpen, resetState]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    
     if (!file) return;
   
-    // Simple image type check
-    if (!file.type.includes('image')) {
+    if (!file.type.startsWith('image/')) {
       showErrorToast('Only image files are allowed');
       return;
     }
   
-    // If valid image, set the state
     setSelectedImage(file);
     setImagePreview(URL.createObjectURL(file));
-  };
+  }, []);
 
-  const handleForgotPassword = async () => {
-    if (!emailInput) return;
+  const handleForgotPassword = useCallback(async () => {
+    if (!email) return;
     
     setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setCurrentView("resetSent");
+     const res=await UserAPIMethods.forgotPassword(email)
+      if (res.ok) {
+        setCurrentView("resetSent");
+        showSuccessToast(res.msg)
+      }
+      else showErrorToast(res.msg)
     } catch (error) {
       showErrorToast("Failed to send reset link");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [email]);
 
-  const handleSaveChanges = async () => {
+  const handleSaveChanges = useCallback(async () => {
     setIsLoading(true);
     try {
       const formData = new FormData();
@@ -95,20 +162,28 @@ export default function EditProfileModal({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [name, selectedImage, setUser, onClose]);
 
   if (!isOpen) return null;
 
-  const views = {
+  const views: Record<View, JSX.Element> = {
     profile: (
       <>
         <div className="flex flex-col items-center mb-6">
           <div
             onClick={() => fileInputRef.current?.click()}
             className="relative h-28 w-28 rounded-full bg-gray-100 border-4 border-white shadow-lg cursor-pointer group overflow-hidden"
+            aria-label="Profile picture"
           >
             {imagePreview ? (
-              <Image src={imagePreview} alt="Preview" fill className="object-cover" />
+              <Image 
+                src={imagePreview} 
+                alt="Preview" 
+                fill 
+                className="object-cover"
+                priority
+                sizes="112px"
+              />
             ) : (
               <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-indigo-100 to-purple-100">
                 <User size={48} className="text-indigo-400" />
@@ -140,7 +215,7 @@ export default function EditProfileModal({
           
           <InputField 
             icon={<Mail size={18} className="text-gray-400" />}
-            value={emailInput}
+            value={maskEmail(email)}
             readOnly
             className="bg-gray-100 cursor-not-allowed"
           />
@@ -153,7 +228,7 @@ export default function EditProfileModal({
           </button>
 
           <Button onClick={handleSaveChanges} gradient loading={isLoading}>
-            {isLoading ? <Loader2 className="animate-spin" /> : "Save Changes"}
+            Save Changes
           </Button>
         </div>
       </>
@@ -168,7 +243,7 @@ export default function EditProfileModal({
           We'll send a password reset link to your email.
         </p>
         <Button onClick={handleForgotPassword} loading={isLoading}>
-          {isLoading ? <Loader2 className="animate-spin" /> : "Send Reset Link"}
+          Send Reset Link
         </Button>
       </div>
     ),
@@ -190,105 +265,53 @@ export default function EditProfileModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 20 }}
-          className="relative w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden"
-        >
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 transition-colors"
-            disabled={isLoading}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="relative w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden"
           >
-            <X size={24} />
-          </button>
-
-          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
-            {currentView !== "profile" && (
-              <button
-                onClick={() => setCurrentView("profile")}
-                className="absolute top-4 left-4 text-white hover:text-indigo-200 transition-colors"
-                disabled={isLoading}
-              >
-                <ChevronLeft size={24} />
-              </button>
-            )}
-            <h2 className="text-2xl font-bold text-center">
-              {currentView === "profile" ? "Edit Profile" : 
-               currentView === "forgotPassword" ? "Reset Password" : "Check Your Email"}
-            </h2>
-          </div>
-
-          <div className="p-6">
-            <motion.div
-              key={currentView}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1 }}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 transition-colors"
+              disabled={isLoading}
+              aria-label="Close modal"
             >
-              {views[currentView]}
-            </motion.div>
-          </div>
-        </motion.div>
-      </div>
+              <X size={24} />
+            </button>
+
+            <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
+              {currentView !== "profile" && (
+                <button
+                  onClick={() => setCurrentView("profile")}
+                  className="absolute top-4 left-4 text-white hover:text-indigo-200 transition-colors"
+                  disabled={isLoading}
+                  aria-label="Go back"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+              )}
+              <h2 className="text-2xl font-bold text-center">
+                {currentView === "profile" ? "Edit Profile" : 
+                currentView === "forgotPassword" ? "Reset Password" : "Check Your Email"}
+              </h2>
+            </div>
+
+            <div className="p-6">
+              <motion.div
+                key={currentView}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+              >
+                {views[currentView]}
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </AnimatePresence>
   );
 }
-
-const InputField = ({ 
-  icon, 
-  value, 
-  onChange, 
-  placeholder, 
-  readOnly, 
-  className = "" 
-}: {
-  icon: React.ReactNode;
-  value: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  readOnly?: boolean;
-  className?: string;
-}) => (
-  <div className="relative">
-    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-      {icon}
-    </div>
-    <input
-      type="text"
-      value={value}
-      onChange={onChange}
-      readOnly={readOnly}
-      className={`w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${className}`}
-      placeholder={placeholder}
-    />
-  </div>
-);
-
-const Button = ({ 
-  children, 
-  onClick, 
-  gradient = false, 
-  loading = false,
-  className = "" 
-}: {
-  children: React.ReactNode;
-  onClick: () => void;
-  gradient?: boolean;
-  loading?: boolean;
-  className?: string;
-}) => (
-  <button
-    onClick={onClick}
-    disabled={loading}
-    className={`w-full text-white py-3 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 ${
-      gradient 
-        ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700" 
-        : `bg-indigo-600 hover:bg-indigo-700 ${className}`
-    } ${loading ? "opacity-80 cursor-not-allowed" : ""}`}
-  >
-    {children}
-  </button>
-);

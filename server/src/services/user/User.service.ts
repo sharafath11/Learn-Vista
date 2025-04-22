@@ -46,7 +46,7 @@ export class UserService implements IUserService{
         const result = await sendPasswordResetEmail(user.email, resetLink);
       
         if (!result.success) {
-          throw new Error("Failed to send reset email. Try again later.");
+          throwError("Failed to send reset email. Try again later.");
         }
     }
     async resetPassword(id: string, password: string): Promise<void> {
