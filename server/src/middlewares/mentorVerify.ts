@@ -8,7 +8,7 @@ export const verifyMentor = (
   next: NextFunction
 ): void => {
   const accessToken = req.cookies?.token;
-   console.log(1)
+   console.log(1,accessToken)
    if (!accessToken) {
      console.log(2)
       res
@@ -21,11 +21,11 @@ export const verifyMentor = (
    const decoded = verifyAccessToken(accessToken);
    console.log(decoded)
    if (decoded?.id && decoded.role === "mentor") {
-     console.log(4)
+     
      next();
      return
    }
-   console.log(5)
+ 
     clearTokens(res)
   
 };

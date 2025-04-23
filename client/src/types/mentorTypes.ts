@@ -52,3 +52,10 @@ export type FormInputProps = {
   placeholder?: string;
   required?: boolean;
 };
+export interface FormOTPProps {
+  label: string
+  email: string
+  onChange: (e: { target: { id: string; value: string } }) => void
+  onVerified: () => void
+  onResend?: () => void
+}

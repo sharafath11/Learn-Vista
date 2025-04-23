@@ -59,10 +59,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-
-      {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
         <div className="bg-[#131a2b] border border-[#1e2a45] rounded-lg overflow-hidden lg:col-span-1 row-span-2">
           <div className="p-4 border-b border-[#1e2a45]">
             <div className="font-semibold text-lg">Quick Actions</div>

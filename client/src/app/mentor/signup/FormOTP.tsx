@@ -1,111 +1,113 @@
-"use client"
-import { postRequest } from "@/src/services/api"
-import { useState, useEffect, useRef } from "react"
-import type React from "react"
-import { FormOTPProps } from "@/src/types/authTypes"
+"use client";
+import { postRequest } from "@/src/services/api";
+import { FormOTPProps } from "@/src/types/mentorTypes";
+import { useEffect, useRef, useState } from "react";
+
 
 export const FormOTP = ({ label, onChange, onVerified, onResend, email }: FormOTPProps) => {
-  const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
-  const [activeInput, setActiveInput] = useState(0)
-  const [isVerifying, setIsVerifying] = useState(false)
-  const [isVerified, setIsVerified] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(30)
-  const inputsRef = useRef<(HTMLInputElement | null)[]>([])
+  const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
 
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Countdown timer
   useEffect(() => {
     if (timeLeft > 0 && !isVerified) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-      return () => clearTimeout(timer)
+      const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
+      return () => clearTimeout(timer);
     }
-  }, [timeLeft, isVerified])
+  }, [timeLeft, isVerified]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const value = e.target.value
-    if (/^[0-9]$/.test(value)) {
-      const newOtp = [...otp]
-      newOtp[index] = value
-      setOtp(newOtp)
-      onChange({ target: { id: "otp", value: newOtp.join("") } })
+  // Handle OTP input change
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
+    const val = e.target.value;
+    if (/^[0-9]$/.test(val)) {
+      const updatedOtp = [...otp];
+      updatedOtp[idx] = val;
+      setOtp(updatedOtp);
+      onChange({ target: { id: "otp", value: updatedOtp.join("") } });
 
-      if (index < 5) {
-        setActiveInput(index + 1)
-        inputsRef.current[index + 1]?.focus()
+      if (idx < 5) {
+        setActiveIndex(idx + 1);
+        inputRefs.current[idx + 1]?.focus();
       }
-    } else if (value === "") {
-      const newOtp = [...otp]
-      newOtp[index] = ""
-      setOtp(newOtp)
-      onChange({ target: { id: "otp", value: newOtp.join("") } })
+    } else if (val === "") {
+      const updatedOtp = [...otp];
+      updatedOtp[idx] = "";
+      setOtp(updatedOtp);
+      onChange({ target: { id: "otp", value: updatedOtp.join("") } });
     }
-  }
+  };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      setActiveInput(index - 1)
-      inputsRef.current[index - 1]?.focus()
+  // Handle backspace navigation
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number) => {
+    if (e.key === "Backspace" && otp[idx] === "" && idx > 0) {
+      setActiveIndex(idx - 1);
+      inputRefs.current[idx - 1]?.focus();
     }
-  }
+  };
 
+  // Verify OTP
   const handleVerify = async () => {
-    if (otp.join("").length !== 6) return;
-    
-    const sendOtp = otp.join("");
-    setIsVerifying(true);
+    const fullOtp = otp.join("");
+    if (fullOtp.length !== 6) return;
 
+    setIsVerifying(true);
     try {
-      const res = await postRequest("/mentor/otp/verify", { email, otp: sendOtp });
+      const res = await postRequest("/mentor/otp/verify", { email, otp: fullOtp });
       if (res.ok) {
         setIsVerified(true);
-        onVerified(); 
+        onVerified();
       }
     } finally {
       setIsVerifying(false);
     }
   };
 
+  // Resend OTP
   const handleResend = () => {
-    setOtp(Array(6).fill(""))
-    setActiveInput(0)
-    setTimeLeft(30)
-    setIsVerified(false)
-    inputsRef.current[0]?.focus()
-    onResend?.()
-  }
+    setOtp(Array(6).fill(""));
+    setTimeLeft(30);
+    setIsVerified(false);
+    setActiveIndex(0);
+    inputRefs.current[0]?.focus();
+    onResend?.();
+  };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
 
-      <div className="flex items-end gap-3">
-        <div className="flex-grow">
-          <div className="flex justify-center space-x-2">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => (inputsRef.current[index] = el)}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleChange(e, index)}
-                onKeyDown={(e) => handleKeyDown(e, index)}
-                onFocus={() => setActiveInput(index)}
-                disabled={isVerified || isVerifying}
-                className={`w-10 h-10 text-center text-lg rounded-md border-2 transition-all ${
-                  activeInput === index
-                    ? "border-purple-500 ring-2 ring-purple-200"
-                    : "border-gray-300 hover:border-purple-300"
-                } ${isVerified ? "bg-green-50 border-green-500" : ""}`}
-              />
-            ))}
-          </div>
+      <div className="flex items-center gap-3">
+        <div className="flex gap-2">
+          {otp.map((digit, idx) => (
+            <input
+              key={idx}
+              ref={(el) => (inputRefs.current[idx] = el)}
+              type="text"
+              inputMode="numeric"
+              maxLength={1}
+              value={digit}
+              onChange={(e) => handleInputChange(e, idx)}
+              onKeyDown={(e) => handleKeyDown(e, idx)}
+              onFocus={() => setActiveIndex(idx)}
+              disabled={isVerified || isVerifying}
+              className={`w-10 h-10 text-center text-lg rounded-md border-2 outline-none transition-all bg-white ${
+                activeIndex === idx
+                  ? "border-purple-500 ring-2 ring-purple-300"
+                  : "border-gray-300 hover:border-purple-400"
+              } ${isVerified ? "bg-green-100 border-green-500" : ""}`}
+            />
+          ))}
         </div>
 
         <button
-          type="button"
           onClick={handleVerify}
           disabled={otp.join("").length !== 6 || isVerifying || isVerified}
-          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+          className={`px-4 py-2 rounded-md text-sm font-medium transition-colors shadow ${
             isVerified
               ? "bg-green-500 text-white"
               : "bg-purple-600 text-white hover:bg-purple-700 disabled:bg-purple-300"
@@ -114,17 +116,17 @@ export const FormOTP = ({ label, onChange, onVerified, onResend, email }: FormOT
           {isVerifying ? (
             <span className="inline-flex items-center">
               <svg
-                className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                className="animate-spin mr-2 h-4 w-4 text-white"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
               >
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path
                   className="opacity-75"
                   fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
+                  d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4zm2 5.3A8 8 0 014 12H0c0 3.1 1.1 5.8 3 7.9l3-2.6z"
+                />
               </svg>
               Verifying...
             </span>
@@ -137,19 +139,18 @@ export const FormOTP = ({ label, onChange, onVerified, onResend, email }: FormOT
       </div>
 
       <div className="flex justify-between items-center">
-        {onResend && (
-          <button
-            type="button"
-            onClick={handleResend}
-            disabled={timeLeft > 0 || isVerified}
-            className={`text-xs ${timeLeft > 0 ? "text-gray-400" : "text-purple-600 hover:text-purple-700"}`}
-          >
-            {timeLeft > 0 ? `Resend in ${timeLeft}s` : "Resend OTP"}
-          </button>
-        )}
+        <button
+          onClick={handleResend}
+          disabled={timeLeft > 0 || isVerified}
+          className={`text-sm font-medium transition ${
+            timeLeft > 0 ? "text-gray-400 cursor-not-allowed" : "text-purple-600 hover:text-purple-800"
+          }`}
+        >
+          {timeLeft > 0 ? `Resend in ${timeLeft}s` : "Resend OTP"}
+        </button>
 
-        {isVerified && <span className="text-xs text-green-600">✓ Verification successful</span>}
+        {isVerified && <span className="text-sm text-green-600">✓ Verification successful</span>}
       </div>
     </div>
-  )
-}
+  );
+};

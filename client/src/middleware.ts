@@ -9,6 +9,7 @@ export async function middleware(req: NextRequest) {
   const publicRoutes = [
     "/user/login", 
     "/mentor/login", 
+    "/mentor/signup",
     "/admin/login",
     "/user/signup",
     "/user/forgot-password",

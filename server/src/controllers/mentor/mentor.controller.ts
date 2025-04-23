@@ -3,7 +3,8 @@ import { Request, Response } from 'express';
 // import { IMentorService } from '../../core/interfaces/services/mentor/IMentorService';
 import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Service';
 import { TYPES } from '../../core/types';
-import { decodeToken } from '../../utils/JWTtoken';
+import { decodeToken, verifyAccessToken } from '../../utils/JWTtoken';
+import { sendResponse } from '../../utils/ResANDError';
 
 
 @injectable()
@@ -15,26 +16,28 @@ export class MentorController {
   async getMentor(req: Request, res: Response): Promise<void> {
     try {
       
-      const decoded = decodeToken(req.cookies.mentorToken) 
+      const decoded = decodeToken(req.cookies.token);
+      console.log(1);
+      console.log(decoded);
+      
+      console.log(2);
+      
+      
       if (!decoded?.id) {
-        res.status(401).json({ ok: false, msg: "Unauthorized: Invalid token",role:"mentor" });
-        return;
+        
+        return sendResponse(res,401,"Unauthorized",false)
+        
       }
 
       const mentor = await this.mentorService.getMentor(decoded.id);
       if (!mentor) {
-        res.status(404).json({ ok: false, msg: "Mentor not found" });
-        return;
+        // res.status(404).json({ ok: false, msg: "Mentor not found" });
+        return;sendResponse(res,404,"mentor not found",false)
       }
-
-      res.status(200).json({
-        ok: true,
-        msg: "Mentor fetched successfully",
-        mentor,
-      });
+      return sendResponse(res,200,"Mentor fetced succes fully",true,mentor)
     } catch (error: any) {
       console.error("Error in getMentor:", error);
-      res.status(500).json({ ok: false, msg: error.message });
+      sendResponse(res,500,error.message,false)
     }
   }
 }
