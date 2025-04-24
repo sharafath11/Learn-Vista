@@ -6,4 +6,6 @@ export interface IMentorAuthController {
   verifyOtp(req: Request, res: Response): Promise<void>;
   mentorOtpControler(req: Request, res: Response): Promise<void>;
   logout(req: Request, res: Response): Promise<void>;
+  forgetPassword(req: Request, res: Response): void
+  restartPassword(req:Request,res:Response):void
 }

@@ -1,10 +1,6 @@
 
 'use client';
-
 import { useLoading } from "../hooks/useLoading";
-
-
-
 export const LoadingSpinner = () => {
   const { isLoading } = useLoading();
 

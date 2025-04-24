@@ -48,6 +48,11 @@ import { IAdminAuthService } from '../interfaces/services/admin/IAdminAuthServic
 import AdminAuthService from '../../services/admin/auth.service';
 import { IAdminMentorController } from '../interfaces/controllers/admin/IAdminMentor.Controller';
 import { IProfileService } from '../interfaces/services/user/IUserProfileService';
+import { IMentorProfileController } from '../interfaces/controllers/mentor/IMentorProfile.controller';
+
+import { IMentorProfileService } from '../interfaces/services/mentor/IMentorProfile.Service';
+import { MentorProfileController } from '../../controllers/mentor/mentorProfile.controller';
+import { MentorProfileService } from '../../services/mentor/MentorProfile.Service';
 
 const container = new Container();
 
@@ -59,7 +64,8 @@ container.bind<IAdminUserController>(TYPES.AdminUserController).to(AdminUserCont
 container.bind<IAdminMentorController>(TYPES.AdminMentorController).to(AdminMentorController);
 container.bind<AuthController>(TYPES.AuthController).to(AuthController);
 container.bind<IProfileController>(TYPES.ProfileController).to(ProfileController);
-container.bind<IAdminAuthController>(TYPES.AdminAuthController).to(AdminAuthController)
+container.bind<IAdminAuthController>(TYPES.AdminAuthController).to(AdminAuthController),
+container.bind<IMentorProfileController>(TYPES.MentorProfileController).to(MentorProfileController)
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -69,6 +75,7 @@ container.bind<IAuthService>(TYPES.AuthService).to(AuthService);
 container.bind<IProfileService>(TYPES.ProfileService).to(ProfileService);
 container.bind<IUserService>(TYPES.UserService).to(UserService);
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService)
+container.bind<IMentorProfileService>(TYPES.MentorProfileService).to(MentorProfileService)
 
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);

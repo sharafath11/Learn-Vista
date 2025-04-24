@@ -3,7 +3,8 @@ import { Request, Response } from 'express';
 import { TYPES } from '../../core/types';
 import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
 import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMentorAuth.Service';
-import { clearTokens, setTokensInCookies } from '../../utils/JWTtoken';
+import { clearTokens, decodeToken, setTokensInCookies } from '../../utils/JWTtoken';
+import { sendResponse } from '../../utils/ResANDError';
 
 
 @injectable()
@@ -61,10 +62,46 @@ export class MentorAuthController implements IMentorAuthController {
 
   async logout(req: Request, res: Response): Promise<void> {
     try {
-     clearTokens(res)
+      console.log("andi shalasf")
+      clearTokens(res);
+      // sendResponse(res,200,"Logout",true)
      
     } catch (error: any) {
       res.status(400).json({ ok: false, msg: 'Logout failed' });
     }
+  
   }
+  async forgetPassword(req: Request, res: Response): Promise<void> {
+      try {
+                const { email } = req.body;
+                if (!email) {
+                    return sendResponse(res, 400, "Email is required", false);
+                }
+    
+                await this.authService.forgetPassword(email);
+                sendResponse(res, 200, "Password reset email sent if account exists", true);
+            } catch (error: any) {
+                sendResponse(res, 500, error.message, false);
+            }
+  }
+  async restartPassword(req: Request, res: Response): Promise<void> {
+    try {
+        const { token, password } = req.body;
+        
+        if (!token || !password) {
+            return sendResponse(res, 400, "Token and password are required", false);
+        }
+
+        const decoded = decodeToken(token);
+        if (!decoded || !decoded.id || decoded.role !== "mentor") {
+            return sendResponse(res, 401, "Invalid or expired token", false);
+        }
+
+        await this.authService.resetPassword(decoded.id, password);
+        sendResponse(res, 200, "Password reset successfully", true);
+    } catch (error: any) {
+        sendResponse(res, 500, error.message, false);
+    }
+}
+
 }

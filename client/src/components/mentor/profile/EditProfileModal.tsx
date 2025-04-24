@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, memo } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, Mail, Lock, User, Camera, CheckCircle, Loader2, Edit } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods, UserAPIMethods } from "@/src/services/APImethods";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 import { useMentorContext } from "@/src/context/mentorContext";
 
@@ -114,7 +114,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
   useEffect(() => {
     if (isOpen) resetState();
   }, [isOpen, resetState]);
-
+   console.log("abcd e",mentor)
   const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -133,7 +133,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     
     setIsLoading(true);
     try {
-      const res = await UserAPIMethods.forgotPassword(mentor.email);
+      const res = await MentorAPIMethods.forgotPassword(mentor.email);
       if (res.ok) {
         setCurrentView("resetSent");
         showSuccessToast(res.msg);
@@ -157,9 +157,10 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
       formData.append("bio", bio);
       if (selectedImage) formData.append("image", selectedImage);
 
-      const res = await UserAPIMethods.editProfile(formData);
+      const res = await MentorAPIMethods.editProfile(formData);
       
       if (res.ok) {
+        console.log(res.data)
         setMentor(prev => prev ? { 
           ...prev, 
           username: res.data.username, 

@@ -31,8 +31,8 @@ export class MentorController {
 
       const mentor = await this.mentorService.getMentor(decoded.id);
       if (!mentor) {
-        // res.status(404).json({ ok: false, msg: "Mentor not found" });
-        return;sendResponse(res,404,"mentor not found",false)
+     
+        return sendResponse(res,404,"mentor not found",false)
       }
       return sendResponse(res,200,"Mentor fetced succes fully",true,mentor)
     } catch (error: any) {
@@ -40,4 +40,5 @@ export class MentorController {
       sendResponse(res,500,error.message,false)
     }
   }
+  
 }

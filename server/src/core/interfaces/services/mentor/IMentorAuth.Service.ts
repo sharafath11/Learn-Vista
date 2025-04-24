@@ -12,4 +12,6 @@ export interface IMentorAuthService {
   sendOtp(email: string): Promise<void>;
   verifyOtp(email: string, otp: string): Promise<void>;
   mentorSignup(data: Partial<IMentor>): Promise<void>;
+  forgetPassword(email: string): Promise<void>
+  resetPassword(id:string,password:string):Promise<void>
 }

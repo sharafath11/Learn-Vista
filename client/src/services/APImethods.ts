@@ -36,5 +36,9 @@ export const MentorAPIMethods = {
   signup: (mentorData: MentorSignupData) => post("/mentor/signup", mentorData),
   otpSend: (email: string) => post("/mentor/send-otp", { email }),
   login: (email: string, password: string) => post("/mentor/login", { email, password }),
-  logout: () => post("/mentor/logout", {})
+  logout: () => post("/mentor/logout", {}),
+  getMentor: () => get("/mentor/get-mentor"),
+  editProfile: (data: FormData) => post("/mentor/edit-profile", data),
+  forgotPassword: (email: string) => post("/mentor/forget-password", { email }),
+  resetPassword: (token: string, password: string) => post("/mentor/reset-password", { token, password })
 } as const;

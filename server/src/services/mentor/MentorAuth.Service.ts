@@ -8,10 +8,11 @@ import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMe
 import { IMentorOtpRepository } from '../../core/interfaces/repositories/mentor/IMentorOtpRepository';
 
 import { generateOtp } from '../../utils/otpGenerator';
-import { sendEmailOtp } from '../../utils/emailService';
+import { sendEmailOtp, sendPasswordResetEmail } from '../../utils/emailService';
 import { IMentor, SafeMentor } from '../../types/mentorTypes';
 import { validateMentorSignupInput } from '../../utils/mentorValidation';
 import { generateAccessToken, generateRefreshToken } from '../../utils/JWTtoken';
+import { throwError } from '../../utils/ResANDError';
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {
@@ -99,7 +100,28 @@ export class MentorAuthService implements IMentorAuthService {
     
     await this.mentorRepo.update(existMentor.id , { ...allowedUpdates, isVerified: true });
     
-  }
+   }
+     async forgetPassword(email: string): Promise<void> {
+           const mentor = await this.mentorRepo.findOne({ email });
+         
+           if (!mentor) throw new Error("User not found");
+         
+           const token = generateAccessToken(mentor.id, "mentor");
+         
+           const resetLink = `${process.env.CLIENT_URL}/mentor/reset-password/${token}`;
+         
+           const result = await sendPasswordResetEmail(mentor.email, resetLink);
+         
+           if (!result.success) {
+             throwError("Failed to send reset email. Try again later.");
+           }
+     }
+   async resetPassword(id: string, password: string): Promise<void> {
+          const user = await this.mentorRepo.findById(id);
+          if (!user) throwError("Mentor not found");
+          const hashedPassword = await bcrypt.hash(password, 10)
+          await this.mentorRepo.update(id,{password:hashedPassword})
+      }
   
 
   

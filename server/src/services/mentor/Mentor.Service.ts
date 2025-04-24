@@ -27,6 +27,7 @@ export class MentorService implements IMentorService {
       bio: mentor.bio,
       applicationDate: mentor.applicationDate,
       phoneNumber: mentor.phoneNumber || "",
+      profilePicture:mentor.profilePicture,
       socialLinks: mentor.socialLinks,
       liveClasses: mentor.liveClasses,
       coursesCreated: mentor.coursesCreated,

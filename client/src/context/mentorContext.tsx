@@ -4,6 +4,7 @@ import { IMentorContext, IMentorMentor } from "../types/mentorTypes";
 import { Mentor } from "../types/adminTypes";
 import { getRequest, postRequest } from "../services/api";
 import { useRouter } from "next/navigation";
+import { MentorAPIMethods } from "../services/APImethods";
 
 
 export const MentorContext = createContext<IMentorContext | null>(null);
@@ -16,7 +17,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
 
   const getMentorDetils = useCallback(async () => {
     try {
-      const res = await getRequest("/mentor/get-mentor");
+      const res = await MentorAPIMethods.getMentor();
       if (res?.ok) {
         if (res.msg.includes("Logged out successfully")) {
           route.push("/mentor/login");
@@ -39,11 +40,11 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
     refreshMentor: getMentorDetils
   }), [mentor, getMentorDetils]);
 
-
+  
   useEffect(() => {
     getMentorDetils();
   }, [getMentorDetils]);
-
+   console.log("context ",mentor)
   return (
     <MentorContext.Provider value={contextValue}>
       {children}

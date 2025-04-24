@@ -43,11 +43,7 @@ export default function LoginPage() {
     if (!formData.password.trim()) {
       newErrors.password = 'Password is required';
       isValid = false;
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-      isValid = false;
     }
-
     setErrors(newErrors);
     return isValid;
   }, [formData]);
@@ -60,9 +56,10 @@ export default function LoginPage() {
       try {
         const res = await MentorAPIMethods.login(formData.email, formData.password);
         if (res.ok) {
-          showSuccessToast(res.msg);
-          mentorContext?.setMentor(res.payload.mentor);
+         
+          mentorContext?.setMentor(res.data);
           router.push("/mentor/home");
+          showSuccessToast(res.msg);
         } else {
           showErrorToast(res.msg || 'Login failed');
         }
