@@ -1,16 +1,13 @@
 "use client";
 import { useContext, useEffect} from "react";
 import MentorList from "@/src/components/admin/mentor/MentorList";
-import { AdminContext } from "@/src/context/adminContext";
+import { AdminContext, useAdminContext } from "@/src/context/adminContext";
 
 const MainPage = () => {
-  const adminContext = useContext(AdminContext);
-  useEffect(() => {
-    adminContext?.refreshMentors()
-  },[])
+const {mentors} =useAdminContext()
   return (
     <div>
-      <MentorList mentors={adminContext?.mentors||[]} />
+      <MentorList mentors={mentors||[]} />
     </div>
   );
 };

@@ -127,7 +127,9 @@ export interface Mentor {
 export interface AdminContextType {
   admin: boolean;
   setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-  mentors: any[];
+  mentors: Mentor[];
   setMentors: React.Dispatch<React.SetStateAction<any[]>>;
   refreshMentors: () => void;
+  users: AdminUser[]
+  setUsers: React.Dispatch<React.SetStateAction<any[]>>;
 }

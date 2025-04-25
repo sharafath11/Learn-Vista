@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
 import { MentorContext, useMentorContext } from '@/src/context/mentorContext';
-import { showSuccessToast, showErrorToast } from '@/src/utils/Toast';
+import { showSuccessToast, showErrorToast, showInfoToast } from '@/src/utils/Toast';
 import { MentorAPIMethods } from '@/src/services/APImethods';
 
 interface FormData {
@@ -63,7 +63,7 @@ export default function LoginPage() {
           setMentor(res.data.mentor);
           router.push("/mentor/home");
           showSuccessToast(res.msg);
-        } 
+        }
      
     },
     [formData, validateForm,  router]

@@ -1,11 +1,10 @@
 import { inject, injectable } from "inversify";
-// import { IAdminMentorRepository } from "../../core/interfaces/admin/IAdminMentorRepository";
 import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
 import { TYPES } from "../../core/types";
 import { sendMentorStatusChangeEmail } from "../../utils/emailService";
 import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";
 import { IMentor } from "../../types/mentorTypes";
-
+import { throwError } from "../../utils/ResANDError";  // Import throwError utility
 
 @injectable()
 export class AdminMentorService implements IAdminMentorServices {
@@ -15,47 +14,33 @@ export class AdminMentorService implements IAdminMentorServices {
   ) {}
 
   async getAllMentors(): Promise<IMentor[]> {
-    try {
-      return await this.adminMentorRepo.findAll();
-    } catch (error) {
-      console.error("Error fetching mentors:", error);
-      throw error;
-    }
+    const mentors = await this.adminMentorRepo.findAll();
+    if (!mentors) throwError("Error fetching mentors", 500); 
+    return mentors;
   }
 
-  async changeMentorStatus(id: string, status: boolean, email: string): Promise<IMentor|null> {
-    try {
-      const statusString = status ? 'approved' : 'rejected';
-      console.log("andi status",status)
-      const updated = await this.adminMentorRepo.update(id, {status});
-      
-      if (updated && status) {
-        await sendMentorStatusChangeEmail(email, statusString);
-      }
-      
-      return updated;
-    } catch (error) {
-      console.error(`Error changing mentor status for ID ${id}:`, error);
-      throw error;
+  async changeMentorStatus(id: string, status: boolean, email: string): Promise<IMentor | null> {
+    const statusString = status ? 'approved' : 'rejected';
+
+    const updated = await this.adminMentorRepo.update(id, { status });
+    if (!updated) throwError(`Error changing mentor status for ID ${id}`, 500); 
+
+    if (updated && status) {
+      await sendMentorStatusChangeEmail(email, statusString);
     }
+
+    return updated;
   }
 
   async toggleMentorBlock(id: string, isBlock: boolean): Promise<IMentor | null> {
-    
-    try {
-      console.log("reeeees serv",id,isBlock)
-      const updated = await this.adminMentorRepo.update(id, { isBlock: isBlock });
-      
-      return updated
-    } catch (error) {
-      console.error(`Error toggling block status for mentor ${id}:`, error);
-      throw error;
-    }
+    const updated = await this.adminMentorRepo.update(id, { isBlock });
+    if (!updated) throwError(`Error toggling block status for mentor ${id}`, 500);  
+    return updated;
   }
-  async mentorDetils(id: string):Promise<IMentor> {
-    const mentor = await this.adminMentorRepo.findById(id);
-    if (!mentor) throw new Error(" Server Error ann mwone");
-    return mentor
 
+  async mentorDetils(id: string): Promise<IMentor> {
+    const mentor = await this.adminMentorRepo.findById(id);
+    if (!mentor) throwError("Mentor not found", 404); 
+    return mentor;
   }
 }

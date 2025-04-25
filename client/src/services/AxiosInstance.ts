@@ -10,9 +10,10 @@ const axiosInstance = axios.create({
 });
 
 let activeRequests = 0;
-const { start, stop } = useLoading.getState(); 
+const { start, stop } = useLoading.getState();
+
 axiosInstance.interceptors.request.use(config => {
-  if (activeRequests === 0) start(); 
+  if (activeRequests === 0) start();
   activeRequests++;
   return config;
 });
@@ -25,11 +26,10 @@ const handleResponseCompletion = () => {
   }
 };
 
-
 let isRefreshing = false;
-let failedQueue: Array<{ 
-  resolve: (value: unknown) => void; 
-  reject: (reason?: any) => void 
+let failedQueue: Array<{
+  resolve: (value: unknown) => void;
+  reject: (reason?: any) => void;
 }> = [];
 
 const processQueue = (error: any) => {
@@ -46,12 +46,15 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     handleResponseCompletion();
-    
+
     const originalRequest = error.config;
-   
-      // showErrorToast(error.response.data.msg);
-     console.log(error.response.data.msg);
-     
+
+  
+    const msg = error?.response?.data?.msg;
+    if (msg && msg.length > 1) {
+      showErrorToast(msg)
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -70,15 +73,15 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        // showInfoToast("Please log in again");
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
-    return Promise.reject(error);
+    return Promise.reject(error); 
   }
 );
+
 
 export default axiosInstance;

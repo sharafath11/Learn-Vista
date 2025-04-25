@@ -6,7 +6,7 @@ import { X, ChevronLeft, Mail, Lock, User, Camera, CheckCircle, Loader2 } from "
 import { motion, AnimatePresence } from "framer-motion";
 import { UserAPIMethods } from "@/src/services/APImethods";
 import { useUserContext } from "@/src/context/userAuthContext";
-import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
+import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast";
 
 type View = "profile" | "forgotPassword" | "resetSent";
 
@@ -141,6 +141,12 @@ export default function EditProfileModal({
 
   const handleSaveChanges = useCallback(async () => {
     setIsLoading(true);
+    if (name.trim().length < 6) {
+      showInfoToast("Username must be at least 6 characters");
+      setIsLoading(false);
+      return
+    }
+      
     try {
       const formData = new FormData();
       formData.append("username", name);

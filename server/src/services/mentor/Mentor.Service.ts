@@ -3,6 +3,7 @@ import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMe
 import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Service';
 import { TYPES } from '../../core/types';
 import { IMentor } from '../../types/mentorTypes';
+import { throwError } from '../../utils/ResANDError'; 
 
 @injectable()
 export class MentorService implements IMentorService {
@@ -12,13 +13,16 @@ export class MentorService implements IMentorService {
 
   async getMentor(id: string): Promise<Partial<IMentor>> {
     const mentor = await this.mentorRepo.findById(id);
-    console.log(mentor)
-    if (!mentor) throw new Error("Please login");
-    if (mentor.isBlock) {
-      throw new Error("Your account was blocked. Please contact support")
-    };
+    console.log(mentor);
     
-
+    if (!mentor) {
+      throwError("Please login", 401); 
+    }
+    
+    if (mentor.isBlock) {
+      throwError("Your account was blocked. Please contact support", 403); 
+    }
+    
     return {
       username: mentor.username,
       email: mentor.email,
@@ -27,7 +31,7 @@ export class MentorService implements IMentorService {
       bio: mentor.bio,
       applicationDate: mentor.applicationDate,
       phoneNumber: mentor.phoneNumber || "",
-      profilePicture:mentor.profilePicture,
+      profilePicture: mentor.profilePicture,
       socialLinks: mentor.socialLinks,
       liveClasses: mentor.liveClasses,
       coursesCreated: mentor.coursesCreated,

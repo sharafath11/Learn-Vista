@@ -2,6 +2,7 @@
 
 import { SearchAndFilterBar } from "@/src/components/admin/users/SearchAndFilterBar";
 import { UserTable } from "@/src/components/admin/users/UserTable";
+import { useAdminContext } from "@/src/context/adminContext";
 import { patchRequest } from "@/src/services/api";
 import { AdminAPIMethods } from "@/src/services/APImethods";
 import { IUser } from "@/src/types/authTypes";
@@ -12,21 +13,9 @@ const User = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Blocked'>('All');
   const [currentPage, setCurrentPage] = useState(1);
-  const [users, setUsers] = useState<IUser[]>([]);
+ const usersPerPage = 8;
 
-  const usersPerPage = 8;
-
-  useEffect(() => {
-    getUsers();
-  }, []);
-
-  async function getUsers() {
-    const res = await AdminAPIMethods.fetchUser();
-   
-    if (res.ok) {
-      setUsers(res.users);
-    }
-  }
+ const {users,setUsers}=useAdminContext()
 
   const filteredUsers = users.filter(user => {
     const matchesSearch =

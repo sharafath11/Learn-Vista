@@ -6,7 +6,6 @@ import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMento
 import { clearTokens, decodeToken, setTokensInCookies } from '../../utils/JWTtoken';
 import { handleControllerError, sendResponse } from '../../utils/ResANDError';
 
-
 @injectable()
 export class MentorAuthController implements IMentorAuthController {
   constructor(
@@ -15,90 +14,85 @@ export class MentorAuthController implements IMentorAuthController {
 
   async login(req: Request, res: Response): Promise<void> {
     try {
-      console.log("andi brocamp", req.body)
       if (!req.body.email || !req.body.password) {
-        // res.status(400).json({ ok: false, msg: 'Email and password are required' });
-        sendResponse(res,400,"Email and password are required",false)
-        
+        return sendResponse(res, 400, "Email and password are required", false);
       }
+
       const result = await this.authService.loginMentor(req.body.email, req.body.password);
-      setTokensInCookies(res,result.token,result.refreshToken)
-      sendResponse(res,200,"Login succesfull",true,result)
+      setTokensInCookies(res, result.token, result.refreshToken);
+      sendResponse(res, 200, "Login successful", true, result);
     } catch (error) {
-      handleControllerError(res,error)
+      handleControllerError(res, error);
     }
   }
 
   async signupController(req: Request, res: Response): Promise<void> {
     try {
-      
       await this.authService.mentorSignup(req.body);
-      res.status(201).json({ ok: true, msg: 'Mentor created successfully' });
+      sendResponse(res, 201, "Mentor created successfully", true);
     } catch (error) {
-      handleControllerError(res,error)
+      handleControllerError(res, error);
     }
   }
 
   async verifyOtp(req: Request, res: Response): Promise<void> {
     try {
       await this.authService.verifyOtp(req.body.email, req.body.otp);
-      res.status(200).json({ ok: true, msg: 'Verification successful' });
+      sendResponse(res, 200, "Verification successful", true);
     } catch (error) {
-      handleControllerError(res,error)
+      handleControllerError(res, error);
     }
   }
 
   async mentorOtpControler(req: Request, res: Response): Promise<void> {
     try {
       await this.authService.sendOtp(req.body.email);
-      res.status(200).json({ ok: true, msg: 'OTP sent successfully' });
+      sendResponse(res, 200, "OTP sent successfully", true);
     } catch (error) {
-      handleControllerError(res,error)
+      handleControllerError(res, error);
     }
   }
 
   async logout(req: Request, res: Response): Promise<void> {
     try {
-     
       clearTokens(res);
-      // sendResponse(res,200,"Logout",true)
-     
+      // sendResponse(res, 200, "Logout successful", true);
     } catch (error) {
-      handleControllerError(res,error)
+      handleControllerError(res, error);
     }
-  
   }
+
   async forgetPassword(req: Request, res: Response): Promise<void> {
-      try {
-                const { email } = req.body;
-                if (!email) {
-                    return sendResponse(res, 400, "Email is required", false);
-                }
-    
-                await this.authService.forgetPassword(email);
-                sendResponse(res, 200, "Password reset email sent if account exists", true);
-            } catch (error) {
-              handleControllerError(res,error)
-            }
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return sendResponse(res, 400, "Email is required", false);
+      }
+
+      await this.authService.forgetPassword(email);
+      sendResponse(res, 200, "Password reset email sent if account exists", true);
+    } catch (error) {
+      handleControllerError(res, error);
+    }
   }
+
   async restartPassword(req: Request, res: Response): Promise<void> {
     try {
-        const { token, password } = req.body;
-        
-        if (!token || !password) {
-            return sendResponse(res, 400, "Token and password are required", false);
-        }
+      const { token, password } = req.body;
+      
+      if (!token || !password) {
+        return sendResponse(res, 400, "Token and password are required", false);
+      }
 
-        const decoded = decodeToken(token);
-        if (!decoded || !decoded.id || decoded.role !== "mentor") {
-            return sendResponse(res, 401, "Invalid or expired token", false);
-        }
+      const decoded = decodeToken(token);
+      if (!decoded || !decoded.id || decoded.role !== "mentor") {
+        return sendResponse(res, 401, "Invalid or expired token", false);
+      }
 
-        await this.authService.resetPassword(decoded.id, password);
-        sendResponse(res, 200, "Password reset successfully", true);
+      await this.authService.resetPassword(decoded.id, password);
+      sendResponse(res, 200, "Password reset successfully", true);
     } catch (error) {
-      handleControllerError(res,error)
+      handleControllerError(res, error);
     }
-}
-
+  }
 }

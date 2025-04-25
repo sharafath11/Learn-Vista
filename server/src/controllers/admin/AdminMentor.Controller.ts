@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IAdminMentorController } from "../../core/interfaces/controllers/admin/IAdminMentor.Controller";
 import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";
-import { sendResponse, handleControllerError } from "../../utils/ResANDError";
+import { sendResponse, handleControllerError, throwError } from "../../utils/ResANDError";
 
 @injectable()
 export class AdminMentorController implements IAdminMentorController {
@@ -46,7 +46,8 @@ export class AdminMentorController implements IAdminMentorController {
       );
 
       if (!result) {
-        throw new Error("Something went wrong while blocking/unblocking mentor");
+        throwError("Something went wrong while blocking/unblocking mentor", 400); // Use throwError for blocking/unblocking error
+        return;
       }
 
       sendResponse(
@@ -67,7 +68,8 @@ export class AdminMentorController implements IAdminMentorController {
       const mentor = await this.adminMentorService.mentorDetils(id);
 
       if (!mentor) {
-        throw new Error("Mentor not found");
+        throwError("Mentor not found", 404); 
+        return;
       }
 
       sendResponse(res, 200, "Mentor fetched successfully", true, mentor);

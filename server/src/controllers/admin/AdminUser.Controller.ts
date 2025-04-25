@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IAdminUserServices } from "../../core/interfaces/services/admin/IAdminUserServices";
 import { IAdminUserController } from "../../core/interfaces/controllers/admin/IAdminUser.controller";
-import { handleControllerError, sendResponse } from "../../utils/ResANDError";
+import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 
 @injectable()
 export class AdminUserController implements IAdminUserController {
@@ -25,7 +25,8 @@ export class AdminUserController implements IAdminUserController {
       const { id, status } = req.body;
 
       if (!id || typeof status !== "boolean") {
-        return sendResponse(res, 400, "Invalid request", false);
+        throwError("Invalid request", 400); 
+        
       }
 
       await this.adminUserService.blockUserServices(id, status);

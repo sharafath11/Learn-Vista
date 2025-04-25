@@ -1,30 +1,50 @@
 "use client";
-import { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
 import { getRequest } from "../services/api";
-import { AdminContextType } from "../types/adminTypes";
+import { AdminContextType, AdminUser, Mentor } from "../types/adminTypes";
 import { AdminAPIMethods } from "../services/APImethods";
 
 export const AdminContext = createContext<AdminContextType | null>(null);
 
 const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [admin, setAdmin] = useState(false);
-  const [mentors, setMentors] = useState<any[]>([]);
+  const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [users, setUsers] = useState<AdminUser[]>([]);
 
   useEffect(() => {
     getAllMentors();
+    getAllUsers();
   }, []);
 
   async function getAllMentors() {
     try {
       const res = await AdminAPIMethods.fetchMentor();
-      console.log(res)
       if (res.ok) {
-        setMentors(res.mentors);
+        setMentors(res.data);
       } else {
         console.error(res.msg);
       }
     } catch (error) {
       console.error("Failed to fetch mentors:", error);
+    }
+  }
+
+  async function getAllUsers() {
+    try {
+      const res = await AdminAPIMethods.fetchUser();
+      if (res.ok) {
+        setUsers(res.data);
+      } else {
+        console.error(res.msg);
+      }
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
     }
   }
 
@@ -36,6 +56,8 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         mentors,
         setMentors,
         refreshMentors: getAllMentors,
+        users,
+        setUsers,
       }}
     >
       {children}
@@ -44,3 +66,8 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export default AdminProvider;
+export const useAdminContext = (): AdminContextType => {
+  const context = useContext(AdminContext);
+  if (!context) throw new Error("useAdminContext must be used within AdminProvider");
+  return context;
+};

@@ -4,7 +4,7 @@ import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IA
 import { TYPES } from "../../core/types";
 import { IAdminAuthService } from "../../core/interfaces/services/admin/IAdminAuthService";
 import { clearTokens, setTokensInCookies } from "../../utils/JWTtoken";
-import { sendResponse, handleControllerError } from "../../utils/ResANDError";
+import { sendResponse, handleControllerError, throwError } from "../../utils/ResANDError"; // Add throwError import
 
 @injectable()
 class AdminAuthController implements IAdminAuthController {
@@ -17,8 +17,7 @@ class AdminAuthController implements IAdminAuthController {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      sendResponse(res, 400, "Invalid email or password", false);
-      return;
+      throwError("Invalid email or password", 400); 
     }
 
     try {
@@ -28,6 +27,7 @@ class AdminAuthController implements IAdminAuthController {
       setTokensInCookies(res, accessToken, refreshToken);
 
       sendResponse(res, 200, "Login successful", true);
+      return
     } catch (error) {
       handleControllerError(res, error, 500);
     }
@@ -36,7 +36,6 @@ class AdminAuthController implements IAdminAuthController {
   logout(req: Request, res: Response): void {
     try {
       clearTokens(res);
-     
     } catch (error) {
       handleControllerError(res, error, 400);
     }
