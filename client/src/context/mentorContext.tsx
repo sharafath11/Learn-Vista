@@ -16,7 +16,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
 
 
   const getMentorDetils = useCallback(async () => {
-    try {
+    
       const res = await MentorAPIMethods.getMentor();
       if (res?.ok) {
         if (res.msg.includes("Logged out successfully")) {
@@ -27,10 +27,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
       } else {
         route.push("/mentor/login");
       }
-    } catch (error) {
-      console.error("Error fetching mentor details:", error);
-      route.push("/mentor/login");
-    }
+    
   }, [route]);
 
 

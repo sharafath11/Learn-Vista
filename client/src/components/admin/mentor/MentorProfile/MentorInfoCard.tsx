@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminContext } from '@/src/context/adminContext';
-import { patchRequest } from '@/src/services/api';
+
 import { AdminAPIMethods } from '@/src/services/APImethods';
 import { Mentor } from '@/src/types/adminTypes';
 import { showSuccessToast } from '@/src/utils/Toast';
@@ -112,7 +112,7 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
         <div className="md:w-1/3 p-6 flex flex-col items-center">
           <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-4 border-indigo-500">
             <img
-              src="/sir2.png"
+              src={mentor?.profilePicture || ''}
               alt={mentor?.profilePicture || ''}
               className="w-full h-full object-cover"
             />

@@ -54,7 +54,8 @@ export class MentorAuthService implements IMentorAuthService {
         socialLinks: mentor.socialLinks,
         liveClasses: mentor.liveClasses,
         coursesCreated: mentor.coursesCreated,
-        reviews: mentor.reviews
+        reviews: mentor.reviews,
+        profilePicture:mentor.profilePicture
         
       },
       token,

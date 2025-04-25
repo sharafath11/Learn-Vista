@@ -4,7 +4,7 @@ import { TYPES } from '../../core/types';
 import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
 import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMentorAuth.Service';
 import { clearTokens, decodeToken, setTokensInCookies } from '../../utils/JWTtoken';
-import { sendResponse } from '../../utils/ResANDError';
+import { handleControllerError, sendResponse } from '../../utils/ResANDError';
 
 
 @injectable()
@@ -17,15 +17,15 @@ export class MentorAuthController implements IMentorAuthController {
     try {
       console.log("andi brocamp", req.body)
       if (!req.body.email || !req.body.password) {
-        res.status(400).json({ ok: false, msg: 'Email and password are required' });
-        return;
+        // res.status(400).json({ ok: false, msg: 'Email and password are required' });
+        sendResponse(res,400,"Email and password are required",false)
+        
       }
       const result = await this.authService.loginMentor(req.body.email, req.body.password);
       setTokensInCookies(res,result.token,result.refreshToken)
-      res.status(200).json({ ok: true, msg: 'Login successful', payload: result });
-    } catch (error: any) {
-      console.error(error.message)
-      res.status(401).json({ ok: false, msg:error.message ,role:"mentor"});
+      sendResponse(res,200,"Login succesfull",true,result)
+    } catch (error) {
+      handleControllerError(res,error)
     }
   }
 
@@ -34,9 +34,8 @@ export class MentorAuthController implements IMentorAuthController {
       
       await this.authService.mentorSignup(req.body);
       res.status(201).json({ ok: true, msg: 'Mentor created successfully' });
-    } catch (error: any) {
-      console.error(error.message)
-      res.status(400).json({ ok: false, msg:error.message });
+    } catch (error) {
+      handleControllerError(res,error)
     }
   }
 
@@ -44,8 +43,8 @@ export class MentorAuthController implements IMentorAuthController {
     try {
       await this.authService.verifyOtp(req.body.email, req.body.otp);
       res.status(200).json({ ok: true, msg: 'Verification successful' });
-    } catch (error: any) {
-      res.status(400).json({ ok: false, msg:error.message });
+    } catch (error) {
+      handleControllerError(res,error)
     }
   }
 
@@ -54,20 +53,18 @@ export class MentorAuthController implements IMentorAuthController {
       await this.authService.sendOtp(req.body.email);
       res.status(200).json({ ok: true, msg: 'OTP sent successfully' });
     } catch (error) {
-      const err = error as Error
-      console.error(err.message)
-      res.status(400).json({ ok: false, msg:err.message });
+      handleControllerError(res,error)
     }
   }
 
   async logout(req: Request, res: Response): Promise<void> {
     try {
-      console.log("andi shalasf")
+     
       clearTokens(res);
       // sendResponse(res,200,"Logout",true)
      
-    } catch (error: any) {
-      res.status(400).json({ ok: false, msg: 'Logout failed' });
+    } catch (error) {
+      handleControllerError(res,error)
     }
   
   }
@@ -80,8 +77,8 @@ export class MentorAuthController implements IMentorAuthController {
     
                 await this.authService.forgetPassword(email);
                 sendResponse(res, 200, "Password reset email sent if account exists", true);
-            } catch (error: any) {
-                sendResponse(res, 500, error.message, false);
+            } catch (error) {
+              handleControllerError(res,error)
             }
   }
   async restartPassword(req: Request, res: Response): Promise<void> {
@@ -99,8 +96,8 @@ export class MentorAuthController implements IMentorAuthController {
 
         await this.authService.resetPassword(decoded.id, password);
         sendResponse(res, 200, "Password reset successfully", true);
-    } catch (error: any) {
-        sendResponse(res, 500, error.message, false);
+    } catch (error) {
+      handleControllerError(res,error)
     }
 }
 

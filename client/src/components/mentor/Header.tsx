@@ -4,42 +4,12 @@ import type React from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
-import { useCallback, useState, memo, useEffect, useRef, createContext, useContext } from "react"
+import { useCallback, useState, memo, useEffect, useRef } from "react"
+import { useMentorContext } from "@/src/context/mentorContext"
+import { MentorAPIMethods } from "@/src/services/APImethods"
+import { showInfoToast } from "@/src/utils/Toast"
+import Image from "next/image"
 
-// Create a simplified mentor context to avoid import errors
-interface Mentor {
-  name: string
-  email: string
-  profilePicture?: string
-}
-
-interface MentorContextType {
-  mentor: Mentor | null
-  setMentor: (mentor: Mentor | null) => void
-}
-
-// Create a default context
-const MentorContext = createContext<MentorContextType>({
-  mentor: null,
-  setMentor: () => {},
-})
-
-// Custom hook to use the mentor context
-const useMentorContext = () => useContext(MentorContext)
-
-// Mock API method for logout
-const MentorAPIMethods = {
-  logout: async () => {
-    // Simulate API call
-    return { ok: true, msg: "Logged out successfully" }
-  },
-}
-
-// Mock toast function
-const showInfoToast = (message: string) => {
-  console.log(message)
-  // You can replace this with your actual toast implementation
-}
 
 interface NavItemType {
   name: string
@@ -111,33 +81,18 @@ const LogoutButton = memo(({ mobile = false, onClick }: LogoutButtonProps) => (
 
 LogoutButton.displayName = "LogoutButton"
 
-// Sample mentor data for demonstration
-const DEMO_MENTOR: Mentor = {
-  name: "John Doe",
-  email: "john.doe@example.com",
-  profilePicture: "/placeholder.svg?height=40&width=40",
-}
-
 const Header = () => {
   const router = useRouter()
   const currentPath = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
-
-  // Use a local state for mentor if context is not available
-  const [localMentor, setLocalMentor] = useState<Mentor | null>(DEMO_MENTOR)
-
-  // Try to use the context, but fall back to local state
-  const mentorContextValue = useMentorContext()
-  const mentor = mentorContextValue.mentor || localMentor
-  const setMentor = mentorContextValue.setMentor || setLocalMentor
-
+  const { mentor, setMentor } = useMentorContext()
   const profileDropdownRef = useRef<HTMLDivElement>(null)
 
   const navItems: NavItemType[] = [
     {
       name: "Dashboard",
-      path: "/",
+      path: "/mentor/home",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -158,7 +113,7 @@ const Header = () => {
     },
     {
       name: "Schedule",
-      path: "/schedule",
+      path: "/mentor/schedule",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -236,7 +191,6 @@ const Header = () => {
 
   const handleLogout = useCallback(async () => {
     try {
-      // Try to use the API method if available, otherwise just simulate logout
       const res = await MentorAPIMethods.logout()
       if (res.ok) {
         showInfoToast(res.msg)
@@ -261,7 +215,6 @@ const Header = () => {
     setProfileDropdownOpen((prev) => !prev)
   }, [])
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
@@ -275,7 +228,6 @@ const Header = () => {
     }
   }, [])
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false)
   }, [currentPath])
@@ -284,17 +236,25 @@ const Header = () => {
     <header className="bg-gray-900 shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo / Brand */}
-          <div className="flex items-center">
-            <motion.h1
-              className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              Mentor Portal
-            </motion.h1>
-          </div>
+          
+        <div className="flex items-center">
+  <motion.h1
+    className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent flex items-center gap-2"
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+  >
+    Mentor Portal
+    <Image
+      src="/images/logo.png"
+      alt="Learn Vista"
+      width={30}
+      height={30}
+      priority
+    />
+  </motion.h1>
+</div>
+
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
@@ -330,7 +290,7 @@ const Header = () => {
                       transition={{ duration: 0.2 }}
                     >
                       <div className="p-3 border-b border-gray-700">
-                        <p className="text-sm font-medium text-white truncate">{mentor.name}</p>
+                        <p className="text-sm font-medium text-white truncate">{mentor.username}</p>
                         <p className="text-xs text-gray-400 truncate">{mentor.email}</p>
                       </div>
                       <div className="py-1">
@@ -410,49 +370,19 @@ const Header = () => {
               transition={{ duration: 0.3 }}
             >
               <div className="py-3 space-y-1">
-              {mentor ? (
-  <div className="relative" ref={profileDropdownRef}>
-    <button
-      onClick={() => setProfileDropdownOpen((prev) => !prev)}
-      className="flex items-center space-x-2 focus:outline-none"
-    >
-      <img
-        src={mentor.profilePicture || "/placeholder.svg"}
-        alt="Profile"
-        className="w-8 h-8 rounded-full"
-      />
-      <span className="text-sm text-white">{mentor.name}</span>
-    </button>
-
-    <AnimatePresence>
-      {profileDropdownOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-50"
-        >
-          <LogoutButton
-            onClick={async () => {
-              await MentorAPIMethods.logout()
-              showInfoToast("Logged out")
-              setMentor(null)
-              router.push("/login")
-            }}
-          />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  </div>
-) : (
-  <Link
-    href="/login"
-    className="px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition"
-  >
-    Login
-  </Link>
-)}
-
+                {mentor && (
+                  <div className="px-4 py-2 flex items-center space-x-3">
+                    <img
+                      src={mentor.profilePicture || "/placeholder.svg?height=40&width=40"}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full"
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-white">{mentor.username}</p>
+                      <p className="text-xs text-gray-400">{mentor.email}</p>
+                    </div>
+                  </div>
+                )}
 
                 {navItems.map((item) => (
                   <NavItem key={item.path} item={item} currentPath={currentPath ?? ""} mobile onClick={closeMenu} />

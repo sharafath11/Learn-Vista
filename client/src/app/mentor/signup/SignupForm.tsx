@@ -4,8 +4,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
-
-import { postRequest } from "@/src/services/api";
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast";
 import { validateMentorSignup } from "@/src/utils/mentor/mentorValidation";
 import { FormOTP } from "./FormOTP";

@@ -1,10 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
-import { apiBaseUrl } from "next-auth/client/_utils";
-
-// Configure Axios defaults
-axios.defaults.timeout = 10000; // 10 seconds timeout globally
+axios.defaults.timeout = 10000; 
 
 const handler = NextAuth({
   providers: [
@@ -83,8 +80,6 @@ const handler = NextAuth({
           config: error.config,
           response: error.response?.data
         });
-
-        // You can customize the error message based on error type
         let errorMessage = "Authentication failed";
         if (error.code === "ECONNABORTED") {
           errorMessage = "Connection to backend timed out";
@@ -92,7 +87,7 @@ const handler = NextAuth({
           errorMessage = error.response.data.message;
         }
 
-        throw new Error(errorMessage); // This will redirect to error page
+        throw new Error(errorMessage); 
       }
     },
     async jwt({ token, user }) {

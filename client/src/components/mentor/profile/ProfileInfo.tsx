@@ -10,6 +10,7 @@ interface ProfileInfoProps {
 export default function ProfileInfo({ mentor }: ProfileInfoProps) {
   const [activeTab, setActiveTab] = useState<'courses' | 'live'>('courses');
   const [isEditing, setIsEditing] = useState(false);
+  console.log(mentor?.applicationDate)
 
   if (!mentor) return (
     <div className="flex justify-center items-center h-64">

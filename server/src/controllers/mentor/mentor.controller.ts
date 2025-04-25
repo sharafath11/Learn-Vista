@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Service';
 import { TYPES } from '../../core/types';
 import { decodeToken, verifyAccessToken } from '../../utils/JWTtoken';
-import { sendResponse } from '../../utils/ResANDError';
+import { handleControllerError, sendResponse } from '../../utils/ResANDError';
 
 
 @injectable()
@@ -35,9 +35,9 @@ export class MentorController {
         return sendResponse(res,404,"mentor not found",false)
       }
       return sendResponse(res,200,"Mentor fetced succes fully",true,mentor)
-    } catch (error: any) {
-      console.error("Error in getMentor:", error);
-      sendResponse(res,500,error.message,false)
+    } catch (error) {
+     
+      handleControllerError(res,error,500)
     }
   }
   

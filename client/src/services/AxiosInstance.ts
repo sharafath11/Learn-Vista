@@ -49,7 +49,7 @@ axiosInstance.interceptors.response.use(
     
     const originalRequest = error.config;
    
-      showErrorToast(error.response.data.msg);
+      // showErrorToast(error.response.data.msg);
      console.log(error.response.data.msg);
      
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -70,7 +70,7 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        showInfoToast("Please log in again");
+        // showInfoToast("Please log in again");
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

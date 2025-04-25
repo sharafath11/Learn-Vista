@@ -3,83 +3,78 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IAdminMentorController } from "../../core/interfaces/controllers/admin/IAdminMentor.Controller";
 import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";
+import { sendResponse, handleControllerError } from "../../utils/ResANDError";
 
 @injectable()
-export class AdminMentorController implements IAdminMentorController{
+export class AdminMentorController implements IAdminMentorController {
   constructor(
     @inject(TYPES.AdminMentorService)
     private adminMentorService: IAdminMentorServices
   ) {}
 
-  async getAllMentors(req: Request, res: Response) {
+  async getAllMentors(req: Request, res: Response): Promise<void> {
     try {
-      
       const result = await this.adminMentorService.getAllMentors();
-  
-      res.status(200).json({ 
-        ok: true, 
-        mentors: result,
-        
-        msg: "Mentors fetched successfully" 
-      });
-    } catch (error: any) {
-      console.error("Error fetching mentors:", error.message);
-      res.status(500).json({ ok: false, msg: "Failed to fetch mentors" });
+      sendResponse(res, 200, "Mentors fetched successfully", true, result);
+    } catch (error) {
+      handleControllerError(res, error, 500);
     }
   }
 
-  async changeStatus(req: Request, res: Response) {
+  async changeStatus(req: Request, res: Response): Promise<void> {
     try {
       const { mentorId, status, email } = req.body;
-      
+
       await this.adminMentorService.changeMentorStatus(
-        mentorId, 
+        mentorId,
         status,
         email
       );
-      res.status(200).json({ 
-        ok: true, 
-       
-        msg: `Mentor status changed to ${status}` 
-      });
-    } catch (error: any) {
-      console.error("Error changing mentor status:", error.message);
-      res.status(500).json({ ok: false, msg: error.message });
+
+      sendResponse(res, 200, `Mentor status changed to ${status}`, true);
+    } catch (error) {
+      handleControllerError(res, error, 500);
     }
   }
 
-  async blockMentor(req: Request, res: Response) {
+  async blockMentor(req: Request, res: Response): Promise<void> {
     try {
       const { mentorId, isBlock } = req.body;
       const result = await this.adminMentorService.toggleMentorBlock(
-        mentorId, 
+        mentorId,
         isBlock
       );
-      console.log("req.body",req.body,"res",result)
+
       if (!result) {
-        throw new Error("somthing fishy")
+        throw new Error("Something went wrong while blocking/unblocking mentor");
       }
-      res.json({
-        ok: true,
-        data: result,
-        msg: `${result.username} ${isBlock ? "Blocked" : "Unblocked"} successfully`
-      });
-    } catch (error: any) {
-      console.error("Error blocking mentor:", error.message);
-      res.status(500).json({ ok: false, msg: error.message });
+
+      sendResponse(
+        res,
+        200,
+        `${result.username} ${isBlock ? "Blocked" : "Unblocked"} successfully`,
+        true,
+        result
+      );
+    } catch (error) {
+      handleControllerError(res, error, 500);
     }
   }
-  mentorDetils(req:Request,res:Response) {
+
+  async mentorDetils(req: Request, res: Response): Promise<void> {
     try {
-      const id=req.params.id
-      const mentor = this.adminMentorService.mentorDetils(id)
-      if (!mentor) throw new Error("Error fetching mentors")
-      res.status(200).json({ok:true,msg:"Mentor fetching succes fully",mentor})
-    } catch (error:any) {
-      res.status(500).json({ok:false,msg:error.message})
+      const id = req.params.id;
+      const mentor = await this.adminMentorService.mentorDetils(id);
+
+      if (!mentor) {
+        throw new Error("Mentor not found");
+      }
+
+      sendResponse(res, 200, "Mentor fetched successfully", true, mentor);
+    } catch (error) {
+      handleControllerError(res, error, 500);
     }
   }
- 
 }
 
 export default AdminMentorController;

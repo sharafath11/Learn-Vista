@@ -23,9 +23,9 @@ const MentorList: FC<MentorListProps> = ({ mentors }) => {
           >
             Mentor Management
           </MotionH1>
-          <div className="flex items-center space-x-4">
+          {/* <div className="flex items-center space-x-4">
             <ApplyMentorButton />
-          </div>
+          </div> */}
         </div>
         <MentorTable mentors={mentors} theme="light" />
       </div>

@@ -1,43 +1,37 @@
 import { NextFunction, Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
-
 import { IAdminUserServices } from "../../core/interfaces/services/admin/IAdminUserServices";
 import { IAdminUserController } from "../../core/interfaces/controllers/admin/IAdminUser.controller";
+import { handleControllerError, sendResponse } from "../../utils/ResANDError";
 
 @injectable()
-export class AdminUserController implements IAdminUserController{
+export class AdminUserController implements IAdminUserController {
   constructor(
-     @inject(TYPES.AdminUsersService) private adminUserService: IAdminUserServices
-   ) {}
-  async getAllUsers(req: Request, res: Response) {
+    @inject(TYPES.AdminUsersService) private adminUserService: IAdminUserServices
+  ) {}
+
+  async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
-      const result = await this.adminUserService.getAllUsers()
-      res.json({ok:true,msg:"Get user succes fully",users:result});
-    } catch (error: any) {
-      console.error("Error in getAllUsers:", error.message);
-      res.status(500).json({ ok: false, msg: error.message });
+      const result = await this.adminUserService.getAllUsers();
+      sendResponse(res, 200, "User get success", true, result);
+    } catch (error) {
+      handleControllerError(res, error, 500);
     }
   }
 
-  async userBlock(req: Request, res: Response) {
+  async userBlock(req: Request, res: Response): Promise<void> {
     try {
-      const { id, status } = req.body.data;
-      
+      const { id, status } = req.body;
+
       if (!id || typeof status !== "boolean") {
-         res.status(400).json({ ok: false, msg: "Invalid request" });
-         return
+        return sendResponse(res, 400, "Invalid request", false);
       }
-  
+
       await this.adminUserService.blockUserServices(id, status);
-     
-       res.status(200).json({ok:true,msg:`status changed`});
-       return
-    } catch (error: any) {
-      
-      console.error("Error in userBlock:", error.message);
-       res.status(500).json({ ok: false, msg: error.message });
-       return
+      sendResponse(res, 200, "Status changed", true);
+    } catch (error) {
+      handleControllerError(res, error, 500);
     }
   }
 }

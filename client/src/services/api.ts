@@ -43,9 +43,9 @@ export const patchRequest = async (url: string, body: object) => {
     });
 
     if (res.data.ok) {
-      if (res.data.msg.includes("Logged out successfully")) {
-        window.location.reload()
-      }
+      // if (res.data.msg.includes("Logged out successfully")) {
+      //   window.location.reload()
+      // }
       
         return res.data;
     }

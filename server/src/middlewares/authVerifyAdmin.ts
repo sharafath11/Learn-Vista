@@ -24,7 +24,7 @@ const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
     console.log(2)
      res
       .status(401)
-       .json({ ok: false, msg: "Authentication required" });
+       .json({ ok: false, msg: "" });
        return
   }
   console.log(3)

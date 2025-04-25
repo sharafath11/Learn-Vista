@@ -1,9 +1,9 @@
 "use client";
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
-import { MentorContext } from '@/src/context/mentorContext';
+import { MentorContext, useMentorContext } from '@/src/context/mentorContext';
 import { showSuccessToast, showErrorToast } from '@/src/utils/Toast';
 import { MentorAPIMethods } from '@/src/services/APImethods';
 
@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({ email: '', password: '' });
 
   const router = useRouter();
-  const mentorContext = useContext(MentorContext);
+  const {mentor,setMentor} =useMentorContext()
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,28 +47,26 @@ export default function LoginPage() {
     setErrors(newErrors);
     return isValid;
   }, [formData]);
-
+  useEffect(() => {
+     if(mentor)router.push("/mentor/home");
+   },)
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
       if (!validateForm()) return;
 
-      try {
+    
         const res = await MentorAPIMethods.login(formData.email, formData.password);
         if (res.ok) {
+          console.log(res)
          
-          mentorContext?.setMentor(res.data);
+          setMentor(res.data.mentor);
           router.push("/mentor/home");
           showSuccessToast(res.msg);
-        } else {
-          showErrorToast(res.msg || 'Login failed');
-        }
-      } catch (err) {
-        console.error('Login error:', err);
-        showErrorToast('An error occurred during login');
-      }
+        } 
+     
     },
-    [formData, validateForm, mentorContext, router]
+    [formData, validateForm,  router]
   );
 
   const togglePasswordVisibility = useCallback(() => {
@@ -130,7 +128,7 @@ export default function LoginPage() {
                 <input type="checkbox" className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" />
                 <span>Remember me</span>
               </label>
-              <Link href="#" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">Forgot password?</Link>
+              <Link href="/mentor/forgot-password" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">Forgot password?</Link>
             </div>
 
             {/* Submit Button */}

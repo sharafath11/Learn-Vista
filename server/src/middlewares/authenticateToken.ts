@@ -10,7 +10,7 @@ export const authenticateToken = async (
   if (!accessToken) {
      res
       .status(401)
-       .json({ ok: false, msg: "Please login" });
+       .json({ ok: false, msg: "" });
        return
   }
 
