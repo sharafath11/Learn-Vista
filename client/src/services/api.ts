@@ -1,62 +1,88 @@
 import axiosInstance from "./AxiosInstance";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
 
-const handleErrorToast = (msg?: string) => {
- 
-  if (msg && msg.length > 1) {
-    showErrorToast(msg); 
+type ApiOptions = {
+  showToast?: boolean;
+};
+
+const defaultOptions: ApiOptions = {
+  showToast: true,
+};
+
+const handleApiError = (error: any, options: ApiOptions) => {
+  console.error("API Error:", error);
+  
+  if (!options.showToast) return;
+
+  const message = error?.response?.data?.msg || error.message || "Request failed";
+  
+  if (error.response?.status === 401) {
+    showInfoToast("Please login again.");
+  } else {
+    showErrorToast(message);
   }
 };
 
-
-
-export const postRequest = async (url: string, body: object | FormData) => {
+export const postRequest = async <T = any>(
+  url: string,
+  body: object | FormData,
+  options: ApiOptions = defaultOptions
+): Promise<T | null> => {
   try {
     const headers: Record<string, string> = {};
-    if (!(body instanceof FormData)) headers["Content-Type"] = "application/json";
+    if (!(body instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
+    }
 
     const res = await axiosInstance.post(url, body, { headers });
-    if (res.data.ok) return res.data;
-
-    handleErrorToast(res.data.msg);
-    return null;
+    
+    if (!res.data.ok) {
+      throw new Error(res.data.msg || 'Request failed');
+    }
+    
+    return res.data;
   } catch (error: any) {
-    console.log("POST error:", error);
-    handleErrorToast(error?.response?.data?.msg);
+    handleApiError(error, options);
     return null;
   }
 };
 
-export const getRequest = async (url: string, params?: object) => {
+export const getRequest = async <T = any>(
+  url: string,
+  params?: object,
+  options: ApiOptions = defaultOptions
+): Promise<T | null> => {
   try {
     const res = await axiosInstance.get(url, params ? { params } : {});
-    if (res.data.ok) return res.data;
-
-    handleErrorToast(res.data.msg);
-    return null;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      showInfoToast("Please login again.");
-    } else {
-      handleErrorToast(error?.response?.data?.msg);
+    
+    if (!res.data.ok) {
+      throw new Error(res.data.msg || 'Request failed');
     }
+    
+    return res.data;
+  } catch (error: any) {
+    handleApiError(error, options);
     return null;
   }
 };
 
-export const patchRequest = async (url: string, body: object) => {
+export const patchRequest = async <T = any>(
+  url: string,
+  body: object,
+  options: ApiOptions = defaultOptions
+): Promise<T | null> => {
   try {
     const res = await axiosInstance.patch(url, body, {
       headers: { "Content-Type": "application/json" },
     });
 
-    if (res.data.ok) return res.data;
-
-    handleErrorToast(res.data.msg);
-    return null;
+    if (!res.data.ok) {
+      throw new Error(res.data.msg || 'Request failed');
+    }
+    
+    return res.data;
   } catch (error: any) {
-    console.log("PATCH error:", error.response.data);
-    handleErrorToast(error?.response?.data?.msg);
+    handleApiError(error, options);
     return null;
   }
 };

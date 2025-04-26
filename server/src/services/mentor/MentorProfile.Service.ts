@@ -18,8 +18,8 @@ export class MentorProfileService implements IMentorProfileService {
         id: string
     ): Promise<{ username: string; image: string; bio: string }> {
         const mentor = await this.mentorRepo.findById(id);
-        if (!mentor) throwError("Mentor not found");
-        if (mentor.isBlock) throwError("This mentor is blocked");
+        if (!mentor) throwError("Mentor not found",404);
+        if (mentor.isBlock) throwError("This mentor is blocked",403);
         
         const updatedUsername = username !== mentor.username ? username : mentor.username;
         const updatedBio = bio !== mentor.bio ? bio : mentor.bio;

@@ -140,7 +140,6 @@ export default function MentorCard() {
     }
 
     setIsLoading(true);
-    try {
       const formDataToSend = new FormData();
       formDataToSend.append("username", formData.username);
       formDataToSend.append("email", formData.email);
@@ -156,12 +155,8 @@ export default function MentorCard() {
         closeModal();
         showSuccessToast(`We'll contact you at ${formData.email}`);
       }
-    } catch (error) {
-      console.error("Submission error:", error);
-      showErrorToast("An error occurred during submission");
-    } finally {
-      setIsLoading(false);
-    }
+ 
+    setIsLoading(false)
   }, [formData, selectedFile, closeModal]);
 
   const isFormDisabled = useMemo(() => isLoading || isSubmitted, [isLoading, isSubmitted]);

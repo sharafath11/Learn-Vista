@@ -5,6 +5,7 @@ import { handleControllerError, sendResponse, throwError } from "../../utils/Res
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IMentorProfileService } from "../../core/interfaces/services/mentor/IMentorProfile.Service";
+import { validateMentorProfile } from "../../utils/mentorValidation";
 
 @injectable()
 export class MentorProfileController implements IMentorProfileController {
@@ -18,6 +19,11 @@ export class MentorProfileController implements IMentorProfileController {
     try {
       const { username, bio } = req.body;
       const decode = decodeToken(req.cookies.token);
+      validateMentorProfile({
+        username,
+        bio,
+        image: req.file || undefined
+      });
       
       if (!decode || decode.role !== "mentor") {
         throwError("Unauthorized");

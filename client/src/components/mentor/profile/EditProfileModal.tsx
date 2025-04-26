@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MentorAPIMethods, UserAPIMethods } from "@/src/services/APImethods";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 import { useMentorContext } from "@/src/context/mentorContext";
+import { validateMentorProfile } from "@/src/utils/mentor/mentorValidation";
 
 type View = "profile" | "forgotPassword" | "resetSent";
 
@@ -149,14 +150,15 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
 
   const handleSaveChanges = useCallback(async () => {
     if (!mentor) return;
-    
+    if(!validateMentorProfile({ username:name, bio,image:selectedImage }))return
     setIsLoading(true);
     try {
+
       const formData = new FormData();
       formData.append("username", name);
       formData.append("bio", bio);
       if (selectedImage) formData.append("image", selectedImage);
-
+    
       const res = await MentorAPIMethods.editProfile(formData);
       
       if (res.ok) {

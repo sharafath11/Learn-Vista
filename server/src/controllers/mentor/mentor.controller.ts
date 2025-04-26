@@ -16,7 +16,7 @@ export class MentorController {
       const decoded = decodeToken(req.cookies.token);
 
       if (!decoded?.id) {
-        return sendResponse(res, 401, "Unauthorized", false);
+        return throwError( "Unauthorized", 401);
       }
 
       const mentor = await this.mentorService.getMentor(decoded.id);

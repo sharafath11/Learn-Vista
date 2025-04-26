@@ -4,7 +4,8 @@ import { IAuthService } from "../../core/interfaces/services/user/IAuthService";
 import { TYPES } from "../../core/types";
 import { IAuthController } from "../../core/interfaces/controllers/user/IAuthController";
 import { clearTokens, setTokensInCookies } from "../../utils/JWTtoken";
-import { sendResponse } from "../../utils/ResANDError";
+import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
+// import { sendResponse, handleControllerError, throwError } from "../../utils/errorUtils";
 
 @injectable()
 export class AuthController implements IAuthController {
@@ -14,21 +15,19 @@ export class AuthController implements IAuthController {
 
     async signup(req: Request, res: Response) {
         try {
+            if (!req.body) throwError("Request body is missing", 400);
             await this.authService.registerUser(req.body);
             return sendResponse(res, 201, "User registration successful", true);
-        } catch (error: any) {
-            console.error(error.message);
-            return sendResponse(res, 400, error.message, false);
+        } catch (error) {
+            handleControllerError(res, error);
         }
     }
 
-    
     async googleAuth(req: Request, res: Response) {
         try {
+            if (!req.body) throwError("Request body is missing", 400);
             const result = await this.authService.googleAuth(req.body);
-            
             setTokensInCookies(res, result.token, result.refreshToken);
-            
             res.status(200).json({ 
                 ok: true, 
                 msg: "Google authentication successful",
@@ -36,54 +35,54 @@ export class AuthController implements IAuthController {
                 token: result.token,
                 refreshToken: result.refreshToken
             });
-        } catch (error: any) {
-            console.log("Google auth error:", error.message);
-           return sendResponse(res, 400, error.message||"google auth filed", false)
+        } catch (error) {
+            handleControllerError(res, error);
         }
     }
 
     async sendOtp(req: Request, res: Response) {
         try {
+            if (!req.body.email) throwError("Email is required", 400);
             await this.authService.sendOtp(req.body.email);
             sendResponse(res, 200, `OTP sent to ${req.body.email}`, true);
-        } catch (error: any) {
-            return sendResponse(res, 400, error.message, false);
+        } catch (error) {
+            handleControllerError(res, error);
         }
     }
 
     async verifyOtp(req: Request, res: Response) {
         try {
+            if (!req.body.email || !req.body.otp) throwError("Email and OTP are required", 400);
             await this.authService.verifyOtp(req.body.email, req.body.otp);
-           return sendResponse(res, 200, "Verification successful", true);
-        } catch (error: any) {
-            return sendResponse(res, 400, error.message, false);
+            return sendResponse(res, 200, "Verification successful", true);
+        } catch (error) {
+            handleControllerError(res, error);
         }
     }
 
     async login(req: Request, res: Response) {
         try {
             const { email, password, googleId } = req.body;
+            if (!email && !googleId) throwError("Email or Google ID is required", 400);
+            
             const { token, refreshToken, user } = await this.authService.loginUser(
                 email, 
                 password, 
                 googleId
             );
-            // if(!token||!refreshToken||!user) return 
-            
             setTokensInCookies(res, token, refreshToken);
-            return sendResponse(res, 200, "Login successful", true,  user );
-        } catch (error: any) {
-            console.error(error.message);
-           return sendResponse(res, 401, error.message, false,);
+            return sendResponse(res, 200, "Login successful", true, user);
+        } catch (error) {
+            handleControllerError(res, error);
         }
     }
 
     async logout(req: Request, res: Response) {
         try {
             clearTokens(res);
-         
-        } catch (error: any) {
-          return sendResponse(res, 500, error.message, false);
+           
+        } catch (error) {
+            handleControllerError(res, error);
         }
     }
 }

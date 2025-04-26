@@ -52,7 +52,9 @@ export default function LoginForm() {
         showSuccessToast(res.msg);
         router.push("/");
       }
+      
       setIsLoading(false);
+      
     } finally {
       setIsLoading(false);
     }

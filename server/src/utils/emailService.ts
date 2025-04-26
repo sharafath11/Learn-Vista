@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendEmailOtp(email: string, otp: string) {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: `"Learn Vista" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Your OTP Code",
     text: `Your OTP code is ${otp}. It will expire in 5 minutes.`,
@@ -26,7 +26,7 @@ export async function sendEmailOtp(email: string, otp: string) {
 export async function sendMentorStatusChangeEmail(email: string, status: string) {
   console.log("ssss");
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: `"Learn Vista" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Mentor Status Updated",
     text: `Dear Mentor,\n\nYour application status has been updated to: ${status.toUpperCase()}.\n\nThank you!`,
@@ -40,7 +40,7 @@ export async function sendMentorStatusChangeEmail(email: string, status: string)
 export const sendPasswordResetEmail = async (to: string, resetLink: string) => {
   try {
     const mailOptions = {
-      from: `"Your App" <${process.env.EMAIL_USER}>`,
+      from: `"Learn Vista" <${process.env.EMAIL_USER}>`,
       to,
       subject: "Password Reset Request",
       html: `

@@ -2,17 +2,14 @@ import multer from "multer";
 
 const storage = multer.memoryStorage();
 
-// Valid file types
 const PDF_MIME_TYPES = ['application/pdf'];
 const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-// Common upload configuration
 const commonConfig = {
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 } 
 };
 
-// PDF upload middleware
 export const upload = multer({
   ...commonConfig,
   fileFilter: (req, file, cb) => {
@@ -24,7 +21,6 @@ export const upload = multer({
   }
 });
 
-// Image upload middleware
 export const uploadImage = multer({
   ...commonConfig,
   fileFilter: (req, file, cb) => {

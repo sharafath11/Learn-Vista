@@ -1,6 +1,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { clearTokens, decodeToken, verifyAccessToken } from '../utils/JWTtoken';
+import { sendResponse } from '../utils/ResANDError';
 
 export const verifyMentor = (
   req: Request,
@@ -11,13 +12,9 @@ export const verifyMentor = (
    console.log(1,accessToken)
    if (!accessToken) {
      console.log(2)
-      res
-       .status(401)
-        .json({ ok: false, msg: "" });
+       sendResponse(res,401,"",false)
         return
    }
-   console.log(3)
-  
    const decoded = verifyAccessToken(accessToken);
    console.log(decoded)
    if (decoded?.id && decoded.role === "mentor") {

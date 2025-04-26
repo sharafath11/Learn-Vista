@@ -6,7 +6,7 @@ import { IProfileController } from "../../core/interfaces/controllers/user/IProf
 import { IProfileService } from "../../core/interfaces/services/user/IUserProfileService";
 import { ISocialLink } from "../../types/mentorTypes";
 import { decodeToken, verifyAccessToken } from "../../utils/JWTtoken";
-import { sendResponse } from "../../utils/ResANDError";
+import { sendResponse, handleControllerError, throwError } from "../../utils/ResANDError";
 
 @injectable()
 export class ProfileController implements IProfileController {
@@ -22,11 +22,11 @@ export class ProfileController implements IProfileController {
         email, username, phoneNumber, req.file || null, expertise
       );
       if (!isValid) {
-        return sendResponse(res, 400, errorMessage as string, false);
+        return throwError(errorMessage as string, 400);
       }
-  
+
       if (!req.file) {
-        return sendResponse(res, 400, "No file uploaded", false);
+        return throwError("No file uploaded", 400);
       }
 
       let parsedExpertise: string[] = [];
@@ -34,7 +34,7 @@ export class ProfileController implements IProfileController {
         try {
           parsedExpertise = JSON.parse(expertise); 
         } catch (error) {
-          return sendResponse(res, 400, "Invalid expertise format", false);
+          return throwError("Invalid expertise format", 400);
         }
       } else {
         parsedExpertise = expertise; 
@@ -45,17 +45,17 @@ export class ProfileController implements IProfileController {
         try {
           parsedSocialLinks = JSON.parse(socialLinks); 
         } catch (error) {
-          return sendResponse(res, 400, "Invalid socialLinks format", false);
+          return throwError("Invalid socialLinks format", 400);
         }
       } else {
         parsedSocialLinks = socialLinks;
       }
-  
+
       const decoded = verifyAccessToken(req.cookies.token);
       if (!decoded?.id || decoded.role !== "user") {
-        return sendResponse(res, 401, "Please login", false, { role: "user" });
+        return throwError("Please login", 401);
       }
-  
+
       await this.profileService.applyMentor(
         email,
         username,
@@ -65,11 +65,10 @@ export class ProfileController implements IProfileController {
         phoneNumber,
         parsedSocialLinks
       );
-  
+
       sendResponse(res, 201, "Application submitted successfully", true);
-    } catch (error: any) {
-      console.error(error);
-      sendResponse(res, 500, error.message || "Server error", false);
+    } catch (error) {
+      handleControllerError(res, error);
     }
   }
 
@@ -77,22 +76,25 @@ export class ProfileController implements IProfileController {
     try {
       const { username } = req.body;
       const image = req.file?.buffer;
-  
+
+      if (username.trim().length < 6) {
+        return throwError("Username must be at least 6 characters long", 403);
+      }
+
       const decoded = decodeToken(req.cookies.token);
       if (!decoded?.id) {
-        return sendResponse(res, 401, "Invalid token", false);
+        return throwError("Invalid token", 401);
       }
-  
+
       const result = await this.profileService.editProfileService(
         username, 
         image || undefined, 
         decoded.id
       );
-  
+
       sendResponse(res, 200, "Profile updated successfully", true, result);
-    } catch (error: any) {
-      console.error("Edit profile error:", error);
-      sendResponse(res, 500, error.message || "Server error", false);
+    } catch (error) {
+      handleControllerError(res, error);
     }
   }
 }

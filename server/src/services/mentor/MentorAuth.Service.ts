@@ -30,11 +30,11 @@ export class MentorAuthService implements IMentorAuthService {
     if (mentor?.isBlock) throwError("This account is blocked", 403);
     if (mentor?.status !== "approved") throwError(`This user is ${mentor?.status}`, 403);
     if (!mentor) throwError("Mentor not found", 404);
-    if (!mentor.isVerified) throwError("Please signup", 401);
+    if (!mentor.isVerified) throwError("Please signup", 400);
     
     const isPasswordValid = await bcrypt.compare(password, mentor?.password || "");
     if (!isPasswordValid) {
-      throwError("Invalid email or password", 401);
+      throwError("Invalid email or password", 400);
     }
   
     const token = generateAccessToken(mentor.id, "mentor");

@@ -4,7 +4,7 @@ import { TYPES } from '../../core/types';
 import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
 import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMentorAuth.Service';
 import { clearTokens, decodeToken, setTokensInCookies } from '../../utils/JWTtoken';
-import { handleControllerError, sendResponse } from '../../utils/ResANDError';
+import { handleControllerError, sendResponse, throwError } from '../../utils/ResANDError';
 
 @injectable()
 export class MentorAuthController implements IMentorAuthController {
@@ -79,7 +79,8 @@ export class MentorAuthController implements IMentorAuthController {
   async restartPassword(req: Request, res: Response): Promise<void> {
     try {
       const { token, password } = req.body;
-      
+      const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+      if (!password || !strongPasswordRegex.test(password)) sendResponse(res,403,"Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",false)
       if (!token || !password) {
         return sendResponse(res, 400, "Token and password are required", false);
       }

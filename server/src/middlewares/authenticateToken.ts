@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import {  clearTokens, verifyAccessToken } from "../utils/JWTtoken";
+import { sendResponse } from "../utils/ResANDError";
 
 export const authenticateToken = async (
   req: Request,
@@ -8,10 +9,8 @@ export const authenticateToken = async (
 ) => {
   const accessToken = req.cookies?.token;
   if (!accessToken) {
-     res
-      .status(401)
-       .json({ ok: false, msg: "" });
-       return
+     sendResponse(res,401,"",true)
+     return
   }
 
   const decoded = verifyAccessToken(accessToken);

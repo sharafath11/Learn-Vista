@@ -5,12 +5,13 @@ import { ISafeUser } from "../../types/userTypes";
 import { IUserService } from "../../core/interfaces/services/user/IUserService";
 import { sendPasswordResetEmail } from "../../utils/emailService";
 import { generateAccessToken } from "../../utils/JWTtoken";
-import dotenv from "dotenv"
-import { throwError } from "../../utils/ResANDError";
-import bcrypt from "bcrypt"
-dotenv.config()
+import dotenv from "dotenv";
 
-export class UserService implements IUserService{
+import bcrypt from "bcrypt";
+import { throwError } from "../../utils/ResANDError";
+dotenv.config();
+
+export class UserService implements IUserService {
     constructor(
         @inject(TYPES.UserRepository) private userRepository: IUserRepository,
     ) { }
@@ -19,10 +20,10 @@ export class UserService implements IUserService{
         const user = await this.userRepository.findById(id);
         
         if (!user) {
-            throw new Error("User not found");
+          return throwError("User not found", 404);
         }
-        if (user.isBlocked) throw new Error("User was blocked")
-        // console.log("andi")
+        if (user.isBlocked) throwError("User was blocked", 403);
+        
         return {
             username: user.username,
             email: user.email,
@@ -34,10 +35,12 @@ export class UserService implements IUserService{
             updatedAt: user.updatedAt
         };
     }
+
     async forgetPassword(email: string): Promise<void> {
         const user = await this.userRepository.findOne({ email });
       
-        if (!user) throw new Error("User not found");
+        if (!user) return throwError("User not found", 404);
+        if(user.isBlocked) return throwError("This account was blocked",403)
       
         const token = generateAccessToken(user.id, "user");
       
@@ -46,14 +49,15 @@ export class UserService implements IUserService{
         const result = await sendPasswordResetEmail(user.email, resetLink);
       
         if (!result.success) {
-          throwError("Failed to send reset email. Try again later.");
+            throwError("Failed to send reset email. Try again later.", 500);
         }
     }
+
     async resetPassword(id: string, password: string): Promise<void> {
         const user = await this.userRepository.findById(id);
-        if (!user) throwError("User not found");
-        const hashedPassword = await bcrypt.hash(password, 10)
-        await this.userRepository.update(id,{password:hashedPassword})
+        if (!user) throwError("User not found", 404);
+        
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await this.userRepository.update(id, { password: hashedPassword });
     }
-    
 }

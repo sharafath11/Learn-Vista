@@ -4,7 +4,7 @@ import { IUserService } from "../../core/interfaces/services/user/IUserService";
 import { IUserController } from "../../core/interfaces/controllers/user/IUserController";
 import { Request, Response } from "express";
 import { decodeToken, verifyAccessToken } from "../../utils/JWTtoken";
-import { sendResponse } from "../../utils/ResANDError";
+import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 
 export class UserController implements IUserController {
     constructor(
@@ -15,17 +15,17 @@ export class UserController implements IUserController {
         try {
             const decoded = verifyAccessToken(req.cookies.token);
             if (!decoded?.id) {
-                return sendResponse(res, 401, "Unauthorized - Invalid token", false);
+                throwError("Unauthorized - Invalid token", 401);
             }
 
             const user = await this.userService.getUser(decoded.id);
             if (!user) {
-                return sendResponse(res, 404, "User not found", false);
+                throwError("User not found", 404);
             }
 
             sendResponse(res, 200, "User retrieved successfully", true, user);
-        } catch (error: any) {
-            sendResponse(res, 500, error.message, false);
+        } catch (error) {
+            handleControllerError(res, error);
         }
     }
 
@@ -33,34 +33,34 @@ export class UserController implements IUserController {
         try {
             const { email } = req.body;
             if (!email) {
-                return sendResponse(res, 400, "Email is required", false);
+                throwError("Email is required", 400);
             }
 
             await this.userService.forgetPassword(email);
             sendResponse(res, 200, "Password reset email sent if account exists", true);
-        } catch (error: any) {
-            sendResponse(res, 500, error.message, false);
+        } catch (error) {
+            handleControllerError(res, error);
         }
     }
 
     async resetPassword(req: Request, res: Response): Promise<void> {
         try {
             const { token, password } = req.body;
-            
+            const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+            if (!password || !strongPasswordRegex.test(password)) sendResponse(res,403,"Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",false)
             if (!token || !password) {
-                return sendResponse(res, 400, "Token and password are required", false);
+                throwError("Token and password are required", 400);
             }
 
             const decoded = decodeToken(token);
             if (!decoded?.id) {
-                return sendResponse(res, 401, "Invalid or expired token", false);
-                
+                throwError("Invalid or expired token", 401);
             }
 
             await this.userService.resetPassword(decoded.id, password);
             sendResponse(res, 200, "Password reset successfully", true);
-        } catch (error: any) {
-            sendResponse(res, 500, error.message, false);
+        } catch (error) {
+            handleControllerError(res, error);
         }
     }
 }

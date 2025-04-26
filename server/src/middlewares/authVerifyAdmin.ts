@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { clearTokens, decodeToken, verifyAccessToken } from "../utils/JWTtoken";
+import { sendResponse } from "../utils/ResANDError";
 
 type Role = "admin" | "user" | "mentor";
 
@@ -22,10 +23,8 @@ const verifyAdmin = (req: Request, res: Response, next: NextFunction) => {
   console.log(1)
   if (!accessToken) {
     console.log(2)
-     res
-      .status(401)
-       .json({ ok: false, msg: "" });
-       return
+    sendResponse(res, 401, "", false)
+    return
   }
   console.log(3)
  

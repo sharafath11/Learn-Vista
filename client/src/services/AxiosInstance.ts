@@ -1,6 +1,6 @@
 import axios from "axios";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
-import { useLoading } from "../hooks/useLoading"; 
+import { useLoading } from "../hooks/useLoading";
 
 const baseURL = "http://localhost:4000";
 
@@ -9,6 +9,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
+// Loading state management
 let activeRequests = 0;
 const { start, stop } = useLoading.getState();
 
@@ -26,6 +27,7 @@ const handleResponseCompletion = () => {
   }
 };
 
+// Token refresh handling
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (value: unknown) => void;
@@ -46,15 +48,9 @@ axiosInstance.interceptors.response.use(
   },
   async (error) => {
     handleResponseCompletion();
-
     const originalRequest = error.config;
 
-  
-    const msg = error?.response?.data?.msg;
-    if (msg && msg.length > 1) {
-      showErrorToast(msg)
-    }
-
+    // Only handle 401 errors here
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
@@ -73,15 +69,15 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
+        showInfoToast("Session expired. Please login again.");
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
-    return Promise.reject(error); 
+    return Promise.reject(error);
   }
 );
-
 
 export default axiosInstance;

@@ -1,4 +1,5 @@
 import { MentorSignupData } from "@/src/types/mentorTypes";
+import { showInfoToast } from "../Toast";
 
 export const validateMentorSignup = (data?: MentorSignupData) => {
     if (!data || typeof data !== "object") return "Invalid data provided";
@@ -33,4 +34,54 @@ export const validateMentorSignup = (data?: MentorSignupData) => {
   }
   
   return null;
+};
+
+
+export const validateMentorProfile = (profileData: {
+  username: string;
+  bio: string;
+  image?: File | null;
+}): boolean => {
+  const { username, bio, image } = profileData;
+
+  if (!username.trim()) {
+    showInfoToast("Username is required");
+    return false;
+  }
+  
+  if (username.length < 3) {
+    showInfoToast("Username must be at least 3 characters");
+    return false;
+  }
+  
+  if (username.length > 30) {
+    showInfoToast("Username must be less than 30 characters");
+    return false;
+  }
+  
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    showInfoToast("Username can only contain letters, numbers, and underscores");
+    return false;
+  }
+
+  if (bio.length > 100) {
+    showInfoToast("Bio must be less than 100 characters");
+    return false;
+  }
+  if (image) {
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    
+    if (!validTypes.includes(image.type)) {
+      showInfoToast("Only JPEG, PNG, WEBP, or GIF images are allowed");
+      return false;
+    }
+    
+    if (image.size > maxSize) {
+      showInfoToast("Image must be smaller than 5MB");
+      return false;
+    }
+  }
+
+  return true;
 };
