@@ -4,7 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { ILogin } from "@/src/types/authTypes";
 import { useUserContext } from "@/src/context/userAuthContext";
-import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
+import {  showSuccessToast } from "@/src/utils/Toast";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { UserAPIMethods } from "@/src/services/APImethods";
@@ -17,12 +17,13 @@ export default function LoginForm() {
   const [autoSubmit, setAutoSubmit] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { setUser } = useUserContext();
+  const { setUser ,user} = useUserContext();
   const router = useRouter();
   const { data: session } = useSession();
 
   useEffect(() => {
     setIsMounted(true);
+     if(user) router.push("/")
   }, []);
 
   useEffect(() => {
