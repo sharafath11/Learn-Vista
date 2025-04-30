@@ -12,58 +12,30 @@ import { UserAPIMethods } from "@/src/services/APImethods"
 import { cn } from "@/src/utils/cn"
 import { showErrorToast } from "@/src/utils/Toast"
 
+const NAV_ITEMS = [
+  { name: "Home", path: "/", icon: Home },
+  { name: "Courses", path: "/courses", icon: BookOpen },
+  { name: "Live Classes", path: "/live-classes", icon: Video },
+  { name: "Community", path: "/community", icon: Users },
+] as const
 
-const Header = () => {
-  const { user, setUser } = useUserContext()
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [activeLink, setActiveLink] = useState("/")
+const UserDropdown = ({
+  user,
+  isDropdownOpen,
+  setIsDropdownOpen,
+  handleLogout
+}: {
+  user: any,
+  isDropdownOpen: boolean,
+  setIsDropdownOpen: (value: boolean) => void,
+  handleLogout: () => void
+}) => {
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
 
-  const navItems = useMemo(
-    () => [
-      { name: "Home", path: "/", icon: Home },
-      { name: "Courses", path: "/courses", icon: BookOpen },
-      { name: "Live Classes", path: "/live-classes", icon: Video },
-      { name: "Community", path: "/community", icon: Users },
-    ],
-    [],
-  )
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
-  const handleLogout = useCallback(async () => {
-    try {
-      await signOut({ redirect: false })
-      const res = await UserAPIMethods.logout()
-      if (res.ok) {
-        setUser(null)
-        router.push("/user/login")
-      }
-    } catch (error: any) {
-      showErrorToast(error.message)
-    }
-  }, [router, setUser])
-  const UserDropdown = () => (
+  return (
     <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setIsDropdownOpen((prev) => !prev)}
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         className="flex items-center gap-2 focus:outline-none group"
         aria-label="User menu"
       >
@@ -83,7 +55,7 @@ const Header = () => {
         />
       </button>
 
-      <AnimatePresence>
+      <AnimatePresence mode="sync">
         {isDropdownOpen && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
@@ -126,6 +98,172 @@ const Header = () => {
       </AnimatePresence>
     </div>
   )
+}
+
+const MobileMenu = ({
+  isOpen,
+  onClose,
+  activeLink,
+  user,
+  handleLogout,
+  setActiveLink
+}: {
+  isOpen: boolean,
+  onClose: () => void,
+  activeLink: string,
+  user: any,
+  handleLogout: () => void,
+  setActiveLink: (path: string) => void
+}) => {
+  return (
+    <AnimatePresence mode="sync">
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="md:hidden fixed top-16 left-0 right-0 bg-white z-40 border-b border-gray-200 shadow-lg overflow-hidden"
+        >
+          <div className="px-4 py-3">
+            <div className="relative mb-3">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search size={18} className="text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search courses..."
+                className="pl-10 pr-4 py-2 w-full bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-200"
+              />
+            </div>
+
+            <nav className="flex flex-col space-y-1 mb-4">
+              {NAV_ITEMS.map(({ name, path, icon: Icon }) => (
+                <Link
+                  key={name}
+                  href={path}
+                  onClick={() => {
+                    setActiveLink(path)
+                    onClose()
+                  }}
+                  className={cn(
+                    "flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors",
+                    activeLink === path ? "bg-purple-50 text-purple-700" : "text-gray-700 hover:bg-gray-50",
+                  )}
+                >
+                  <Icon size={18} className="mr-3" />
+                  {name}
+                </Link>
+              ))}
+            </nav>
+
+            {!user && (
+              <div className="flex flex-col space-y-2 pt-2 border-t border-gray-100">
+                <Link
+                  href="/user/login"
+                  className="w-full text-center py-2.5 text-gray-700 border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                  onClick={onClose}
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/user/signup"
+                  className="w-full text-center py-2.5 bg-gradient-to-r from-purple-700 to-purple-500 text-white rounded-lg font-medium hover:from-purple-800 hover:to-purple-600 transition-colors"
+                  onClick={onClose}
+                >
+                  Sign up
+                </Link>
+              </div>
+            )}
+
+            {user && (
+              <div className="pt-2 border-t border-gray-100">
+                <div className="flex items-center p-3 mb-2">
+                  <Image
+                    src={user.profilePicture || "/images/ai.png"}
+                    alt="User profile"
+                    width={40}
+                    height={40}
+                    className="rounded-full mr-3 border-2 border-purple-200"
+                  />
+                  <div>
+                    <p className="font-medium text-gray-900">{user.username || "User"}</p>
+                    <p className="text-xs text-gray-500 truncate">{user.email || ""}</p>
+                  </div>
+                </div>
+
+                <Link
+                  href="/user/profile"
+                  className="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                  onClick={onClose}
+                >
+                  Profile
+                </Link>
+
+                <Link
+                  href="/user/dashboard"
+                  className="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                  onClick={onClose}
+                >
+                  Dashboard
+                </Link>
+
+                <button
+                  onClick={() => {
+                    handleLogout()
+                    onClose()
+                  }}
+                  className="w-full text-left px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors mt-1"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
+const Header = () => {
+  const { user, setUser } = useUserContext()
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [activeLink, setActiveLink] = useState("/")
+  const router = useRouter()
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await signOut({ redirect: false })
+      const res = await UserAPIMethods.logout()
+      if (res.ok) {
+        setUser(null)
+        router.push("/user/login")
+      }
+    } catch (error: any) {
+      showErrorToast(error.message)
+    }
+  }, [router, setUser])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isDropdownOpen) {
+        setIsDropdownOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [isDropdownOpen])
 
   return (
     <>
@@ -156,7 +294,7 @@ const Header = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-1">
-              {navItems.map(({ name, path, icon: Icon }) => (
+              {NAV_ITEMS.map(({ name, path, icon: Icon }) => (
                 <Link
                   key={name}
                   href={path}
@@ -195,7 +333,12 @@ const Header = () => {
 
               {/* User Profile or Login */}
               {user ? (
-                <UserDropdown />
+                <UserDropdown 
+                  user={user} 
+                  isDropdownOpen={isDropdownOpen} 
+                  setIsDropdownOpen={setIsDropdownOpen} 
+                  handleLogout={handleLogout} 
+                />
               ) : (
                 <div className="flex items-center space-x-2">
                   <Link
@@ -227,119 +370,19 @@ const Header = () => {
       </header>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden fixed top-16 left-0 right-0 bg-white z-40 border-b border-gray-200 shadow-lg overflow-hidden"
-          >
-            <div className="px-4 py-3">
-              <div className="relative mb-3">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search size={18} className="text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search courses..."
-                  className="pl-10 pr-4 py-2 w-full bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-200"
-                />
-              </div>
-
-              <nav className="flex flex-col space-y-1 mb-4">
-                {navItems.map(({ name, path, icon: Icon }) => (
-                  <Link
-                    key={name}
-                    href={path}
-                    onClick={() => {
-                      setActiveLink(path)
-                      setIsMobileMenuOpen(false)
-                    }}
-                    className={cn(
-                      "flex items-center px-3 py-3 rounded-lg text-sm font-medium transition-colors",
-                      activeLink === path ? "bg-purple-50 text-purple-700" : "text-gray-700 hover:bg-gray-50",
-                    )}
-                  >
-                    <Icon size={18} className="mr-3" />
-                    {name}
-                  </Link>
-                ))}
-              </nav>
-
-              {!user && (
-                <div className="flex flex-col space-y-2 pt-2 border-t border-gray-100">
-                  <Link
-                    href="/user/login"
-                    className="w-full text-center py-2.5 text-gray-700 border border-gray-200 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/user/signup"
-                    className="w-full text-center py-2.5 bg-gradient-to-r from-purple-700 to-purple-500 text-white rounded-lg font-medium hover:from-purple-800 hover:to-purple-600 transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Sign up
-                  </Link>
-                </div>
-              )}
-
-              {user && (
-                <div className="pt-2 border-t border-gray-100">
-                  <div className="flex items-center p-3 mb-2">
-                    <Image
-                      src={user.profilePicture || "/images/ai.png"}
-                      alt="User profile"
-                      width={40}
-                      height={40}
-                      className="rounded-full mr-3 border-2 border-purple-200"
-                    />
-                    <div>
-                      <p className="font-medium text-gray-900">{user.name || "User"}</p>
-                      <p className="text-xs text-gray-500 truncate">{user.email || ""}</p>
-                    </div>
-                  </div>
-
-                  <Link
-                    href="/user/profile"
-                    className="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Profile
-                  </Link>
-
-                  <Link
-                    href="/user/dashboard"
-                    className="flex items-center px-3 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
-
-                  <button
-                    onClick={() => {
-                      handleLogout()
-                      setIsMobileMenuOpen(false)
-                    }}
-                    className="w-full text-left px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors mt-1"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        activeLink={activeLink}
+        user={user}
+        handleLogout={handleLogout}
+        setActiveLink={setActiveLink}
+      />
 
       {/* Spacer to prevent content from being hidden under fixed header */}
       <div className="h-16 md:h-16" />
     </>
   )
 }
-
 
 export default Header
