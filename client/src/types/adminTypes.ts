@@ -133,3 +133,31 @@ export interface AdminContextType {
   users: AdminUser[]
   setUsers: React.Dispatch<React.SetStateAction<any[]>>;
 }
+export interface ICourse  {
+  _id:string;
+  title: string;
+  description?: string;
+  mentorId: string;
+  sessions: string[];
+  categoryId: string;
+  thumbnail?: string;
+  price?: number;
+  language?: string;
+  tags?: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+export interface ICourseFormData {
+  title: string
+  description: string
+  mentorName: string
+  category: string
+  price: string
+  language: string
+  tags: string[]
+  currentTag: string
+  startDate: string
+  endDate: string
+  startTime: string
+  thumbnailPreview: string | null
+}

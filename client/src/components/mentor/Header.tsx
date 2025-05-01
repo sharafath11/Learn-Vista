@@ -112,8 +112,8 @@ const Header = () => {
       ),
     },
     {
-      name: "Schedule",
-      path: "/mentor/schedule",
+      name: "Upcoming",
+      path: "/mentor/upcoming",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"

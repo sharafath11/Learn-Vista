@@ -6,12 +6,13 @@ import { TYPES } from "../../core/types";
 import { IAdminUserController } from "../../core/interfaces/controllers/admin/IAdminUser.controller";
 import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IAdminAuth.Controller";
 import { IAdminMentorController } from "../../core/interfaces/controllers/admin/IAdminMentor.Controller";
+import { IAdminCourseController } from "../../core/interfaces/controllers/admin/IAdminCourse.Controller";
 const route = express.Router();
 
 const adminMentorController = container.get<IAdminMentorController>(TYPES.AdminMentorController);
 const adminUsersController = container.get<IAdminUserController>(TYPES.AdminUserController); 
 const adminAuthController = container.get<IAdminAuthController>(TYPES.AdminAuthController)
-
+const adminCourseController=container.get<IAdminCourseController>(TYPES.AdminCourseController)
 route.post("/login", adminAuthController.login.bind(adminAuthController));
 route.post("/logout", verifyAdmin, adminAuthController.logout.bind(adminAuthController));
 route.get("/users", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));
@@ -20,5 +21,6 @@ route.get("/mentors", verifyAdmin, adminMentorController.getAllMentors.bind(admi
 route.get("/mentor/:id",verifyAdmin,adminMentorController.mentorDetils.bind(adminMentorController))
 route.patch("/mentor/change-status", verifyAdmin, adminMentorController.changeStatus.bind(adminMentorController));
 route.patch("/mentor/block", verifyAdmin, adminMentorController.blockMentor.bind(adminMentorController));
+route.post("/create-course",verifyAdmin,adminCourseController.createClass.bind(adminCourseController))
 
 export default route;

@@ -53,6 +53,10 @@ import { IMentorProfileController } from '../interfaces/controllers/mentor/IMent
 import { IMentorProfileService } from '../interfaces/services/mentor/IMentorProfile.Service';
 import { MentorProfileController } from '../../controllers/mentor/mentorProfile.controller';
 import { MentorProfileService } from '../../services/mentor/MentorProfile.Service';
+import AdminCourseController from '../../controllers/admin/AdminCourse.Controller';
+import { IAdminCourseController } from '../interfaces/controllers/admin/IAdminCourse.Controller';
+import { IAdminCourseServices } from '../interfaces/services/admin/IAdminCourseService';
+import AdminCourseServices from '../../services/admin/adminCourse.service';
 
 const container = new Container();
 
@@ -66,6 +70,7 @@ container.bind<AuthController>(TYPES.AuthController).to(AuthController);
 container.bind<IProfileController>(TYPES.ProfileController).to(ProfileController);
 container.bind<IAdminAuthController>(TYPES.AdminAuthController).to(AdminAuthController),
 container.bind<IMentorProfileController>(TYPES.MentorProfileController).to(MentorProfileController)
+container.bind<IAdminCourseController>(TYPES.AdminCourseController).to(AdminCourseController)
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -76,6 +81,7 @@ container.bind<IProfileService>(TYPES.ProfileService).to(ProfileService);
 container.bind<IUserService>(TYPES.UserService).to(UserService);
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService)
 container.bind<IMentorProfileService>(TYPES.MentorProfileService).to(MentorProfileService)
+container.bind<IAdminCourseServices>(TYPES.AdminCourseServices).to(AdminCourseServices)
 
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);

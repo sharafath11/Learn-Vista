@@ -1,4 +1,4 @@
-import { userBlock } from "../types/adminTypes";
+import { ICourse, userBlock } from "../types/adminTypes";
 import { ILogin, IUserRegistration } from "../types/authTypes";
 import { MentorSignupData } from "../types/mentorTypes";
 import { getRequest, patchRequest, postRequest } from "./api";
@@ -26,9 +26,11 @@ export const AdminAPIMethods = {
   getSingleMentor: (id: string) => get(`/admin/mentor/${id}`),
   blockUser: (data: userBlock) => patch("/admin/users/block", data),
   mentorChangeStatus: (mentorId: string, status: string, email: string) => 
-    patch("/admin/mentor/change-status", { mentorId, status, email }),
+  patch("/admin/mentor/change-status", { mentorId, status, email }),
   blockMentor: (mentorId: string, isBlock: boolean) => 
-    patch("/admin/mentor/block", { mentorId, isBlock }),
+  patch("/admin/mentor/block", { mentorId, isBlock }),
+  createCourse: (data: ICourse) => post("/admin/create-course", data),
+  addCategory:(title:string,discription:string)=>post("/admin/add-categories",{title:title,discription:discription}),
   logout: () => post("/admin/logout", {})
 } as const;
 

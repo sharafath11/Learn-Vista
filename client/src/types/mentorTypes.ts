@@ -59,3 +59,16 @@ export interface FormOTPProps {
   onVerified: () => void
   onResend?: () => void
 }
+export interface ClassSession {
+  id: string;
+  title: string;
+  startTime: Date;
+  endTime: Date;
+  students: {
+    id: string;
+    name: string;
+    avatar?: string;
+  }[];
+  topic: string;
+  description?: string;
+}
