@@ -153,7 +153,7 @@ export interface ICourse  {
 export interface ICourseFormData {
   title: string
   description: string
-  mentorName: string
+  // mentorName: string
   category: string
   price: string
   language: string
@@ -171,4 +171,25 @@ export interface ICategory {
   isBlock:boolean,
   createdAt?: Date;
   updatedAt?: Date;
+}
+export interface ICourse  {
+  _id: string;
+  title: string;
+  description?: string;
+  mentorId: string;
+  sessions: string[];
+  categoryId: string;
+  category?: string; // for frontend display only
+  price?: number;
+  language?: string;
+  isBlock: boolean;
+  tags?: string[];
+  currentTag?: string;     // frontend use
+  startDate?: string;      // from form
+  endDate?: string;        // from form
+  startTime?: string;      // from form
+  thumbnail?: string;
+  thumbnailPreview?: string | null; // frontend use
+  createdAt: Date;
+  updatedAt: Date;
 }

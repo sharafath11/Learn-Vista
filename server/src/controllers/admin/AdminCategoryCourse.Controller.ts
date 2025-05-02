@@ -9,8 +9,7 @@ class AdminCourseController implements IAdminCourseController{
     constructor(
         @inject(TYPES.AdminCourseService) private adminCourseServices :IAdminCourseServices
     ) { }
-    createClass(req:Request,res:Response) {
-    }
+   
     async addCategories(req: Request, res: Response): Promise<void> {
         
         try {
@@ -40,6 +39,17 @@ class AdminCourseController implements IAdminCourseController{
             const {id,status}=req.body
             await this.adminCourseServices.blockCategory(id, status);
             sendResponse(res,200,`status change successfull`,true)
+        } catch (error) {
+            handleControllerError(res,error)
+        }
+    }
+    createClass(req: Request, res: Response) {
+        try {
+            return
+            const data = req.body
+            console.log("andi",data)
+            const result = this.adminCourseServices.createClass(data);
+            return sendResponse(res,200,"Course cxreated sicces full",true,result)
         } catch (error) {
             handleControllerError(res,error)
         }
