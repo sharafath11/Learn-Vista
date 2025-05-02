@@ -1,146 +1,113 @@
 "use client"
 
-import type React from "react"
-import { useState, useEffect, useRef } from "react"
+import { useAdminContext } from "@/src/context/adminContext"
+import { AdminAPIMethods } from "@/src/services/APImethods"
+import { showSuccessToast } from "@/src/utils/Toast"
 import { X } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
 
-interface AddProductModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onAddProduct: (product: { name: string; price: number; description: string }) => void
+interface CategoriesModalProps {
+  setIsModalOpen: (isOpen: boolean) => void
 }
 
-export default function AddProductModal({ isOpen, onClose, onAddProduct }: AddProductModalProps) {
-  const [name, setName] = useState("")
-  const [price, setPrice] = useState("")
-  const [description, setDescription] = useState("")
+export default function CategoriesModal({ setIsModalOpen }: CategoriesModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
+   const {setCat}=useAdminContext()
+  const [name, setName] = useState("")
+  const [description, setDescription] = useState("")
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        onClose()
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isOpen, onClose])
-
-  useEffect(() => {
-    function handleEscKey(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose()
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscKey)
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscKey)
-    }
-  }, [isOpen, onClose])
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = "auto"
-    }
-
-    return () => {
-      document.body.style.overflow = "auto"
-    }
-  }, [isOpen])
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (name.trim() && price.trim() && description.trim()) {
-      onAddProduct({ name, price: parseFloat(price), description })
-      setName("")
-      setPrice("")
-      setDescription("")
+  const handleClose = () => {
+    if (modalRef.current) {
+      modalRef.current.classList.add("animate-fadeOut")
+      setTimeout(() => setIsModalOpen(false), 200)
     }
   }
 
-  if (!isOpen) return null
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+ 
+      const res=await AdminAPIMethods.addCategory(name,description)
+    if (res.ok) {
+      setCat((prev)=>[...prev,res.data])
+      showSuccessToast(`Category ${name} added succesfully`)
+      handleClose()
+    }
+   
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose()
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div ref={modalRef} className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-semibold text-gray-800">Add New Product</h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-gray-100 transition-colors">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+      <div
+        ref={modalRef}
+        className="animate-fadeIn bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 border border-gray-200"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center p-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">Add New Category</h2>
+          <button
+            onClick={handleClose}
+            className="p-1.5 rounded-full hover:bg-gray-50 transition-colors"
+            aria-label="Close"
+          >
             <X size={20} className="text-gray-500" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4">
-          <div className="mb-4">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Product Name
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Category Name
             </label>
             <input
               type="text"
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-              placeholder="Enter product name"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors"
+              placeholder="Enter category name"
               required
             />
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-              Price
-            </label>
-            <input
-              type="number"
-              id="price"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-              placeholder="Enter product price"
-              required
-            />
-          </div>
-
-          <div className="mb-6">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="space-y-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
               Description
             </label>
             <textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-              placeholder="Enter product description"
-              rows={3}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-colors"
+              placeholder="Enter category description"
+              rows={4}
               required
             />
           </div>
 
-          <div className="flex justify-end space-x-3">
+          {/* Buttons */}
+          <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+              onClick={handleClose}
+              className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-sky-600 text-white rounded-md hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+              className="px-5 py-2.5 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors"
             >
-              Add Product
+              Add Category
             </button>
           </div>
         </form>

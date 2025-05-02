@@ -21,6 +21,9 @@ route.get("/mentors", verifyAdmin, adminMentorController.getAllMentors.bind(admi
 route.get("/mentor/:id",verifyAdmin,adminMentorController.mentorDetils.bind(adminMentorController))
 route.patch("/mentor/change-status", verifyAdmin, adminMentorController.changeStatus.bind(adminMentorController));
 route.patch("/mentor/block", verifyAdmin, adminMentorController.blockMentor.bind(adminMentorController));
-route.post("/create-course",verifyAdmin,adminCourseController.createClass.bind(adminCourseController))
+route.post("/create-course", verifyAdmin, adminCourseController.createClass.bind(adminCourseController));
+route.post("/add-categories", verifyAdmin, adminCourseController.addCategories.bind(adminCourseController));
+route.get("/categories", verifyAdmin, adminCourseController.getAllCategories.bind(adminCourseController));
+route.patch("/categorie/block",verifyAdmin,adminCourseController.blockCategorie.bind(adminCourseController))
 
 export default route;

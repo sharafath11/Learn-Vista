@@ -23,8 +23,7 @@ export const TYPES = {
   ProfileService: Symbol.for('ProfileService'),
   UserService: Symbol.for('UserService'),
   MentorProfileService: Symbol.for("MentorProfileService"),
-  AdminCourseServices:Symbol.for("AdminCourseServices"),
-  
+  AdminCourseService: Symbol.for("AdminCourseService"),
   // Repositories
   MentorRepository: Symbol.for('MentorRepository'),
   MentorOtpRepository: Symbol.for('MentorOtpRepository'),
@@ -32,6 +31,7 @@ export const TYPES = {
   AdminUsersRepository: Symbol.for('AdminUsersRepository'),
   UserRepository: Symbol.for('UserRepository'),
   OtpRepository: Symbol.for('OtpRepository'),
-  
+  AdminCourseRepository: Symbol.for("AdminCourseRepository"),
+  AdminCategoriesRepository: Symbol.for("AdminCategoriesRepository"),
   
 };

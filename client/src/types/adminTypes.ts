@@ -1,4 +1,5 @@
 
+import React from "react";
 import { IUser, UserRole } from "./authTypes"; 
 export enum Theme {
   DARK = 'dark',
@@ -132,6 +133,8 @@ export interface AdminContextType {
   refreshMentors: () => void;
   users: AdminUser[]
   setUsers: React.Dispatch<React.SetStateAction<any[]>>;
+  setCat: React.Dispatch<React.SetStateAction<ICategory[]>>;
+  cat:ICategory[]
 }
 export interface ICourse  {
   _id:string;
@@ -160,4 +163,12 @@ export interface ICourseFormData {
   endDate: string
   startTime: string
   thumbnailPreview: string | null
+}
+export interface ICategory {
+  _id: string;
+  title: string;
+  description: string;
+  isBlock:boolean,
+  createdAt?: Date;
+  updatedAt?: Date;
 }

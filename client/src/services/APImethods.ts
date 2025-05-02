@@ -30,7 +30,9 @@ export const AdminAPIMethods = {
   blockMentor: (mentorId: string, isBlock: boolean) => 
   patch("/admin/mentor/block", { mentorId, isBlock }),
   createCourse: (data: ICourse) => post("/admin/create-course", data),
-  addCategory:(title:string,discription:string)=>post("/admin/add-categories",{title:title,discription:discription}),
+  addCategory: (title: string, discription: string) => post("/admin/add-categories", { title: title, discription: discription }),
+  getGetegories: () => get("/admin/categories"),
+  blockCategorie:(id:string,status:boolean)=>patch("/admin/categorie/block",{id,status}),
   logout: () => post("/admin/logout", {})
 } as const;
 

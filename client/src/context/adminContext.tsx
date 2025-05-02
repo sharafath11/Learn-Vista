@@ -7,8 +7,9 @@ import {
   useEffect,
 } from "react";
 import { getRequest } from "../services/api";
-import { AdminContextType, AdminUser, Mentor } from "../types/adminTypes";
+import { AdminContextType, AdminUser, ICategory, Mentor } from "../types/adminTypes";
 import { AdminAPIMethods } from "../services/APImethods";
+import { showInfoToast } from "../utils/Toast";
 
 export const AdminContext = createContext<AdminContextType | null>(null);
 
@@ -16,12 +17,18 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [admin, setAdmin] = useState(false);
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [cat,setCat]=useState<ICategory[]>([])
 
   useEffect(() => {
     getAllMentors();
     getAllUsers();
+    getCategories()
   }, []);
-
+  async function getCategories() {
+    const res = await AdminAPIMethods.getGetegories();
+    if (res.ok) setCat(res.data);
+    else showInfoToast(res.msg)
+  }
   async function getAllMentors() {
     try {
       const res = await AdminAPIMethods.fetchMentor();
@@ -55,6 +62,8 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         setAdmin,
         mentors,
         setMentors,
+        cat,
+        setCat,
         refreshMentors: getAllMentors,
         users,
         setUsers,

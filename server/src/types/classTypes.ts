@@ -35,4 +35,10 @@ export interface ICourse extends Document {
     createdAt: Date;
     updatedAt: Date;
   }
-  
+  export interface ICategory extends Document {
+    title: string;
+    description: string;
+    isBlock:boolean,
+    createdAt?: Date;
+    updatedAt?: Date;
+  }

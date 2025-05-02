@@ -53,10 +53,14 @@ import { IMentorProfileController } from '../interfaces/controllers/mentor/IMent
 import { IMentorProfileService } from '../interfaces/services/mentor/IMentorProfile.Service';
 import { MentorProfileController } from '../../controllers/mentor/mentorProfile.controller';
 import { MentorProfileService } from '../../services/mentor/MentorProfile.Service';
-import AdminCourseController from '../../controllers/admin/AdminCourse.Controller';
+import AdminCourseController from '../../controllers/admin/AdminCategoryCourse.Controller';
 import { IAdminCourseController } from '../interfaces/controllers/admin/IAdminCourse.Controller';
 import { IAdminCourseServices } from '../interfaces/services/admin/IAdminCourseService';
-import AdminCourseServices from '../../services/admin/adminCourse.service';
+import AdminCourseServices from '../../services/admin/AdminCategoryCourse.Service';
+import { IAdminCourserRepository } from '../interfaces/repositories/admin/IAdminCourseRepository';
+import { IAdminCategoriesRepostory } from '../interfaces/repositories/admin/IAdminCategoryRepository';
+import { AdminCourseRepository } from '../../repositories/admin/AdminCourseRepo';
+import { AdminCategoriesRepo } from '../../repositories/admin/AdminCategoriesRepo';
 
 const container = new Container();
 
@@ -81,8 +85,7 @@ container.bind<IProfileService>(TYPES.ProfileService).to(ProfileService);
 container.bind<IUserService>(TYPES.UserService).to(UserService);
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService)
 container.bind<IMentorProfileService>(TYPES.MentorProfileService).to(MentorProfileService)
-container.bind<IAdminCourseServices>(TYPES.AdminCourseServices).to(AdminCourseServices)
-
+container.bind<IAdminCourseServices>(TYPES.AdminCourseService).to(AdminCourseServices);
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);
@@ -90,5 +93,13 @@ container.bind<IAdminMentorRepository>(TYPES.AdminMentorRepository).to(AdminMent
 container.bind<IAdminUsersRepository>(TYPES.AdminUsersRepository).to(AdminUsersRepo);
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpRepository);
+container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository);
+// Services
+
+
+// Repositories
+container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository).to(AdminCourseRepository);
+container.bind<IAdminCategoriesRepostory>(TYPES.AdminCategoriesRepository).to(AdminCategoriesRepo);
+
 
 export default container;
