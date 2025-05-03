@@ -5,7 +5,7 @@ import { handleControllerError, sendResponse, throwError } from "../../utils/Res
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IMentorProfileService } from "../../core/interfaces/services/mentor/IMentorProfile.Service";
-import { validateMentorProfile } from "../../utils/mentorValidation";
+import { validateMentorProfile } from "../../validation/mentorValidation";
 
 @injectable()
 export class MentorProfileController implements IMentorProfileController {

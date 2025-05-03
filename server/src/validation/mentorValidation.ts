@@ -1,5 +1,6 @@
 import { IMentor } from "../types/mentorTypes";
-import { throwError } from "./ResANDError";
+import { throwError } from "../utils/ResANDError";
+
 
 export const validateMentorSignupInput = (
   data?: Partial<IMentor>

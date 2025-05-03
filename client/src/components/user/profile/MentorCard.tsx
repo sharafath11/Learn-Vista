@@ -3,7 +3,7 @@
 import { UserAPIMethods } from "@/src/services/APImethods";
 import { MentorApplyFormData } from "@/src/types/authTypes";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
-import { validateMentorApplyForm } from "@/src/utils/user/validation";
+import { validateMentorApplyForm } from "@/src/validations/validation";
 import { GraduationCap, X, Upload, FileText, Loader2, Github, Linkedin, Globe, Link2 } from "lucide-react";
 import { useRef, useState, useCallback, useMemo } from "react";
 

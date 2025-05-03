@@ -1,7 +1,7 @@
 import { injectable, inject } from "inversify";
 import { Request, Response } from "express";
 import { TYPES } from "../../core/types";
-import { validateMentorApplyInput } from "../../utils/userValidation";
+import { validateMentorApplyInput } from "../../validation/userValidation";
 import { IProfileController } from "../../core/interfaces/controllers/user/IProfileController";
 import { IProfileService } from "../../core/interfaces/services/user/IUserProfileService";
 import { ISocialLink } from "../../types/mentorTypes";

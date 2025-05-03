@@ -165,7 +165,7 @@ export interface ICourseFormData {
   thumbnailPreview: string | null
 }
 export interface ICategory {
-  _id: string;
+  id: string;
   title: string;
   description: string;
   isBlock:boolean,
@@ -179,17 +179,31 @@ export interface ICourse  {
   mentorId: string;
   sessions: string[];
   categoryId: string;
-  category?: string; // for frontend display only
+  category?: string; 
   price?: number;
-  language?: string;
+  courseLanguage?: string;
   isBlock: boolean;
   tags?: string[];
-  currentTag?: string;     // frontend use
-  startDate?: string;      // from form
-  endDate?: string;        // from form
-  startTime?: string;      // from form
+  currentTag?: string;     
+  startDate?: string;     
+  endDate?: string;        
+  startTime?: string;      
   thumbnail?: string;
-  thumbnailPreview?: string | null; // frontend use
+  thumbnailPreview?: string | null; 
   createdAt: Date;
   updatedAt: Date;
 }
+export type CourseFormData = {
+  title: string;
+  description: string;
+  mentorId: string;
+  categoryId: string;
+  category: string;
+  price: string | number;
+  language: string;
+  tags: string;
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  thumbnail?: File;
+};

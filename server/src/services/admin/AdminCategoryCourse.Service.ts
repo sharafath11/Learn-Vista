@@ -5,6 +5,8 @@ import { TYPES } from "../../core/types";
 import { IAdminCategoriesRepostory } from "../../core/interfaces/repositories/admin/IAdminCategoryRepository";
 import { throwError } from "../../utils/ResANDError";
 import { IAdminCourserRepository } from "../../core/interfaces/repositories/admin/IAdminCourseRepository";
+import { uploadToCloudinary } from "../../utils/cloudImage";
+import { validateCoursePayload } from "../../validation/adminValidation";
 @injectable()
 class AdminCourseServices implements IAdminCourseServices{
     constructor( @inject(TYPES.AdminCourseRepository) private courseRepo: IAdminCourserRepository,
@@ -14,28 +16,46 @@ class AdminCourseServices implements IAdminCourseServices{
     async addCategories(title: string, description: string): Promise<ICategory> {
         const existCategory = await this.categoryRepo.findOne({ title });
         if (existCategory) throwError("This categorie already added");
-        const newData = this.categoryRepo.create({ title, description })
+        const newData = this.categoryRepo.create({ title, description });
         return newData
     }
     async getCategory(): Promise<ICategory[]> {
         const categories = this.categoryRepo.findAll();
-        return categories
+        if (!categories) throwError("Failed to fetch categories", 500);
+        return categories;
     }
     async blockCategory(id:string,status:boolean): Promise<void> {
-        this.categoryRepo.update(id,{isBlock:status})
-    }
-    createClass(data: Partial<ICourse>): Promise<ICourse> {
-        const newData = this.courseRepo.create(data);   
-        return newData
-    }
-    getClass(): Promise<ICourse[]> {
-        const data = this.courseRepo.findAll();
-        return data
-    }
-    blockCourse(id: string, status: boolean):void {
-        this.courseRepo.update(id,{isBlock:status})
+        const updated=this.categoryRepo.update(id, { isBlock: status });
+        if (!updated) throwError("Failed to update category status", 500);
 
     }
+    
+    async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
+        validateCoursePayload(data, thumbnail);
+        const imageUrl = await uploadToCloudinary(thumbnail, "thumbnail");
+
+        const courseData: Partial<ICourse> = {
+          ...data,
+          thumbnail: imageUrl,
+        };
+      
+        const createdCourse = await this.courseRepo.create(courseData);
+      
+        if (!createdCourse) throwError("Failed to create course", 500);
+      
+        return createdCourse;
+    }
+    async getClass(): Promise<ICourse[]> {
+        const courses = await this.courseRepo.findAll();
+        if (!courses) throwError("Failed to fetch courses", 500);
+        return courses;
+      }
+      async blockCourse(id: string, status: boolean): Promise<void> {
+        if (!id || id.length !== 24) throwError("Invalid course ID", 400);
+    
+        const updated = await this.courseRepo.update(id, { isBlock: status });
+        if (!updated) throwError("Failed to update course status", 500);
+      }
     
 
 }

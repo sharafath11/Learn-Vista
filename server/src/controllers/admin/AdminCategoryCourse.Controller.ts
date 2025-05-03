@@ -3,7 +3,7 @@ import { IAdminCourseController } from "../../core/interfaces/controllers/admin/
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IAdminCourseServices } from "../../core/interfaces/services/admin/IAdminCourseService";
-import { handleControllerError, sendResponse } from "../../utils/ResANDError";
+import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 @injectable()
 class AdminCourseController implements IAdminCourseController{
     constructor(
@@ -43,16 +43,20 @@ class AdminCourseController implements IAdminCourseController{
             handleControllerError(res,error)
         }
     }
-    createClass(req: Request, res: Response) {
+    async createClass(req: Request, res: Response) {
         try {
-            return
-            const data = req.body
-            console.log("andi",data)
-            const result = this.adminCourseServices.createClass(data);
-            return sendResponse(res,200,"Course cxreated sicces full",true,result)
+          const data = req.body;
+          const thumbnail = req.file;
+      
+          if (!thumbnail) throwError("Thumbnail image is required", 400);
+      
+          const result = await this.adminCourseServices.createClass(data, thumbnail.buffer);
+      
+          return sendResponse(res, 200, "Course created successfully", true, result);
         } catch (error) {
-            handleControllerError(res,error)
+          handleControllerError(res, error);
         }
-    }
+      }
+      
 }
 export default AdminCourseController

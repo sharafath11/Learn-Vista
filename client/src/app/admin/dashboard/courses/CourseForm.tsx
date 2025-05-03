@@ -28,7 +28,7 @@ interface ICourseFormData {
 interface CourseFormProps {
   initialData?: Partial<ICourseFormData>
   mentors: Array<{ id: string; username: string; expertise: string[] }>
-  categories: Array<{ _id: string; title: string }>
+  categories: Array<{ id: string; title: string }>
   languages: string[]
   onSubmit: (data: ICourseFormData) => Promise<void>
 }
@@ -73,7 +73,8 @@ export default function CourseForm({
     }
 
     if (name === "category") {
-      const selectedCategory = categories.find((c) => c._id === value)
+      console.log("rfgre",categories,value)
+      const selectedCategory = categories.find((c) => c.id === value)
       setFormData((prev) => ({
         ...prev,
         categoryId: value,
@@ -128,7 +129,8 @@ export default function CourseForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
-      console.log("adf",formData)
+      console.log("adf",formData);
+    
     await onSubmit(formData)
   }
 

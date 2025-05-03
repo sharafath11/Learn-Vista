@@ -11,7 +11,7 @@ interface CourseBasicInfoProps {
   }
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
   mentors: Array<{ id: string; username: string; expertise: string[] }>
-  categories: Array<{ _id: string; title: string }>
+  categories: Array<{ id: string; title: string }>
 }
 
 export default function CourseBasicInfo({
@@ -89,7 +89,7 @@ export default function CourseBasicInfo({
         >
           <option value="">Select a category</option>
           {categories.map((category) => (
-            <option key={category._id} value={category._id}>
+            <option key={category.id} value={category.id}>
               {category.title}
             </option>
           ))}

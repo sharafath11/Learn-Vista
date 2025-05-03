@@ -10,9 +10,9 @@ import { IMentorOtpRepository } from '../../core/interfaces/repositories/mentor/
 import { generateOtp } from '../../utils/otpGenerator';
 import { sendEmailOtp, sendPasswordResetEmail } from '../../utils/emailService';
 import { IMentor, SafeMentor } from '../../types/mentorTypes';
-import { validateMentorSignupInput } from '../../utils/mentorValidation';
 import { generateAccessToken, generateRefreshToken } from '../../utils/JWTtoken';
 import { throwError } from '../../utils/ResANDError';
+import { validateMentorSignupInput } from '../../validation/mentorValidation';
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {

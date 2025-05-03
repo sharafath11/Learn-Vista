@@ -30,7 +30,7 @@ export interface ICourse extends Document {
   categoryId: ObjectId;
   category?: string; // for frontend display only
   price?: number;
-  language?: string;
+  courseLanguage?: string;
   isBlock: boolean;
   tags?: string[];
   currentTag?: string;     // frontend use

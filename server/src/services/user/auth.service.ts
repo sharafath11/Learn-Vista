@@ -4,7 +4,7 @@ import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRe
 import { TYPES } from "../../core/types";
 import bcrypt from "bcryptjs";
 import { GooglePayload, IUser } from "../../types/userTypes";
-import { validateUserSignupInput } from "../../utils/userValidation";
+import { validateUserSignupInput } from "../../validation/userValidation";
 import { OtpRepository } from "../../repositories/user/OtpRepository";
 import { generateOtp } from "../../utils/otpGenerator";
 import { sendEmailOtp } from "../../utils/emailService";

@@ -10,7 +10,7 @@ const CourseSchema: Schema = new Schema(
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     thumbnail: { type: String },
     price: { type: Number, default: 0 },
-    language: { type: String },
+    courseLanguage: { type: String },
     isBlock: { type: Boolean, required: true, default: false },
     tags: [{ type: String }],
     startDate: { type: String }, 

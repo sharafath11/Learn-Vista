@@ -5,14 +5,21 @@ import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast"
 import { useAdminContext } from "@/src/context/adminContext"
 import CourseForm from "./CourseForm"
+import {  ICourse } from "@/src/types/adminTypes"
+import { validateCourseForm } from "@/src/validations/adminvalidation"
 
 export default function CreateCoursePage() {
   const { mentors, cat } = useAdminContext()
   const languages = ["English", "Malayalam"]
-
+console.log(cat)
   const handleSubmit = async (formData: any) => {
-    const payload = new FormData();
-    console.log("andimukk shagha ",formData)
+    const { isValid, message } = validateCourseForm(formData);
+    if (!isValid) {
+      showInfoToast(message);
+      return 
+    }
+    const payload = new FormData() ;
+   
     // Append regular fields to FormData
     payload.append('title', formData.title);
     payload.append('description', formData.description);
@@ -20,19 +27,23 @@ export default function CreateCoursePage() {
     payload.append('categoryId', formData.categoryId);
     payload.append('category', formData.category);
     payload.append('price', Number(formData.price).toString());
-    payload.append('language', formData.language);
+    payload.append('courseLanguage', formData.language);
     payload.append('tags', formData.tags);
     payload.append('startDate', formData.startDate);
     payload.append('endDate', formData.endDate);
     payload.append('startTime', formData.startTime);
    
- 
+    for (let pair of payload.entries()) {
+      console.log(pair[0]+ ': ' + pair[1]);
+    }
+    
+   
     if (formData.thumbnail) {
       payload.append('thumbnail', formData.thumbnail); 
     }
   
     try {
-      
+     
       const res = await AdminAPIMethods.createCourse(payload);
       if (res.ok) {
         showSuccessToast(res.msg);
