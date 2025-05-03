@@ -30,9 +30,12 @@ export interface ICourse extends Document {
   categoryId: ObjectId;
   category?: string; // for frontend display only
   price?: number;
+  students:number,
   courseLanguage?: string;
   isBlock: boolean;
   tags?: string[];
+  mentorApproved: boolean
+  isCompleted:boolean
   currentTag?: string;     // frontend use
   startDate?: string;      // from form
   endDate?: string;        // from form

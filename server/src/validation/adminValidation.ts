@@ -26,9 +26,9 @@ export function validateCoursePayload(data: Partial<ICourse>, thumbnail?: Buffer
       throwError(`Missing required field: ${field}`, 400);
     }
   }
-
-  if (typeof data.price !== "number" || data.price <= 0) {
-    throwError("Price must be a positive number", 400);
+  console.log(typeof data.price)
+  if (typeof data.price !== "string" || data.price <0) {
+    throwError("Price must be a positive numbetttr", 400);
   }
 
   if (!thumbnail || !Buffer.isBuffer(thumbnail)) {

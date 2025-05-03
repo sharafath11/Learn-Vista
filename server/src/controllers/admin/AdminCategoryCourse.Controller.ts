@@ -56,7 +56,26 @@ class AdminCourseController implements IAdminCourseController{
         } catch (error) {
           handleControllerError(res, error);
         }
-      }
+    }
+    async getCourse(req: Request, res: Response): Promise<void> {
+        try {
+            const courses = await this.adminCourseServices.getClass();
+            if (!courses) throwError("Somthing wentwrong :)")
+            sendResponse(res,200,"",true,courses)
+        } catch (error) {
+            handleControllerError(res, error); 
+        }
+    }
+    async blockCourses(req: Request, res: Response): Promise<void> {
+        try {
+            const {id,status}=req.body
+            await this.adminCourseServices.blockCourse(id as string, status);
+            sendResponse(res,200,`Status ${status} changed `,true)
+        } catch (error) {
+            handleControllerError(res, error)
+        }
+    }
+
       
 }
 export default AdminCourseController

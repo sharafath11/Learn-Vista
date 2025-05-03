@@ -7,10 +7,12 @@ import { throwError } from "../../utils/ResANDError";
 import { IAdminCourserRepository } from "../../core/interfaces/repositories/admin/IAdminCourseRepository";
 import { uploadToCloudinary } from "../../utils/cloudImage";
 import { validateCoursePayload } from "../../validation/adminValidation";
+import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
 @injectable()
 class AdminCourseServices implements IAdminCourseServices{
     constructor( @inject(TYPES.AdminCourseRepository) private courseRepo: IAdminCourserRepository,
-    @inject(TYPES.AdminCategoriesRepository) private categoryRepo: IAdminCategoriesRepostory
+      @inject(TYPES.AdminCategoriesRepository) private categoryRepo: IAdminCategoriesRepostory,
+    @inject(TYPES.AdminMentorRepository )private mentorRepo:IAdminMentorRepository
     ) { }
    
     async addCategories(title: string, description: string): Promise<ICategory> {
@@ -31,8 +33,26 @@ class AdminCourseServices implements IAdminCourseServices{
     }
     
     async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
-        validateCoursePayload(data, thumbnail);
-        const imageUrl = await uploadToCloudinary(thumbnail, "thumbnail");
+      validateCoursePayload(data, thumbnail);
+      if (!data.mentorId) throw new Error("Mentor ID is required");
+      const courses = await this.courseRepo.findAll({ mentorId: data.mentorId });
+
+      const hasOverlap = courses.some((course) => {
+        return (
+          course.startDate &&
+          course.endDate &&
+          data.startDate &&
+          data.endDate &&
+          course.startDate <= data.endDate &&
+          course.endDate >= data.startDate
+        );
+      });
+      
+      if (hasOverlap) {
+        throwError("This mentor already has a class at the same time.");
+      }
+      
+      const imageUrl = await uploadToCloudinary(thumbnail, "thumbnail");
 
         const courseData: Partial<ICourse> = {
           ...data,
@@ -50,12 +70,13 @@ class AdminCourseServices implements IAdminCourseServices{
         if (!courses) throwError("Failed to fetch courses", 500);
         return courses;
       }
-      async blockCourse(id: string, status: boolean): Promise<void> {
+  async blockCourse(id: string, status: boolean): Promise<void> {
+      console.log(id)
         if (!id || id.length !== 24) throwError("Invalid course ID", 400);
     
         const updated = await this.courseRepo.update(id, { isBlock: status });
         if (!updated) throwError("Failed to update course status", 500);
-      }
+     }
     
 
 }

@@ -134,16 +134,19 @@ export interface AdminContextType {
   users: AdminUser[]
   setUsers: React.Dispatch<React.SetStateAction<any[]>>;
   setCat: React.Dispatch<React.SetStateAction<ICategory[]>>;
-  cat:ICategory[]
+  cat: ICategory[]
+  courses:ICourse[]
+  setCourses: React.Dispatch<React.SetStateAction<ICourse[]>>;
 }
 export interface ICourse  {
-  _id:string;
+  id:string;
   title: string;
   description?: string;
   mentorId: string;
   sessions: string[];
   categoryId: string;
   thumbnail?: string;
+  mentorApproved:boolean
   price?: number;
   language?: string;
   tags?: string[];

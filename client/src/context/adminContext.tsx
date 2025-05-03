@@ -7,7 +7,7 @@ import {
   useEffect,
 } from "react";
 import { getRequest } from "../services/api";
-import { AdminContextType, AdminUser, ICategory, Mentor } from "../types/adminTypes";
+import { AdminContextType, AdminUser, ICategory, ICourse, Mentor } from "../types/adminTypes";
 import { AdminAPIMethods } from "../services/APImethods";
 import { showInfoToast } from "../utils/Toast";
 
@@ -17,12 +17,14 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [admin, setAdmin] = useState(false);
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [cat,setCat]=useState<ICategory[]>([])
+  const [cat, setCat] = useState<ICategory[]>([])
+  const [courses,setCourses]=useState<ICourse[]>([])
 
   useEffect(() => {
     getAllMentors();
     getAllUsers();
-    getCategories()
+    getCategories();
+    getCourse()
   }, []);
   async function getCategories() {
     const res = await AdminAPIMethods.getGetegories();
@@ -40,6 +42,11 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error("Failed to fetch mentors:", error);
     }
+  }
+  async function getCourse(){
+    const res = await AdminAPIMethods.getCourses();
+    if (res.ok) setCourses(res.data);
+
   }
 
   async function getAllUsers() {
@@ -59,6 +66,8 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     <AdminContext.Provider
       value={{
         admin,
+        courses,
+        setCourses,
         setAdmin,
         mentors,
         setMentors,
