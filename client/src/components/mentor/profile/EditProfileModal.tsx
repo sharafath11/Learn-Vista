@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MentorAPIMethods, UserAPIMethods } from "@/src/services/APImethods";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 import { useMentorContext } from "@/src/context/mentorContext";
-import { validateMentorProfile } from "@/src/utils/mentor/mentorValidation";
+import { validateMentorProfile } from "@/src/validations/mentorValidation";
 
 type View = "profile" | "forgotPassword" | "resetSent";
 

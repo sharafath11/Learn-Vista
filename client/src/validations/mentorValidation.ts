@@ -1,5 +1,6 @@
 import { MentorSignupData } from "@/src/types/mentorTypes";
-import { showInfoToast } from "../Toast";
+import { showInfoToast } from "../utils/Toast";
+
 
 export const validateMentorSignup = (data?: MentorSignupData) => {
     if (!data || typeof data !== "object") return "Invalid data provided";

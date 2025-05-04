@@ -1,4 +1,4 @@
-// components/course/CourseForm.tsx
+
 "use client"
 
 import CourseAdditionalDetails from "@/src/components/admin/course/CourseAdditionalDetails"

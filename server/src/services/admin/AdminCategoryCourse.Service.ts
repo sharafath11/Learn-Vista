@@ -8,6 +8,7 @@ import { IAdminCourserRepository } from "../../core/interfaces/repositories/admi
 import { uploadToCloudinary } from "../../utils/cloudImage";
 import { validateCoursePayload } from "../../validation/adminValidation";
 import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
+import { ObjectId } from "mongoose";
 @injectable()
 class AdminCourseServices implements IAdminCourseServices{
     constructor( @inject(TYPES.AdminCourseRepository) private courseRepo: IAdminCourserRepository,
@@ -59,10 +60,10 @@ class AdminCourseServices implements IAdminCourseServices{
           thumbnail: imageUrl,
         };
       
-        const createdCourse = await this.courseRepo.create(courseData);
+      const createdCourse = await this.courseRepo.create(courseData);
       
-        if (!createdCourse) throwError("Failed to create course", 500);
-      
+      if (!createdCourse) throwError("Failed to create course", 500);
+       
         return createdCourse;
     }
     async getClass(): Promise<ICourse[]> {
