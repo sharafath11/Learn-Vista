@@ -34,7 +34,8 @@ export interface ICourse extends Document {
   courseLanguage?: string;
   isBlock: boolean;
   tags?: string[];
-  mentorApproved: boolean
+  // mentorApproved: boolean
+  mentorStatus: "approved" | "rejected"|"pending";
   isCompleted:boolean
   currentTag?: string;     // frontend use
   startDate?: string;      // from form

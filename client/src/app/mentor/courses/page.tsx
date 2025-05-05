@@ -1,64 +1,38 @@
 "use client"
-
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react'
+import { useMentorContext } from '@/src/context/mentorContext'
+import { CheckCircle2, XCircle } from 'lucide-react'
 import Image from 'next/image'
+import { format } from 'date-fns'
+import { MentorAPIMethods } from '@/src/services/APImethods'
+import { showSuccessToast } from '@/src/utils/Toast'
+import { ICourse } from '@/src/types/adminTypes'
 
 export default function CoursesPage() {
+  const { courses, setCourses } = useMentorContext()
 
-  const courses = [
-    {
-      id: '1',
-      title: 'Introduction to React Hooks',
-      description: 'Learn how to use React Hooks to simplify your functional components and manage state effectively.',
-      category: 'Web Development',
-      level: 'Beginner',
-      thumbnail: '/images/course1.jpg',
-      status: 'pending',
-      student: {
-        id: '101',
-        name: 'Alex Johnson',
-        avatar: '/images/avatar1.jpg'
-      }
-    },
-    {
-      id: '2',
-      title: 'Advanced Python Programming',
-      description: 'Master advanced Python concepts including decorators, generators, and async programming.',
-      category: 'Programming',
-      level: 'Advanced',
-      thumbnail: '/images/course2.jpg',
-      status: 'pending',
-      student: {
-        id: '102',
-        name: 'Sarah Williams',
-        avatar: '/images/avatar2.jpg'
-      }
-    },
-    {
-      id: '3',
-      title: 'UI/UX Design Fundamentals',
-      description: 'Learn the core principles of user interface and user experience design with practical examples.',
-      category: 'Design',
-      level: 'Intermediate',
-      thumbnail: '/images/course3.jpg',
-      status: 'pending',
-      student: {
-        id: '103',
-        name: 'Michael Chen',
-        avatar: '/images/avatar3.jpg'
-      }
+  const changeStatus = async (id: string, status: string) => {
+    const res = await MentorAPIMethods.courseStatusChange(id, status)
+    if (res.ok) {
+      showSuccessToast(`Course ${status}`)
+      setCourses(prevCourses =>
+        prevCourses.map(course =>
+          course.id === id ? { ...course, mentorStatus: status } : course
+        )
+      )
     }
-  ]
+  }
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Approved</span>
-      case 'rejected':
-        return <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Rejected</span>
-      default:
-        return <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Pending</span>
+    const statusStyles = {
+      approved: 'bg-green-100 text-green-800',
+      rejected: 'bg-red-100 text-red-800',
+      pending: 'bg-yellow-100 text-yellow-800',
     }
+    return (
+      <span className={`${statusStyles[status]} text-xs px-2 py-1 rounded-full`}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </span>
+    )
   }
 
   return (
@@ -71,57 +45,44 @@ export default function CoursesPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {courses.map((course) => (
+        {courses.map(course => (
           <div key={course.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
             <div className="relative h-48 w-full">
-              <Image
-                src={course.thumbnail}
-                alt={course.title}
-                fill
-                className="object-cover"
-              />
+              <Image src={course.thumbnail || "/placeholder.png"} alt={course.title} fill className="object-cover" />
             </div>
-            
-            <div className="p-4">
-              <div className="flex justify-between items-start mb-2">
+
+            <div className="p-4 space-y-2">
+              <div className="flex justify-between items-start">
                 <h3 className="text-lg font-semibold text-gray-800 line-clamp-2">{course.title}</h3>
-                {getStatusBadge(course.status)}
-              </div>
-              
-              <div className="flex gap-2 mb-2">
-                <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">{course.category}</span>
-                <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">{course.level}</span>
-              </div>
-              
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3">{course.description}</p>
-              
-              <div className="flex items-center mb-4">
-                <div className="relative h-8 w-8 mr-2">
-                  <Image
-                    src={course.student.avatar}
-                    alt={course.student.name}
-                    fill
-                    className="rounded-full object-cover"
-                  />
-                </div>
-                <span className="text-sm text-gray-700">{course.student.name}</span>
+                {getStatusBadge(course.mentorStatus)}
               </div>
 
-              <div className="flex space-x-2">
-                <button
-                  className="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 py-2 px-4 rounded-md flex items-center justify-center space-x-2 transition-colors"
-                >
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span>Approve</span>
-                </button>
-                
-                <button
-                  className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 px-4 rounded-md flex items-center justify-center space-x-2 transition-colors"
-                >
-                  <XCircle className="h-4 w-4" />
-                  <span>Reject</span>
-                </button>
+              <p className="text-sm text-gray-600">{course.description}</p>
+
+              <div className="text-xs text-gray-700 space-y-1">
+                <p><strong>Sessions:</strong> {course.sessions.join(', ') || 'None'}</p>
+                <p><strong>Price:</strong> ₹{course.price ?? 'Free'}</p>
+                <p><strong>Language:</strong> {course.courseLanguage ?? 'Not specified'}</p>
+                <p><strong>Tags:</strong> {course.tags?.join(', ') || 'None'}</p>
+                <p><strong>Status:</strong> {course.mentorStatus}</p>
+                <p><strong>Starts On:</strong> {course.startDate && course.startTime ? format(new Date(`${course.startDate}T${course.startTime}`), 'PPPp') : 'Not specified'}</p>
+                <p><strong>Time:</strong> {course.startDate && course.startTime ? format(new Date(`${course.startDate}T${course.startTime}`), 'ppp') : 'Not specified'}</p>
+                <p><strong>Ending Date:</strong> {course.endDate ? format(new Date(course.endDate), 'PPP') : 'Not specified'}</p>
               </div>
+
+              {course.mentorStatus === "pending" && (
+                <div className="flex space-x-2 pt-4">
+                  <button onClick={() => changeStatus(course.id, "approved")} className="flex-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 py-2 px-4 rounded-md flex items-center justify-center space-x-2 transition-colors">
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>Approve</span>
+                  </button>
+
+                  <button onClick={() => changeStatus(course.id, "rejected")} className="flex-1 bg-red-50 hover:bg-red-100 text-red-600 py-2 px-4 rounded-md flex items-center justify-center space-x-2 transition-colors">
+                    <XCircle className="h-4 w-4" />
+                    <span>Reject</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

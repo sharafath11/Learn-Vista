@@ -5,4 +5,4 @@ import { IBaseRepository } from "../IBaseRepository";
 
 export interface IUserRepository extends IBaseRepository<IUser , IUser> {
   applyMentor(mentorData: Partial<IMentor>): Promise<IMentor>
-}
+ }

@@ -33,5 +33,7 @@ export const TYPES = {
   OtpRepository: Symbol.for('OtpRepository'),
   AdminCourseRepository: Symbol.for("AdminCourseRepository"),
   AdminCategoriesRepository: Symbol.for("AdminCategoriesRepository"),
+  MentorCourseRepository: Symbol.for("MentorCourseRepository"),
+  CourseRepository: Symbol.for("CourseRepository"),
   
 };

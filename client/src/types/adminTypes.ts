@@ -146,7 +146,9 @@ export interface ICourse  {
   sessions: string[];
   categoryId: string;
   thumbnail?: string;
-  mentorApproved:boolean
+  
+ 
+  mentorStatus: "approved" | "rejected" | "pending";
   price?: number;
   language?: string;
   tags?: string[];
@@ -180,6 +182,7 @@ export interface ICourse  {
   title: string;
   description?: string;
   mentorId: string;
+  mentorStatus: "approved" | "rejected" | "pending";
   sessions: string[];
   categoryId: string;
   category?: string; 

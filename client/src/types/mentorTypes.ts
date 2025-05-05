@@ -1,5 +1,5 @@
 
-import {  Mentor } from "./adminTypes"
+import {  ICourse, Mentor } from "./adminTypes"
 export interface MentorSignupData {
   email: string;
   password: string;
@@ -13,7 +13,9 @@ export interface MentorSignupData {
 export interface IMentorContext{
   mentor: IMentorMentor|null;
   setMentor: React.Dispatch<React.SetStateAction<IMentorMentor | null>>;
-  refreshMentor:()=>void
+  refreshMentor: () => void
+  courses:ICourse[],
+  setCourses:React.Dispatch<React.SetStateAction<ICourse[]>>;
   
 }
 export interface SocialLink {
@@ -29,6 +31,7 @@ export interface IMentorMentor {
   profilePicture: string | null;
   bio: string | null;
   experience: number;
+  courses?:ICourse[]
   expertise: string[];
   socialLinks: SocialLink[];
   cvOrResume: string;

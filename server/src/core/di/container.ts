@@ -61,6 +61,9 @@ import { IAdminCourserRepository } from '../interfaces/repositories/admin/IAdmin
 import { IAdminCategoriesRepostory } from '../interfaces/repositories/admin/IAdminCategoryRepository';
 import { AdminCourseRepository } from '../../repositories/admin/AdminCourseRepo';
 import { AdminCategoriesRepo } from '../../repositories/admin/AdminCategoriesRepo';
+import { IMentorCourseRepo } from '../interfaces/repositories/mentor/IMentorCourseRepo';
+import { ICourseRepository } from '../interfaces/repositories/course/ICourseRepository';
+import { CourseRepository } from '../../repositories/course/CourseRepository';
 
 const container = new Container();
 
@@ -94,10 +97,8 @@ container.bind<IAdminUsersRepository>(TYPES.AdminUsersRepository).to(AdminUsersR
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpRepository);
 container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository);
-// Services
-
-
-// Repositories
+container.bind<IMentorCourseRepo>(TYPES.MentorCourseRepository).to(MentorRepository);
+container.bind<ICourseRepository>(TYPES.CourseRepository).to(CourseRepository)
 container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository).to(AdminCourseRepository);
 container.bind<IAdminCategoriesRepostory>(TYPES.AdminCategoriesRepository).to(AdminCategoriesRepo);
 

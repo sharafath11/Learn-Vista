@@ -8,7 +8,6 @@ import { IAdminCourserRepository } from "../../core/interfaces/repositories/admi
 import { uploadToCloudinary } from "../../utils/cloudImage";
 import { validateCoursePayload } from "../../validation/adminValidation";
 import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
-import { ObjectId } from "mongoose";
 @injectable()
 class AdminCourseServices implements IAdminCourseServices{
     constructor( @inject(TYPES.AdminCourseRepository) private courseRepo: IAdminCourserRepository,

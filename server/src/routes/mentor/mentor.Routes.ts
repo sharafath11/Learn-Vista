@@ -10,19 +10,18 @@ const router = express.Router();
 const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
 const mentorController = container.get<IMentorController>(TYPES.MentorController);
 const mentorProfileController=container.get<IMentorProfileController>(TYPES.MentorProfileController)
-// Auth Routes
 router.post('/signup', (req, res) => mentorAuthController.signupController(req, res));
 router.post('/send-otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
 router.post('/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
 router.post('/login', (req, res) => mentorAuthController.login(req, res));
 router.post('/logout', (req, res) => mentorAuthController.logout(req, res));
-
-// Protected Routes
 router.post("/edit-profile",uploadImage.single('image'),verifyMentor,(req,res)=>mentorProfileController.editProfile(req,res))
 router.get('/get-mentor', verifyMentor, (req, res, next) => {
     mentorController.getMentor(req, res).catch(next);
 });
 router.post("/forget-password", (req, res) => mentorAuthController.forgetPassword(req, res));
-router.post("/reset-password",(req,res)=>mentorAuthController.restartPassword(req,res))
+router.post("/reset-password", (req, res) => mentorAuthController.restartPassword(req, res));
+router.get("/courses", verifyMentor, mentorController.getCourses.bind(mentorController));
+router.patch("/course/status-change", mentorController.statusChange.bind(mentorController));
 
 export default router;

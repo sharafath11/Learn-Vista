@@ -1,4 +1,5 @@
 import { Document, Types } from 'mongoose';
+import { ICourse } from './classTypes';
 
 type SocialPlatform = 'LinkedIn' | 'GitHub' | 'Portfolio';
 
@@ -18,6 +19,7 @@ export interface IMentor extends Document {
   experience: number;
   expertise: string[];
   googleMentor?: boolean;
+  courses?:ICourse[]
   role: 'mentor';
   googleId?: string;
   status: 'pending' | 'approved' | 'rejected';
