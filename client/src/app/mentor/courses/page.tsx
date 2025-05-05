@@ -10,30 +10,33 @@ import { ICourse } from '@/src/types/adminTypes'
 export default function CoursesPage() {
   const { courses, setCourses } = useMentorContext()
 
-  const changeStatus = async (id: string, status: string) => {
-    const res = await MentorAPIMethods.courseStatusChange(id, status)
+  const changeStatus = async (id: string, status: "approved" | "rejected" | "pending") => {
+    const res = await MentorAPIMethods.courseStatusChange(id, status);
     if (res.ok) {
-      showSuccessToast(`Course ${status}`)
+      showSuccessToast(`Course ${status}`);
       setCourses(prevCourses =>
         prevCourses.map(course =>
           course.id === id ? { ...course, mentorStatus: status } : course
         )
-      )
+      );
     }
   }
+  
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: "approved" | "rejected" | "pending") => {
     const statusStyles = {
       approved: 'bg-green-100 text-green-800',
       rejected: 'bg-red-100 text-red-800',
       pending: 'bg-yellow-100 text-yellow-800',
-    }
+    };
+    
     return (
       <span className={`${statusStyles[status]} text-xs px-2 py-1 rounded-full`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
-    )
-  }
+    );
+  };
+  
 
   return (
     <div className="container mx-auto px-4 py-8">
