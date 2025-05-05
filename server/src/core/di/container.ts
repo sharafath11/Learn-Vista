@@ -97,7 +97,6 @@ container.bind<IAdminUsersRepository>(TYPES.AdminUsersRepository).to(AdminUsersR
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpRepository);
 container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository);
-container.bind<IMentorCourseRepo>(TYPES.MentorCourseRepository).to(MentorRepository);
 container.bind<ICourseRepository>(TYPES.CourseRepository).to(CourseRepository)
 container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository).to(AdminCourseRepository);
 container.bind<IAdminCategoriesRepostory>(TYPES.AdminCategoriesRepository).to(AdminCategoriesRepo);

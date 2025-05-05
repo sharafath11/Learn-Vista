@@ -5,10 +5,9 @@ import {
   useContext,
   useEffect,
   useState,
-  useMemo,
   useCallback,
 } from "react";
-import { IMentorContext, IMentorMentor } from "../types/mentorTypes";
+import { IMentorContext, IMentorMentor, IPopulatedCourse } from "../types/mentorTypes";
 import { ICourse } from "../types/adminTypes";
 import { useRouter } from "next/navigation";
 import { MentorAPIMethods } from "../services/APImethods";
@@ -17,38 +16,43 @@ export const MentorContext = createContext<IMentorContext | null>(null);
 
 export const MentorsContextProvider = ({ children }: { children: ReactNode }) => {
   const [mentor, setMentor] = useState<IMentorMentor | null>(null);
-  const [courses, setCourses] = useState<ICourse[]>([]);
+  const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
   const router = useRouter();
 
   const getMentorDetils = useCallback(async () => {
     const res = await MentorAPIMethods.getMentor();
+   
+  
     if (res?.ok) {
-      if (res.msg.includes("Logged out successfully")) {
-        router.push("/mentor/login");
-      } 
-      console.log(res)
+      setMentor(res.data); 
     } else {
       router.push("/mentor/login");
     }
   }, [router]);
+  
+
   const getCourses = useCallback(async () => {
     const res = await MentorAPIMethods.getCourses();
     if (res.ok) setCourses(res.data);
-    console.log(res.data)
-  },[courses])
+    console.log("mentor side", res);
+  }, []);
 
   useEffect(() => {
+    alert("triger")
     getMentorDetils();
-    getCourses();
   }, [getMentorDetils]);
 
-  const contextValue = useMemo<IMentorContext>(() => ({
+  useEffect(() => {
+    getCourses();
+  }, [getCourses]);
+
+  const contextValue: IMentorContext = {
     mentor,
     setMentor,
     refreshMentor: getMentorDetils,
     courses,
     setCourses,
-  }), [mentor, getMentorDetils, courses]);
+  };
 
   return (
     <MentorContext.Provider value={contextValue}>

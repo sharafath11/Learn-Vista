@@ -72,6 +72,12 @@ const mentorSchema = new Schema<IMentor>({
     type: Schema.Types.ObjectId,
     ref: 'Review',
   }],
+  courseRejectReson: [
+    {
+      courseId: { type: Schema.Types.ObjectId, ref: 'Course' },  
+      message: { type: String }
+    }
+  ],
   applicationDate: {
     type: Date,
     default: Date.now,

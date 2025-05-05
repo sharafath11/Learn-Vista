@@ -9,7 +9,8 @@ import { IMentorController } from '../../core/interfaces/controllers/mentor/IMen
 @injectable()
 export class MentorController implements IMentorController{
   constructor(
-    @inject(TYPES.MentorService) private mentorService: IMentorService
+    @inject(TYPES.MentorService) private mentorService: IMentorService,
+   
   ) {}
 
   async getMentor(req: Request, res: Response): Promise<void> {

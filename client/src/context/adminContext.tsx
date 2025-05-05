@@ -45,6 +45,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   }
   async function getCourse(){
     const res = await AdminAPIMethods.getCourses();
+    console.log("populated course",res.data)
     if (res.ok) setCourses(res.data);
 
   }

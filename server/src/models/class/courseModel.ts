@@ -11,7 +11,7 @@ const CourseSchema: Schema = new Schema(
     thumbnail: { type: String },
     students:{type:Number,default:0},
     price: { type: Number, default: 0 },
-    // mentorApproved: { type: Boolean, default: false },
+   
     mentorStatus: {
       type: String,
       enum: ['approved', 'rejected',"pending"],

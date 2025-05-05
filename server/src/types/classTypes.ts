@@ -1,5 +1,6 @@
 
-import { Document, ObjectId } from "mongoose";
+import { Document, ObjectId, Types } from "mongoose";
+import { IMentor } from "./mentorTypes";
 
 export interface ISessionDocument extends ISession, Document {
   _id: ObjectId; 
@@ -28,13 +29,15 @@ export interface ICourse extends Document {
   mentorId: ObjectId;
   sessions: ObjectId[];
   categoryId: ObjectId;
-  category?: string; // for frontend display only
+  mentor:IMentor
   price?: number;
-  students:number,
+  students: number,
+  
   courseLanguage?: string;
   isBlock: boolean;
   tags?: string[];
   // mentorApproved: boolean
+  category:ICategory
   mentorStatus: "approved" | "rejected"|"pending";
   isCompleted:boolean
   currentTag?: string;     // frontend use
@@ -46,6 +49,12 @@ export interface ICourse extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId'> {
+  mentorId: IMentor;   
+  categoryId: ICategory;
+}
+
+
   export interface ICategory extends Document {
     title: string;
     description: string;

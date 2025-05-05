@@ -4,7 +4,7 @@ import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Se
 import { TYPES } from '../../core/types';
 import { IMentor } from '../../types/mentorTypes';
 import { throwError } from '../../utils/ResANDError'; 
-import { ICourse } from '../../types/classTypes';
+import { ICourse, IPopulatedCourse } from '../../types/classTypes';
 import { ICourseRepository } from '../../core/interfaces/repositories/course/ICourseRepository';
 
 @injectable()
@@ -41,10 +41,11 @@ export class MentorService implements IMentorService {
       reviews: mentor.reviews
     };
   }
-  async getCourses(id: string): Promise<ICourse[]> {
+  async getCourses(id: string): Promise<IPopulatedCourse[]> {
+    const courses=await this.courseRepo.findWithMenorIdgetAllWithPopulatedFields(id)
     const result = await this.courseRepo.findAll({ mentorId: id });
     if(!result) throwError("You dont have any Courses ")
-    return result
+    return courses
   }
   async courseApproveOrReject(id: string, courseId: string, status: string): Promise<void> {
     if (status !== "approved" && status !== "rejected") {

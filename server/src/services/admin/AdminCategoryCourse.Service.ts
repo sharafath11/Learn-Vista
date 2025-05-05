@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { IAdminCourseServices } from "../../core/interfaces/services/admin/IAdminCourseService";
-import { ICategory, ICourse } from "../../types/classTypes";
+import { ICategory, ICourse, IPopulatedCourse } from "../../types/classTypes";
 import { TYPES } from "../../core/types";
 import { IAdminCategoriesRepostory } from "../../core/interfaces/repositories/admin/IAdminCategoryRepository";
 import { throwError } from "../../utils/ResANDError";
@@ -8,11 +8,16 @@ import { IAdminCourserRepository } from "../../core/interfaces/repositories/admi
 import { uploadToCloudinary } from "../../utils/cloudImage";
 import { validateCoursePayload } from "../../validation/adminValidation";
 import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
+import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
+import { PopulateOption } from "mongoose";
+
 @injectable()
 class AdminCourseServices implements IAdminCourseServices{
-    constructor( @inject(TYPES.AdminCourseRepository) private courseRepo: IAdminCourserRepository,
+  constructor(
+    // @inject(TYPES.AdminCourseRepository) private courseRepo: IAdminCourserRepository,
       @inject(TYPES.AdminCategoriesRepository) private categoryRepo: IAdminCategoriesRepostory,
-    @inject(TYPES.AdminMentorRepository )private mentorRepo:IAdminMentorRepository
+      @inject(TYPES.AdminMentorRepository) private mentorRepo: IAdminMentorRepository,
+      @inject(TYPES.CourseRepository) private baseCourseRepo :ICourseRepository
     ) { }
    
     async addCategories(title: string, description: string): Promise<ICategory> {
@@ -35,7 +40,7 @@ class AdminCourseServices implements IAdminCourseServices{
     async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
       validateCoursePayload(data, thumbnail);
       if (!data.mentorId) throw new Error("Mentor ID is required");
-      const courses = await this.courseRepo.findAll({ mentorId: data.mentorId });
+      const courses = await this.baseCourseRepo.findAll({ mentorId: data.mentorId });
 
       const hasOverlap = courses.some((course) => {
         return (
@@ -59,14 +64,14 @@ class AdminCourseServices implements IAdminCourseServices{
           thumbnail: imageUrl,
         };
       
-      const createdCourse = await this.courseRepo.create(courseData);
+      const createdCourse = await this.baseCourseRepo.create(courseData);
       
       if (!createdCourse) throwError("Failed to create course", 500);
        
         return createdCourse;
     }
-    async getClass(): Promise<ICourse[]> {
-        const courses = await this.courseRepo.findAll();
+    async getClass(): Promise<IPopulatedCourse[]> {
+        const courses = await this.baseCourseRepo.populateWithAllFildes();
         if (!courses) throwError("Failed to fetch courses", 500);
         return courses;
       }
@@ -74,7 +79,7 @@ class AdminCourseServices implements IAdminCourseServices{
       console.log(id)
         if (!id || id.length !== 24) throwError("Invalid course ID", 400);
     
-        const updated = await this.courseRepo.update(id, { isBlock: status });
+        const updated = await this.baseCourseRepo.update(id, { isBlock: status });
         if (!updated) throwError("Failed to update course status", 500);
      }
     

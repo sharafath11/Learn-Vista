@@ -1,15 +1,19 @@
-
 import React from "react";
-import { IUser, UserRole } from "./authTypes"; 
+
+// Theme Enum
 export enum Theme {
   DARK = 'dark',
   LIGHT = 'light',
 }
 
-export type dropDown = 'All' | 'admin' | 'mentor' | 'user';
+// Dropdown roles
+export type DropDown = 'All' | 'admin' | 'mentor' | 'user';
 
+// User Role Type (re-exported from elsewhere)
+export type UserRole = 'admin' | 'mentor' | 'user';
 
-export interface AdminUser extends IUser {
+// User Types
+export interface IUser {
   _id: string;
   username: string;
   email: string;
@@ -18,26 +22,20 @@ export interface AdminUser extends IUser {
   createdAt: string;
 }
 
-export interface SideBarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
-  
-}
+export interface AdminUser extends IUser {}
+
+export type UserStatus = 'All' | 'Active' | 'Blocked';
 
 export interface UserTableProps {
   currentUsers: IUser[];
-  getRoleColor: (role: string) => string; 
+  getRoleColor: (role: string) => string;
   onBlockToggle?: (userId: string, newStatus: boolean) => void;
 }
-export interface userBlock{
-  id: string,
-  status:boolean
+
+export interface UserBlock {
+  id: string;
+  status: boolean;
 }
-
-
-export type UserStatus = 'All' | 'Active' | 'Blocked';
 
 export interface SearchAndFilterProps {
   searchTerm: string;
@@ -46,20 +44,15 @@ export interface SearchAndFilterProps {
   setStatusFilter: (value: UserStatus) => void;
 }
 
+// Sidebar Types
+export interface SideBarProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+}
 
-
-
-
-
-export type { UserRole };
-  
-  
-  
-  
-  
-  
-///mentorTypes
-  
+// Mentor Types
 export type MentorStatus = 'Approved' | 'Pending' | 'Rejected';
 
 export interface IMentor {
@@ -70,6 +63,30 @@ export interface IMentor {
   students: number;
   courses: number;
   avatar?: string;
+}
+
+export interface Mentor {
+  id: string;
+  userId: string;
+  username: string;
+  email: string;
+  profilePicture: string | null;
+  bio: string | null;
+  experience: number;
+  expertise: string[];
+  socialLinks: SocialLink[];
+  cvOrResume: string;
+  phoneNumber: string;
+  coursesCreated: any[];
+  liveClasses: any[];
+  reviews: any[];
+  isBlock: boolean;
+  isVerified: boolean;
+  status: 'pending' | 'approved' | 'rejected';
+  applicationDate: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 export interface MentorTableProps {
@@ -85,99 +102,28 @@ export interface MentorDetailsProps {
   onClose: () => void;
 }
 
+// Pagination
 export interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
-// types.ts
+// Social Media
+export interface SocialLink {
+  platform: "twitter" | "github" | "website";
+  url: string;
+}
+
 export interface SocialLinks {
   linkedin?: string;
   twitter?: string;
   github?: string;
 }
-export interface SocialLink {
-  platform: "twitter" | "github" | "website";
-  url: string;
-}
-export interface Mentor {
-  id: string;
-  userId: string;
-  username: string;
-  email: string;
-  profilePicture: string | null;
-  bio: string | null;
-  experience: number;
-  expertise: string[];
-  socialLinks: SocialLink[];
-  cvOrResume: string;
-  phoneNumber:string,
-  coursesCreated: any[]; 
-  liveClasses: any[];    
-  reviews: any[];     
-  isBlock:boolean
-  isVerified: boolean;
-  status: 'pending' | 'approved' | 'rejected'; 
-  applicationDate: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
 
-export interface AdminContextType {
-  admin: boolean;
-  setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
-  mentors: Mentor[];
-  setMentors: React.Dispatch<React.SetStateAction<any[]>>;
-  refreshMentors: () => void;
-  users: AdminUser[]
-  setUsers: React.Dispatch<React.SetStateAction<any[]>>;
-  setCat: React.Dispatch<React.SetStateAction<ICategory[]>>;
-  cat: ICategory[]
-  courses:ICourse[]
-  setCourses: React.Dispatch<React.SetStateAction<ICourse[]>>;
-}
-export interface ICourse  {
-  id:string;
-  title: string;
-  description?: string;
-  mentorId: string;
-  sessions: string[];
-  categoryId: string;
-  thumbnail?: string;
-  
- 
-  mentorStatus: "approved" | "rejected" | "pending";
-  price?: number;
-  language?: string;
-  tags?: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-export interface ICourseFormData {
-  title: string
-  description: string
-  // mentorName: string
-  category: string
-  price: string
-  language: string
-  tags: string[]
-  currentTag: string
-  startDate: string
-  endDate: string
-  startTime: string
-  thumbnailPreview: string | null
-}
-export interface ICategory {
-  id: string;
-  title: string;
-  description: string;
-  isBlock:boolean,
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-export interface ICourse  {
+// Course Types
+export interface ICourse {
+  id:string
   _id: string;
   title: string;
   description?: string;
@@ -185,20 +131,36 @@ export interface ICourse  {
   mentorStatus: "approved" | "rejected" | "pending";
   sessions: string[];
   categoryId: string;
-  category?: string; 
+  category?: string;
   price?: number;
   courseLanguage?: string;
   isBlock: boolean;
   tags?: string[];
-  currentTag?: string;     
-  startDate?: string;     
-  endDate?: string;        
-  startTime?: string;      
+  currentTag?: string;
+  startDate?: string;
+  endDate?: string;
+  startTime?: string;
   thumbnail?: string;
-  thumbnailPreview?: string | null; 
+  thumbnailPreview?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
+
+// For Course creation form
+export interface ICourseFormData {
+  title: string;
+  description: string;
+  category: string;
+  price: string;
+  language: string;
+  tags: string[];
+  currentTag: string;
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  thumbnailPreview: string | null;
+}
+
 export type CourseFormData = {
   title: string;
   description: string;
@@ -213,3 +175,39 @@ export type CourseFormData = {
   startTime: string;
   thumbnail?: File;
 };
+
+// Categories
+export interface ICategory {
+  id: string;
+  title: string;
+  description: string;
+  isBlock: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+// Rejection Reason
+export interface IReson {
+  mentorId: string;
+  message: string;
+}
+
+// Admin Context
+export interface IPopulatedCourse extends ICourse {
+  mentor?: Mentor;
+  categoryDetails?: ICategory;
+}
+
+export interface AdminContextType {
+  admin: boolean;
+  setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
+  mentors: Mentor[];
+  setMentors: React.Dispatch<React.SetStateAction<Mentor[]>>;
+  refreshMentors: () => void;
+  users: AdminUser[];
+  setUsers: React.Dispatch<React.SetStateAction<AdminUser[]>>;
+  setCat: React.Dispatch<React.SetStateAction<ICategory[]>>;
+  cat: ICategory[];
+  courses: IPopulatedCourse[];
+  setCourses: React.Dispatch<React.SetStateAction<IPopulatedCourse[]>>;
+}

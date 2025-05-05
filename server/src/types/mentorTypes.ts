@@ -34,8 +34,12 @@ export interface IMentor extends Document {
   cvOrResume: string;
   createdAt: Date;
   updatedAt: Date;
+  courseRejectReson:IReson
 }
-
+export interface IReson {
+  courseId: Types.ObjectId;
+  message: string;
+}
 
 export type SafeMentor = Omit<IMentor, 'password'>;
 export interface IMentorDTO {
@@ -52,6 +56,7 @@ export interface IMentorDTO {
   googleId?: string;
   status: 'pending' | 'approved' | 'rejected';
   isBlock: boolean;
+  
   bio?: string;
   socialLinks: ISocialLink[];
   liveClasses: string[];

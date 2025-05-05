@@ -4,21 +4,13 @@ import { Search, Filter, Calendar, Clock, Tag, Globe, CheckCircle, XCircle, Hash
 import { useAdminContext } from "@/src/context/adminContext"
 import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast } from "@/src/utils/Toast"
-import Link from "next/link"
+
 import Cheader from "./header"
 
 export default function CoursesAdminPage() {
   const { courses, setCourses, cat } = useAdminContext()
   
-  const mergedCourses = courses.map(course => {
-    const category = cat.find(c => c.id === course.categoryId)
-    return {
-      ...course,
-      categoryId: category?.id,
-      categoryTitle: category?.title,
-      categoryDetails: category || null
-    }
-  })
+  
 
   const toggleCourseStatus = async (id: string, status: boolean) => {
     const res = await AdminAPIMethods.blockCours(id, !status)
@@ -56,7 +48,7 @@ export default function CoursesAdminPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {mergedCourses.map((course) => (
+          {courses.map((course) => (
             <div key={course.title} className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow transition-all hover:shadow-md">
               <div className="relative h-48 w-full">
                 <Image

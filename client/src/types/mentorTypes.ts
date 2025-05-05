@@ -1,5 +1,5 @@
 
-import {  ICourse, Mentor } from "./adminTypes"
+import {  ICategory, ICourse, IMentor, IReson } from "./adminTypes"
 export interface MentorSignupData {
   email: string;
   password: string;
@@ -14,8 +14,8 @@ export interface IMentorContext{
   mentor: IMentorMentor|null;
   setMentor: React.Dispatch<React.SetStateAction<IMentorMentor | null>>;
   refreshMentor: () => void
-  courses:ICourse[],
-  setCourses:React.Dispatch<React.SetStateAction<ICourse[]>>;
+  courses:IPopulatedCourse[],
+  setCourses:React.Dispatch<React.SetStateAction<IPopulatedCourse[]>>;
   
 }
 export interface SocialLink {
@@ -35,6 +35,7 @@ export interface IMentorMentor {
   expertise: string[];
   socialLinks: SocialLink[];
   cvOrResume: string;
+  courseRejectReson:IReson
   phoneNumber:""
   coursesCreated: any[]; 
   liveClasses: any[];    
@@ -74,4 +75,8 @@ export interface ClassSession {
   }[];
   topic: string;
   description?: string;
+}
+export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId'> {
+  mentorId: IMentor;    
+  categoryId: ICategory;
 }
