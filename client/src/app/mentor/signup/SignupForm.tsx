@@ -5,10 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast";
-import { validateMentorSignup } from "@/src/utils/mentor/mentorValidation";
+
 import { FormOTP } from "./FormOTP";
 import { FormInput } from "@/src/components/mentor/signup/FormInput";
 import { MentorAPIMethods } from "@/src/services/APImethods";
+import { validateMentorSignup } from "@/src/validations/mentorValidation";
 
 export default function MentorSignupForm() {
   const [mentorData, setMentorData] = useState({
