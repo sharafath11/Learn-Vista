@@ -14,7 +14,7 @@ export default function CoursesAdminPage() {
     const res = await AdminAPIMethods.blockCours(id, !status)
     if (res.ok) {
       showSuccessToast(res.msg)
-      setCourses(courses.map(prev => prev.id === id ? { ...prev, isBlock: !status } : prev))
+      setCourses(courses.map(prev => prev._id === id ? { ...prev, isBlock: !status } : prev))
     }
   }
 
@@ -93,12 +93,13 @@ export default function CoursesAdminPage() {
                       ))}
                     </div>
                   </div>
-                  {/* <div className="flex items-center text-sm text-gray-500">
-                    <Hash className="mr-2 h-4 w-4" />
-                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-                      {course.categoryId.title || "No Category"}
-                    </span>
-                  </div> */}
+                  <div className="flex items-center text-sm text-gray-500">
+  <Hash className="mr-2 h-4 w-4" />
+  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+    {typeof course.categoryId !== 'string' ? course.categoryId.title || "No Category" : "No Category"}
+  </span>
+</div>
+
                 </div>
 
               
@@ -122,7 +123,7 @@ export default function CoursesAdminPage() {
                     )}
                   </div>
                   <button
-                    onClick={() => toggleCourseStatus(course.id, course.isBlock)}
+                    onClick={() => toggleCourseStatus(course._id, course.isBlock)}
                     className={`inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium ${
                       course.isBlock ? "bg-green-50 text-green-700 hover:bg-green-100" : "bg-red-50 text-red-700 hover:bg-red-100"
                     }`}

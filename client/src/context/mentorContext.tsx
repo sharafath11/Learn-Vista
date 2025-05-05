@@ -28,7 +28,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
     } else {
       router.push("/mentor/login");
     }
-  }, [router]);
+  }, []);
   
 
   const getCourses = useCallback(async () => {

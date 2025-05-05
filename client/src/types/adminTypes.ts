@@ -56,13 +56,27 @@ export interface SideBarProps {
 export type MentorStatus = 'Approved' | 'Pending' | 'Rejected';
 
 export interface IMentor {
-  id: number;
-  name: string;
-  expertise: string;
-  status: MentorStatus;
-  students: number;
-  courses: number;
-  avatar?: string;
+  id: string;
+  userId: string;
+  username: string;
+  email: string;
+  profilePicture: string | null;
+  bio: string | null;
+  experience: number;
+  expertise: string[];
+  socialLinks: SocialLink[];
+  cvOrResume: string;
+  phoneNumber: string;
+  coursesCreated: any[];
+  liveClasses: any[];
+  reviews: any[];
+  isBlock: boolean;
+  isVerified: boolean;
+  status: 'pending' | 'approved' | 'rejected';
+  applicationDate: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 export interface Mentor {

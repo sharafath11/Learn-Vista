@@ -77,6 +77,6 @@ export interface ClassSession {
   description?: string;
 }
 export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId'> {
-  mentorId: IMentor;    
+  mentorId: IMentor;   
   categoryId: ICategory;
 }

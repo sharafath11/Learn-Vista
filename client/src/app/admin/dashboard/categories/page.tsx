@@ -14,6 +14,7 @@ export default function AdminCategoriesPage() {
   const { cat,setCat  } = useAdminContext()
 
   const handleDropdownToggle = (id: string) => {
+    
     setActiveDropdown(prev => (prev === id ? null : id))
   }
   const handleToggleBLock = async (id: string, status: boolean) => {
@@ -22,7 +23,7 @@ export default function AdminCategoriesPage() {
       showSuccessToast(res.msg)
       setCat((prev) =>
         prev.map((c) =>
-          c._id === id ? { ...c, isBlock: !status } : c
+          c.id === id ? { ...c, isBlock: !status } : c
         )
       );
     }else showInfoToast(res.msg)
@@ -51,7 +52,7 @@ export default function AdminCategoriesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {cat.map((category) => (
           <div
-            key={category._id}
+            key={category.id}
             className="relative bg-white rounded-2xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-all group"
           >
             <div className="flex justify-between items-start">
@@ -64,17 +65,17 @@ export default function AdminCategoriesPage() {
               <div className="relative">
                 <button
                   className="p-1.5 rounded-full hover:bg-gray-100 transition"
-                  onClick={() => handleDropdownToggle(category._id)}
+                  onClick={() => handleDropdownToggle(category.id)}
                 >
                   <MoreHorizontal size={20} className="text-gray-500" />
                 </button>
 
                 {/* Dropdown menu */}
-                {activeDropdown === category._id && (
+                {activeDropdown === category.id && (
                   <div className="absolute right-0 mt-2 w-40 z-20 bg-white border rounded-lg shadow-md py-1 animate-fade-in">
                     <button
                       onClick={() => {
-                        handleToggleBLock(category._id,category.isBlock)
+                        handleToggleBLock(category.id,category.isBlock)
                         setActiveDropdown(null)
                       }}
                       className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition"
