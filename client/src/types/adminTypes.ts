@@ -127,10 +127,10 @@ export interface ICourse {
   _id: string;
   title: string;
   description?: string;
-  mentorId: string;
+  mentorId: string |IMentor;
   mentorStatus: "approved" | "rejected" | "pending";
   sessions: string[];
-  categoryId: string;
+  categoryId: string|ICategory;
   category?: string;
   price?: number;
   courseLanguage?: string;
