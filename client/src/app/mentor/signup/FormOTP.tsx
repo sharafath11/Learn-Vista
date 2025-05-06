@@ -1,10 +1,10 @@
 "use client";
 import { postRequest } from "@/src/services/api";
-import { FormOTPProps } from "@/src/types/mentorTypes";
+import { MentorSignupOtpProps } from "@/src/types/mentorTypes";
 import { useEffect, useRef, useState } from "react";
 
 
-export const FormOTP = ({ label, onChange, onVerified, onResend, email }: FormOTPProps) => {
+export const FormOTP = ({ label, onChange, onVerified, onResend, email }: MentorSignupOtpProps) => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -13,7 +13,7 @@ export const FormOTP = ({ label, onChange, onVerified, onResend, email }: FormOT
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Countdown timer
+
   useEffect(() => {
     if (timeLeft > 0 && !isVerified) {
       const timer = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
@@ -86,7 +86,10 @@ export const FormOTP = ({ label, onChange, onVerified, onResend, email }: FormOT
           {otp.map((digit, idx) => (
             <input
               key={idx}
-              ref={(el) => (inputRefs.current[idx] = el)}
+              ref={(el) => {
+                inputRefs.current[idx] = el;
+              }}
+              
               type="text"
               inputMode="numeric"
               maxLength={1}

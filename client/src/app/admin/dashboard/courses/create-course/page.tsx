@@ -4,7 +4,6 @@
 import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast"
 import { useAdminContext } from "@/src/context/adminContext"
-import {  ICourse } from "@/src/types/adminTypes"
 import { validateCourseForm } from "@/src/validations/adminvalidation"
 import CourseForm from "./CourseForm"
 import { useRouter } from "next/navigation"

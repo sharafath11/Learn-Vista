@@ -1,4 +1,4 @@
-// components/course/CourseBasicInfo.tsx
+
 import React from "react"
 
 interface CourseBasicInfoProps {

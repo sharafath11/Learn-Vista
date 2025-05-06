@@ -1,4 +1,3 @@
-// components/course/CourseSchedule.tsx
 import { Calendar, Clock } from "lucide-react"
 import React from "react"
 

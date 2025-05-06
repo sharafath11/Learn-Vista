@@ -3,15 +3,13 @@
 import { SearchAndFilterBar } from "@/src/components/admin/users/SearchAndFilterBar";
 import { UserTable } from "@/src/components/admin/users/UserTable";
 import { useAdminContext } from "@/src/context/adminContext";
-import { patchRequest } from "@/src/services/api";
 import { AdminAPIMethods } from "@/src/services/APImethods";
-import { IUser } from "@/src/types/authTypes";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 
 const User = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Blocked'>('All');
+  const [statusFilter, setStatusFilter] = useState< 'All'| 'Active' | 'Blocked'>('All');
   const [currentPage, setCurrentPage] = useState(1);
  const usersPerPage = 8;
 

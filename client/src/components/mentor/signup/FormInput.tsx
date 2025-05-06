@@ -1,5 +1,4 @@
-import type { FormInputProps } from "@/src/types/mentorTypes";
-
+import { IMentorSingupFormInputProps } from "@/src/types/mentorTypes";
 export const FormInput = ({
   label,
   type,
@@ -8,7 +7,7 @@ export const FormInput = ({
   value,
   placeholder,
   required = false
-}: FormInputProps) => {
+}: IMentorSingupFormInputProps) => {
   return (
     <div className="mb-2">
       <label htmlFor={id} className="block text-sm font-medium text-gray-700">

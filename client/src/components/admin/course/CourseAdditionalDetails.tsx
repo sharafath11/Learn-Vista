@@ -1,4 +1,3 @@
-// components/course/CourseAdditionalDetails.tsx
 import { X } from "lucide-react"
 import React from "react"
 

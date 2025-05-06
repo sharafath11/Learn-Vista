@@ -3,8 +3,8 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
-import { MentorContext, useMentorContext } from '@/src/context/mentorContext';
-import { showSuccessToast, showErrorToast, showInfoToast } from '@/src/utils/Toast';
+import {  useMentorContext } from '@/src/context/mentorContext';
+import { showSuccessToast } from '@/src/utils/Toast';
 import { MentorAPIMethods } from '@/src/services/APImethods';
 
 interface FormData {

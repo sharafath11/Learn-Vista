@@ -1,14 +1,12 @@
 "use client";
-
 import { AdminContext } from '@/src/context/adminContext';
-
 import { AdminAPIMethods } from '@/src/services/APImethods';
-import { Mentor } from '@/src/types/adminTypes';
+import { IMentor } from '@/src/types/mentorTypes';
 import { showSuccessToast } from '@/src/utils/Toast';
 import { useContext, useEffect, useState } from 'react';
 
 interface MentorInfoCardProps {
-  mentor: Mentor;
+  mentor: IMentor;
 }
 
 const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {

@@ -1,10 +1,10 @@
 "use client";
-import { IMentorMentor } from "@/src/types/mentorTypes";
+import { IMentor } from "@/src/types/mentorTypes";
 import React, { useState } from "react";
 import { FiExternalLink, FiEdit2, FiPlay, FiClock, FiUsers } from "react-icons/fi";
 
 interface ProfileInfoProps {
-  mentor: IMentorMentor | null;
+  mentor: IMentor | null;
 }
 
 export default function ProfileInfo({ mentor }: ProfileInfoProps) {
@@ -115,7 +115,7 @@ export default function ProfileInfo({ mentor }: ProfileInfoProps) {
             onClick={() => setActiveTab('courses')}
             className={`pb-3 px-1 font-medium text-sm border-b-2 ${activeTab === 'courses' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-400 hover:text-gray-300'}`}
           >
-            Courses ({mentor.coursesCreated.length})
+            Courses ({mentor.coursesCreated&&mentor.coursesCreated.length})
           </button>
           <button
             onClick={() => setActiveTab('live')}
@@ -129,7 +129,7 @@ export default function ProfileInfo({ mentor }: ProfileInfoProps) {
       {/* Content Section */}
       <div className="grid gap-6">
         {activeTab === 'courses' ? (
-          mentor.coursesCreated.length > 0 ? (
+          mentor.coursesCreated&&mentor.coursesCreated.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {mentor.coursesCreated.map((course) => (
                 <div key={course.id} className="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
@@ -147,7 +147,7 @@ export default function ProfileInfo({ mentor }: ProfileInfoProps) {
                     )}
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
                       <span className="text-xs font-medium text-white">
-                        {course.lessons?.length || 0} lessons
+                        {course.sessions?.length || 0} lessons
                       </span>
                     </div>
                   </div>
@@ -157,9 +157,9 @@ export default function ProfileInfo({ mentor }: ProfileInfoProps) {
                       {course.description || 'No description provided'}
                     </p>
                     <div className="mt-3 flex justify-between items-center">
-                      <span className="text-xs text-gray-500">
-                        {course.students || 0} students
-                      </span>
+                      {/* <span className="text-xs text-gray-500">
+                        {course.sessions || 0} students
+                      </span> */}
                       <span className="text-sm font-medium text-indigo-400">
                         {course.price ? `$${course.price}` : 'Free'}
                       </span>

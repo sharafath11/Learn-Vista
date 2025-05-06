@@ -5,7 +5,6 @@ import type React from "react"
 import { useState, useCallback, useRef, useEffect } from "react"
 import { Mail, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
-import { postRequest } from "@/src/services/api"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast } from "@/src/utils/Toast"
 

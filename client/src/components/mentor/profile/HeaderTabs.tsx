@@ -1,14 +1,12 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, {  useState } from "react";
 import EditProfileModal from "./EditProfileModal";
 
-import { MentorContext } from "@/src/context/mentorContext";
 
 
 export default function HeaderTabs() {
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showResetModal, setShowResetModal] = useState(false);
-  const mentorDetils=useContext(MentorContext)
+
 
   return (
     <div className="mb-6">

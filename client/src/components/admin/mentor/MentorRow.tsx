@@ -3,14 +3,14 @@ import { FC, useContext } from 'react';
 import { motion } from 'framer-motion';
 import { FiUser,FiEye,FiLock,FiUnlock } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
-import { Mentor } from '@/src/types/adminTypes';
 import { patchRequest } from '@/src/services/api';
 import { showInfoToast, showSuccessToast } from '@/src/utils/Toast';
 import { AdminContext } from '@/src/context/adminContext';
 import { AdminAPIMethods } from '@/src/services/APImethods';
+import { IMentor } from '@/src/types/mentorTypes';
 
 interface MentorRowProps {
-  mentor: Mentor;
+  mentor: IMentor;
   theme: string;
   getStatusColor: (status: string) => string;
 }
@@ -61,7 +61,7 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
         <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(mentor.status)}`}>{mentor.status}</span>
       </td>
       <td className="p-4">{mentor.liveClasses.length}</td>
-      <td className="p-4">{mentor.coursesCreated.length}</td>
+      <td className="p-4">{mentor.coursesCreated&&mentor.coursesCreated.length}</td>
       <td className="p-4">{mentor.isBlock?"Block":"Active"}</td>
       <td className="p-4 text-right space-x-2">
   {/* View button */}

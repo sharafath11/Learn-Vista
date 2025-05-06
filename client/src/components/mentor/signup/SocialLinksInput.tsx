@@ -1,9 +1,8 @@
 "use client"
 import { useState } from "react";
-import type { SocialLink, MentorSignupData } from "@/src/types/mentorTypes";
-
+import type { SocialLink, IMentorSignupData } from "@/src/types/mentorTypes";
 type SocialLinksInputProps = {
-  mentorData: MentorSignupData;
+  mentorData: IMentorSignupData;
   onAddSocialLink: (link: SocialLink) => void;
   onRemoveSocialLink: (index: number) => void;
 };

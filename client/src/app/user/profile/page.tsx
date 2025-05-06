@@ -1,4 +1,3 @@
-import Footer from "@/src/components/user/Footer"
 import Header from "@/src/components/user/Header"
 import ProfileCard from "@/src/components/user/profile/ProfileCard"
 import BioCard from "@/src/components/user/profile/BioCard"

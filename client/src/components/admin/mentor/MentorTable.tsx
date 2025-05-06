@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import { FiUser } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import MentorRow from './MentorRow';
 
