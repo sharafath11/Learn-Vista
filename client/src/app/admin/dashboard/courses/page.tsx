@@ -4,7 +4,6 @@ import { Search, Filter, Calendar, Clock, Tag, Globe, CheckCircle, XCircle, Hash
 import { useAdminContext } from "@/src/context/adminContext"
 import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast } from "@/src/utils/Toast"
-
 import Cheader from "./header"
 
 export default function CoursesAdminPage() {
@@ -47,7 +46,7 @@ export default function CoursesAdminPage() {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => (
-            <div key={course.title} className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow transition-all hover:shadow-md">
+            <div key={course._id} className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow transition-all hover:shadow-md">
               <div className="relative h-48 w-full">
                 <Image
                   src={course.thumbnail || "/placeholder.svg?height=192&width=384"}
@@ -67,7 +66,6 @@ export default function CoursesAdminPage() {
                   </div>
                 </div>
               </div>
-              {course.mentorStatus}
 
               <div className="p-4">
                 <h3 className="mb-1 text-lg font-semibold text-gray-900 line-clamp-1">{course.title}</h3>
@@ -95,25 +93,36 @@ export default function CoursesAdminPage() {
                     </div>
                   </div>
                   <div className="flex items-center text-sm text-gray-500">
-  <Hash className="mr-2 h-4 w-4" />
-  <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-    {typeof course.categoryId !== 'string' ? course.categoryId.title || "No Category" : "No Category"}
-  </span>
-</div>
-
+                    <Hash className="mr-2 h-4 w-4" />
+                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
+                      {typeof course.categoryId !== 'string' ? course.categoryId.title || "No Category" : "No Category"}
+                    </span>
+                  </div>
                 </div>
 
-              
-                {/* {course.mentorStatus === "rejected" && Array.isArray(course.reson) && course.reson.length > 0 && (
-                  <div className="mt-2 rounded-md bg-red-50 p-2 text-sm text-red-800">
+               
+                {course.mentorStatus === "rejected" && (
+                  <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
                     <strong>Rejection Reason:</strong>
-                    <ul className="list-disc ml-5">
-                      {course.reson.map((r, i) => (
+                    <ul className="ml-4 list-disc mt-1">
+                      {(Array.isArray(course.mentorId.courseRejectReson) && course.reson.length > 0
+                        ? course.reson
+                        : [{ message: "Insufficient experience" }, { message: "Profile incomplete" }]
+                      ).map((r, i) => (
                         <li key={i}>{r.message}</li>
                       ))}
                     </ul>
+                    <button
+                      className="mt-3 inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+                      onClick={() => {
+                        // Placeholder logic
+                        alert(`Redirect to change mentor for course: ${course.title}`)
+                      }}
+                    >
+                      Change Mentor
+                    </button>
                   </div>
-                )} */}
+                )}
 
                 <div className="mt-4 flex items-center justify-between">
                   <div className="font-medium">
