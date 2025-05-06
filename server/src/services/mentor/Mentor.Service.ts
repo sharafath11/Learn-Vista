@@ -47,17 +47,43 @@ export class MentorService implements IMentorService {
     if(!result) throwError("You dont have any Courses ")
     return courses
   }
-  async courseApproveOrReject(id: string, courseId: string, status: string): Promise<void> {
+  async courseApproveOrReject(
+    mentorId: string,
+    courseId: string,
+    status: string,
+    courseRejectReason?: string
+  ): Promise<void> {
+    console.log(status)
     if (status !== "approved" && status !== "rejected") {
       throwError("Invalid status", 400);
     }
+    console.log("yd",courseId)
+  
     if (status === "approved") {
-      await this.mentorRepo.update(id, {
+      await this.mentorRepo.update(mentorId, {
         $push: { coursesCreated: courseId }
       });
-      await this.courseRepo.update(courseId, { mentorStatus: "approved" ,});
-      return
+      await this.courseRepo.update(courseId, {
+        mentorStatus: "approved"
+      });
+      return;
     }
-    await this.courseRepo.update(courseId, { mentorStatus:"rejected" });
+  
+    if (!courseRejectReason) {
+      throwError("Rejection reason required", 400);
+    }
+  
+    await this.mentorRepo.update(mentorId, {
+      $push: {
+        courseRejectReson: {
+          courseId,
+          message: courseRejectReason
+        }
+      }
+    });
+  
+    await this.courseRepo.update(courseId, {
+      mentorStatus: "rejected"
+    });
   }
 }

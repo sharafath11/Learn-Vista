@@ -1,4 +1,4 @@
-import { ICourse, ICourseFormData, userBlock } from "../types/adminTypes";
+import { ICourse, ICourseFormData, UserBlock,  } from "../types/adminTypes";
 import { ILogin, IUserRegistration } from "../types/authTypes";
 import { MentorSignupData } from "../types/mentorTypes";
 import { getRequest, patchRequest, postRequest } from "./api";
@@ -24,7 +24,7 @@ export const AdminAPIMethods = {
   fetchUser: () => get("/admin/users"),
   fetchMentor: () => get("/admin/mentors"),
   getSingleMentor: (id: string) => get(`/admin/mentor/${id}`),
-  blockUser: (data: userBlock) => patch("/admin/users/block", data),
+  blockUser: (data: UserBlock) => patch("/admin/users/block", data),
   mentorChangeStatus: (mentorId: string, status: string, email: string) => 
   patch("/admin/mentor/change-status", { mentorId, status, email }),
   blockMentor: (mentorId: string, isBlock: boolean) => 
@@ -48,5 +48,5 @@ export const MentorAPIMethods = {
   forgotPassword: (email: string) => post("/mentor/forget-password", { email }),
   resetPassword: (token: string, password: string) => post("/mentor/reset-password", { token, password }),
   getCourses: () => get("/mentor/courses"),
-  courseStatusChange:(courseId:string,status:string)=>patch("/mentor/course/status-change",{courseId:courseId,status:status})
+  courseStatusChange:(courseId:string,status:string,reson:string)=>patch("/mentor/course/status-change",{courseId:courseId,status:status,courseRejectReson:reson})
 } as const;

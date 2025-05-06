@@ -7,7 +7,8 @@ import { showSuccessToast } from "@/src/utils/Toast"
 import Cheader from "./header"
 
 export default function CoursesAdminPage() {
-  const { courses, setCourses, cat } = useAdminContext()
+  const { courses, setCourses, cat, } = useAdminContext()
+  
 
   const toggleCourseStatus = async (id: string, status: boolean) => {
     const res = await AdminAPIMethods.blockCours(id, !status)
@@ -100,29 +101,46 @@ export default function CoursesAdminPage() {
                   </div>
                 </div>
 
-               
-                {course.mentorStatus === "rejected" && (
-                  <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
-                    <strong>Rejection Reason:</strong>
-                    <ul className="ml-4 list-disc mt-1">
-                      {(Array.isArray(course.mentorId.courseRejectReson) && course.reson.length > 0
-                        ? course.reson
-                        : [{ message: "Insufficient experience" }, { message: "Profile incomplete" }]
-                      ).map((r, i) => (
-                        <li key={i}>{r.message}</li>
-                      ))}
-                    </ul>
-                    <button
-                      className="mt-3 inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
-                      onClick={() => {
-                        // Placeholder logic
-                        alert(`Redirect to change mentor for course: ${course.title}`)
-                      }}
-                    >
-                      Change Mentor
-                    </button>
-                  </div>
-                )}
+                {course.mentorStatus === "rejected" && (() => {
+  const reasons = Array.isArray(course.mentorId?.courseRejectReson) &&
+    course.mentorId.courseRejectReson.filter(
+      (r) => r.courseId?.toString() === course._id.toString()
+    ).length > 0
+      ? course.mentorId.courseRejectReson.filter(
+          (r) => r.courseId?.toString() === course._id.toString()
+        )
+      : [{ message: "Insufficient experience" }, { message: "Profile incomplete" }]
+  
+  // Debug log - Log only the rejection messages
+  console.log(`Rejection reasons for course "${course.title}" (${course._id}):`)
+  reasons.forEach((r, i) => {
+    console.log(`  ${i + 1}. ${r.message}`);
+  });
+
+  return (
+    <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
+      <strong>Rejection Reason:</strong>
+      <ul className="ml-4 list-disc mt-1">
+        {reasons.map((r, i) => (
+          <li key={i}>{r.message}</li>
+        ))}
+      </ul>
+
+      <button
+        className="mt-3 inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
+        onClick={() => {
+          alert(`Redirect to change mentor for course: ${course.title}`);
+        }}
+      >
+        Change Mentor
+      </button>
+    </div>
+  )
+})()}
+
+
+
+
 
                 <div className="mt-4 flex items-center justify-between">
                   <div className="font-medium">

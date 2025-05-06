@@ -44,7 +44,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
 
   useEffect(() => {
     getCourses();
-  }, [getCourses]);
+  }, []);
 
   const contextValue: IMentorContext = {
     mentor,

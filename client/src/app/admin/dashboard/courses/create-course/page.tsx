@@ -22,7 +22,6 @@ console.log(cat)
     }
     const payload = new FormData() ;
    
-    // Append regular fields to FormData
     payload.append('title', formData.title);
     payload.append('description', formData.description);
     payload.append('mentorId', formData.mentorId);
@@ -44,7 +43,7 @@ console.log(cat)
       payload.append('thumbnail', formData.thumbnail); 
     }
   
-    try {
+  
      
       const res = await AdminAPIMethods.createCourse(payload);
       if (res.ok) {
@@ -52,10 +51,7 @@ console.log(cat)
         setCourses((prev) => [...prev, res.data]);
         route.push("/admin/dashboard/courses")
       }
-    } catch (error) {
-      showInfoToast("Failed to create course. Please try again.");
-      console.error("Course creation error:", error);
-    }
+  
   };
   
 

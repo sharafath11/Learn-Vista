@@ -47,11 +47,11 @@ export class MentorController implements IMentorController{
   async statusChange(req: Request, res: Response): Promise<void> {
     try {
       const decoded = decodeToken(req.cookies.token);
-      const {courseId,status}=req.body
+      const {courseId,status,courseRejectReson}=req.body
       if (!decoded?.id) {
         return throwError( "Unauthorized", 401);
       }
-      this.mentorService.courseApproveOrReject(decoded.id, courseId, status);
+      this.mentorService.courseApproveOrReject(decoded.id, courseId, status,courseRejectReson);
       return sendResponse(res,200,"Status changed succesfully",true)
     } catch (error) {
       handleControllerError(res,error)

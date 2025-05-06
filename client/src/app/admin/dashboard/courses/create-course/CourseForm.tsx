@@ -5,6 +5,7 @@ import CourseAdditionalDetails from "@/src/components/admin/course/CourseAdditio
 import CourseBasicInfo from "@/src/components/admin/course/CourseBasicInfo"
 import CourseSchedule from "@/src/components/admin/course/CourseSchedule"
 import CourseThumbnail from "@/src/components/admin/course/CourseThumbnail"
+import { showInfoToast } from "@/src/utils/Toast"
 import { useState } from "react"
 
 
@@ -105,19 +106,28 @@ export default function CourseForm({
   }
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
+  
     if (file) {
-      const reader = new FileReader()
+      const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/gif'];
+  
+      if (!allowedImageTypes.includes(file.type)) {
+        showInfoToast('Please select a valid image file (JPEG, PNG, WEBP, JPG, GIF)');
+        return;
+      }
+  
+      const reader = new FileReader();
       reader.onload = () => {
         setFormData((prev) => ({
           ...prev,
           thumbnail: file,
           thumbnailPreview: reader.result as string,
-        }))
-      }
-      reader.readAsDataURL(file)
+        }));
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
+  
 
   const clearThumbnail = () => {
     setFormData((prev) => ({
@@ -129,7 +139,8 @@ export default function CourseForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
-      console.log("adf",formData);
+     
+    
     
     await onSubmit(formData)
   }

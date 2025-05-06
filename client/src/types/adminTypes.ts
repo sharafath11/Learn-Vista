@@ -54,7 +54,10 @@ export interface SideBarProps {
 
 // Mentor Types
 export type MentorStatus = 'Approved' | 'Pending' | 'Rejected';
-
+export interface rejectedReson{
+  courseId: string,
+  message:string
+}
 export interface IMentor {
   id: string;
   userId: string;
@@ -68,6 +71,7 @@ export interface IMentor {
   cvOrResume: string;
   phoneNumber: string;
   coursesCreated: any[];
+  courseRejectReson:rejectedReson[]
   liveClasses: any[];
   reviews: any[];
   isBlock: boolean;
@@ -89,6 +93,7 @@ export interface Mentor {
   experience: number;
   expertise: string[];
   socialLinks: SocialLink[];
+  courseRejectReson:rejectedReson[]
   cvOrResume: string;
   phoneNumber: string;
   coursesCreated: any[];
@@ -141,11 +146,12 @@ export interface ICourse {
   _id: string;
   title: string;
   description?: string;
-  mentorId: string |IMentor;
+  mentorId: string |Mentor;
   mentorStatus: "approved" | "rejected" | "pending";
   sessions: string[];
   categoryId: string|ICategory;
   category?: string;
+ 
   price?: number;
   courseLanguage?: string;
   isBlock: boolean;
