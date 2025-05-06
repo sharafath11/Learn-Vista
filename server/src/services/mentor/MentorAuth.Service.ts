@@ -104,6 +104,7 @@ export class MentorAuthService implements IMentorAuthService {
   async forgetPassword(email: string): Promise<void> {
     const mentor = await this.mentorRepo.findOne({ email });
     if (!mentor) throwError("User not found", 404);
+    if(!mentor.password) throwError ("Please Register then you can change password")
     
     const token = generateAccessToken(mentor.id, "mentor");
     const resetLink = `${process.env.CLIENT_URL}/mentor/reset-password/${token}`;

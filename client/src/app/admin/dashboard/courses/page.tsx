@@ -67,6 +67,7 @@ export default function CoursesAdminPage() {
                   </div>
                 </div>
               </div>
+              {course.mentorStatus}
 
               <div className="p-4">
                 <h3 className="mb-1 text-lg font-semibold text-gray-900 line-clamp-1">{course.title}</h3>

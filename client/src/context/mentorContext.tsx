@@ -38,7 +38,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   }, []);
 
   useEffect(() => {
-    alert("triger")
+    
     getMentorDetils();
   }, [getMentorDetils]);
 

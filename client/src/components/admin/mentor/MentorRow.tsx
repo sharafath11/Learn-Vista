@@ -21,6 +21,7 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
   function onView(id: string): void {
     route.push(`/admin/dashboard/mentor/${id}`);
   }
+  console.log("rgrgrg",mentor)
   async function handleBlock() {
     const res = await AdminAPIMethods.blockMentor( mentor.id,!mentor.isBlock)
   
