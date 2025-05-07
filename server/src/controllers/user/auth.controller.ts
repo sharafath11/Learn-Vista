@@ -5,6 +5,7 @@ import { TYPES } from "../../core/types";
 import { IAuthController } from "../../core/interfaces/controllers/user/IAuthController";
 import { clearTokens, setTokensInCookies } from "../../utils/JWTtoken";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
+import { StatusCode } from "../../enums/statusCode.enum";
 // import { sendResponse, handleControllerError, throwError } from "../../utils/errorUtils";
 
 @injectable()
@@ -15,9 +16,9 @@ export class AuthController implements IAuthController {
 
     async signup(req: Request, res: Response) {
         try {
-            if (!req.body) throwError("Request body is missing", 400);
+            if (!req.body) throwError("Request body is missing", StatusCode.BAD_REQUEST);
             await this.authService.registerUser(req.body);
-            return sendResponse(res, 201, "User registration successful", true);
+            return sendResponse(res, StatusCode.CREATED, "User registration successful", true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -28,7 +29,7 @@ export class AuthController implements IAuthController {
             if (!req.body) throwError("Request body is missing", 400);
             const result = await this.authService.googleAuth(req.body);
             setTokensInCookies(res, result.token, result.refreshToken);
-            res.status(200).json({ 
+            res.status(StatusCode.OK).json({ 
                 ok: true, 
                 msg: "Google authentication successful",
                 user: result.user,
@@ -42,9 +43,9 @@ export class AuthController implements IAuthController {
 
     async sendOtp(req: Request, res: Response) {
         try {
-            if (!req.body.email) throwError("Email is required", 400);
+            if (!req.body.email) throwError("Email is required", StatusCode.BAD_REQUEST);
             await this.authService.sendOtp(req.body.email);
-            sendResponse(res, 200, `OTP sent to ${req.body.email}`, true);
+            sendResponse(res, StatusCode.CREATED, `OTP sent to ${req.body.email}`, true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -54,7 +55,7 @@ export class AuthController implements IAuthController {
         try {
             if (!req.body.email || !req.body.otp) throwError("Email and OTP are required", 400);
             await this.authService.verifyOtp(req.body.email, req.body.otp);
-            return sendResponse(res, 200, "Verification successful", true);
+            return sendResponse(res, StatusCode.CREATED, "Verification successful", true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -63,7 +64,7 @@ export class AuthController implements IAuthController {
     async login(req: Request, res: Response) {
         try {
             const { email, password, googleId } = req.body;
-            if (!email && !googleId) throwError("Email or Google ID is required", 400);
+            if (!email && !googleId) throwError("Email or Google ID is required", StatusCode.BAD_REQUEST);
             
             const { token, refreshToken, user } = await this.authService.loginUser(
                 email, 
@@ -71,7 +72,7 @@ export class AuthController implements IAuthController {
                 googleId
             );
             setTokensInCookies(res, token, refreshToken);
-            return sendResponse(res, 200, "Login successful", true, user);
+            return sendResponse(res, StatusCode.OK, "Login successful", true, user);
         } catch (error) {
             handleControllerError(res, error);
         }

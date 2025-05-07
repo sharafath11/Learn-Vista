@@ -4,19 +4,22 @@ import { TYPES } from "../../core/types";
 import { IAdminUserServices } from "../../core/interfaces/services/admin/IAdminUserServices";
 import { IAdminUserController } from "../../core/interfaces/controllers/admin/IAdminUser.controller";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
+import { StatusCode } from "../../enums/statusCode.enum";
 
 @injectable()
-export class AdminUserController implements IAdminUserController {
+class AdminUserController implements IAdminUserController {
   constructor(
-    @inject(TYPES.AdminUsersService) private adminUserService: IAdminUserServices
+    @inject(TYPES.AdminUsersService)
+    private adminUserService: IAdminUserServices
   ) {}
 
   async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
-      const result = await this.adminUserService.getAllUsers();
-      sendResponse(res, 200, "User get success", true, result);
+      const page=Number(req.params.page)
+      const result = await this.adminUserService.getAllUsers(page);
+      sendResponse(res, StatusCode.OK, "Users fetched successfully", true, result);
     } catch (error) {
-      handleControllerError(res, error, 500);
+      handleControllerError(res, error);
     }
   }
 
@@ -25,14 +28,13 @@ export class AdminUserController implements IAdminUserController {
       const { id, status } = req.body;
 
       if (!id || typeof status !== "boolean") {
-        throwError("Invalid request", 400); 
-        
+        throwError("User ID and valid status (boolean) are required", StatusCode.BAD_REQUEST);
       }
 
       await this.adminUserService.blockUserServices(id, status);
-      sendResponse(res, 200, "Status changed", true);
+      sendResponse(res, StatusCode.OK, "User status updated successfully", true);
     } catch (error) {
-      handleControllerError(res, error, 500);
+      handleControllerError(res, error);
     }
   }
 }

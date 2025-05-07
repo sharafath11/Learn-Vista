@@ -9,6 +9,10 @@
     findOne(condition: FilterQuery<T>): Promise<U | null>;
     update(id: string, data: UpdateQuery<T>): Promise<U | null>;
     delete(id: string): Promise<boolean>;
+    findPaginated(
+      filter: FilterQuery<T>,
+      page: number
+    ): Promise<{ data: U[]; total: number }>;
     
     // // Utility Methods - all public in interface
     // toDTO(document: T): U;

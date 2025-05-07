@@ -49,6 +49,27 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
       throw this.handleError(error, 'Error fetching documents');
     }
   }
+ 
+  async findPaginated(
+    filter: FilterQuery<T> = {},
+    page: number = 1
+  ): Promise<{ data: U[]; total: number }> {
+    try {
+      const limit = 2;
+      const skip = (page - 1) * limit;
+  
+      const [documents, total] = await Promise.all([
+        this.model.find(filter).skip(skip).limit(limit),
+        this.model.countDocuments(filter),
+      ]);
+  
+      const data = documents.map(doc => this.toDTO(doc));
+      return { data, total };
+    } catch (error) {
+      throw this.handleError(error, 'Error fetching paginated documents');
+    }
+  }
+  
 
   async findById(id: string): Promise<U | null> {
     try {

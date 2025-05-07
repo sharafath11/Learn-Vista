@@ -4,7 +4,8 @@ import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IA
 import { TYPES } from "../../core/types";
 import { IAdminAuthService } from "../../core/interfaces/services/admin/IAdminAuthService";
 import { clearTokens, setTokensInCookies } from "../../utils/JWTtoken";
-import { sendResponse, handleControllerError, throwError } from "../../utils/ResANDError"; // Add throwError import
+import { sendResponse, handleControllerError } from "../../utils/ResANDError";
+import { StatusCode } from "../../enums/statusCode.enum";
 
 @injectable()
 class AdminAuthController implements IAdminAuthController {
@@ -14,30 +15,28 @@ class AdminAuthController implements IAdminAuthController {
   ) {}
 
   async login(req: Request, res: Response): Promise<void> {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      throwError("Invalid email or password", 400); 
-    }
-
     try {
-      const { accessToken, refreshToken } =
-        await this.adminAuthServices.login(email, password);
+      const { email, password } = req.body;
 
+      if (!email || !password) {
+        return sendResponse(res, StatusCode.BAD_REQUEST, "Email and password are required", false);
+      }
+
+      const { accessToken, refreshToken } = await this.adminAuthServices.login(email, password);
       setTokensInCookies(res, accessToken, refreshToken);
 
-      sendResponse(res, 200, "Login successful", true);
-      return
+      return sendResponse(res, StatusCode.OK, "Login successful", true);
     } catch (error) {
-      handleControllerError(res, error, 500);
+      handleControllerError(res, error);
     }
   }
 
   logout(req: Request, res: Response): void {
     try {
       clearTokens(res);
+      sendResponse(res, StatusCode.OK, "Logout successful", true);
     } catch (error) {
-      handleControllerError(res, error, 400);
+      handleControllerError(res, error);
     }
   }
 }

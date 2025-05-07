@@ -5,6 +5,7 @@ import { IUserController } from "../../core/interfaces/controllers/user/IUserCon
 import { Request, Response } from "express";
 import { decodeToken, verifyAccessToken } from "../../utils/JWTtoken";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
+import { StatusCode } from "../../enums/statusCode.enum";
 
 export class UserController implements IUserController {
     constructor(
@@ -15,15 +16,15 @@ export class UserController implements IUserController {
         try {
             const decoded = verifyAccessToken(req.cookies.token);
             if (!decoded?.id) {
-                throwError("Unauthorized - Invalid token", 401);
+                throwError("Unauthorized - Invalid token", StatusCode.UNAUTHORIZED);
             }
 
             const user = await this.userService.getUser(decoded.id);
             if (!user) {
-                throwError("User not found", 404);
+                throwError("User not found", StatusCode.NOT_FOUND);
             }
 
-            sendResponse(res, 200, "User retrieved successfully", true, user);
+            sendResponse(res, StatusCode.OK, "User retrieved successfully", true, user);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -33,11 +34,11 @@ export class UserController implements IUserController {
         try {
             const { email } = req.body;
             if (!email) {
-                throwError("Email is required", 400);
+                throwError("Email is required", StatusCode.BAD_REQUEST);
             }
 
             await this.userService.forgetPassword(email);
-            sendResponse(res, 200, "Password reset email sent if account exists", true);
+            sendResponse(res, StatusCode.OK, "Password reset email sent if account exists", true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -47,18 +48,28 @@ export class UserController implements IUserController {
         try {
             const { token, password } = req.body;
             const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-            if (!password || !strongPasswordRegex.test(password)) sendResponse(res,403,"Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",false)
+
+            if (!password || !strongPasswordRegex.test(password)) {
+                sendResponse(
+                    res,
+                    StatusCode.FORBIDDEN,
+                    "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+                    false
+                );
+                return;
+            }
+
             if (!token || !password) {
-                throwError("Token and password are required", 400);
+                throwError("Token and password are required", StatusCode.BAD_REQUEST);
             }
 
             const decoded = decodeToken(token);
             if (!decoded?.id) {
-                throwError("Invalid or expired token", 401);
+                throwError("Invalid or expired token", StatusCode.UNAUTHORIZED);
             }
 
             await this.userService.resetPassword(decoded.id, password);
-            sendResponse(res, 200, "Password reset successfully", true);
+            sendResponse(res, StatusCode.OK, "Password reset successfully", true);
         } catch (error) {
             handleControllerError(res, error);
         }

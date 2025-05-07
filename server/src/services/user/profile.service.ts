@@ -9,12 +9,12 @@ import { IProfileService } from "../../core/interfaces/services/user/IUserProfil
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
 import { throwError } from "../../utils/ResANDError";
-
+import { StatusCode } from "../../enums/statusCode.enum";
 @injectable()
 export class ProfileService implements IProfileService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-    @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
+    @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository
   ) {}
 
   private async uploadMentorResume(file: Express.Multer.File, username: string) {
@@ -29,8 +29,8 @@ export class ProfileService implements IProfileService {
           flags: "attachment",
         },
         (error, result) => {
-          if (error) return reject(throwError(`File upload failed: ${error.message}`, 500));
-          if (!result) return reject(throwError("No result from Cloudinary", 500));
+          if (error) return reject(throwError(`File upload failed: ${error.message}`, StatusCode.INTERNAL_SERVER_ERROR));
+          if (!result) return reject(throwError("No result from Cloudinary", StatusCode.INTERNAL_SERVER_ERROR));
           resolve({ secure_url: result.secure_url });
         }
       );
@@ -39,16 +39,16 @@ export class ProfileService implements IProfileService {
   }
 
   private validateMentorApplication(userId: string | JwtPayload, email: string) {
-    if (!userId) throwError("Authentication required", 400);
-    if (!email) throwError("Email is required", 400);
+    if (!userId) throwError("Authentication required", StatusCode.BAD_REQUEST);
+    if (!email) throwError("Email is required", StatusCode.BAD_REQUEST);
   }
 
   async applyMentor(
-    email: string, 
-    username: string, 
-    file: Express.Multer.File, 
+    email: string,
+    username: string,
+    file: Express.Multer.File,
     expertise: string[],
-    userId: string | JwtPayload, 
+    userId: string | JwtPayload,
     phoneNumber: string,
     socialLinks: ISocialLink[] | string
   ) {
@@ -56,11 +56,11 @@ export class ProfileService implements IProfileService {
 
     const [existingMentor, existingUserMentor] = await Promise.all([
       this.mentorRepo.findOne({ email }),
-      this.mentorRepo.findOne({ userId })
+      this.mentorRepo.findOne({ userId }),
     ]);
 
-    if (existingMentor) throwError("Mentor application already submitted for this email", 400);
-    if (existingUserMentor) throwError("You have already applied", 400);
+    if (existingMentor) throwError("Mentor application already submitted for this email", StatusCode.BAD_REQUEST);
+    if (existingUserMentor) throwError("You have already applied", StatusCode.BAD_REQUEST);
 
     const uploadResult = await this.uploadMentorResume(file, username);
 
@@ -74,7 +74,7 @@ export class ProfileService implements IProfileService {
       userId: new Types.ObjectId(userId as string),
       status: "pending",
       expertise: Array.isArray(expertise) ? expertise : [],
-      socialLinks: typeof socialLinks === 'string' ? JSON.parse(socialLinks) : socialLinks,
+      socialLinks: typeof socialLinks === "string" ? JSON.parse(socialLinks) : socialLinks,
     };
 
     const application = await this.userRepository.applyMentor(mentorData);
@@ -88,19 +88,20 @@ export class ProfileService implements IProfileService {
 
   async editProfileService(username: string, imageBuffer: Buffer | undefined, id: string) {
     const user = await this.userRepository.findById(id);
-    if (!user) return throwError("User not found", 404);
-    if (user.isBlocked) throwError("This user was Blocked", 403);
-    
+    if (!user) return throwError("User not found", StatusCode.NOT_FOUND);
+    if (user.isBlocked) throwError("This user was Blocked", StatusCode.FORBIDDEN);
+
     const updatedUsername = username !== user.username ? username : user.username;
     const imageUrl = imageBuffer ? await uploadToCloudinary(imageBuffer) : user.profilePicture;
-    
-    if (imageBuffer && user.profilePicture?.includes('cloudinary')) {
-      await deleteFromCloudinary(user.profilePicture).catch(err =>
+
+    if (imageBuffer && user.profilePicture?.includes("cloudinary")) {
+      await deleteFromCloudinary(user.profilePicture).catch((err) =>
         console.error("Failed to delete old profile picture:", err)
       );
     }
 
-    const safeImageUrl = imageUrl || ''; 
+    const safeImageUrl = imageUrl || "";
+
     await this.userRepository.update(id, {
       username: updatedUsername,
       profilePicture: safeImageUrl,
@@ -108,7 +109,7 @@ export class ProfileService implements IProfileService {
 
     return {
       username: updatedUsername,
-      image: safeImageUrl, 
+      image: safeImageUrl,
     };
   }
 }

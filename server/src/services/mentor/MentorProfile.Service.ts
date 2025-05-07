@@ -4,6 +4,7 @@ import { TYPES } from "../../core/types";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
 import { throwError } from "../../utils/ResANDError";
+import { StatusCode } from "../../enums/statusCode.enum";
 
 @injectable()
 export class MentorProfileService implements IMentorProfileService {
@@ -18,8 +19,8 @@ export class MentorProfileService implements IMentorProfileService {
         id: string
     ): Promise<{ username: string; image: string; bio: string }> {
         const mentor = await this.mentorRepo.findById(id);
-        if (!mentor) throwError("Mentor not found",404);
-        if (mentor.isBlock) throwError("This mentor is blocked",403);
+        if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
+        if (mentor.isBlock) throwError("This mentor is blocked", StatusCode.FORBIDDEN);
         
         const updatedUsername = username !== mentor.username ? username : mentor.username;
         const updatedBio = bio !== mentor.bio ? bio : mentor.bio;

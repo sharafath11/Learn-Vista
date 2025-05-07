@@ -1,6 +1,7 @@
-import { ICourse, ICourseFormData, UserBlock,  } from "../types/adminTypes";
+import {  UserBlock,  } from "../types/adminTypes";
 import { ILogin, IUserRegistration } from "../types/authTypes";
-import { MentorSignupData } from "../types/mentorTypes";
+import { IMentorSignupData } from "../types/mentorTypes";
+
 import { getRequest, patchRequest, postRequest } from "./api";
 
 const get = getRequest;
@@ -21,7 +22,7 @@ export const UserAPIMethods = {
 } as const;
 
 export const AdminAPIMethods = {
-  fetchUser: () => get("/admin/users"),
+  fetchUser: (page:number) => get(`/admin/users/${page}`),
   fetchMentor: () => get("/admin/mentors"),
   getSingleMentor: (id: string) => get(`/admin/mentor/${id}`),
   blockUser: (data: UserBlock) => patch("/admin/users/block", data),
@@ -39,7 +40,7 @@ export const AdminAPIMethods = {
 } as const;
 
 export const MentorAPIMethods = {
-  signup: (mentorData: MentorSignupData) => post("/mentor/signup", mentorData),
+  signup: (mentorData: IMentorSignupData) => post("/mentor/signup", mentorData),
   otpSend: (email: string) => post("/mentor/send-otp", { email }),
   login: (email: string, password: string) => post("/mentor/login", { email, password }),
   logout: () => post("/mentor/logout", {}),

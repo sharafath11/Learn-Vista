@@ -6,26 +6,26 @@ import { IMentor } from '../../types/mentorTypes';
 import { throwError } from '../../utils/ResANDError'; 
 import { ICourse, IPopulatedCourse } from '../../types/classTypes';
 import { ICourseRepository } from '../../core/interfaces/repositories/course/ICourseRepository';
+import { StatusCode } from '../../enums/statusCode.enum'; // Consistent StatusCode Enum
 
 @injectable()
 export class MentorService implements IMentorService {
   constructor(
     @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
-    @inject (TYPES.CourseRepository) private courseRepo:ICourseRepository
+    @inject(TYPES.CourseRepository) private courseRepo: ICourseRepository
   ) {}
 
   async getMentor(id: string): Promise<Partial<IMentor>> {
     const mentor = await this.mentorRepo.findById(id);
-   
-    console.log(mentor);
-    
+
     if (!mentor) {
-      throwError("Please login", 401); 
+      throwError("Please login", StatusCode.UNAUTHORIZED); 
     }
-    
+
     if (mentor.isBlock) {
-      throwError("Your account was blocked. Please contact support", 403); 
+      throwError("Your account was blocked. Please contact support", StatusCode.FORBIDDEN); 
     }
+
     return {
       username: mentor.username,
       email: mentor.email,
@@ -41,24 +41,23 @@ export class MentorService implements IMentorService {
       reviews: mentor.reviews
     };
   }
+
   async getCourses(id: string): Promise<IPopulatedCourse[]> {
-    const courses=await this.courseRepo.findWithMenorIdgetAllWithPopulatedFields(id)
-    const result = await this.courseRepo.findAll({ mentorId: id });
-    if(!result) throwError("You dont have any Courses ")
-    return courses
+    const courses = await this.courseRepo.findWithMenorIdgetAllWithPopulatedFields(id);
+    if (!courses) throwError("You don't have any courses", StatusCode.NOT_FOUND); 
+    return courses;
   }
+
   async courseApproveOrReject(
     mentorId: string,
     courseId: string,
     status: string,
     courseRejectReason?: string
   ): Promise<void> {
-    console.log(status)
     if (status !== "approved" && status !== "rejected") {
-      throwError("Invalid status", 400);
+      throwError("Invalid status", StatusCode.BAD_REQUEST); 
     }
-    console.log("yd",courseId)
-  
+
     if (status === "approved") {
       await this.mentorRepo.update(mentorId, {
         $push: { coursesCreated: courseId }
@@ -68,22 +67,23 @@ export class MentorService implements IMentorService {
       });
       return;
     }
-  
+
     if (!courseRejectReason) {
-      throwError("Rejection reason required", 400);
+      throwError("Rejection reason required", StatusCode.BAD_REQUEST); 
     }
-  
+
     await this.mentorRepo.update(mentorId, {
       $push: {
-        courseRejectReson: {
+        courseRejectReason: {
           courseId,
           message: courseRejectReason
         }
       }
     });
-  
+
     await this.courseRepo.update(courseId, {
       mentorStatus: "rejected"
     });
   }
 }
+

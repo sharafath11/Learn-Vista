@@ -5,13 +5,12 @@ import { TYPES } from "../../core/types";
 import bcrypt from "bcryptjs";
 import { GooglePayload, IUser } from "../../types/userTypes";
 import { validateUserSignupInput } from "../../validation/userValidation";
-import { OtpRepository } from "../../repositories/user/OtpRepository";
+import { IOtpRepository } from "../../core/interfaces/repositories/user/IOtpRepository";
 import { generateOtp } from "../../utils/otpGenerator";
 import { sendEmailOtp } from "../../utils/emailService";
-import { IOtpRepository } from "../../core/interfaces/repositories/user/IOtpRepository";
 import { generateAccessToken, generateRefreshToken } from "../../utils/JWTtoken";
 import { throwError } from "../../utils/ResANDError";
-
+import { StatusCode } from "../../enums/statusCode.enum"; 
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -22,51 +21,51 @@ export class AuthService implements IAuthService {
 
   async registerUser(userData: IUser): Promise<Partial<IUser>> {
     const { username, email, password, role } = userData;
-    
+
     validateUserSignupInput(username, email, password, role);
-    const existingUser = await this.userRepository.findOne({email});
+    const existingUser = await this.userRepository.findOne({ email });
     const existOtp = await this.otpRepository.findOne({ email });
-    
-    if(!existOtp) throwError("OTP Expired", 400);
-    if (existingUser) throwError("User already exists", 409);
-    
+
+    if (!existOtp) throwError("OTP Expired", StatusCode.BAD_REQUEST);
+    if (existingUser) throwError("User already exists", StatusCode.CONFLICT);
+
     const userToCreate = {
       ...userData,
       password: await bcrypt.hash(password, 10),
       isVerified: userData.isVerified,
     };
-    
+
     return this.userRepository.create(userToCreate);
   }
 
   async sendOtp(email: string): Promise<void> {
-    if (!email) throwError("Email is required", 400);
-    
+    if (!email) throwError("Email is required", StatusCode.BAD_REQUEST);
+
     const existingUser = await this.userRepository.findOne({ email });
-    if (existingUser) throwError("This email is already registered", 409);
-    
+    if (existingUser) throwError("This email is already registered", StatusCode.CONFLICT);
+
     const exitOtp = await this.otpRepository.findOne({ email });
-    if(exitOtp) throwError("OTP already sent", 400);
-    
+    if (exitOtp) throwError("OTP already sent", StatusCode.BAD_REQUEST);
+
     const otp = generateOtp();
-    await this.otpRepository.create({ 
-      email, 
-      otp, 
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000) 
+    await this.otpRepository.create({
+      email,
+      otp,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000)
     });
     sendEmailOtp(email, otp);
   }
 
   async verifyOtp(email: string, otp: string): Promise<void> {
-    if (!email || !otp) throwError("Email and OTP are required", 400);
-    
+    if (!email || !otp) throwError("Email and OTP are required", StatusCode.BAD_REQUEST);
+
     const otpRecord = await this.otpRepository.findOne({ email, otp });
-    if (!otpRecord) throwError("Invalid OTP", 400);
+    if (!otpRecord) throwError("Invalid OTP", StatusCode.BAD_REQUEST);
   }
 
   async loginUser(
-    email: string, 
-    password: string, 
+    email: string,
+    password: string,
     googleId?: string
   ): Promise<{
     token: string;
@@ -75,29 +74,29 @@ export class AuthService implements IAuthService {
   }> {
     let user;
     if (googleId) {
-      user = await this.userRepository.findOne({googleId});
-      if (!user) throwError("Invalid credentiols", 400);
+      user = await this.userRepository.findOne({ googleId });
+      if (!user) throwError("Invalid credentials", StatusCode.BAD_REQUEST);
     } else {
-      if (!email || !password) throwError("Email and password are required", 400);
-      user = await this.userRepository.findOne({email});
-      if (!user) throwError("Invalid credentiols", 400);
+      if (!email || !password) throwError("Email and password are required", StatusCode.BAD_REQUEST);
+      user = await this.userRepository.findOne({ email });
+      if (!user) throwError("Invalid credentials", StatusCode.BAD_REQUEST);
     }
 
     const userId = user?.id as string;
-    
+
     if (googleId) {
-      if (user.googleId !== googleId) throwError("Invalid Google account",400);
+      if (user.googleId !== googleId) throwError("Invalid Google account", StatusCode.BAD_REQUEST);
     } else {
-      if (!user.password) throwError("Password not set for this account", 400);
+      if (!user.password) throwError("Password not set for this account", StatusCode.BAD_REQUEST);
       const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) throwError("Invalid credentials", 400);
+      if (!isPasswordValid) throwError("Invalid credentials", StatusCode.BAD_REQUEST);
     }
 
-    if (user.isBlocked) throwError("This account is blocked", 403);
-    
+    if (user.isBlocked) throwError("This account is blocked", StatusCode.FORBIDDEN);
+
     const token = generateAccessToken(userId, user.role);
     const refreshToken = generateRefreshToken(userId, user.role);
-    
+
     return {
       token,
       refreshToken,
@@ -114,11 +113,11 @@ export class AuthService implements IAuthService {
     user: any;
   }> {
     if (!profile.email || !profile.googleId) {
-      throwError("Invalid Google profile data", 400);
+      throwError("Invalid Google profile data", StatusCode.BAD_REQUEST);
     }
-    
+
     let user = await this.userRepository.findOne({ email: profile.email });
-    
+
     if (!user) {
       user = await this.userRepository.create({
         username: profile.username,
@@ -141,13 +140,13 @@ export class AuthService implements IAuthService {
       });
     }
 
-    if (!user) return throwError("User creation/update failed", 500);
-    if (user.isBlocked) throwError("This user is blocked", 403);
-    
+    if (!user) return throwError("User creation/update failed", StatusCode.INTERNAL_SERVER_ERROR);
+    if (user.isBlocked) throwError("This user is blocked", StatusCode.FORBIDDEN);
+
     const userId = user.id as string;
     const token = generateAccessToken(userId, user.role);
     const refreshToken = generateRefreshToken(userId, user.role);
-  
+
     return {
       token,
       refreshToken,

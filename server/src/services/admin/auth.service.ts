@@ -2,6 +2,7 @@ import { injectable } from "inversify";
 import { IAdminAuthService } from "../../core/interfaces/services/admin/IAdminAuthService";
 import { generateAccessToken, generateRefreshToken } from "../../utils/JWTtoken";
 import { throwError } from "../../utils/ResANDError";  
+import { StatusCode } from "../../enums/statusCode.enum"; 
 
 @injectable()
 class AdminAuthService implements IAdminAuthService {
@@ -18,7 +19,7 @@ class AdminAuthService implements IAdminAuthService {
         refreshToken,
       };
     } else {
-      throwError("Invalid credentials", 401);  
+      throwError("Invalid credentials", StatusCode.UNAUTHORIZED); 
     }
   }
 }

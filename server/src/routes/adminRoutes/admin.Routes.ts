@@ -15,7 +15,7 @@ const adminAuthController = container.get<IAdminAuthController>(TYPES.AdminAuthC
 const adminCourseController=container.get<IAdminCourseController>(TYPES.AdminCourseController)
 route.post("/login", adminAuthController.login.bind(adminAuthController));
 route.post("/logout", verifyAdmin, adminAuthController.logout.bind(adminAuthController));
-route.get("/users", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));
+route.get("/users/:page", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));
 route.patch("/users/block", verifyAdmin, adminUsersController.userBlock.bind(adminUsersController));
 route.get("/mentors", verifyAdmin, adminMentorController.getAllMentors.bind(adminMentorController));
 route.get("/mentor/:id",verifyAdmin,adminMentorController.mentorDetils.bind(adminMentorController))

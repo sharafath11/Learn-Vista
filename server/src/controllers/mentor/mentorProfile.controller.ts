@@ -6,31 +6,37 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IMentorProfileService } from "../../core/interfaces/services/mentor/IMentorProfile.Service";
 import { validateMentorProfile } from "../../validation/mentorValidation";
+import { StatusCode } from "../../enums/statusCode.enum";
 
 @injectable()
 export class MentorProfileController implements IMentorProfileController {
   constructor(
     @inject(TYPES.MentorProfileService) private mentorProfileService: IMentorProfileService
-  ) {
-    console.log("MentorProfileService injected?", this.mentorProfileService !== undefined);
-  }
+  ) {}
 
   async editProfile(req: Request, res: Response): Promise<void> {
     try {
       const { username, bio } = req.body;
-      const decode = decodeToken(req.cookies.token);
+      const decoded = decodeToken(req.cookies.token);
+
+      if (!decoded || decoded.role !== "mentor") {
+        return sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized", false);
+      }
+
       validateMentorProfile({
         username,
         bio,
         image: req.file || undefined
       });
-      
-      if (!decode || decode.role !== "mentor") {
-        throwError("Unauthorized");
-      }
 
-      const data = await this.mentorProfileService.editProfile(username, bio, req.file?.buffer, decode?.id as string);
-      sendResponse(res, 200, "Profile updated successfully", true, data);
+      const updatedData = await this.mentorProfileService.editProfile(
+        username,
+        bio,
+        req.file?.buffer,
+        decoded.id as string
+      );
+
+      return sendResponse(res, StatusCode.OK, "Profile updated successfully", true, updatedData);
     } catch (error) {
       handleControllerError(res, error);
     }
