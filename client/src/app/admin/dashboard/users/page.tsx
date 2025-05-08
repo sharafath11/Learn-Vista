@@ -15,7 +15,6 @@ const User = () => {
   const usersPerPage = 10;
 
   const { users, setUsers, getAllUsers, totalUsersCount } = useAdminContext();
-
   useEffect(() => {
     const filters: Record<string, unknown> = {};
 

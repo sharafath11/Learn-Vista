@@ -30,7 +30,6 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     fetchUsers,
     setUsers,
   } = useUserPagination();
-
   useEffect(() => {
     getAllMentors();
     getCategories();
@@ -85,7 +84,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         setCourses,
         usersPagination,
         loadingUsers,
-        totalUsersCount: usersPagination.total, // ✅ total count extracted from pagination
+        totalUsersCount: usersPagination.total, 
       }}
     >
       {children}

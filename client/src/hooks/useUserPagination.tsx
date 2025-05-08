@@ -54,6 +54,7 @@ export const useUserPagination = (): UseUserPaginationReturn => {
       console.log(res)
       if (res.ok) {
         setUsers(res.data.data);
+        console.log("res",res)
         setPagination(prev => ({
           ...prev,
           ...queryParams,

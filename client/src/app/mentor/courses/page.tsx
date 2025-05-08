@@ -33,7 +33,7 @@ export default function CoursesPage() {
   const handleReasonSubmit = async () => {
 
     if (!selectedCourseId || !rejectionReason.trim()) {
-      alert(selectedCourseId);
+      
       return 
     }
     await handleStatusChange(selectedCourseId, "rejected", rejectionReason)
