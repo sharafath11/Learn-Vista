@@ -22,7 +22,13 @@ export const UserAPIMethods = {
 } as const;
 
 export const AdminAPIMethods = {
-  fetchUser: (page:number) => get(`/admin/users/${page}`),
+  fetchUsers: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    filters?: Record<string, any>;
+    sort?: Record<string, 1 | -1>;
+  }) => get(`/admin/users`, { params }),
   fetchMentor: () => get("/admin/mentors"),
   getSingleMentor: (id: string) => get(`/admin/mentor/${id}`),
   blockUser: (data: UserBlock) => patch("/admin/users/block", data),

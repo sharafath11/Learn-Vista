@@ -52,25 +52,43 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
  
   async findPaginated(
     filter: FilterQuery<T> = {},
-    page: number = 1
-  ): Promise<{ data: U[]; total: number }> {
+    page: number = 1,
+    limit?: number,
+    search?: string,
+    sort: Record<string, 1 | -1> = { createdAt: -1 }
+  ): Promise<{ data: U[]; total: number; totalPages: number }> {
     try {
-      const limit = 2;
-      const skip = (page - 1) * limit;
+      console.log("sort in base",sort)
+      const finalLimit = limit || 10;
+      const skip = (page - 1) * finalLimit;
+  
+     
+      if (search) {
+        const searchRegex = new RegExp(search, 'i');
+        filter.$or = [
+          { username: { $regex: searchRegex } },
+          { email: { $regex: searchRegex } },
+          { tag: { $regex: searchRegex } },
+        ];
+      }
   
       const [documents, total] = await Promise.all([
-        this.model.find(filter).skip(skip).limit(limit),
+        this.model.find(filter)
+          .sort(sort)
+          .skip(skip)
+          .limit(finalLimit),
         this.model.countDocuments(filter),
       ]);
   
       const data = documents.map(doc => this.toDTO(doc));
-      return { data, total };
+      const totalPages = Math.ceil(total / finalLimit);
+      
+      return { data, total, totalPages };
     } catch (error) {
       throw this.handleError(error, 'Error fetching paginated documents');
     }
   }
   
-
   async findById(id: string): Promise<U | null> {
     try {
       const document = await this.model.findById(id);

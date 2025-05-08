@@ -1,4 +1,3 @@
-// AdminProvider.tsx
 "use client";
 
 import {
@@ -12,25 +11,31 @@ import { AdminAPIMethods } from "../services/APImethods";
 import { showInfoToast } from "../utils/Toast";
 import { AdminContextType } from "../types/adminTypes";
 import { IMentor } from "../types/mentorTypes";
-import { IUser } from "../types/userTypes";
 import { IPopulatedCourse } from "../types/courseTypes";
 import { ICategory } from "../types/categoryTypes";
-
+import { useUserPagination } from "../hooks/useUserPagination";
 
 export const AdminContext = createContext<AdminContextType | null>(null);
 
 const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [admin, setAdmin] = useState(false);
   const [mentors, setMentors] = useState<IMentor[]>([]);
-  const [users, setUsers] = useState<IUser[]>([]);
   const [cat, setCat] = useState<ICategory[]>([]);
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
-  const [totalUsersCount, setTotalUsersCount] = useState<number>(0);
+
+  const {
+    users,
+    pagination: usersPagination,
+    loading: loadingUsers,
+    fetchUsers,
+    setUsers,
+  } = useUserPagination();
 
   useEffect(() => {
     getAllMentors();
     getCategories();
     getCourse();
+    fetchUsers({});
   }, []);
 
   async function getCategories() {
@@ -54,36 +59,33 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     if (res.ok) setCourses(res.data);
   }
 
-  async function getAllUsers(pageNumber = 1) {
-    try {
-      const res = await AdminAPIMethods.fetchUser(pageNumber);
-      if (res.ok) {
-        setUsers(res.data.data);
-        setTotalUsersCount(res.data.total); // ✅ total user count
-      } else {
-        console.error(res.msg);
-      }
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    }
-  }
+  const getAllUsers = async (params?: {
+    page?: number;
+    search?: string;
+    filters?: Record<string, unknown>;
+    sort?: Record<string, 1 | -1>;
+  }) => {
+    await fetchUsers(params ?? {}); 
+  };
 
   return (
     <AdminContext.Provider
       value={{
         admin,
-        courses,
-        setCourses,
         setAdmin,
-        getAllUsers,
         mentors,
         setMentors,
-        cat,
-        setCat,
         refreshMentors: getAllMentors,
         users,
         setUsers,
-        totalUsersCount, 
+        cat,
+        setCat,
+        getAllUsers,
+        courses,
+        setCourses,
+        usersPagination,
+        loadingUsers,
+        totalUsersCount: usersPagination.total, // ✅ total count extracted from pagination
       }}
     >
       {children}

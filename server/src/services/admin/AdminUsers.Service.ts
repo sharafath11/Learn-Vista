@@ -6,6 +6,7 @@ import { IUser } from "../../types/userTypes";
 import { throwError } from "../../utils/ResANDError";
 import { IAdminUserServices } from "../../core/interfaces/services/admin/IAdminUserServices";
 import { StatusCode } from "../../enums/statusCode.enum";  
+import { FilterQuery } from "mongoose";
 
 @injectable()
 export class AdminUsersServices implements IAdminUserServices {
@@ -14,10 +15,32 @@ export class AdminUsersServices implements IAdminUserServices {
     private adminUsersRepo: IAdminUsersRepository
   ) {}
 
-  async getAllUsers(page: number): Promise<{ data: IUser[]; total: number }> {
-    const { data, total } = await this.adminUsersRepo.findPaginated({}, page);
-    if (!data) throwError("Error fetching users", StatusCode.INTERNAL_SERVER_ERROR);
-    return { data, total };
+  async getAllUsers(
+    page: number = 1,
+    limit?: number,
+    search?: string,
+    filters: FilterQuery<IUser> = {},
+    sort: Record<string, 1 | -1> = { username: -1 }
+  ): Promise<{ data: IUser[]; total: number; totalPages?: number }> {
+    console.log("sort service ",sort)
+      const { data, total, totalPages } = await this.adminUsersRepo.findPaginated(
+        filters,
+        page,
+        limit,
+        search,
+        sort
+      );
+      
+      if (!data) {
+        throwError("Error fetching users", StatusCode.INTERNAL_SERVER_ERROR);
+      }
+      
+      return { 
+        data, 
+        total,
+        ...(totalPages !== undefined && { totalPages }) 
+      };
+   
   }
   
 

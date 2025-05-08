@@ -11,8 +11,11 @@
     delete(id: string): Promise<boolean>;
     findPaginated(
       filter: FilterQuery<T>,
-      page: number
-    ): Promise<{ data: U[]; total: number }>;
+      page: number,
+      limit?: number,
+      search?: string,
+      sort?: Record<string, 1 | -1>
+    ): Promise<{ data: U[]; total: number; totalPages: number }>;
     
     // // Utility Methods - all public in interface
     // toDTO(document: T): U;

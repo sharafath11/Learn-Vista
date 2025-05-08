@@ -19,11 +19,16 @@ export interface UserBlock {
   status: boolean;
 }
 
+export type SortOrder = 'asc' | 'desc';
+
+
 export interface SearchAndFilterProps {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
-  statusFilter: 'All'| 'Active' | 'Blocked'
+  statusFilter: UserStatus;
   setStatusFilter: (value: UserStatus) => void;
+  sortOrder: SortOrder;
+  setSortOrder: (value: SortOrder) => void;
 }
 
 export interface SideBarProps {
@@ -45,7 +50,6 @@ export interface MentorDetailsProps {
   mentor: IMentor;
   onClose: () => void;
 }
-
 export interface AdminContextType {
   admin: boolean;
   setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
@@ -56,8 +60,20 @@ export interface AdminContextType {
   setUsers: React.Dispatch<React.SetStateAction<AdminUser[]>>;
   setCat: React.Dispatch<React.SetStateAction<ICategory[]>>;
   cat: ICategory[];
-  getAllUsers: (pageNumber?: number) => Promise<void>;
+  getAllUsers: (params?: {
+    page?: number;
+    search?: string;
+    filters?: Record<string, unknown>;
+    sort?: Record<string, 1 | -1>;
+  }) => Promise<void>;
   courses: IPopulatedCourse[];
   setCourses: React.Dispatch<React.SetStateAction<IPopulatedCourse[]>>;
-  totalUsersCount:number
+  usersPagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  loadingUsers: boolean;
+  totalUsersCount: number;
 }
