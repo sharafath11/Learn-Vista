@@ -6,6 +6,7 @@ import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdmi
 import { IMentor } from "../../types/mentorTypes";
 import { throwError } from "../../utils/ResANDError";  
 import { StatusCode } from "../../enums/statusCode.enum";
+import { FilterQuery } from "mongoose";
 
 @injectable()
 export class AdminMentorService implements IAdminMentorServices {
@@ -14,11 +15,32 @@ export class AdminMentorService implements IAdminMentorServices {
     private adminMentorRepo: IAdminMentorRepository
   ) {}
 
-  async getAllMentors(): Promise<IMentor[]> {
-    const mentors = await this.adminMentorRepo.findAll();
-    if (!mentors) throwError("Error fetching mentors", StatusCode.INTERNAL_SERVER_ERROR);
-    return mentors;
+  async getAllMentors(
+    page: number = 1,
+    limit?: number,
+    search?: string,
+    filters: FilterQuery<IMentor> = {},
+    sort: Record<string, 1 | -1> = { createdAt: -1 }
+  ): Promise<{ data: IMentor[]; total: number; totalPages?: number }> {
+    const { data, total, totalPages } = await this.adminMentorRepo.findPaginated(
+      filters,
+      page,
+      limit,
+      search,
+      sort
+    );
+  
+    if (!data) {
+      throwError("Error fetching mentors", StatusCode.INTERNAL_SERVER_ERROR);
+    }
+  
+    return {
+      data,
+      total,
+      ...(totalPages !== undefined && { totalPages })
+    };
   }
+  
 
   async changeMentorStatus(id: string, status: boolean, email: string): Promise<IMentor | null> {
     const statusString = status ? "approved" : "rejected";
@@ -39,7 +61,7 @@ export class AdminMentorService implements IAdminMentorServices {
     return updated;
   }
 
-  async mentorDetils(id: string): Promise<IMentor> {
+  async mentorDetails(id: string): Promise<IMentor> {
     const mentor = await this.adminMentorRepo.findById(id);
     if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
     return mentor;

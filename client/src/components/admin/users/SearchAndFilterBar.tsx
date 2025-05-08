@@ -23,7 +23,7 @@ export const SearchAndFilterBar: React.FC<SearchAndFilterProps> = ({
    
       <select
         value={statusFilter}
-        onChange={(e) => setStatusFilter(e.target.value as "All" | "Active" | "Blocked")}
+        onChange={(e) => setStatusFilter(e.target.value as 'All'|'Active' | 'Blocked ' |'Approved' | 'Pending' | 'Rejected')}
         className="w-full md:w-auto px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200"
       >
         <option value="All">All Status</option>

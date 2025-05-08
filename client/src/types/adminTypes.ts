@@ -76,4 +76,9 @@ export interface AdminContextType {
   };
   loadingUsers: boolean;
   totalUsersCount: number;
+  mentorPagination: {
+    page: number;
+    limit: number;
+    total: number;
+  };
 }

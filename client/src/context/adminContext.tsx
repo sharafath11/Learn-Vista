@@ -22,7 +22,11 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [mentors, setMentors] = useState<IMentor[]>([]);
   const [cat, setCat] = useState<ICategory[]>([]);
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
-
+  const [mentorPagination, setMentorPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+  });
   const {
     users,
     pagination: usersPagination,
@@ -43,16 +47,28 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     else showInfoToast(res.msg);
   }
 
-  async function getAllMentors() {
-    try {
-      const res = await AdminAPIMethods.fetchMentor();
-      if (res.ok) setMentors(res.data);
-      else console.error(res.msg);
-    } catch (error) {
-      console.error("Failed to fetch mentors:", error);
+  async function getAllMentors(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sort?: Record<string, 1 | -1>;
+    filters?: Record<string, any>;
+  }) {
+    const res = await AdminAPIMethods.fetchMentor(params || {});
+   
+    if (res.ok) {
+      setMentors(res.data.data);
+      setMentorPagination({
+        page: res.data.page,
+        limit: res.data.limit,
+        total: res.data.total,
+      });
+    } else {
+      showInfoToast(res.msg);
     }
-  }
 
+  }
+  
   async function getCourse() {
     const res = await AdminAPIMethods.getCourses();
     if (res.ok) setCourses(res.data);
@@ -85,6 +101,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         usersPagination,
         loadingUsers,
         totalUsersCount: usersPagination.total, 
+        mentorPagination
       }}
     >
       {children}

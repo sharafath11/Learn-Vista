@@ -29,7 +29,13 @@ export const AdminAPIMethods = {
     filters?: Record<string, any>;
     sort?: Record<string, 1 | -1>;
   }) => get(`/admin/users`, { params }),
-  fetchMentor: () => get("/admin/mentors"),
+  fetchMentor: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    filters?: Record<string, any>;
+    sort?: Record<string, 1 | -1>;
+  }) => get("/admin/mentors"),
   getSingleMentor: (id: string) => get(`/admin/mentor/${id}`),
   blockUser: (data: UserBlock) => patch("/admin/users/block", data),
   mentorChangeStatus: (mentorId: string, status: string, email: string) => 

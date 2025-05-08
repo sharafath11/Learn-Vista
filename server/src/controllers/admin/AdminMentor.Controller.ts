@@ -5,6 +5,7 @@ import { IAdminMentorController } from "../../core/interfaces/controllers/admin/
 import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";
 import { sendResponse, handleControllerError, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { IMentorFilterParams } from "../../types/adminTypes";
 
 @injectable()
 class AdminMentorController implements IAdminMentorController {
@@ -15,12 +16,71 @@ class AdminMentorController implements IAdminMentorController {
 
   async getAllMentors(req: Request, res: Response): Promise<void> {
     try {
-      const result = await this.adminMentorService.getAllMentors();
-      sendResponse(res, StatusCode.OK, "Mentors fetched successfully", true, result);
-    } catch (error) {
-      handleControllerError(res, error);
-    }
-  }
+
+         const queryParams = (req.query as any).params || req.query;
+     
+         const page = Math.max(Number(queryParams.page) || 1, 1);
+         const limit = Math.min(Math.max(Number(queryParams.limit) || 10, 1), 100);
+         const search = queryParams.search?.toString() || '';
+     
+         console.log("🔍 Request Query Params:", queryParams);
+     
+         const filters: IMentorFilterParams = {
+           ...(queryParams.filters?.isActive && { isActive: queryParams.filters.isActive === 'true' }),
+           ...(queryParams.filters?.isBlocked && { isBlocked: queryParams.filters.isBlocked === 'true' }),
+           ...(queryParams.filters?.role && { role: queryParams.filters.role.toString() }),
+         };
+     
+         console.log("🧰 sort in controler:", filters);
+     
+         // Proper sort handling
+         const sort: Record<string, 1 | -1> = {};
+         console.log("queryParams.sort", queryParams.sort);
+     
+         if (queryParams.sort) {
+           for (const key in queryParams.sort) {
+             const value = queryParams.sort[key];
+             if (value === 'asc' || value === '1' || value === 1) {
+               sort[key] = 1;
+             } else if (value === 'desc' || value === '-1' || value === -1) {
+               sort[key] = -1;
+             } else {
+               console.warn(`⚠️ Invalid sort value for ${key}: ${value}, defaulting to -1`);
+               sort[key] = -1;
+             }
+           }
+           console.log("🔃 Sort:", sort);
+         } else {
+           sort.createdAt = -1;
+           console.log("🔃 Default Sort: createdAt DESC");
+         }
+     
+         console.log("sort in controller", sort);
+     
+         const result = await this.adminMentorService.getAllMentors(
+           page,
+           limit,
+           search,
+           filters,
+           sort
+         );
+     
+         console.log("✅ Users Fetched:", result.data.length, "users");
+     
+         sendResponse(res, StatusCode.OK, "Users fetched successfully", true, {
+           data: result.data,
+           total: result.total,
+           page,
+           limit,
+           totalPages: result.totalPages,
+         });
+       } catch (error) {
+         console.error("❌ Error in getAllUsers:", error);
+         handleControllerError(res, error);
+       }
+     }
+  
+  
 
   async changeStatus(req: Request, res: Response): Promise<void> {
     try {
@@ -71,7 +131,7 @@ class AdminMentorController implements IAdminMentorController {
         return sendResponse(res, StatusCode.BAD_REQUEST, "Mentor ID is required", false);
       }
 
-      const mentor = await this.adminMentorService.mentorDetils(id);
+      const mentor = await this.adminMentorService.mentorDetails(id);
 
       if (!mentor) {
         throwError("Mentor not found", StatusCode.NOT_FOUND);

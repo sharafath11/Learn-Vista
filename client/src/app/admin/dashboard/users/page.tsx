@@ -9,12 +9,24 @@ import { useEffect, useState } from "react";
 
 const User = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Blocked'>('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const usersPerPage = 10;
 
   const { users, setUsers, getAllUsers, totalUsersCount } = useAdminContext();
+
+ 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 700); 
+
+    return () => clearTimeout(timer); 
+  }, [searchTerm]);
+
+  
   useEffect(() => {
     const filters: Record<string, unknown> = {};
 
@@ -22,14 +34,14 @@ const User = () => {
     else if (statusFilter === 'Blocked') filters.isBlocked = true;
 
     const sort: Record<string, 1 | -1> = { username: sortOrder === 'asc' ? 1 : -1 };
-    
+
     getAllUsers({
       page: currentPage,
-      search: searchTerm,
+      search: debouncedSearchTerm,
       filters,
       sort,
     });
-  }, [currentPage, searchTerm, statusFilter, sortOrder]);
+  }, [currentPage, debouncedSearchTerm, statusFilter, sortOrder]);
 
   const totalPages = Math.ceil(totalUsersCount / usersPerPage);
 

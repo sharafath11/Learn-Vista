@@ -21,7 +21,7 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
   function onView(id: string): void {
     route.push(`/admin/dashboard/mentor/${id}`);
   }
-  console.log("rgrgrg",mentor)
+ 
   async function handleBlock() {
     const res = await AdminAPIMethods.blockMentor( mentor.id,!mentor.isBlock)
   
@@ -73,7 +73,6 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
     <FiEye className="w-5 h-5" />
   </button>
 
-  {/* Block/Unblock button */}
   <button 
     
     className={`p-2 rounded-lg transition-all duration-200 ${
