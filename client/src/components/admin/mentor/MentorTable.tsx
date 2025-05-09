@@ -1,5 +1,3 @@
-//connetcyt new hookls mentor hooks
-
 import { FC, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import MentorRow from './MentorRow';
@@ -18,9 +16,9 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<'All' | 'Approved' | 'Pending' | 'Rejected'>('All');
+  const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Blocked' | 'Approved' | 'Pending' | 'Rejected'>('All');
 
-  const mentorsPerPage = 1;
+  const mentorsPerPage = 2;
   const [totalMentors, setTotalMentors] = useState(0);
 
   useEffect(() => {
@@ -36,29 +34,36 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
 
   const fetchMentors = async () => {
     const filters: any = {};
+  
     if (statusFilter !== 'All') {
-      filters.status = statusFilter;
+      filters.status = statusFilter.toLowerCase(); // ensure lowercase like 'pending'
     }
-
+  
     const res = await AdminAPIMethods.fetchMentor({
       page: currentPage,
       search: debouncedSearchTerm,
       sort: { username: sortOrder === 'asc' ? 1 : -1 },
-      filters
+      filters,
     });
-
+  
     if (res.ok) {
       setMentors(res.data.data);
       setTotalMentors(res.data.total);
     }
   };
+  
+  
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Approved': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'Pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
-      case 'Rejected': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+      case 'Approved':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'Pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'Rejected':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
     }
   };
 
@@ -72,18 +77,17 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
           setSearchTerm={(val) => {
             setSearchTerm(val);
             setCurrentPage(1);
-          }}
+          } }
           statusFilter={statusFilter}
           setStatusFilter={(val) => {
             setStatusFilter(val);
             setCurrentPage(1);
-          }}
+          } }
           sortOrder={sortOrder}
           setSortOrder={(val) => {
             setSortOrder(val);
             setCurrentPage(1);
-          }}
-        />
+          } }roleFilter={'Mentor'}        />
       </div>
 
       <motion.div

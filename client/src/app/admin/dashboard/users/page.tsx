@@ -10,14 +10,14 @@ import { useEffect, useState } from "react";
 const User = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Blocked'>('All');
+  const [statusFilter, setStatusFilter] = useState<'All'|'Active' | 'Blocked' |'Approved' | 'Pending' | 'Rejected'>('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const usersPerPage = 10;
 
   const { users, setUsers, getAllUsers, totalUsersCount } = useAdminContext();
 
- 
+  
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -82,18 +82,18 @@ const User = () => {
           setSearchTerm={(val) => {
             setSearchTerm(val);
             setCurrentPage(1);
-          }}
+            
+          } }
           statusFilter={statusFilter}
           setStatusFilter={(val) => {
             setStatusFilter(val);
             setCurrentPage(1);
-          }}
+          } }
           sortOrder={sortOrder}
           setSortOrder={(val) => {
             setSortOrder(val);
             setCurrentPage(1);
-          }}
-        />
+          } } roleFilter={"User"}       />
 
         <div className="rounded-lg shadow-sm overflow-hidden bg-white">
           <UserTable

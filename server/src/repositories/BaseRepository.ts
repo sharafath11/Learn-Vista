@@ -58,8 +58,8 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: U[]; total: number; totalPages: number }> {
     try {
-      console.log("sort in base",sort)
-      const finalLimit =  1;
+      console.log("filter gvgukfuygfg base",sort)
+      const finalLimit =  2;
       const skip = (page - 1) * finalLimit;
   
      
@@ -71,7 +71,7 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
           { tag: { $regex: searchRegex } },
         ];
       }
-  
+     console.log("basesort",sort)
       const [documents, total] = await Promise.all([
         this.model.find(filter)
           .sort(sort)

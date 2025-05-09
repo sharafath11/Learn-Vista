@@ -1,8 +1,9 @@
 
-import { IUser, UserStatus } from "./userTypes";
+import { IUser} from "./userTypes";
 import { IMentor } from "./mentorTypes";
 import { ICategory } from "./categoryTypes";
 import { IPopulatedCourse } from "./courseTypes";
+import { AllStatusFilter } from "./commonTypes";
 
 export type DropDown = 'All' | 'admin' | 'mentor' | 'user';
 
@@ -22,13 +23,19 @@ export interface UserBlock {
 export type SortOrder = 'asc' | 'desc';
 
 
+export type RoleFilter =  'Mentor' | 'User';
+
 export interface SearchAndFilterProps {
   searchTerm: string;
-  setSearchTerm: (value: string) => void;
-  statusFilter: UserStatus;
-  setStatusFilter: (value: UserStatus) => void;
-  sortOrder: SortOrder;
-  setSortOrder: (value: SortOrder) => void;
+  setSearchTerm: (term: string) => void;
+  statusFilter: 'All' | 'Active' | 'Blocked' | 'Approved' | 'Pending' | 'Rejected';
+  setStatusFilter: (status: SearchAndFilterProps['statusFilter']) => void;
+  sortOrder: 'asc' | 'desc';
+  setSortOrder: (order: 'asc' | 'desc') => void;
+
+  
+  roleFilter: RoleFilter;
+ 
 }
 
 export interface SideBarProps {
