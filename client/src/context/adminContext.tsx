@@ -1,5 +1,4 @@
 "use client";
-
 import {
   createContext,
   useState,
@@ -27,6 +26,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     limit: 10,
     total: 0,
   });
+
   const {
     users,
     pagination: usersPagination,
@@ -34,6 +34,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     fetchUsers,
     setUsers,
   } = useUserPagination();
+
   useEffect(() => {
     getAllMentors();
     getCategories();
@@ -55,7 +56,6 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     filters?: Record<string, any>;
   }) {
     const res = await AdminAPIMethods.fetchMentor(params || {});
-   
     if (res.ok) {
       setMentors(res.data.data);
       setMentorPagination({
@@ -66,12 +66,18 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     } else {
       showInfoToast(res.msg);
     }
-
   }
-  
-  async function getCourse() {
-    const res = await AdminAPIMethods.getCourses();
+
+  async function getCourse(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sort?: Record<string, 1 | -1>;
+    filters?: Record<string, any>;
+  }) {
+    const res = await AdminAPIMethods.getCourses(params||{});
     if (res.ok) setCourses(res.data);
+    else showInfoToast(res.msg);
   }
 
   const getAllUsers = async (params?: {
@@ -80,7 +86,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     filters?: Record<string, unknown>;
     sort?: Record<string, 1 | -1>;
   }) => {
-    await fetchUsers(params ?? {}); 
+    await fetchUsers(params ?? {});
   };
 
   return (
@@ -100,8 +106,9 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         setCourses,
         usersPagination,
         loadingUsers,
-        totalUsersCount: usersPagination.total, 
-        mentorPagination
+        totalUsersCount: usersPagination.total,
+        mentorPagination,
+        getCourse,
       }}
     >
       {children}

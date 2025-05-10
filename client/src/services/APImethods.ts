@@ -43,7 +43,13 @@ export const AdminAPIMethods = {
   blockMentor: (mentorId: string, isBlock: boolean) => 
   patch("/admin/mentor/block", { mentorId, isBlock }),
   createCourse: (data: FormData) => post("/admin/create-course", data),
-  getCourses: () => get("/admin/courses"),
+  getCourses: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    filters?: Record<string, any>;
+    sort?: Record<string, 1 | -1>
+  }) => get("/admin/courses"),
   blockCours:(id:string,status:boolean)=>patch("/admin/block-courses",{id:id,status:status}),
   addCategory: (title: string, discription: string) => post("/admin/add-categories", { title: title, discription: discription }),
   getGetegories: () => get("/admin/categories"),

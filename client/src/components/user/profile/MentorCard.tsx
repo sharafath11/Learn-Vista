@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserContext } from "@/src/context/userAuthContext";
 import { UserAPIMethods } from "@/src/services/APImethods";
 import { MentorApplyFormData } from "@/src/types/authTypes";
 import { showSuccessToast } from "@/src/utils/Toast";
@@ -13,8 +14,8 @@ const PLATFORM_ICONS = {
   Portfolio: <Globe className="h-4 w-4" />,
   default: <Link2 className="h-4 w-4" />
 };
-
 export default function MentorCard() {
+  const {user}=useUserContext()
   const dialogRef = useRef<HTMLDialogElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -194,7 +195,7 @@ export default function MentorCard() {
 
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
-              {/* Name */}
+
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-1">Full Name</label>
                 <input

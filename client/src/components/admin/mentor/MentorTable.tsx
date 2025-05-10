@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import MentorRow from './MentorRow';
 import { AdminAPIMethods } from '@/src/services/APImethods';
 import { useAdminContext } from '@/src/context/adminContext';
-import { SearchAndFilterBar } from '../users/SearchAndFilterBar';
+import { SearchAndFilterBar } from '../SearchAndFilterBar';
 
 interface MentorTableProps {
   theme: string;

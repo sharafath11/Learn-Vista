@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchAndFilterBar } from "@/src/components/admin/users/SearchAndFilterBar";
+import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { UserTable } from "@/src/components/admin/users/UserTable";
 import { useAdminContext } from "@/src/context/adminContext";
 import { AdminAPIMethods } from "@/src/services/APImethods";

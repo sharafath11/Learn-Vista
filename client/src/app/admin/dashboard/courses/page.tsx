@@ -1,179 +1,194 @@
-"use client"
-import Image from "next/image"
-import { Search, Filter, Calendar, Clock, Tag, Globe, CheckCircle, XCircle, Hash } from "lucide-react"
-import { useAdminContext } from "@/src/context/adminContext"
-import { AdminAPIMethods } from "@/src/services/APImethods"
-import { showSuccessToast } from "@/src/utils/Toast"
-import Cheader from "./header"
+"use client";
+
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Calendar, Clock, PenSquare } from "lucide-react";
+import { useAdminContext } from "@/src/context/adminContext";
+import { AdminAPIMethods } from "@/src/services/APImethods";
+import { showSuccessToast } from "@/src/utils/Toast";
+import Cheader from "./header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
+import { useRouter } from "next/navigation";
 
 export default function CoursesAdminPage() {
-  const { courses, setCourses, cat, } = useAdminContext()
-  
+  const { courses, setCourses } = useAdminContext();
+  const router=useRouter()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Blocked' | 'Approved' | 'Pending' | 'Rejected'>('All');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCourses, setTotalCourses] = useState(0);
+  const coursesPerPage = 6;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [debouncedSearchTerm, statusFilter, sortOrder, currentPage]);
+
+  const fetchCourses = async () => {
+    const filters: any = {};
+    if (statusFilter !== "All") {
+      filters.status = statusFilter.toLowerCase();
+    }
+
+    const res = await AdminAPIMethods.getCourses({
+      page: currentPage,
+      search: debouncedSearchTerm,
+      sort: { title: sortOrder === "asc" ? 1 : -1 },
+      filters,
+    });
+
+    if (res.ok) {
+      setCourses(res.data.data);
+      setTotalCourses(res.data.total);
+    }
+  };
 
   const toggleCourseStatus = async (id: string, status: boolean) => {
-    const res = await AdminAPIMethods.blockCours(id, !status)
+    const res = await AdminAPIMethods.blockCours(id, !status);
     if (res.ok) {
-      showSuccessToast(res.msg)
-      setCourses(courses.map(prev => prev._id === id ? { ...prev, isBlock: !status } : prev))
+      showSuccessToast(res.msg);
+      setCourses(courses.map((prev) => (prev._id === id ? { ...prev, isBlock: !status } : prev)));
     }
-  }
+  };
+
+  const handleEditCourse = (courseId: string) => {
+    router.push(`/admin/dashboard/courses/edit/${courseId}`)
+  };
 
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" }
-    return new Date(dateString).toLocaleDateString(undefined, options)
-  }
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const totalPages = Math.ceil(totalCourses / coursesPerPage);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
       <Cheader />
 
       <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <div className="relative w-full max-w-md">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Search className="h-5 w-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              className="block w-full rounded-lg border border-gray-300 bg-white p-2.5 pl-10 text-gray-900 focus:border-gray-500 focus:ring-gray-500"
-              placeholder="Search courses..."
-            />
-          </div>
-          <button className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100">
-            <Filter className="mr-2 h-4 w-4" />
-            Filters
-          </button>
-        </div>
+        <SearchAndFilterBar
+          searchTerm={searchTerm}
+          setSearchTerm={(val) => {
+            setSearchTerm(val);
+            setCurrentPage(1);
+          }}
+          statusFilter={statusFilter}
+          setStatusFilter={(val) => {
+            setStatusFilter(val);
+            setCurrentPage(1);
+          }}
+          sortOrder={sortOrder}
+          setSortOrder={(val) => {
+            setSortOrder(val);
+            setCurrentPage(1);
+          }}
+          roleFilter="Course"
+        />
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {courses.map((course) => (
-            <div key={course._id} className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow transition-all hover:shadow-md">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6">
+          {courses&&courses?.map((course) => (
+            <Card key={course._id} className="overflow-hidden shadow-md">
               <div className="relative h-48 w-full">
                 <Image
-                  src={course.thumbnail || "/placeholder.svg?height=192&width=384"}
+                  src={course.thumbnail || "/placeholder.svg"}
                   alt={course.title}
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <div className="flex items-center justify-between">
-                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${course.isBlock ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
+                    <Badge variant={course.isBlock ? "destructive" : "default"} className="text-xs">
                       {course.isBlock ? "Blocked" : "Active"}
-                    </span>
-                    <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                    </Badge>
+                    <Badge variant="outline" className="text-xs">
                       {course.courseLanguage}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
               </div>
 
               <div className="p-4">
-                <h3 className="mb-1 text-lg font-semibold text-gray-900 line-clamp-1">{course.title}</h3>
-                <p className="mb-3 text-sm text-gray-600 line-clamp-2">{course.description}</p>
+                <h3 className="mb-1 text-lg font-semibold line-clamp-1">{course.title}</h3>
+                <p className="mb-3 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{course.description}</p>
 
-                <div className="mb-4 space-y-2">
-                  <div className="flex items-center text-sm text-gray-500">
+                <div className="mb-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />
-                    <span>{formatDate(course.startDate || "")} - {formatDate(course.endDate || "")}</span>
+                    <span>
+                      {formatDate(course.startDate || "")} - {formatDate(course.endDate || "")}
+                    </span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-500">
+                  <div className="flex items-center">
                     <Clock className="mr-2 h-4 w-4" />
                     <span>Starts at {course.startTime}</span>
                   </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Globe className="mr-2 h-4 w-4" />
-                    <span>{course.courseLanguage}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Tag className="mr-2 h-4 w-4" />
-                    <div className="flex flex-wrap gap-1">
-                      {Array.isArray(course.tags) && course.tags.map((tag, index) => (
-                        <span key={index} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs">{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Hash className="mr-2 h-4 w-4" />
-                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-                      {typeof course.categoryId !== 'string' ? course.categoryId.title || "No Category" : "No Category"}
-                    </span>
-                  </div>
                 </div>
 
-                {course.mentorStatus === "rejected" && (() => {
-  const reasons = Array.isArray(course.mentorId?.courseRejectReson) &&
-    course.mentorId.courseRejectReson.filter(
-      (r) => r.courseId?.toString() === course._id.toString()
-    ).length > 0
-      ? course.mentorId.courseRejectReson.filter(
-          (r) => r.courseId?.toString() === course._id.toString()
-        )
-      : [{ message: "Insufficient experience" }, { message: "Profile incomplete" }]
-  
-  // Debug log - Log only the rejection messages
-  console.log(`Rejection reasons for course "${course.title}" (${course._id}):`)
-  reasons.forEach((r, i) => {
-    console.log(`  ${i + 1}. ${r.message}`);
-  });
-
-  return (
-    <div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-800">
-      <strong>Rejection Reason:</strong>
-      <ul className="ml-4 list-disc mt-1">
-        {reasons.map((r, i) => (
-          <li key={i}>{r.message}</li>
-        ))}
-      </ul>
-
-      <button
-        className="mt-3 inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
-        onClick={() => {
-          alert(`Redirect to change mentor for course: ${course.title}`);
-        }}
-      >
-        Change Mentor
-      </button>
-    </div>
-  )
-})()}
-
-
-
-
-
-                <div className="mt-4 flex items-center justify-between">
-                  <div className="font-medium">
-                    {course.price === 0 ? (
-                      <span className="text-green-600">Free</span>
-                    ) : (
-                      <span>₹{(course.price ?? 0).toFixed(2)}</span>
-                    )}
-                  </div>
-                  <button
+                <div className="flex justify-between items-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => toggleCourseStatus(course._id, course.isBlock)}
-                    className={`inline-flex items-center rounded-md px-3 py-1.5 text-xs font-medium ${
-                      course.isBlock ? "bg-green-50 text-green-700 hover:bg-green-100" : "bg-red-50 text-red-700 hover:bg-red-100"
-                    }`}
                   >
-                    {course.isBlock ? (
-                      <>
-                        <CheckCircle className="mr-1 h-3.5 w-3.5" />
-                        Unblock
-                      </>
-                    ) : (
-                      <>
-                        <XCircle className="mr-1 h-3.5 w-3.5" />
-                        Block
-                      </>
-                    )}
-                  </button>
+                    {course.isBlock ? "Unblock" : "Block"}
+                  </Button>
+                  <Button size="sm" onClick={() => handleEditCourse(course._id)}>
+                    <PenSquare className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-6">
+            <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-100"
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`px-4 py-2 border text-sm font-medium ${
+                    currentPage === i + 1
+                      ? "bg-indigo-600 text-white"
+                      : "bg-white text-gray-500 hover:bg-gray-100"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-100"
+              >
+                Next
+              </button>
+            </nav>
+          </div>
+        )}
       </main>
     </div>
-  )
+  );
 }

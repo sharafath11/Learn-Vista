@@ -23,7 +23,7 @@ export interface UserBlock {
 export type SortOrder = 'asc' | 'desc';
 
 
-export type RoleFilter =  'Mentor' | 'User';
+export type RoleFilter =  'Mentor' | 'User'|'Course';
 
 export interface SearchAndFilterProps {
   searchTerm: string;
@@ -32,9 +32,7 @@ export interface SearchAndFilterProps {
   setStatusFilter: (status: SearchAndFilterProps['statusFilter']) => void;
   sortOrder: 'asc' | 'desc';
   setSortOrder: (order: 'asc' | 'desc') => void;
-
-  
-  roleFilter: RoleFilter;
+    roleFilter: RoleFilter;
  
 }
 
@@ -62,11 +60,17 @@ export interface AdminContextType {
   setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
   mentors: IMentor[];
   setMentors: React.Dispatch<React.SetStateAction<IMentor[]>>;
-  refreshMentors: () => void;
+  refreshMentors: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sort?: Record<string, 1 | -1>;
+    filters?: Record<string, any>;
+  }) => void;
   users: AdminUser[];
   setUsers: React.Dispatch<React.SetStateAction<AdminUser[]>>;
-  setCat: React.Dispatch<React.SetStateAction<ICategory[]>>;
   cat: ICategory[];
+  setCat: React.Dispatch<React.SetStateAction<ICategory[]>>;
   getAllUsers: (params?: {
     page?: number;
     search?: string;
@@ -75,6 +79,7 @@ export interface AdminContextType {
   }) => Promise<void>;
   courses: IPopulatedCourse[];
   setCourses: React.Dispatch<React.SetStateAction<IPopulatedCourse[]>>;
+  getCourse: () => Promise<void>;
   usersPagination: {
     page: number;
     limit: number;
