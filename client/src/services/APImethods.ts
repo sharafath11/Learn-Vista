@@ -49,7 +49,7 @@ export const AdminAPIMethods = {
     search?: string;
     filters?: Record<string, any>;
     sort?: Record<string, 1 | -1>
-  }) => get("/admin/courses"),
+  }) => get("/admin/courses",{params}),
   blockCours:(id:string,status:boolean)=>patch("/admin/block-courses",{id:id,status:status}),
   addCategory: (title: string, discription: string) => post("/admin/add-categories", { title: title, discription: discription }),
   getGetegories: () => get("/admin/categories"),

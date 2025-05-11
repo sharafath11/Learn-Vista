@@ -11,7 +11,7 @@ export interface ICourse {
   mentorStatus: "approved" | "rejected" | "pending";
   sessions: string[];
   categoryId: string | ICategory;
-  category?: string;
+  categoryName?:string;
   price?: number;
   courseLanguage?: string;
   isBlock: boolean;

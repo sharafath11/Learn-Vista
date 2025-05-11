@@ -1,4 +1,3 @@
-
 "use client"
 
 import CourseAdditionalDetails from "@/src/components/admin/course/CourseAdditionalDetails"
@@ -8,13 +7,12 @@ import CourseThumbnail from "@/src/components/admin/course/CourseThumbnail"
 import { showInfoToast } from "@/src/utils/Toast"
 import { useState } from "react"
 
-
 interface ICourseFormData {
   title: string
   description: string
   mentorId: string
   categoryId: string
-  category?: string
+  categoryName?: string
   price: string
   language: string
   tags: string[]
@@ -39,7 +37,7 @@ const initialFormData: ICourseFormData = {
   description: "",
   mentorId: "",
   categoryId: "",
-  category: "",
+  categoryName: "",
   price: "",
   language: "",
   tags: [],
@@ -74,19 +72,29 @@ export default function CourseForm({
     }
 
     if (name === "category") {
-      console.log("rfgre",categories,value)
       const selectedCategory = categories.find((c) => c.id === value)
       setFormData((prev) => ({
         ...prev,
         categoryId: value,
-        category: selectedCategory?.title || "",
+        categoryName: prev?.title || "",
       }))
       return
     }
 
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
-
+  const handleSelectChange = (name: string, value: string) => {
+    if (name === "mentorId") {
+      setFormData((prev) => ({ ...prev, mentorId: value }))
+    } else if (name === "categoryId") {
+      const selectedCategory = categories.find((c) => c.id === value)
+      setFormData((prev) => ({
+        ...prev,
+        categoryId: value,
+        categoryName: selectedCategory?.title || "",
+      }))
+    }
+  }
   const handleAddTag = () => {
     const newTag = formData.currentTag.trim()
     if (newTag && !formData.tags.includes(newTag)) {
@@ -107,15 +115,15 @@ export default function CourseForm({
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-  
+
     if (file) {
       const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/gif'];
-  
+
       if (!allowedImageTypes.includes(file.type)) {
         showInfoToast('Please select a valid image file (JPEG, PNG, WEBP, JPG, GIF)');
         return;
       }
-  
+
       const reader = new FileReader();
       reader.onload = () => {
         setFormData((prev) => ({
@@ -127,7 +135,6 @@ export default function CourseForm({
       reader.readAsDataURL(file);
     }
   };
-  
 
   const clearThumbnail = () => {
     setFormData((prev) => ({
@@ -138,21 +145,19 @@ export default function CourseForm({
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault()
-     
-    
-    
+    e.preventDefault()
     await onSubmit(formData)
   }
 
   return (
     <form onSubmit={handleSubmit} className="p-8 space-y-8">
-      <CourseBasicInfo
-        formData={formData}
-        handleChange={handleChange}
-        mentors={mentors}
-        categories={categories}
-      />
+     <CourseBasicInfo
+  formData={formData}
+  handleChange={handleChange}
+  handleSelectChange={handleSelectChange}
+  mentors={mentors}
+  categories={categories}
+/>
 
       <CourseThumbnail
         thumbnailPreview={formData.thumbnailPreview}

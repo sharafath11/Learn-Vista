@@ -1,5 +1,16 @@
+"use client"
 
-import React from "react"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select"
 
 interface CourseBasicInfoProps {
   formData: {
@@ -9,7 +20,8 @@ interface CourseBasicInfoProps {
     categoryId: string
     price: string
   }
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
+  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  handleSelectChange: (name: string, value: string) => void
   mentors: Array<{ id: string; username: string; expertise: string[] }>
   categories: Array<{ id: string; title: string }>
 }
@@ -17,99 +29,92 @@ interface CourseBasicInfoProps {
 export default function CourseBasicInfo({
   formData,
   handleChange,
+  handleSelectChange,
   mentors,
   categories,
 }: CourseBasicInfoProps) {
   return (
-    <div className="space-y-6">
-      <h2 className="text-lg font-medium text-gray-800">Basic Information</h2>
+    <Card>
+      <CardHeader>
+        <CardTitle>Basic Information</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="title">Course Title</Label>
+          <Input
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Enter course title"
+            required
+          />
+        </div>
 
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-          Course Title
-        </label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-200 focus:border-sky-400 focus:outline-none transition"
-          required
-        />
-      </div>
+        <div className="space-y-2">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Describe your course"
+            rows={4}
+            required
+          />
+        </div>
 
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-          Description
-        </label>
-        <textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          rows={4}
-          className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-200 focus:border-sky-400 focus:outline-none transition"
-          required
-        />
-      </div>
+        <div className="space-y-2">
+          <Label>Mentor</Label>
+          <Select
+            value={formData.mentorId}
+            onValueChange={(value) => handleSelectChange("mentorId", value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a mentor" />
+            </SelectTrigger>
+            <SelectContent>
+              {mentors.map((mentor) => (
+                <SelectItem key={mentor.id} value={mentor.id}>
+                  {mentor.username} - {mentor.expertise.join(", ")}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-      <div>
-        <label htmlFor="mentorName" className="block text-sm font-medium text-gray-700">
-          Mentor Name
-        </label>
-        <select
-          id="mentorName"
-          name="mentorName"
-          value={formData.mentorId}
-          onChange={handleChange}
-          className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-200 focus:border-sky-400 focus:outline-none transition"
-          required
-        >
-          <option value="">Select a mentor</option>
-          {mentors.map((mentor) => (
-            <option key={mentor.id} value={mentor.id}>
-              {mentor.username} - {mentor.expertise.join(", ")}
-            </option>
-          ))}
-        </select>
-      </div>
+        <div className="space-y-2">
+          <Label>Category</Label>
+          <Select
+            value={formData.categoryId}
+            onValueChange={(value) => handleSelectChange("categoryId", value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-      <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-          Category
-        </label>
-        <select
-          id="category"
-          name="category"
-          value={formData.categoryId}
-          onChange={handleChange}
-          className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-200 focus:border-sky-400 focus:outline-none transition"
-          required
-        >
-          <option value="">Select a category</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.title}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-          Price
-        </label>
-        <input
-          type="number"
-          id="price"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-200 focus:border-sky-400 focus:outline-none transition"
-          required
-        />
-      </div>
-    </div>
+        <div className="space-y-2">
+          <Label htmlFor="price">Price</Label>
+          <Input
+            id="price"
+            name="price"
+            type="number"
+            value={formData.price}
+            onChange={handleChange}
+            placeholder="Enter price"
+            required
+          />
+        </div>
+      </CardContent>
+    </Card>
   )
 }

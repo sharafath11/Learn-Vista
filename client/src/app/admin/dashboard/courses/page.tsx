@@ -22,7 +22,7 @@ export default function CoursesAdminPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCourses, setTotalCourses] = useState(0);
-  const coursesPerPage = 6;
+  const coursesPerPage = 10;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,19 +36,21 @@ export default function CoursesAdminPage() {
   }, [debouncedSearchTerm, statusFilter, sortOrder, currentPage]);
 
   const fetchCourses = async () => {
-    const filters: any = {};
-    if (statusFilter !== "All") {
-      filters.status = statusFilter.toLowerCase();
-    }
+    const filters: Record<string, unknown> = {};
+  
+    if (statusFilter === 'Active') filters.isBlocked = false;
+    else if (statusFilter === 'Blocked') filters.isBlocked = true;
 
     const res = await AdminAPIMethods.getCourses({
       page: currentPage,
       search: debouncedSearchTerm,
-      sort: { title: sortOrder === "asc" ? 1 : -1 },
+      sort: { createdAt: sortOrder === "asc" ? 1 : -1 },
       filters,
     });
 
     if (res.ok) {
+
+      console.log(res)
       setCourses(res.data.data);
       setTotalCourses(res.data.total);
     }
@@ -99,7 +101,7 @@ export default function CoursesAdminPage() {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6">
           {courses&&courses?.map((course) => (
-            <Card key={course._id} className="overflow-hidden shadow-md">
+            <Card key={course.id} className="overflow-hidden shadow-md">
               <div className="relative h-48 w-full">
                 <Image
                   src={course.thumbnail || "/placeholder.svg"}
@@ -110,6 +112,7 @@ export default function CoursesAdminPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <div className="flex items-center justify-between">
+                   
                     <Badge variant={course.isBlock ? "destructive" : "default"} className="text-xs">
                       {course.isBlock ? "Blocked" : "Active"}
                     </Badge>
@@ -123,7 +126,7 @@ export default function CoursesAdminPage() {
               <div className="p-4">
                 <h3 className="mb-1 text-lg font-semibold line-clamp-1">{course.title}</h3>
                 <p className="mb-3 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{course.description}</p>
-
+                <strong>Categori:</strong><span>{course?.categoryName }</span>
                 <div className="mb-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
                   <div className="flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />

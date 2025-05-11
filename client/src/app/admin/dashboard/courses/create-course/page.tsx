@@ -20,7 +20,6 @@ console.log(cat)
       return 
     }
     const payload = new FormData() ;
-   
     payload.append('title', formData.title);
     payload.append('description', formData.description);
     payload.append('mentorId', formData.mentorId);
@@ -32,6 +31,7 @@ console.log(cat)
     payload.append('startDate', formData.startDate);
     payload.append('endDate', formData.endDate);
     payload.append('startTime', formData.startTime);
+    payload.append('categoryName', formData.categoryName);
    
     for (let pair of payload.entries()) {
       console.log(pair[0]+ ': ' + pair[1]);

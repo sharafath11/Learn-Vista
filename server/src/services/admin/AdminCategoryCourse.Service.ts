@@ -9,6 +9,9 @@ import { throwError } from "../../utils/ResANDError";
 import { uploadToCloudinary } from "../../utils/cloudImage";
 import { validateCoursePayload } from "../../validation/adminValidation";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { FilterQuery } from "mongoose";
+import { CourseRepository } from "../../repositories/course/CourseRepository";
+import { IAdminCourserRepository } from "../../core/interfaces/repositories/admin/IAdminCourseRepository";
 
 @injectable()
 class AdminCourseServices implements IAdminCourseServices {
@@ -18,6 +21,7 @@ class AdminCourseServices implements IAdminCourseServices {
 
     @inject(TYPES.AdminMentorRepository)
     private mentorRepo: IAdminMentorRepository,
+    @inject(TYPES.AdminCourseRepository) private adminCourseRepo:IAdminCourserRepository,
 
     @inject(TYPES.CourseRepository)
     private baseCourseRepo: ICourseRepository
@@ -76,13 +80,31 @@ class AdminCourseServices implements IAdminCourseServices {
     return createdCourse;
   }
 
-  async getClass(): Promise<IPopulatedCourse[]> {
-    const courses = await this.baseCourseRepo.populateWithAllFildes();
-    if (!courses) throwError("Failed to fetch courses", StatusCode.INTERNAL_SERVER_ERROR);
-
-    return courses;
+  async getClass(
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    filters: FilterQuery<ICourse> = {},
+    sort: Record<string, 1 | -1> = { createdAt: -1 }
+  ): Promise<{ data: ICourse[]; total: number; totalPages?: number }> {
+    // Correct the order of arguments
+    const { data, total, totalPages } = await this.adminCourseRepo.getClassRepo(
+      page,      // First argument should be page
+      limit,     // Second argument should be limit
+      search,    // Third argument should be search
+      filters,   // Fourth argument should be filters
+      sort       // Fifth argument should be sort
+    );
+  
+    if (!data) throwError("Failed to fetch courses", StatusCode.INTERNAL_SERVER_ERROR);
+  
+    return {
+      data,
+      total,
+      ...(totalPages !== undefined && { totalPages })
+    };
   }
-
+  
   async blockCourse(id: string, status: boolean): Promise<void> {
     if (!id || id.length !== 24) throwError("Invalid course ID", StatusCode.BAD_REQUEST);
 

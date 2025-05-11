@@ -8,6 +8,7 @@ const CourseSchema: Schema = new Schema(
     mentorId: { type: Schema.Types.ObjectId, ref: 'Mentor', required: true },
     sessions: [{ type: Schema.Types.ObjectId, ref: 'Session' }],
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
+    categoryName:{type:String,required:true},
     thumbnail: { type: String },
     students:{type:Number,default:0},
     price: { type: Number, default: 0 },

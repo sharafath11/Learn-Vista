@@ -32,7 +32,7 @@ export interface ICourse extends Document {
   mentor:IMentor
   price?: number;
   students: number,
-  
+  categoryName:string,
   courseLanguage?: string;
   isBlock: boolean;
   tags?: string[];

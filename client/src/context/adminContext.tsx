@@ -75,8 +75,9 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     sort?: Record<string, 1 | -1>;
     filters?: Record<string, any>;
   }) {
-    const res = await AdminAPIMethods.getCourses(params||{});
-    if (res.ok) setCourses(res.data);
+    const res = await AdminAPIMethods.getCourses(params || {});
+    console.log("course",res)
+    if (res.ok) setCourses(res.data.data);
     else showInfoToast(res.msg);
   }
 
