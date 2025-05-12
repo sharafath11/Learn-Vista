@@ -35,3 +35,19 @@ export function validateCoursePayload(data: Partial<ICourse>, thumbnail?: Buffer
     throwError("Thumbnail file is required and must be a valid buffer", 400);
   }
 }
+
+export function validateCategory(title: string, description: string): string | null {
+  if (!title || !description) {
+    return "Title and description are required";
+  }
+
+  if (title.length < 3) {
+    return "Title must be at least 3 characters long";
+  }
+
+  if (description.length < 10) {
+    return "Description must be at least 10 characters long";
+  }
+
+  return null;
+}

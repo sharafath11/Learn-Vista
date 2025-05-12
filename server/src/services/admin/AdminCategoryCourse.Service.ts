@@ -6,7 +6,7 @@ import { IAdminCategoriesRepostory } from "../../core/interfaces/repositories/ad
 import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { throwError } from "../../utils/ResANDError";
-import { uploadToCloudinary } from "../../utils/cloudImage";
+import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
 import { validateCoursePayload } from "../../validation/adminValidation";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
@@ -35,11 +35,24 @@ class AdminCourseServices implements IAdminCourseServices {
     return newData;
   }
 
-  async getCategory(): Promise<ICategory[]> {
-    const categories = await this.categoryRepo.findAll();
-    if (!categories) throwError("Failed to fetch categories", StatusCode.INTERNAL_SERVER_ERROR);
+  async getCategory(
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    filters: FilterQuery<ICategory> = {},
+    sort: Record<string, 1 | -1> = { createdAt: -1 }
+  ): Promise<{ data: ICategory[]; total: number; totalPages?: number }>{
+    const { data, total, totalPages } = await this.categoryRepo.findPaginated(
+      filters,   
+      page,     
+      limit,   
+      search,   
+      
+      sort      
+    );
+    if (!data) throwError("Failed to fetch categories", StatusCode.INTERNAL_SERVER_ERROR);
 
-    return categories;
+    return {data,total,totalPages};
   }
 
   async blockCategory(id: string, status: boolean): Promise<void> {
@@ -79,7 +92,40 @@ class AdminCourseServices implements IAdminCourseServices {
 
     return createdCourse;
   }
+  async editCourseService(courseId: string, data: ICourse, thumbnail?: Buffer): Promise<ICourse> {
+    let imageUrl: string | undefined;
+    if (thumbnail) {
+        imageUrl = await uploadToCloudinary(thumbnail, "thumbnail");
+        data.thumbnail = imageUrl;
+    }
+    
+    const currentCourse = await this.baseCourseRepo.findById(courseId);
+    if (!currentCourse) throwError("Course not found");
+    
+    const updatedCourse = await this.baseCourseRepo.update(courseId, data);
+    if (!updatedCourse) throwError("Failed to update course");
+    
+    if (thumbnail && currentCourse.thumbnail) {
+        await deleteFromCloudinary(currentCourse.thumbnail).catch(err => 
+            console.error("Failed to delete old thumbnail:", err)
+        );
+    }
 
+    return updatedCourse;
+}
+
+async editCategories(categoryId: string, title: string, description: string): Promise<ICategory> {
+    if (!categoryId || !title.trim() || !description.trim()) throwError("Invalid input parameters");
+    
+    const updateData = { title, description, updatedAt: new Date() };
+    const existingCategory = await this.categoryRepo.findById(categoryId);
+    if (!existingCategory) throwError("Category not found");
+    
+    const updatedCategory = await this.categoryRepo.update(categoryId, updateData);
+    if (!updatedCategory) throwError("Failed to update category");
+    
+    return updatedCategory;
+}
   async getClass(
     page: number = 1,
     limit: number = 10,
@@ -87,13 +133,13 @@ class AdminCourseServices implements IAdminCourseServices {
     filters: FilterQuery<ICourse> = {},
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: ICourse[]; total: number; totalPages?: number }> {
-    // Correct the order of arguments
+   
     const { data, total, totalPages } = await this.adminCourseRepo.getClassRepo(
-      page,      // First argument should be page
-      limit,     // Second argument should be limit
-      search,    // Third argument should be search
-      filters,   // Fourth argument should be filters
-      sort       // Fifth argument should be sort
+      page,     
+      limit,   
+      search,   
+      filters,   
+      sort      
     );
   
     if (!data) throwError("Failed to fetch courses", StatusCode.INTERNAL_SERVER_ERROR);

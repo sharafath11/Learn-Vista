@@ -18,14 +18,16 @@ route.post("/logout", verifyAdmin, adminAuthController.logout.bind(adminAuthCont
 route.get("/users", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));
 route.patch("/users/block", verifyAdmin, adminUsersController.userBlock.bind(adminUsersController));
 route.get("/mentors", verifyAdmin, adminMentorController.getAllMentors.bind(adminMentorController));
-route.get("/mentor/:id",verifyAdmin,adminMentorController.mentorDetils.bind(adminMentorController))
+route.get("/mentor/:id", verifyAdmin, adminMentorController.mentorDetils.bind(adminMentorController));
 route.patch("/mentor/change-status", verifyAdmin, adminMentorController.changeStatus.bind(adminMentorController));
 route.patch("/mentor/block", verifyAdmin, adminMentorController.blockMentor.bind(adminMentorController));
+route.patch("/course/edit-course",verifyAdmin, uploadImage.single('thumbnail'),adminCourseController.editCourse.bind(adminCourseController))
 route.post("/create-course", verifyAdmin, uploadImage.single('thumbnail'), adminCourseController.createClass.bind(adminCourseController));
 route.get("/courses", adminCourseController.getCourse.bind(adminCourseController));
 route.patch("/block-courses",adminCourseController.blockCourses.bind(adminCourseController))
 route.post("/add-categories", verifyAdmin, adminCourseController.addCategories.bind(adminCourseController));
 route.get("/categories", verifyAdmin, adminCourseController.getAllCategories.bind(adminCourseController));
-route.patch("/categorie/block",verifyAdmin,adminCourseController.blockCategorie.bind(adminCourseController))
+route.patch("/categorie/block", verifyAdmin, adminCourseController.blockCategorie.bind(adminCourseController));
+route.patch("/edit/category",verifyAdmin,adminCourseController.editCategories.bind(adminCourseController))
 
 export default route;

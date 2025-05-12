@@ -24,8 +24,6 @@ export default function CategoriesList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const { cat: categories, setCat: setCategories } = useAdminContext();
- console.log("categoiries",categories)
-  // Filter and pagination state
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<"All" | "Active" | "Blocked" | "Approved" | "Pending" | "Rejected">("All");
@@ -34,17 +32,13 @@ export default function CategoriesList() {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const categoriesPerPage = 2;
-
-  // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-      setCurrentPage(1); // Reset to first page on search
+      setCurrentPage(1); 
     }, 300);
     return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  // Fetch categories with filters
   useEffect(() => {
     const fetchCategories = async () => {
       setIsLoading(true);
@@ -63,7 +57,7 @@ export default function CategoriesList() {
         });
 
         if (res.ok) {
-          setCategories(res.data.categories);
+          setCategories(res.data.data);
           setTotalPages(res.data.totalPages);
         }
       } catch (error) {
@@ -122,8 +116,8 @@ export default function CategoriesList() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-              {categories.map((category) => (
-                <Card key={category._id} className="hover:shadow-lg transition-shadow">
+              {categories?.map((category) => (
+                <Card key={category.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <CardTitle className="flex justify-between items-start">
                       <span className="truncate max-w-[180px]">{category.title}</span>

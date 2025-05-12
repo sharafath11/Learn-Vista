@@ -59,7 +59,7 @@ export const AdminAPIMethods = {
     search?: string;
     filters?: Record<string, any>;
     sort?: Record<string, 1 | -1>
-  }) => get("/admin/categories"),
+  }) => get("/admin/categories",{params}),
   editCategory: (id: string, title: string, discription: string) =>
     patch(`/admin/edit/category`, { id, title, discription }),
     blockCategorie:(id:string,status:boolean)=>patch("/admin/categorie/block",{id,status}),

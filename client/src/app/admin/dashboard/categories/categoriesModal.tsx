@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useAdminContext } from "@/src/context/adminContext"
 import { AdminAPIMethods } from "@/src/services/APImethods"
-import { showSuccessToast } from "@/src/utils/Toast"
+import { showInfoToast, showSuccessToast } from "@/src/utils/Toast"
 
 interface CategoryFormProps {
   isOpen: boolean
@@ -26,7 +26,7 @@ export default function CategoryForm({
   const [description, setDescription] = useState("")
   const { cat, setCat } = useAdminContext()
 
-  // Find the category if we're editing
+
   const category = categoryId ? cat.find(c => c.id === categoryId) : null
 
   useEffect(() => {
@@ -41,18 +41,27 @@ export default function CategoryForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+    if (!title.trim() || title.length < 3) {
+      showInfoToast("Title must be at least 3 characters long");
+      return;
+    }
+  
+    if (!description.trim() || description.length <= 10) {
+      showInfoToast("Description must be more than 10 characters long");
+      return;
+    }
     if (categoryId && category) {
-      // Edit existing category
+     
+  
       const res = await AdminAPIMethods.editCategory(categoryId,  title, description)
       if (res.ok) {
-        setCat(prev => prev.map(c => c._id === categoryId ? { ...c, title, description } : c))
+        setCat(prev => prev.map(c => c.id === categoryId ? { ...c, title, description } : c))
         showSuccessToast(`Category ${title} updated`)
         onClose()
         onSuccess?.()
       }
     } else {
-      // Create new category
+ 
       const res = await AdminAPIMethods.addCategory( title, description )
       if (res.ok) {
         setCat(prev => [...prev, res.data])
