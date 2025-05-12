@@ -1,4 +1,4 @@
-import {  UserBlock,  } from "../types/adminTypes";
+import {   UserBlock,  } from "../types/adminTypes";
 import { ILogin, IUserRegistration } from "../types/authTypes";
 import { IMentorSignupData } from "../types/mentorTypes";
 
@@ -50,10 +50,19 @@ export const AdminAPIMethods = {
     filters?: Record<string, any>;
     sort?: Record<string, 1 | -1>
   }) => get("/admin/courses",{params}),
-  blockCours:(id:string,status:boolean)=>patch("/admin/block-courses",{id:id,status:status}),
+  blockCours: (id: string, status: boolean) => patch("/admin/block-courses", { id: id, status: status }),
+  editCourse:(courseId:string,FormData:FormData)=>patch("/admin/course/edit-course",{courseId,FormData}),
   addCategory: (title: string, discription: string) => post("/admin/add-categories", { title: title, discription: discription }),
-  getGetegories: () => get("/admin/categories"),
-  blockCategorie:(id:string,status:boolean)=>patch("/admin/categorie/block",{id,status}),
+  getGetegories: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    filters?: Record<string, any>;
+    sort?: Record<string, 1 | -1>
+  }) => get("/admin/categories"),
+  editCategory: (id: string, title: string, discription: string) =>
+    patch(`/admin/edit/category`, { id, title, discription }),
+    blockCategorie:(id:string,status:boolean)=>patch("/admin/categorie/block",{id,status}),
   logout: () => post("/admin/logout", {})
 } as const;
 

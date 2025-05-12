@@ -13,24 +13,81 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { useState } from "react"
+import { AdminAPIMethods } from "@/src/services/APImethods"
+import { showSuccessToast } from "@/src/utils/Toast"
 
 export function CourseFormDesign({ courseId }: { courseId: string }) {
-  const { courses, mentors, cat } = useAdminContext()
+  const { courses, mentors, cat ,setCourses} = useAdminContext()
   const course = courses.find((i) => i._id === courseId)
 
-  // Check if course and mentorId exist
-  if (!course || !course.mentorId) {
-    return <div>Loading...</div> // or any loading state
-  }
-  if (!course || !course.categoryId) {
+  const [formData, setFormData] = useState({
+    title: course?.title || "",
+    description: course?.description || "",
+    mentorId: course?.mentorId?._id || "",
+    categoryId: course?.categoryId?._id || "",
+    price: course?.price || 0,
+    courseLanguage: course?.courseLanguage || "English",
+    startDate: course?.startDate?.split("T")[0] || "",
+    endDate: course?.endDate?.split("T")[0] || "",
+    startTime: course?.startTime || "",
+    thumbnail: course?.thumbnail || ""
+  })
+
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
+
+  if (!course) {
     return <div>Loading...</div>
   }
 
-  console.log("edit", course)
-  console.log("Mentor Username:", course?.mentorId?.username)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }))
+  }
+
+  const handleSelectChange = (key: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [key]: value
+    }))
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setThumbnailFile(e.target.files[0])
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const data = new FormData()
+    data.append('title', formData.title)
+    data.append('description', formData.description)
+    data.append('mentorId', formData.mentorId)
+    data.append('categoryId', formData.categoryId)
+    data.append('price', formData.price.toString())
+    data.append('courseLanguage', formData.courseLanguage)
+    data.append('startDate', formData.startDate)
+    data.append('endDate', formData.endDate)
+    data.append('startTime', formData.startTime)
+    if (thumbnailFile) {
+      data.append('thumbnail', thumbnailFile)
+    }
+    const res = await AdminAPIMethods.editCourse(courseId, data);
+    if (res.ok) {
+      setCourses(prev => prev.map(c =>
+        c._id === courseId ? { ...c, ...res.data } : c
+      ));
+      showSuccessToast(res.msg)
+
+    }
+  }
 
   return (
-    <form className="space-y-6 p-4">
+    <form className="space-y-6 p-4" onSubmit={handleSubmit}>
       <Tabs defaultValue="basic" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="basic">Basic Info</TabsTrigger>
@@ -39,7 +96,6 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
           <TabsTrigger value="schedule">Schedule</TabsTrigger>
         </TabsList>
 
-        {/* Basic Info Tab */}
         <TabsContent value="basic">
           <Card>
             <CardHeader>
@@ -50,8 +106,10 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                 <Label htmlFor="title">Course Title *</Label>
                 <Input
                   id="title"
-                  defaultValue={course?.title || ""}
+                  value={formData.title}
+                  onChange={handleChange}
                   placeholder="Enter course title"
+                  required
                 />
               </div>
 
@@ -59,19 +117,24 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                 <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
-                  defaultValue={course?.description || ""}
+                  value={formData.description}
+                  onChange={handleChange}
                   placeholder="Describe your course"
                   rows={5}
+                  required
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Mentor *</Label>
-                  <Select defaultValue={course?.mentorId?._id}>
+                  <Select 
+                    value={formData.mentorId}
+                    onValueChange={(value) => handleSelectChange("mentorId", value)}
+                  >
                     <SelectTrigger>
-                      <SelectValue>
-                        {course?.mentorId?.username || "Select mentor"}
+                      <SelectValue placeholder="Select mentor">
+                        {mentors.find(m => m._id === formData.mentorId)?.username || "Select mentor"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
@@ -86,10 +149,13 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
 
                 <div className="space-y-2">
                   <Label>Category *</Label>
-                  <Select defaultValue={course?.categoryId._id}>
+                  <Select 
+                    value={formData.categoryId}
+                    onValueChange={(value) => handleSelectChange("categoryId", value)}
+                  >
                     <SelectTrigger>
-                      <SelectValue>
-                        {course?.categoryId?.title || "Select mentor"}
+                      <SelectValue placeholder="Select category">
+                        {cat.find(c => c._id === formData.categoryId)?.title || "Select category"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
@@ -106,41 +172,45 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
           </Card>
         </TabsContent>
 
-        {/* Media Tab */}
         <TabsContent value="media">
-  <Card>
-    <CardHeader>
-      <CardTitle>Course Media</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-4">
-      <div className="space-y-2">
-        <Label>Thumbnail</Label>
-        <div className="flex flex-col items-center gap-4">
-          {/* Show existing thumbnail or default image */}
-          <div className="border-2 border-dashed rounded-md p-8 w-full max-w-md text-center">
-            {course?.thumbnail ? (
-              <img
-                src={course.thumbnail} // Assuming `thumbnail` contains the URL of the existing image
-                alt="Course Thumbnail"
-                className="w-full h-auto"
-              />
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Drag and drop image here, or click to select
-              </p>
-            )}
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Course Media</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Thumbnail</Label>
+                <div className="flex flex-col items-center gap-4">
+                  <div className="border-2 border-dashed rounded-md p-8 w-full max-w-md text-center">
+                    {thumbnailFile ? (
+                      <img
+                        src={URL.createObjectURL(thumbnailFile)}
+                        alt="Course Thumbnail Preview"
+                        className="w-full h-auto"
+                      />
+                    ) : formData.thumbnail ? (
+                      <img
+                        src={formData.thumbnail}
+                        alt="Course Thumbnail"
+                        className="w-full h-auto"
+                      />
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Drag and drop image here, or click to select
+                      </p>
+                    )}
+                  </div>
+                  <Input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleFileChange}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-          {/* Input for file upload */}
-          <Input type="file" accept="image/*" />
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-</TabsContent>
-
-
-        {/* Details Tab */}
         <TabsContent value="details">
           <Card>
             <CardHeader>
@@ -155,22 +225,26 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                     id="price"
                     type="number"
                     step="0.01"
-                    defaultValue={course?.price}
+                    value={formData.price}
+                    onChange={handleChange}
                     className="pl-8"
+                    required
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label>Language *</Label>
-                <Select defaultValue={course?.courseLanguage}>
+                <Select 
+                  value={formData.courseLanguage}
+                  onValueChange={(value) => handleSelectChange("courseLanguage", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select language" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="English">English</SelectItem>
                     <SelectItem value="Malayalam">Malayalam</SelectItem>
-                    
                   </SelectContent>
                 </Select>
               </div>
@@ -178,7 +252,6 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
           </Card>
         </TabsContent>
 
-        {/* Schedule Tab */}
         <TabsContent value="schedule">
           <Card>
             <CardHeader>
@@ -187,24 +260,33 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Start Date</Label>
+                  <Label htmlFor="startDate">Start Date</Label>
                   <Input
+                    id="startDate"
                     type="date"
-                    defaultValue={course?.startDate?.split("T")[0]}
+                    value={formData.startDate}
+                    onChange={handleChange}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>End Date</Label>
+                  <Label htmlFor="endDate">End Date</Label>
                   <Input
+                    id="endDate"
                     type="date"
-                    defaultValue={course?.endDate?.split("T")[0]}
+                    value={formData.endDate}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Start Time</Label>
-                <Input type="time" defaultValue={course?.startTime} />
+                <Label htmlFor="startTime">Start Time</Label>
+                <Input 
+                  id="startTime"
+                  type="time" 
+                  value={formData.startTime}
+                  onChange={handleChange}
+                />
               </div>
             </CardContent>
           </Card>

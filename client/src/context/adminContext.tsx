@@ -42,8 +42,14 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     fetchUsers({});
   }, []);
 
-  async function getCategories() {
-    const res = await AdminAPIMethods.getGetegories();
+  async function getCategories(params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sort?: Record<string, 1 | -1>;
+    filters?: Record<string, any>;
+  }) {
+    const res = await AdminAPIMethods.getGetegories(params||{});
     if (res.ok) setCat(res.data);
     else showInfoToast(res.msg);
   }
@@ -110,6 +116,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         totalUsersCount: usersPagination.total,
         mentorPagination,
         getCourse,
+        getCategories
       }}
     >
       {children}

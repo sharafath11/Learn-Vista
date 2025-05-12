@@ -116,7 +116,7 @@ export default function CoursesAdminPage() {
                     <Badge variant={course.isBlock ? "destructive" : "default"} className="text-xs">
                       {course.isBlock ? "Blocked" : "Active"}
                     </Badge>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs bg-amber-50">
                       {course.courseLanguage}
                     </Badge>
                   </div>
@@ -126,7 +126,7 @@ export default function CoursesAdminPage() {
               <div className="p-4">
                 <h3 className="mb-1 text-lg font-semibold line-clamp-1">{course.title}</h3>
                 <p className="mb-3 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{course.description}</p>
-                <strong>Categori:</strong><span>{course?.categoryName }</span>
+                <strong>Categori:</strong><span>{course?.categoryName?course.categoryName:course.categoryId.title }</span>
                 <div className="mb-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
                   <div className="flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />

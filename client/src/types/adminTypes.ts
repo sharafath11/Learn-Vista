@@ -23,7 +23,7 @@ export interface UserBlock {
 export type SortOrder = 'asc' | 'desc';
 
 
-export type RoleFilter =  'Mentor' | 'User'|'Course';
+export type RoleFilter =  'Mentor' | 'User'|'Course'|'Category';
 
 export interface SearchAndFilterProps {
   searchTerm: string;
@@ -68,6 +68,12 @@ export interface AdminContextType {
     filters?: Record<string, any>;
   }) => void;
   users: AdminUser[];
+  getCategories:(params?: {
+    page?: number;
+    search?: string;
+    filters?: Record<string, unknown>;
+    sort?: Record<string, 1 | -1>;
+  }) => Promise<void>;
   setUsers: React.Dispatch<React.SetStateAction<AdminUser[]>>;
   cat: ICategory[];
   setCat: React.Dispatch<React.SetStateAction<ICategory[]>>;
