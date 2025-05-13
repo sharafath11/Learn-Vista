@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { useRouter } from "next/navigation";
+import { IReson } from "@/src/types/commonTypes";
 
 export default function CoursesAdminPage() {
   const { courses, setCourses } = useAdminContext();
@@ -23,7 +24,7 @@ export default function CoursesAdminPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCourses, setTotalCourses] = useState(0);
   const coursesPerPage = 10;
-
+ console.log("course",courses)
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -74,6 +75,7 @@ export default function CoursesAdminPage() {
   };
 
   const totalPages = Math.ceil(totalCourses / coursesPerPage);
+  
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -100,7 +102,9 @@ export default function CoursesAdminPage() {
         />
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6">
-          {courses&&courses?.map((course) => (
+          {courses && courses?.map((course) => (
+               
+            
             <Card key={course.id} className="overflow-hidden shadow-md">
               <div className="relative h-48 w-full">
                 <Image
@@ -122,11 +126,22 @@ export default function CoursesAdminPage() {
                   </div>
                 </div>
               </div>
-
+             
               <div className="p-4">
                 <h3 className="mb-1 text-lg font-semibold line-clamp-1">{course.title}</h3>
                 <p className="mb-3 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{course.description}</p>
-                <strong>Categori:</strong><span>{course?.categoryName?course.categoryName:course.categoryId.title }</span>
+                <strong>category:</strong><span>{course?.categoryName ? course.categoryName : course.categoryId.title}</span> <br />
+                <strong>Mentor:</strong><span>{course?.mentorId.username}</span>
+              
+                {course?.mentorStatus === 'rejected' && course.mentorId?.courseRejectReson && (
+  <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/20 rounded-md">
+    <p className="text-sm font-medium text-red-600 dark:text-red-400">Rejection Reason:</p>
+    <p className="text-sm text-red-500 dark:text-red-300">
+      {course.mentorId.courseRejectReson.find((reason: IReson) => reason.courseId == course._id)?.message || 
+       "No specific reason provided"}
+    </p>
+  </div>
+)}
                 <div className="mb-4 space-y-2 text-sm text-gray-500 dark:text-gray-400">
                   <div className="flex items-center">
                     <Calendar className="mr-2 h-4 w-4" />

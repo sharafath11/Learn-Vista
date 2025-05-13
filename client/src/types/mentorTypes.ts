@@ -114,7 +114,7 @@ export interface IMentor {
   isBlock: boolean;
   isVerified: boolean;
   status: MentorStatus;
-  courseRejectReson?: IReson;
+  courseRejectReson?: IReson[];
   applicationDate: string;
   createdAt: string;
   updatedAt: string;

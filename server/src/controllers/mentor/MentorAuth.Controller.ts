@@ -58,7 +58,7 @@ export class MentorAuthController implements IMentorAuthController {
   async logout(req: Request, res: Response): Promise<void> {
     try {
       clearTokens(res);
-      return sendResponse(res, StatusCode.OK, "Logout successful", true);
+       sendResponse(res, StatusCode.OK, "Logout successful", true);
     } catch (error) {
       handleControllerError(res, error);
     }

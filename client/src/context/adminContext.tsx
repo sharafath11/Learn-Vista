@@ -19,6 +19,7 @@ export const AdminContext = createContext<AdminContextType | null>(null);
 const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [admin, setAdmin] = useState(false);
   const [mentors, setMentors] = useState<IMentor[]>([]);
+  const [avilbleMentors,setAvilbleMentors]=useState<IMentor[]>([])
   const [cat, setCat] = useState<ICategory[]>([]);
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
   const [mentorPagination, setMentorPagination] = useState({
@@ -70,6 +71,9 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         limit: res.data.limit,
         total: res.data.total,
       });
+      const mentor = res.data.data.filter((i: IMentor) => i.isVerified && !i.isBlock && i.status == "approved");
+      console.log("adfff",mentor)
+     setAvilbleMentors(mentor)
     } else {
       showInfoToast(res.msg);
     }
@@ -117,7 +121,8 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         totalUsersCount: usersPagination.total,
         mentorPagination,
         getCourse,
-        getCategories
+        getCategories,
+        avilbleMentors
       }}
     >
       {children}

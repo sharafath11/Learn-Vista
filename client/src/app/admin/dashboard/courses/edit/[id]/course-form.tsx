@@ -16,11 +16,16 @@ import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
 import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast } from "@/src/utils/Toast"
+import { useRouter } from "next/navigation"
 
 export function CourseFormDesign({ courseId }: { courseId: string }) {
-  const { courses, mentors, cat ,setCourses} = useAdminContext()
-  const course = courses.find((i) => i._id === courseId)
+  const { courses, avilbleMentors, cat, setCourses } = useAdminContext();
 
+  const course = courses.find((i) => i._id === courseId);
+  if (!course) {
+    return <div>Loading...</div>
+  }
+ const router=useRouter()
   const [formData, setFormData] = useState({
     title: course?.title || "",
     description: course?.description || "",
@@ -36,9 +41,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
 
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
 
-  if (!course) {
-    return <div>Loading...</div>
-  }
+ 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target
@@ -72,17 +75,23 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
     data.append('courseLanguage', formData.courseLanguage)
     data.append('startDate', formData.startDate)
     data.append('endDate', formData.endDate)
-    data.append('startTime', formData.startTime)
+    data.append('startTime', formData.startTime);
+    data.append('courseId', courseId);
     if (thumbnailFile) {
       data.append('thumbnail', thumbnailFile)
     }
-    const res = await AdminAPIMethods.editCourse(courseId, data);
+    console.log('FormData contents:');
+    for (let [key, value] of data.entries()) {
+      console.log(key, value);
+    }
+    const res = await AdminAPIMethods.editCourse( data);
     if (res.ok) {
       setCourses(prev => prev.map(c =>
-        c._id === courseId ? { ...c, ...res.data } : c
+        c.id === courseId ? { ...c, ...res.data } : c
       ));
-      showSuccessToast(res.msg)
-
+      showSuccessToast(res.msg);
+      router.push("/admin/dashboard/courses")
+    
     }
   }
 
@@ -127,19 +136,20 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Mentor *</Label>
+                  <Label>Mentor * { course.mentorId.username}</Label>
                   <Select 
                     value={formData.mentorId}
                     onValueChange={(value) => handleSelectChange("mentorId", value)}
+                    // defaultValue={course.mentorId.username}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select mentor">
-                        {mentors.find(m => m._id === formData.mentorId)?.username || "Select mentor"}
+                        {avilbleMentors.find(m => m.id === formData.mentorId)?.username || "Select mentor"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {mentors.map((mentor) => (
-                        <SelectItem key={mentor._id} value={mentor._id}>
+                      {avilbleMentors.map((mentor) => (
+                        <SelectItem key={mentor.id} value={mentor.id}>
                           {mentor.username}
                         </SelectItem>
                       ))}
@@ -148,21 +158,22 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Category *</Label>
+                  <Label>Category *{ course.categoryId.title}</Label>
                   <Select 
                     value={formData.categoryId}
                     onValueChange={(value) => handleSelectChange("categoryId", value)}
+                    defaultValue={course.categoryId.title}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select category">
-                        {cat.find(c => c._id === formData.categoryId)?.title || "Select category"}
+                        {cat.find(c => c.id === formData.categoryId)?.title || "Select category"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {cat.map((ca) => (
-                        <SelectItem key={ca._id} value={ca._id as string}>
-                          {ca.title}
-                        </SelectItem>
+                       ca.isBlock?"":( <SelectItem key={ca.id} value={ca.id as string}>
+                        {ca.title}
+                      </SelectItem>)
                       ))}
                     </SelectContent>
                   </Select>

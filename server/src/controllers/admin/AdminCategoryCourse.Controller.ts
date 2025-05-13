@@ -114,27 +114,29 @@ class AdminCourseController implements IAdminCourseController {
 
 async editCourse(req: Request, res: Response): Promise<void> {
   try {
-    console.log("req.body",req.body,req.file)
-        const { courseId, data } = req.body;
-        const thumbnail = req.file?.buffer;
-        
-        if (!courseId || !data) {
-          sendResponse(res, StatusCode.BAD_REQUEST, "Missing required fields", false);
-          return 
-        }
-
-        const result = await this.adminCourseServices.editCourseService(
-            courseId, 
-            data, 
-            thumbnail
-        );
-        
-        sendResponse(res, StatusCode.OK, "Course edited suyuccesfulyy", true,result);
-    } catch (error) {
-        console.error(error);
-        handleControllerError(res,error)
+    const data = req.body;
+    const courseId = data.courseId;
+    const thumbnailBuffer = req.file?.buffer; 
+    delete data.thumbnail;
+    console.log("req.file",req.file)
+    if (!courseId) {
+      sendResponse(res, StatusCode.BAD_REQUEST, "Missing courseId", false);
+      return;
     }
+    console.log("buffer",thumbnailBuffer)
+    const result = await this.adminCourseServices.editCourseService(
+      courseId,
+      data,
+      thumbnailBuffer
+    );
+
+    sendResponse(res, StatusCode.OK, "Course edited successfully", true, result);
+  } catch (error) {
+    console.error(error);
+    handleControllerError(res, error);
+  }
 }
+
   async createClass(req: Request, res: Response): Promise<void> {
     try {
       const data = req.body;

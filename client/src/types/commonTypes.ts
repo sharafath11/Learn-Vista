@@ -6,7 +6,7 @@ export enum Theme {
 }
 
 export interface IReson {
-  mentorId: string;
+  courseId: string;
   message: string;
 }
 

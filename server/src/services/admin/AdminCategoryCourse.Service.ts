@@ -92,27 +92,78 @@ class AdminCourseServices implements IAdminCourseServices {
 
     return createdCourse;
   }
-  async editCourseService(courseId: string, data: ICourse, thumbnail?: Buffer): Promise<ICourse> {
-    let imageUrl: string | undefined;
-    if (thumbnail) {
-        imageUrl = await uploadToCloudinary(thumbnail, "thumbnail");
-        data.thumbnail = imageUrl;
-    }
-    
+  async editCourseService(
+    courseId: string,
+    data: Partial<ICourse>,
+    thumbnail?: Buffer
+  ): Promise<ICourse> {
     const currentCourse = await this.baseCourseRepo.findById(courseId);
-    if (!currentCourse) throwError("Course not found");
-    
-    const updatedCourse = await this.baseCourseRepo.update(courseId, data);
-    if (!updatedCourse) throwError("Failed to update course");
-    
-    if (thumbnail && currentCourse.thumbnail) {
-        await deleteFromCloudinary(currentCourse.thumbnail).catch(err => 
-            console.error("Failed to delete old thumbnail:", err)
-        );
+    if (!currentCourse) {
+      throwError("Course not found", StatusCode.NOT_FOUND);
     }
-
+  
+    const updateData: Partial<ICourse> = { ...data };
+  
+    const newMentorId = data.mentorId || currentCourse.mentorId;
+    const isMentorChanged = !!data.mentorId && data.mentorId !== currentCourse.mentorId;
+  
+    const isTimeChanged = (!!data.startTime && data.startTime !== currentCourse.startTime);
+  
+    if (isMentorChanged || isTimeChanged) {
+      const startDate = data.startDate ?? currentCourse.startDate;
+      const endDate = data.endDate ?? currentCourse.endDate;
+      const startTime = data.startTime ?? currentCourse.startTime;
+  
+      if (!startDate || !endDate || !startTime) {
+        throwError("Incomplete scheduling data", StatusCode.BAD_REQUEST);
+      }
+  
+      const existingCourses = await this.baseCourseRepo.findAll({ mentorId: newMentorId });
+  
+      const newStart = new Date(startDate);
+      const newEnd = new Date(endDate);
+  
+      const hasConflict = existingCourses.some(course => {
+        if (course.id === courseId) return false;
+        if (!course.startDate || !course.endDate || !course.startTime) return false;
+  
+        const courseStart = new Date(course.startDate);
+        const courseEnd = new Date(course.endDate);
+  
+        const isDateOverlap = newStart <= courseEnd && newEnd >= courseStart;
+        const isTimeOverlap = course.startTime === startTime;
+  
+        return isDateOverlap && isTimeOverlap;
+      });
+  
+      if (hasConflict) {
+        throwError("Mentor already has a course at this time", StatusCode.CONFLICT);
+      }
+  
+      if (isMentorChanged) {
+        updateData.mentorStatus = "pending";
+      }
+    }
+  
+    if (thumbnail) {
+      updateData.thumbnail = await uploadToCloudinary(thumbnail, "thumbnail");
+  
+      if (currentCourse.thumbnail) {
+        await deleteFromCloudinary(currentCourse.thumbnail).catch(err =>
+          console.error("Failed to delete old thumbnail:", err)
+        );
+      }
+    }
+  
+    const updatedCourse = await this.baseCourseRepo.update(courseId, updateData);
+    if (!updatedCourse) {
+      throwError("Failed to update course", StatusCode.INTERNAL_SERVER_ERROR);
+    }
+  
     return updatedCourse;
-}
+  }
+   
+  
 
 async editCategories(categoryId: string, title: string, description: string): Promise<ICategory> {
     if (!categoryId || !title.trim() || !description.trim()) throwError("Invalid input parameters");

@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation"
 
 export default function CreateCoursePage() {
   const route=useRouter()
-  const { mentors, cat ,setCourses} = useAdminContext()
+  const { avilbleMentors, cat ,setCourses} = useAdminContext()
   const languages = ["English", "Malayalam"]
 console.log(cat)
   const handleSubmit = async (formData: any) => {
@@ -65,7 +65,7 @@ console.log(cat)
         </div>
 
         <CourseForm
-          mentors={mentors}
+          mentors={avilbleMentors}
           categories={cat}
           languages={languages}
           onSubmit={handleSubmit}

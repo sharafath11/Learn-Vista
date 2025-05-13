@@ -51,7 +51,7 @@ export const AdminAPIMethods = {
     sort?: Record<string, 1 | -1>
   }) => get("/admin/courses",{params}),
   blockCours: (id: string, status: boolean) => patch("/admin/block-courses", { id: id, status: status }),
-  editCourse:(courseId:string,FormData:FormData)=>patch("/admin/course/edit-course",{courseId,FormData}),
+  editCourse:(data:FormData)=>patch("/admin/course/edit-course",data),
   addCategory: (title: string, discription: string) => post("/admin/add-categories", { title: title, discription: discription }),
   getGetegories: (params: {
     page?: number;

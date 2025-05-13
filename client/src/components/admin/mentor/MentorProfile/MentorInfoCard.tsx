@@ -115,6 +115,7 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
               className="w-full h-full object-cover"
             />
           </div>
+          <h3 className="text-xl font-bold text-center text-red-500">{ mentor.isVerified?"":"Not verified"}</h3>
           <h2 className="text-xl font-bold text-center">{mentor?.username}</h2>
           <p className="text-sm text-center mb-4 text-gray-600">{mentor?.expertise}</p>
 

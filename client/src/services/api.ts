@@ -72,14 +72,14 @@ export const patchRequest = async <T = any>(
   options: ApiOptions = defaultOptions
 ): Promise<T | null> => {
   try {
-    const res = await axiosInstance.patch(url, body, {
-      headers: { "Content-Type": "application/json" },
-    });
-
+    const headers: Record<string, string> = {};
+    if (!(body instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
+    }
+    const res = await axiosInstance.patch(url, body, { headers });
     if (!res.data.ok) {
       throw new Error(res.data.msg || 'Request failed');
     }
-    
     return res.data;
   } catch (error: any) {
     handleApiError(error, options);
