@@ -4,58 +4,16 @@ import React, { useState, useEffect } from "react"
 import { format, parseISO, differenceInMinutes, addMinutes } from "date-fns"
 import { Calendar, Clock, Users, Video } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { ICourse, IPopulatedCourse } from "@/src/types/courseTypes"
+import { useMentorContext } from "@/src/context/mentorContext"
 
-interface Session {
-  id: string
-  title: string
-  description: string
-  date: string
-  startTime: string
-  endTime: string
-  category: {
-    id: string
-    name: string
-  }
-  participantsCount: number
-}
 
-const sampleSessions: Session[] = [
-  {
-    id: "1",
-    title: "Introduction to React Hooks",
-    description: "Learn the basics of React Hooks and how to use them in your applications.",
-    date: "2025-05-15",
-    startTime: "10:00",
-    endTime: "11:30",
-    category: { id: "1", name: "Programming" },
-    participantsCount: 24,
-  },
-  {
-    id: "2",
-    title: "Advanced CSS Techniques",
-    description: "Master advanced CSS techniques including Grid, Flexbox, and animations.",
-    date: "2025-05-16",
-    startTime: "14:00",
-    endTime: "15:30",
-    category: { id: "3", name: "Design" },
-    participantsCount: 18,
-  },
-  {
-    id: "3",
-    title: "Data Visualization with D3.js",
-    description: "Learn how to create interactive data visualizations using D3.js.",
-    date: "2025-05-17",
-    startTime: "09:00",
-    endTime: "11:00",
-    category: { id: "2", name: "Data Science" },
-    participantsCount: 32,
-  },
-]
 
 export default function UpcomingSessions() {
   const router = useRouter()
-  const [sessions, setSessions] = useState<Session[]>([])
-  const [currentTime, setCurrentTime] = useState(new Date())
+ 
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const {courses}=useMentorContext()
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -64,9 +22,7 @@ export default function UpcomingSessions() {
     return () => clearInterval(timer)
   }, [])
 
-  useEffect(() => {
-    setSessions(sampleSessions)
-  }, [])
+ 
 
   const canStartSession = (sessionDate: string, startTime: string): boolean => {
     const sessionDateTime = parseISO(`${sessionDate}T${startTime}`)
@@ -107,42 +63,42 @@ export default function UpcomingSessions() {
           <div className="col-span-2">Actions</div>
         </div>
 
-        {sessions.length > 0 ? (
+        {courses.length > 0 ? (
           <div className="divide-y divide-gray-700">
-            {sessions.map((session) => (
+            {courses.map((session) => (
               <div key={session.id} className="px-4 py-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-800 transition">
                 <div className="col-span-4">
                   <div className="font-medium text-white">{session.title}</div>
                   <p className="text-sm text-gray-400">{session.description}</p>
                   <div className="flex items-center gap-2 text-sm text-gray-400 mt-1">
                     <Users className="w-4 h-4" />
-                    {session.participantsCount} participants
+                    {session.sessions.length} Sessions
                   </div>
                 </div>
                 <div className="col-span-2 flex items-center gap-2 text-sm">
                   <Calendar className="w-4 h-4 text-gray-400" />
-                  {format(parseISO(session.date), "dd MMM yyyy")}
+                  {format(parseISO(session.startDate||""), "dd MMM yyyy")}
                 </div>
                 <div className="col-span-2 flex items-center gap-2 text-sm">
                   <Clock className="w-4 h-4 text-gray-400" />
-                  {session.startTime} - {session.endTime}
+                  {session.startTime} - {session.endDate||""}
                 </div>
                 <div className="col-span-2 text-sm">
-                  <span className="bg-gray-700 px-2 py-1 rounded-md text-gray-200">{session.category.name}</span>
+                  <span className="bg-gray-700 px-2 py-1 rounded-md text-gray-200">{session.categoryId.title}</span>
                 </div>
                 <div className="col-span-2">
                   <button
                     onClick={() => handleStartSession(session.id)}
-                    disabled={!canStartSession(session.date, session.startTime)}
+                    disabled={!canStartSession(session.startDate ||"", session.startTime||"")}
                     className={`px-4 py-2 rounded-md text-sm font-medium w-full ${
-                      canStartSession(session.date, session.startTime)
+                      canStartSession(session.startDate||"", session.startTime||"")
                         ? "bg-blue-600 hover:bg-blue-700 text-white"
                         : "bg-gray-600 text-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    {canStartSession(session.date, session.startTime)
+                    {canStartSession(session.startDate||"", session.startTime||"")
                       ? "Start Now"
-                      : getTimeUntilCanStart(session.date, session.startTime)}
+                      : getTimeUntilCanStart(session.startDate||"", session.startTime||"")}
                   </button>
                 </div>
               </div>

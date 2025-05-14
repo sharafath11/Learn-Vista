@@ -7,15 +7,16 @@ import {
   useState,
   useCallback,
 } from "react";
-import { IMentorContext, IMentorMentor, IPopulatedCourse } from "../types/mentorTypes";
-import { ICourse } from "../types/adminTypes";
+import { IMentor, IMentorContext, } from "../types/mentorTypes";
+
 import { useRouter } from "next/navigation";
 import { MentorAPIMethods } from "../services/APImethods";
+import { IPopulatedCourse } from "../types/courseTypes";
 
 export const MentorContext = createContext<IMentorContext | null>(null);
 
 export const MentorsContextProvider = ({ children }: { children: ReactNode }) => {
-  const [mentor, setMentor] = useState<IMentorMentor | null>(null);
+  const [mentor, setMentor] = useState<IMentor | null>(null);
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
   const router = useRouter();
 
