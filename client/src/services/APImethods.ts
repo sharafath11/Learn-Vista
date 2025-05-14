@@ -76,5 +76,6 @@ export const MentorAPIMethods = {
   forgotPassword: (email: string) => post("/mentor/forget-password", { email }),
   resetPassword: (token: string, password: string) => post("/mentor/reset-password", { token, password }),
   getCourses: () => get("/mentor/courses"),
-  courseStatusChange:(courseId:string,status:string,reson:string)=>patch("/mentor/course/status-change",{courseId:courseId,status:status,courseRejectReson:reson})
+  courseStatusChange: (courseId: string, status: string, reson: string) => patch("/mentor/course/status-change", { courseId: courseId, status: status, courseRejectReson: reson }),
+  startLiveSession:()=>get("/mentor/live-session/start")
 } as const;

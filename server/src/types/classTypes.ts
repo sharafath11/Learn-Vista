@@ -1,26 +1,26 @@
 
-import { Document, ObjectId, Types } from "mongoose";
+import { Decimal128, Document, ObjectId, Types } from "mongoose";
 import { IMentor } from "./mentorTypes";
 
 export interface ISessionDocument extends ISession, Document {
   _id: ObjectId; 
 }
 
-export interface ISession extends Document {
-  _id: ObjectId;
-  title: string;
-  duration: number;
-  content?: string;
-  courseId: ObjectId;
-  videoUrl: string;
-  order?: number;
-  isPreview?: boolean;
-  resources?: string[];
-  createdAt: Date;
-  updatedAt: Date;
-  liveSessionId?: ObjectId;
-  practicalId?: ObjectId;
-}
+// export interface ISession extends Document {
+//   _id: ObjectId;
+//   title: string;
+//   duration: number;
+//   content?: string;
+//   courseId: ObjectId;
+//   videoUrl: string;
+//   order?: number;
+//   isPreview?: boolean;
+//   resources?: string[];
+//   createdAt: Date;
+//   updatedAt: Date;
+//   liveSessionId?: ObjectId;
+//   practicalId?: ObjectId;
+// }
 
 export interface ICourse extends Document {
   _id: ObjectId;
@@ -78,4 +78,30 @@ export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId
     thumbnail?: File | null
     thumbnailPreview: string | null
   }
+  export interface ILiveClass extends Document {
+    _id: ObjectId;
+    courseId: ObjectId | null;
+    mentorId: ObjectId | null;
+    title: string | null;
+    time: string | null;
+    date: Date | null;
+    duration: string | null;
+    participants: { userId: ObjectId }[];
+    isActive: boolean;
+    createdAt: Date | null;
+    updatedAt: Date | null;
+  }
+
+  export interface ISession extends Document {
+    _id: ObjectId;
+    title?: string;
+    duration?: number;
+    content?: string;
+    courseId?: ObjectId;
+    videoUrl?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    liveSessionId?: ObjectId;
+  }
+  
   
