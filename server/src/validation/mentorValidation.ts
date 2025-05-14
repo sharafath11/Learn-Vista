@@ -83,8 +83,8 @@ export const validateMentorProfile = (profileData: {
     return false;
   }
 
-  if (bio.length > 100) {
-    throwError("Bio must be less than 100 characters");
+  if (bio.length < 50) {
+    throwError("Bio must be minimum 50 characters");
     return false;
   }
   if (image) {

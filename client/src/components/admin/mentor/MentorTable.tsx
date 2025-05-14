@@ -4,6 +4,7 @@ import MentorRow from './MentorRow';
 import { AdminAPIMethods } from '@/src/services/APImethods';
 import { useAdminContext } from '@/src/context/adminContext';
 import { SearchAndFilterBar } from '../SearchAndFilterBar';
+import { User } from 'lucide-react';
 
 interface MentorTableProps {
   theme: string;
@@ -36,7 +37,7 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
     const filters: any = {};
   
     if (statusFilter !== 'All') {
-      filters.status = statusFilter.toLowerCase(); // ensure lowercase like 'pending'
+      filters.status = statusFilter.toLowerCase();
     }
   
     const res = await AdminAPIMethods.fetchMentor({
@@ -51,8 +52,6 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
       setTotalMentors(res.data.total);
     }
   };
-  
-  
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -77,79 +76,102 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
           setSearchTerm={(val) => {
             setSearchTerm(val);
             setCurrentPage(1);
-          } }
+          }}
           statusFilter={statusFilter}
           setStatusFilter={(val) => {
             setStatusFilter(val);
             setCurrentPage(1);
-          } }
+          }}
           sortOrder={sortOrder}
           setSortOrder={(val) => {
             setSortOrder(val);
             setCurrentPage(1);
-          } }roleFilter={'Mentor'}        />
+          }}
+          roleFilter={'Mentor'}
+        />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className={`rounded-xl shadow-sm overflow-hidden ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
-      >
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className={`text-left ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
-                <th className="p-4">Mentor</th>
-                <th className="p-4">Expertise</th>
-                <th className="p-4">Status</th>
-                <th className="p-4">Students</th>
-                <th className="p-4">Courses</th>
-                <th className="p-4">Block</th>
-                <th className="p-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mentors.map((mentor) => (
-                <MentorRow key={mentor.id} mentor={mentor} theme={theme} getStatusColor={getStatusColor} />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </motion.div>
+      {mentors && mentors.length > 0 ? (
+        <>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className={`rounded-xl shadow-sm overflow-hidden ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className={`text-left ${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'}`}>
+                    <th className="p-4">Mentor</th>
+                    <th className="p-4">Expertise</th>
+                    <th className="p-4">Status</th>
+                    <th className="p-4">Students</th>
+                    <th className="p-4">Courses</th>
+                    <th className="p-4">Block</th>
+                    <th className="p-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mentors.map((mentor) => (
+                    <MentorRow key={mentor.id} mentor={mentor} theme={theme} getStatusColor={getStatusColor} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </motion.div>
 
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-4">
-          <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-100"
-            >
-              Previous
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-4 py-2 border text-sm font-medium ${
-                  currentPage === i + 1
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-white text-gray-500 hover:bg-gray-100'
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-100"
-            >
-              Next
-            </button>
-          </nav>
-        </div>
+          {totalPages > 0 && (
+            <div className="flex justify-center items-center mt-4">
+              <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-100"
+                >
+                  Previous
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-4 py-2 border text-sm font-medium ${
+                      currentPage === i + 1
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-white text-gray-500 hover:bg-gray-100'
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-100"
+                >
+                  Next
+                </button>
+              </nav>
+            </div>
+          )}
+        </>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="flex flex-col items-center justify-center py-12"
+        >
+          <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full mb-4">
+            <User className="h-12 w-12 text-gray-400" />
+          </div>
+          <h3 className="text-xl font-semibold mb-2">No Mentors Available</h3>
+          <p className="text-gray-500 dark:text-gray-400 text-center max-w-md">
+            {debouncedSearchTerm || statusFilter !== 'All'
+              ? "No mentors match your current filters. Try adjusting your search criteria."
+              : "There are currently no mentors in the system."}
+          </p>
+        </motion.div>
       )}
     </div>
   );

@@ -1,8 +1,8 @@
-import { MentorSignupData } from "@/src/types/mentorTypes";
+import { IMentorSignupData } from "@/src/types/mentorTypes";
 import { showInfoToast } from "../utils/Toast";
 
 
-export const validateMentorSignup = (data?: MentorSignupData) => {
+export const validateMentorSignup = (data?: IMentorSignupData) => {
     if (!data || typeof data !== "object") return "Invalid data provided";
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -44,7 +44,7 @@ export const validateMentorProfile = (profileData: {
   image?: File | null;
 }): boolean => {
   const { username, bio, image } = profileData;
-
+  console.log("validation",username,"sample",username)
   if (!username.trim()) {
     showInfoToast("Username is required");
     return false;
@@ -65,8 +65,9 @@ export const validateMentorProfile = (profileData: {
     return false;
   }
 
-  if (bio.length > 100) {
-    showInfoToast("Bio must be less than 100 characters");
+  if (bio.length <50) {
+    console.log(bio)
+    showInfoToast("Bio Minimum 50 characters");
     return false;
   }
   if (image) {

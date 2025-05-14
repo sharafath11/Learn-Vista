@@ -226,7 +226,7 @@ export default function CategoriesList() {
                   ))}
                 </div>
 
-                {totalPages > 1 && (
+                {totalPages > 0 && (
                   <div className="flex justify-center mt-8">
                     <nav className="inline-flex items-center space-x-1">
                       <button
