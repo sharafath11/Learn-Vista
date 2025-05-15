@@ -18,7 +18,8 @@ export const UserAPIMethods = {
   editProfile: (data: FormData) => post("/edit-profile", data),
   logout: () => post("/logout", {}),
   forgotPassword: (email: string) => post("/forgot-password", { email }),
-  resetPassword: (token: string, password: string) => post("/reset-password", { token, password })
+  resetPassword: (token: string, password: string) => post("/reset-password", { token, password }),
+  fetchAllCourse:()=>get("/courses")
 } as const;
 
 export const AdminAPIMethods = {

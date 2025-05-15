@@ -10,27 +10,20 @@ import CourseCard from "@/src/components/user/Home/cards/CourseCard";
 import FeatureCard from "@/src/components/user/Home/cards/FeatureCard";
 import TestimonialCard from "@/src/components/user/Home/cards/TestimonialCard";
 export default function Home() {
-  // Animation controls
   const controls = useAnimation();
   const [ref, inView] = useInView();
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-
-  // Testimonial auto-rotation
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % 3);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  // Animate when in view
   useEffect(() => {
     if (inView) {
       controls.start("visible");
     }
   }, [controls, inView]);
-
-  // Animation variants
   const container = {
     hidden: { opacity: 0 },
     visible: {

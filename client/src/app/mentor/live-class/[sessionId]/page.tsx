@@ -55,9 +55,9 @@ export default function LiveStarterPage() {
     if (res.ok) {
       showSuccessToast(res.msg);
       localStorage.setItem("liveId", res.data.liveId);
-      
+      const liveId=res.data.liveId
       console.log("Live session started successfully, session ID:", res);
-      router.push(`/live/${res.data.liveId}`);
+      router.push(`/mentor/live/${liveId}`);
     } else {
       console.error("Failed to start live stream:", res.message || "Unknown error");
       showInfoToast("Failed to start the live stream. Please try again.");

@@ -79,7 +79,7 @@ export class AuthService implements IAuthService {
     if (googleId) {
       user = await this.userRepository.findOne({ googleId });
       console.log("hgbjiok",googleId)
-      if (!user) throwError("Invalid credentials", StatusCode.BAD_REQUEST);
+      if (!user) throwError("Invalid credentials google Id", StatusCode.BAD_REQUEST);
     } else {
       if (!email || !password) throwError("Email and password are required", StatusCode.BAD_REQUEST);
       user = await this.userRepository.findOne({ email });
