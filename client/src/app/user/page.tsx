@@ -4,26 +4,34 @@ import Image from "next/image";
 import { BookOpen, Award, Users, Clock, ChevronRight } from "lucide-react";
 import { motion, useAnimation, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import Header from "@/src/components/user/Header";
-import CategoryCard from "@/src/components/user/Home/cards/CategoryCard";
-import CourseCard from "@/src/components/user/Home/cards/CourseCard";
-import FeatureCard from "@/src/components/user/Home/cards/FeatureCard";
-import TestimonialCard from "@/src/components/user/Home/cards/TestimonialCard";
+import { useUserContext } from "@/src/context/userAuthContext";
+import Courses from "@/src/components/user/Courses";
+
 export default function Home() {
   const controls = useAnimation();
+  const { allCourses } = useUserContext();
   const [ref, inView] = useInView();
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % 3);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
+
   useEffect(() => {
     if (inView) {
       controls.start("visible");
     }
   }, [controls, inView]);
+
   const container = {
     hidden: { opacity: 0 },
     visible: {
@@ -54,10 +62,60 @@ export default function Home() {
     visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } }
   };
 
+  const categories = [
+    { icon: <BookOpen className="h-10 w-10 text-blue-600" />, title: "Web Development", courses: 420 },
+    { icon: <Award className="h-10 w-10 text-blue-600" />, title: "Data Science", courses: 310 },
+    { icon: <Users className="h-10 w-10 text-blue-600" />, title: "Business", courses: 280 },
+    { icon: <Clock className="h-10 w-10 text-blue-600" />, title: "Design", courses: 340 }
+  ];
+
+  const features = [
+    {
+      icon: <Users className="h-10 w-10 text-blue-600" />,
+      title: "Expert Instructors",
+      description: "Learn from industry professionals with years of experience",
+      features: ["Industry veterans", "Practical knowledge", "Active professionals"]
+    },
+    {
+      icon: <Clock className="h-10 w-10 text-blue-600" />,
+      title: "Flexible Learning",
+      description: "Study at your own pace, anywhere and anytime",
+      features: ["Lifetime access", "Mobile friendly", "Self-paced courses"]
+    },
+    {
+      icon: <Award className="h-10 w-10 text-blue-600" />,
+      title: "Certification",
+      description: "Earn certificates recognized by top companies",
+      features: ["Industry-recognized", "Portfolio ready", "Verifiable online"]
+    }
+  ];
+
+  const testimonials = [
+    {
+      name: "Alex Thompson",
+      role: "Web Developer",
+      content: "The courses on this platform completely transformed my career. I went from knowing nothing about web development to landing a job at a top tech company in just 6 months.",
+      avatar: "A"
+    },
+    {
+      name: "Jessica Lee",
+      role: "Data Analyst",
+      content: "The instructors are incredibly knowledgeable and the course material is comprehensive. I've tried other platforms, but none compare to the quality of education I received here.",
+      avatar: "J"
+    },
+    {
+      name: "David Wilson",
+      role: "UX Designer",
+      content: "The community support and networking opportunities are invaluable. I not only gained technical skills but also made connections that helped me advance in my career.",
+      avatar: "D"
+    }
+  ];
+
   return (
-   
     <div className="min-h-screen bg-white overflow-x-hidden">
       <Header />
+      
+      {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-indigo-50 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
           <div className="absolute top-20 left-10 w-64 h-64 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
@@ -66,11 +124,7 @@ export default function Home() {
         </div>
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={slideInLeft}
-          >
+          <motion.div initial="hidden" animate="visible" variants={slideInLeft}>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
               Expand Your <span className="text-blue-600">Knowledge</span> with Expert-Led Courses
             </h1>
@@ -78,20 +132,23 @@ export default function Home() {
               Access thousands of high-quality courses taught by industry experts and transform your skills.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-              >
-                Explore Courses
-              </motion.button>
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-white text-blue-600 font-medium rounded-lg border border-blue-600 hover:bg-blue-50 transition-all duration-300 flex items-center justify-center shadow hover:shadow-md"
-              >
-                How It Works <ChevronRight className="ml-2 h-5 w-5" />
-              </motion.button>
+              <Button asChild>
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Explore Courses
+                </motion.div>
+              </Button>
+              <Button variant="outline" asChild>
+                <motion.div 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center"
+                >
+                  How It Works <ChevronRight className="ml-2 h-5 w-5" />
+                </motion.div>
+              </Button>
             </div>
           </motion.div>
           <motion.div 
@@ -111,6 +168,8 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
+
+      {/* Stats Section */}
       <motion.section 
         ref={ref}
         initial="hidden"
@@ -129,19 +188,20 @@ export default function Home() {
               <motion.div 
                 key={index}
                 variants={container}
-                className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
               >
-                <div className="text-center">
-                  <p className="text-4xl font-bold text-blue-600 mb-2">{stat.value}</p>
-                  <p className="text-lg text-gray-600">{stat.label}</p>
-                </div>
+                <Card>
+                  <CardContent className="p-6 text-center">
+                    <p className="text-4xl font-bold text-blue-600 mb-2">{stat.value}</p>
+                    <p className="text-lg text-gray-600">{stat.label}</p>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </div>
         </div>
       </motion.section>
 
-      {/* Featured Categories */}
+      {/* Categories Section */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -164,106 +224,25 @@ export default function Home() {
             variants={container}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
           >
-            <CategoryCard
-              icon={<BookOpen className="h-10 w-10 text-blue-600" />}
-              title="Web Development"
-              courses={420}
-            />
-            <CategoryCard 
-              icon={<Award className="h-10 w-10 text-blue-600" />}
-              title="Data Science"
-              courses={310}
-            />
-            <CategoryCard 
-              icon={<Users className="h-10 w-10 text-blue-600" />}
-              title="Business"
-              courses={280}
-            />
-            <CategoryCard 
-              icon={<Clock className="h-10 w-10 text-blue-600" />}
-              title="Design"
-              courses={340}
-            />
+            {categories.map((category, index) => (
+              <motion.div key={index} variants={fadeIn}>
+                <Card className="h-full hover:shadow-md transition-all">
+                  <CardHeader className="items-center">
+                    {category.icon}
+                    <CardTitle className="text-xl">{category.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <p className="text-gray-600">{category.courses} courses</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Featured Courses */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeIn}
-            className="flex flex-col md:flex-row justify-between items-center mb-16"
-          >
-            <div className="mb-8 md:mb-0">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Featured Courses</h2>
-              <p className="text-xl text-gray-600">Handpicked courses to get you started</p>
-            </div>
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 bg-white text-blue-600 font-medium rounded-lg border border-blue-600 hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md"
-            >
-              View All Courses
-            </motion.button>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={container}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            <CourseCard
-              title="Complete Web Development Bootcamp"
-              instructor="Sarah Johnson"
-              level="Beginner"
-              duration="48 hours"
-              rating={4.9}
-              students={12500}
-              price="$89.99"
-              originalPrice="$199.99"
-              index={0}
-            />
-            <CourseCard
-              title="Advanced Data Science with Python"
-              instructor="Michael Chen"
-              level="Intermediate"
-              duration="36 hours"
-              rating={4.8}
-              students={8300}
-              price="$94.99"
-              originalPrice="$229.99"
-              index={1}
-            />
-            <CourseCard
-              title="UI/UX Design Masterclass"
-              instructor="Emma Rodriguez"
-              level="All Levels"
-              duration="24 hours"
-              rating={4.7}
-              students={6200}
-              price="$79.99"
-              originalPrice="$179.99"
-              index={2}
-            />
-          </motion.div>
-
-          <div className="mt-12 text-center md:hidden">
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 bg-white text-blue-600 font-medium rounded-lg border border-blue-600 hover:bg-blue-50 transition-all duration-300"
-            >
-              View All Courses
-            </motion.button>
-          </div>
-        </div>
-      </section>
+      {/* Courses Section */}
+      <Courses/>
 
       {/* Features Section */}
       <section className="py-20 bg-gradient-to-b from-white to-gray-50">
@@ -288,29 +267,32 @@ export default function Home() {
             variants={container}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            <FeatureCard
-              icon={<Users className="h-10 w-10 text-blue-600" />}
-              title="Expert Instructors"
-              description="Learn from industry professionals with years of experience"
-              features={["Industry veterans", "Practical knowledge", "Active professionals"]}
-            />
-            <FeatureCard
-              icon={<Clock className="h-10 w-10 text-blue-600" />}
-              title="Flexible Learning"
-              description="Study at your own pace, anywhere and anytime"
-              features={["Lifetime access", "Mobile friendly", "Self-paced courses"]}
-            />
-            <FeatureCard
-              icon={<Award className="h-10 w-10 text-blue-600" />}
-              title="Certification"
-              description="Earn certificates recognized by top companies"
-              features={["Industry-recognized", "Portfolio ready", "Verifiable online"]}
-            />
+            {features.map((feature, index) => (
+              <motion.div key={index} variants={fadeIn}>
+                <Card className="h-full hover:shadow-md transition-all">
+                  <CardHeader className="items-center">
+                    {feature.icon}
+                    <CardTitle>{feature.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-center">
+                    <p className="text-gray-600 mb-4">{feature.description}</p>
+                    <ul className="space-y-2 text-left">
+                      {feature.features.map((item, i) => (
+                        <li key={i} className="flex items-center">
+                          <span className="mr-2">✓</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Testimonials Section */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -326,33 +308,31 @@ export default function Home() {
 
           <div className="relative h-96">
             <AnimatePresence mode="wait">
-              <TestimonialCard
-                name="Alex Thompson"
-                role="Web Developer"
-                content="The courses on this platform completely transformed my career. I went from knowing nothing about web development to landing a job at a top tech company in just 6 months."
-                avatar="A"
-                active={activeTestimonial === 0}
-                onClick={() => setActiveTestimonial(0)}
-                key={"ee"}
-              />
-              <TestimonialCard
-                name="Jessica Lee"
-                role="Data Analyst"
-                content="The instructors are incredibly knowledgeable and the course material is comprehensive. I've tried other platforms, but none compare to the quality of education I received here."
-                avatar="J"
-                active={activeTestimonial === 1}
-                onClick={() => setActiveTestimonial(1)}
-                key={"dfsd"}
-              />
-              <TestimonialCard
-                name="David Wilson"
-                role="UX Designer"
-                content="The community support and networking opportunities are invaluable. I not only gained technical skills but also made connections that helped me advance in my career."
-                avatar="D"
-                active={activeTestimonial === 2}
-                onClick={() => setActiveTestimonial(2)}
-                key={"dfdsre"}
-              />
+              {testimonials.map((testimonial, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: activeTestimonial === index ? 1 : 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className={`absolute inset-0 ${activeTestimonial === index ? 'block' : 'hidden'}`}
+                >
+                  <Card className="h-full">
+                    <CardContent className="flex flex-col items-center justify-center h-full p-8 text-center">
+                      <Avatar className="h-20 w-20 mb-4">
+                        <AvatarFallback>{testimonial.avatar}</AvatarFallback>
+                      </Avatar>
+                      <blockquote className="text-lg italic mb-4">
+                        "{testimonial.content}"
+                      </blockquote>
+                      <div>
+                        <p className="font-semibold">{testimonial.name}</p>
+                        <p className="text-gray-600">{testimonial.role}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
             </AnimatePresence>
           </div>
           <div className="flex justify-center mt-8 space-x-2">
@@ -381,20 +361,16 @@ export default function Home() {
             Join thousands of students already learning on our platform. Get unlimited access to all courses.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-white text-blue-600 font-medium rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              Get Started For Free
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-transparent text-white font-medium rounded-lg border-2 border-white hover:bg-blue-700 transition-all duration-300 hover:shadow-lg"
-            >
-              View All Courses
-            </motion.button>
+            <Button variant="secondary" size="lg" asChild>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                Get Started For Free
+              </motion.div>
+            </Button>
+            <Button variant="outline" size="lg" className="text-white border-white hover:bg-blue-700" asChild>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                View All Courses
+              </motion.div>
+            </Button>
           </div>
         </div>
       </motion.section>

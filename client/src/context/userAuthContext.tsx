@@ -8,11 +8,14 @@ import {
   UserProviderProps, 
   IUser 
 } from "../types/authTypes";
+import { IPopulatedCourse } from "../types/courseTypes";
+import { showErrorToast } from "../utils/Toast";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
+  const [allCourses,setAllCourses]=useState<IPopulatedCourse[]>([])
   const router = useRouter();
 
   const fetchUserData = useCallback(async () => {
@@ -32,11 +35,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   useEffect(() => {
     fetchUserData();
+    fetchCourses();
   }, [fetchUserData]);
+  const fetchCourses = async () => {
+    const res = await UserAPIMethods.fetchAllCourse();
+    if (res.ok) setAllCourses(res.data);
+    else showErrorToast(res.msg)
+  }
 
   const contextValue = {
     user,
     setUser,
+    allCourses,
   };
 
   return (

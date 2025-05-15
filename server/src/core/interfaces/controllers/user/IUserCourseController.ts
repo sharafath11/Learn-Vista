@@ -1,0 +1,7 @@
+import { Request, Response } from "express";
+
+
+export interface IUserCourseController{
+    getAllCourse(req: Request, res: Response): Promise<void>
+    updateUserCourse(req:Request,res:Response):Promise<void>
+}

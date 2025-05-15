@@ -1,1 +1,1 @@
-//repostry we can call anyware ?
+//validation in controller or servises

@@ -17,6 +17,7 @@ export interface ICourse {
   isBlock: boolean;
   tags?: string[];
   currentTag?: string;
+  enrolledUsers?:string[]
   startDate?: string;
   endDate?: string;
   startTime?: string;

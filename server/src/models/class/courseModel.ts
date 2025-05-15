@@ -12,7 +12,7 @@ const CourseSchema: Schema = new Schema(
     thumbnail: { type: String },
     students:{type:Number,default:0},
     price: { type: Number, default: 0 },
-   
+    enrolledUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     mentorStatus: {
       type: String,
       enum: ['approved', 'rejected',"pending"],

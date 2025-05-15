@@ -1,3 +1,5 @@
+import { IPopulatedCourse } from "./courseTypes";
+
 export type UserRole = "user" | "mentor";
 
 export interface IUserRegistration {
@@ -38,6 +40,8 @@ export interface IUser {
 export interface UserContextType {
   user: IUser | null;
   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
+  allCourses:IPopulatedCourse[]
+  
 }
 
 export interface UserProviderProps {

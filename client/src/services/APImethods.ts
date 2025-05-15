@@ -19,7 +19,8 @@ export const UserAPIMethods = {
   logout: () => post("/logout", {}),
   forgotPassword: (email: string) => post("/forgot-password", { email }),
   resetPassword: (token: string, password: string) => post("/reset-password", { token, password }),
-  fetchAllCourse:()=>get("/courses")
+  fetchAllCourse: () => get("/courses"),
+  updateCourse:(courseId:string)=>patch("/update-course",{courseId})
 } as const;
 
 export const AdminAPIMethods = {
