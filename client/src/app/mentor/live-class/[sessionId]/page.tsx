@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mic, Video, Radio } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { MentorAPIMethods } from "@/src/services/APImethods";
-import { showInfoToast } from "@/src/utils/Toast";
+import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
 
 interface DeviceInfo {
   deviceId: string;
@@ -43,18 +43,21 @@ export default function LiveStarterPage() {
     }
     setIsLoading(false);
   };
-
+  const params = useParams();
+  const courseId = params?.sessionId as string;
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(handleDevices);
   }, []);
 
   const startLiveStream = async () => {
-    const res = await MentorAPIMethods.startLiveSession();
+    const res = await MentorAPIMethods.startLiveSession(courseId);
 
     if (res.ok) {
-      localStorage.setItem("liveId", res.data.sessionUid);
-      console.log("Live session started successfully, session ID:", res.data.sessionUid);
-      router.push(`/live/${res.data.sessionUid}`);
+      showSuccessToast(res.msg);
+      localStorage.setItem("liveId", res.data.liveId);
+      
+      console.log("Live session started successfully, session ID:", res);
+      router.push(`/live/${res.data.liveId}`);
     } else {
       console.error("Failed to start live stream:", res.message || "Unknown error");
       showInfoToast("Failed to start the live stream. Please try again.");

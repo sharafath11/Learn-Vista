@@ -6,10 +6,12 @@ import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/
 import container from '../../core/di/container';
 import { IMentorProfileController } from '../../core/interfaces/controllers/mentor/IMentorProfile.controller';
 import upload, { uploadImage } from '../../middlewares/upload';
+import { IMentorCourseController } from '../../core/interfaces/controllers/mentor/IMentorCourse.controller';
 const router = express.Router();
 const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
 const mentorController = container.get<IMentorController>(TYPES.MentorController);
-const mentorProfileController=container.get<IMentorProfileController>(TYPES.MentorProfileController)
+const mentorProfileController = container.get<IMentorProfileController>(TYPES.MentorProfileController)
+const mentorCourseController=container.get<IMentorCourseController>(TYPES.MentorCourseController)
 router.post('/signup', (req, res) => mentorAuthController.signupController(req, res));
 router.post('/send-otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
 router.post('/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
@@ -22,6 +24,7 @@ router.get('/get-mentor', verifyMentor, (req, res, next) => {
 router.post("/forget-password", (req, res) => mentorAuthController.forgetPassword(req, res));
 router.post("/reset-password", (req, res) => mentorAuthController.restartPassword(req, res));
 router.get("/courses", verifyMentor, mentorController.getCourses.bind(mentorController));
-router.patch("/course/status-change", mentorController.statusChange.bind(mentorController));
+router.patch("/course/status-change",verifyMentor, mentorController.statusChange.bind(mentorController));
+router.get("/live-session/start/:courseId",verifyMentor,mentorCourseController.startLiveController.bind(mentorCourseController))
 
 export default router;

@@ -80,28 +80,25 @@ export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId
   }
   export interface ILiveClass extends Document {
     _id: ObjectId;
-    courseId: ObjectId | null;
-    mentorId: ObjectId | null;
-    title: string | null;
-    time: string | null;
-    date: Date | null;
-    duration: string | null;
+    courseId:Types.ObjectId;
+    mentorId:Types.ObjectId;
+    date: Date;
+    duration: string;
+    liveId: string;
     participants: { userId: ObjectId }[];
     isActive: boolean;
-    createdAt: Date | null;
-    updatedAt: Date | null;
-  }
-
-  export interface ISession extends Document {
-    _id: ObjectId;
-    title?: string;
-    duration?: number;
-    content?: string;
-    courseId?: ObjectId;
-    videoUrl?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-    liveSessionId?: ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
   }
   
+  export interface ISession extends Document {
+    _id: ObjectId;
+    title: string;
+    duration: number;
+    courseId: ObjectId;
+    videoUrl?: string;
+    liveSessionId?: ObjectId;  
+    createdAt: Date;
+    updatedAt: Date;
+  }
   

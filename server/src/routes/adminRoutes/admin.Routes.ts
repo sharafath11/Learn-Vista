@@ -23,8 +23,8 @@ route.patch("/mentor/change-status", verifyAdmin, adminMentorController.changeSt
 route.patch("/mentor/block", verifyAdmin, adminMentorController.blockMentor.bind(adminMentorController));
 route.patch("/course/edit-course",verifyAdmin, uploadImage.single('thumbnail'),adminCourseController.editCourse.bind(adminCourseController))
 route.post("/create-course", verifyAdmin, uploadImage.single('thumbnail'), adminCourseController.createClass.bind(adminCourseController));
-route.get("/courses", adminCourseController.getCourse.bind(adminCourseController));
-route.patch("/block-courses",adminCourseController.blockCourses.bind(adminCourseController))
+route.get("/courses",verifyAdmin, adminCourseController.getCourse.bind(adminCourseController));
+route.patch("/block-courses",verifyAdmin,adminCourseController.blockCourses.bind(adminCourseController))
 route.post("/add-categories", verifyAdmin, adminCourseController.addCategories.bind(adminCourseController));
 route.get("/categories", verifyAdmin, adminCourseController.getAllCategories.bind(adminCourseController));
 route.patch("/categorie/block", verifyAdmin, adminCourseController.blockCategorie.bind(adminCourseController));
