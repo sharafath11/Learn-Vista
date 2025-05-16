@@ -66,7 +66,8 @@ const Courses = () => {
               </CardContent>
               <CardFooter className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold">${course.price || 0}</span>
+                  <span className="text-lg font-semibold">₹
+{course.price || 0}</span>
                   {course.price !== 0 && (
                     <span className="text-sm text-gray-400 line-through">Free</span>
                   )}

@@ -23,7 +23,7 @@ export default function CoursesAdminPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCourses, setTotalCourses] = useState(0);
-  const coursesPerPage = 10;
+  const coursesPerPage = 1;
 
   useEffect(() => {
     const timer = setTimeout(() => {

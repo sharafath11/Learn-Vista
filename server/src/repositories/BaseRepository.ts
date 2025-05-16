@@ -58,8 +58,8 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: U[]; total: number; totalPages: number }> {
     try {
-      console.log("filter gvgukfuygfg base",sort)
-      const finalLimit =  10;
+      
+      const finalLimit =  1;
       const skip = (page - 1) * finalLimit;
   
      

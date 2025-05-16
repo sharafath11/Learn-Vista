@@ -28,9 +28,12 @@ class AdminCourseServices implements IAdminCourseServices {
   ) {}
 
   async addCategories(title: string, description: string): Promise<ICategory> {
-    const existCategory = await this.categoryRepo.findOne({ title });
-    if (existCategory) throwError("This category already exists", StatusCode.BAD_REQUEST);
-
+    const existCategory = await this.categoryRepo.findOne({
+      title: { $regex: new RegExp(`^${title}$`, "i") }
+    });
+    if (existCategory) {
+      throwError("This category already exists", StatusCode.BAD_REQUEST);
+    }
     const newData = await this.categoryRepo.create({ title, description });
     return newData;
   }
@@ -167,7 +170,12 @@ class AdminCourseServices implements IAdminCourseServices {
 
 async editCategories(categoryId: string, title: string, description: string): Promise<ICategory> {
     if (!categoryId || !title.trim() || !description.trim()) throwError("Invalid input parameters");
-    
+    const existCategory = await this.categoryRepo.findOne({
+      title: { $regex: new RegExp(`^${title}$`, "i") }
+    });
+    if (existCategory) {
+      throwError("This category already exists", StatusCode.BAD_REQUEST);
+    }
     const updateData = { title, description, updatedAt: new Date() };
     const existingCategory = await this.categoryRepo.findById(categoryId);
     if (!existingCategory) throwError("Category not found");
