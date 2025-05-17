@@ -19,7 +19,13 @@ export const UserAPIMethods = {
   logout: () => post("/logout", {}),
   forgotPassword: (email: string) => post("/forgot-password", { email }),
   resetPassword: (token: string, password: string) => post("/reset-password", { token, password }),
-  fetchAllCourse: () => get("/courses"),
+  fetchAllCourse: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    filters?: Record<string, any>;
+    sort?: Record<string, 1 | -1>
+  }) => get("/courses"),
   updateCourse:(courseId:string)=>patch("/update-course",{courseId})
 } as const;
 

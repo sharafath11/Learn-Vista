@@ -21,7 +21,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const fetchUserData = useCallback(async () => {
     try {
       const res = await UserAPIMethods.fetchUser();
-      
+      console.log(res.data)
       if (res.ok) {
         setUser(res.data);
       } else {
@@ -38,7 +38,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     fetchCourses();
   }, [fetchUserData]);
   const fetchCourses = async () => {
-    const res = await UserAPIMethods.fetchAllCourse();
+    const res = await UserAPIMethods.fetchAllCourse({});
     if (res.ok) setAllCourses(res.data);
     else showErrorToast(res.msg)
   }

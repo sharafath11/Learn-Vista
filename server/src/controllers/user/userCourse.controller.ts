@@ -30,7 +30,7 @@ export class UserCourseController implements IUserCourseController {
             if (!decoded?.id) {
                 return sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized", false);
             }
-
+            console.log(courseId)
             await this._userCourseService.updateUserCourse(courseId, decoded.id);
             sendResponse(res, StatusCode.OK, "Course updated with user", true);
         } catch (error) {

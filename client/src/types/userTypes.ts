@@ -2,7 +2,7 @@ export type UserRole = 'admin' | 'mentor' | 'user';
 
 export interface IUser {
   id: string;
-  _id: string;
+  // _id: string;
   username: string;
   email: string;
   password?: string;

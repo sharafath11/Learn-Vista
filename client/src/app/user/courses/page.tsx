@@ -17,8 +17,12 @@ import CourseFilter from "./filtringAndSearch"
 import CourseDetailsModal from "./CourseDetailsModal"
 import { IPopulatedCourse } from "@/src/types/courseTypes"
 import { useUserContext } from "@/src/context/userAuthContext"
+import { UserAPIMethods } from "@/src/services/APImethods"
+import { showSuccessToast } from "@/src/utils/Toast"
+import { useRouter } from "next/navigation"
 
 const Page = () => {
+  const route=useRouter()
   const [courses, setCourses] = useState<IPopulatedCourse[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -31,14 +35,52 @@ const Page = () => {
   const [selectedCourse, setSelectedCourse] = useState<IPopulatedCourse | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [ref, inView] = useInView()
-  const {allCourses}=useUserContext()
-
-  // Fetch courses from API
+  const { allCourses, user, setUser } = useUserContext();
+  console.log(user)
+  const handleStartNewCourse = async (id: string) => {
+    const res = await UserAPIMethods.updateCourse(id);
+  
+    if (res.ok) {
+      showSuccessToast(res.msg);
+  
+      setUser((prev) => {
+        if (!prev) return prev; 
+  
+        return {
+          ...prev,
+          enrolledCourses: [...(prev.enrolledCourses || []), id],
+        };
+      });
+  
+      route.push("/user/sessions");
+    }
+  };
+  
+  
+  console.log("user",user)
   const fetchCourses = async () => {
- 
-     
-  }
-
+   
+      const res = await UserAPIMethods.fetchAllCourse({
+        page,
+        limit: 6,
+        search: filters.search || '',
+        filters: {
+          category: filters.category,
+        },
+        sort: filters.sort === "latest" ? { createdAt: -1 } : {},
+      });
+  
+      if (res.ok) {
+        const newCourses = res.data;
+        setCourses(prev => (page === 1 ? newCourses : [...prev, ...newCourses]));
+        setHasMore(newCourses.length >= 6);
+      } else {
+        console.error(res.msg);
+      }
+      setLoading(false);
+  };
+  
+  
   useEffect(() => {
     fetchCourses()
   }, [])
@@ -60,8 +102,9 @@ const Page = () => {
   }
 
   const handleFilterChange = (newFilters: any) => {
-    setPage(1) // Reset to first page when filters change
-    setFilters(newFilters)
+    setPage(1) 
+    setFilters(newFilters);
+
   }
 
   return (
@@ -89,9 +132,6 @@ const Page = () => {
   categories={Array.from(new Set(courses.map(c => c.categoryId?.title).filter(Boolean)))} 
   onFilter={handleFilterChange} 
 />
-
-
-
         {/* Courses Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {allCourses.map((course) => (
@@ -151,17 +191,42 @@ const Page = () => {
                   )}
                 </div>
                 <div className="flex gap-2">
-                  <Button  className="cursor-pointer"
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleDetailsClick(course)}
-                  >
-                    Details
-                  </Button>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700 cursor-pointer">
-                    Enroll
-                  </Button>
-                </div>
+  <Button  
+    className="cursor-pointer"
+    variant="outline" 
+    size="sm"
+    onClick={() => handleDetailsClick(course)}
+  >
+    Details
+  </Button>
+
+  {(() => {
+   
+    const isEnrolled = course?.enrolledUsers?.filter((i)=>i===user?.id);
+
+    console.log("Is User Enrolled in This Course?", isEnrolled);
+
+    return isEnrolled ? (
+      <Button 
+        size="sm" 
+        className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+        onClick={() => route.push("/user/sessions")}
+      >
+        Continue Learning
+      </Button>
+    ) : (
+      <Button 
+        size="sm" 
+        className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+        onClick={() => handleStartNewCourse(course._id)}
+      >
+        Start Learning
+      </Button>
+    );
+  })()}
+</div>
+
+
               </CardFooter>
             </Card>
           ))}

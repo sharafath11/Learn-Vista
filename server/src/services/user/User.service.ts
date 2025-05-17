@@ -1,7 +1,7 @@
 import { inject } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import { ISafeUser } from "../../types/userTypes";
+import { ISafeUser, IUser } from "../../types/userTypes";
 import { IUserService } from "../../core/interfaces/services/user/IUserService";
 import { sendPasswordResetEmail } from "../../utils/emailService";
 import { generateAccessToken } from "../../utils/JWTtoken";
@@ -16,7 +16,7 @@ export class UserService implements IUserService {
     @inject(TYPES.UserRepository) private userRepository: IUserRepository
   ) {}
 
-  async getUser(id: string): Promise<ISafeUser> {
+  async getUser(id: string): Promise<IUser> {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
@@ -27,16 +27,7 @@ export class UserService implements IUserService {
       throwError("User was blocked", StatusCode.FORBIDDEN);
     }
 
-    return {
-      username: user.username,
-      email: user.email,
-      role: user.role,
-      profilePicture: user.profilePicture || null,
-      isBlocked: user.isBlocked,
-      enrolledCourses: user.enrolledCourses || [],
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    return user
   }
 
   async forgetPassword(email: string): Promise<void> {

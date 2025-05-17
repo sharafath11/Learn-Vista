@@ -23,7 +23,7 @@ export class UserController implements IUserController {
             if (!user) {
                 throwError("User not found", StatusCode.NOT_FOUND);
             }
-
+            console.log("user id",user.id)
             sendResponse(res, StatusCode.OK, "User retrieved successfully", true, user);
         } catch (error) {
             handleControllerError(res, error);

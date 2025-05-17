@@ -28,8 +28,9 @@ export async function middleware(req: NextRequest) {
     "/mentor": "/mentor/login",
     "/admin": "/admin/login",
   };
-
+  console.log(token)
   if (!token) {
+    console.log("abcd")
     for (const [prefix, redirectPath] of Object.entries(redirectMap)) {
       if (path.startsWith(prefix)) {
         const url = new URL(redirectPath, req.url);

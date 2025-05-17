@@ -15,7 +15,7 @@ import { showErrorToast } from "@/src/utils/Toast"
 const NAV_ITEMS = [
   { name: "Home", path: "/", icon: Home },
   { name: "Courses", path: "/user/courses", icon: BookOpen },
-  { name: "Live Classes", path: "/live-classes", icon: Video },
+  { name: "Live Classes", path: "/user/live-classes", icon: Video },
   { name: "Community", path: "/community", icon: Users },
 ] as const
 

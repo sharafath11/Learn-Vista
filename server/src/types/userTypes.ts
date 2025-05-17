@@ -18,6 +18,7 @@ export interface IUser extends Document {
   googleId:string
 }
 export interface ISafeUser {
+  id:string
   username: string;
   email: string;
   role: UserRole;

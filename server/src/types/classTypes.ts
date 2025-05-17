@@ -36,7 +36,7 @@ export interface ICourse extends Document {
   courseLanguage?: string;
   isBlock: boolean;
   tags?: string[];
-  enrolledUsers:ObjectId[]
+  enrolledUsers:string[]
   // mentorApproved: boolean
   category:ICategory
   mentorStatus: "approved" | "rejected"|"pending";
