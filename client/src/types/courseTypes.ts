@@ -18,9 +18,9 @@ export interface ICourse {
   tags?: string[];
   currentTag?: string;
   enrolledUsers?:string[]
-  startDate?: string;
-  endDate?: string;
-  startTime?: string;
+  startDate: string;
+  endDate: string;
+  startTime: string;
   thumbnail?: string;
   thumbnailPreview?: string | null;
   createdAt: Date;
