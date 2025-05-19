@@ -14,7 +14,8 @@ export const TYPES = {
   MentorProfileController: Symbol.for("MentroProfileController"),
   AdminCourseController: Symbol.for("AdminCourseController"),
   MentorCourseController: Symbol.for("MentorCOurseController"),
-  UserCourseController:Symbol.for("UserCourseController"),
+  UserCourseController: Symbol.for("UserCourseController"),
+  UserLiveCOntroller:Symbol.for("UserLiveController"),
   // Services
   MentorAuthService: Symbol.for('MentorAuthService'),
   MentorService: Symbol.for('MentorService'),
@@ -27,7 +28,8 @@ export const TYPES = {
   MentorProfileService: Symbol.for("MentorProfileService"),
   AdminCourseService: Symbol.for("AdminCourseService"),
   MentorCourseService: Symbol.for("MentorCourseServices"),
-  UserCourseService:Symbol.for("UserCourseService"),
+  UserCourseService: Symbol.for("UserCourseService"),
+  UserLiveService:Symbol.for("UserLiveService"),
   // Repositories
   MentorRepository: Symbol.for('MentorRepository'),
   MentorOtpRepository: Symbol.for('MentorOtpRepository'),

@@ -76,6 +76,10 @@ import { IUserCourseController } from '../interfaces/controllers/user/IUserCours
 import { UserCourseController } from '../../controllers/user/userCourse.controller';
 import { IUserCourseService } from '../interfaces/services/user/IUserCourseController';
 import { UserCourseService } from '../../services/user/UserCourse.service';
+import { IUserLiveController } from '../interfaces/controllers/user/IUserLiveVideoController';
+import { UserLiveCallController } from '../../controllers/user/liveVideo.Controller';
+import { IUserLiveService } from '../interfaces/services/user/IUserLiveService';
+import { LiveUserService } from '../../services/user/LiveUser.Service';
 
 const container = new Container();
 
@@ -91,7 +95,8 @@ container.bind<IAdminAuthController>(TYPES.AdminAuthController).to(AdminAuthCont
 container.bind<IMentorProfileController>(TYPES.MentorProfileController).to(MentorProfileController)
 container.bind<IAdminCourseController>(TYPES.AdminCourseController).to(AdminCourseController)
 container.bind<IMentorCourseController>(TYPES.MentorCourseController).to(MentorCourseController)
-container.bind<IUserCourseController>(TYPES.UserCourseController).to(UserCourseController)
+container.bind<IUserCourseController>(TYPES.UserCourseController).to(UserCourseController);
+container.bind<IUserLiveController>(TYPES.UserLiveCOntroller).to(UserLiveCallController)
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -105,6 +110,7 @@ container.bind<IMentorProfileService>(TYPES.MentorProfileService).to(MentorProfi
 container.bind<IAdminCourseServices>(TYPES.AdminCourseService).to(AdminCourseServices);
 container.bind<IMentorCourseService>(TYPES.MentorCourseService).to(MentorCourseService);
 container.bind<IUserCourseService>(TYPES.UserCourseService).to(UserCourseService),
+container.bind<IUserLiveService>(TYPES.UserLiveService).to(LiveUserService)
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);

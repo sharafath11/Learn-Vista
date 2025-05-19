@@ -37,4 +37,5 @@ export class UserCourseController implements IUserCourseController {
             handleControllerError(res, error);
         }
     }
+
 }

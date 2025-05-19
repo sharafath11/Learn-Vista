@@ -7,6 +7,7 @@ import { authenticateToken } from "../../middlewares/authenticateToken";
 import upload, { uploadImage } from "../../middlewares/upload";
 import { IUserController } from "../../core/interfaces/controllers/user/IUserController";
 import { IUserCourseController } from "../../core/interfaces/controllers/user/IUserCourseController";
+import { IUserLiveController } from "../../core/interfaces/controllers/user/IUserLiveVideoController";
 
 
 const router = express.Router();
@@ -14,7 +15,8 @@ const router = express.Router();
 const authController = container.get<AuthController>(TYPES.AuthController);
 const profileController = container.get<ProfileController>(TYPES.ProfileController);
 const userController = container.get<IUserController>(TYPES.UserController);
-const userCourseController=container.get<IUserCourseController>(TYPES.UserCourseController)
+const userCourseController = container.get<IUserCourseController>(TYPES.UserCourseController)
+const userLiveController=container.get<IUserLiveController>(TYPES.UserLiveCOntroller)
 
 router.post("/signup", authController.signup.bind(authController));
 router.post("/google/signup", authController.googleAuth.bind(authController));
@@ -31,7 +33,8 @@ router.post("/apply-mentor",
   profileController.applyMentor.bind(profileController)
 );
 router.post('/edit-profile', authenticateToken, uploadImage.single('image'), profileController.editProfile.bind(profileController))
-router.get("/courses", userCourseController.getAllCourse.bind(userCourseController));
-router.patch("/update-course",authenticateToken,userCourseController.updateUserCourse.bind(userCourseController))
+router.get("/courses",authenticateToken, userCourseController.getAllCourse.bind(userCourseController));
+router.patch("/update-course", authenticateToken, userCourseController.updateUserCourse.bind(userCourseController));
+router.get("/start-live/vc/:courseId",authenticateToken,userLiveController.getRoomId.bind(userLiveController))
 
 export default router;

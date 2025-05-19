@@ -5,10 +5,13 @@ import { Calendar, Clock, Users } from "lucide-react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { UserAPIMethods } from "@/src/services/APImethods"
+import { showSuccessToast } from "@/src/utils/Toast"
+import { useRouter } from "next/navigation"
 
 export default function UpcomingSessions() {
   const { allCourses } = useUserContext()
-
+  const route=useRouter()
   const [currentTime, setCurrentTime] = useState(new Date())
 
   useEffect(() => {
@@ -18,7 +21,17 @@ export default function UpcomingSessions() {
 
     return () => clearInterval(interval)
   }, [])
+  const handleJoinCall = async (courseId: string) => {
+    let liveId=""
+    const res = await UserAPIMethods.getUserRoomId(courseId);
+    if (res.ok) {
+      liveId=res.data
+      showSuccessToast(res.msg);
+     route.push(`/user/live-classes/${liveId}`)
 
+    }
+  };
+  
   const canStartSession = (sessionDate: string, startTime: string): boolean => {
     if (!sessionDate || !startTime) return false
     const sessionDateTime = new Date(`${sessionDate}T${startTime}`)
@@ -78,16 +91,27 @@ export default function UpcomingSessions() {
 
                 {/* Status */}
                 <div className="col-span-2 text-center">
-                  <Badge
-                    className={
-                      canStart
-                        ? "bg-green-100 text-green-700"
-                        : "bg-muted text-muted-foreground"
-                    }
-                  >
-                    {canStart ? "Start Now" : "Upcoming"}
-                  </Badge>
-                </div>
+  <div
+    className="inline-block cursor-pointer"
+    onClick={() => {
+      if (canStart) {
+        // 👇 Navigate or trigger join call logic
+        handleJoinCall(session._id);
+      }
+    }}
+  >
+    <Badge
+      className={
+        canStart
+          ? "bg-green-100 text-green-700"
+          : "bg-muted text-muted-foreground"
+      }
+    >
+      {canStart ? "Start Now" : "Upcoming"}
+    </Badge>
+  </div>
+</div>
+
               </div>
             )
           })}

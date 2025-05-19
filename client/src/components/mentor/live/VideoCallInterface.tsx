@@ -1,279 +1,306 @@
 "use client"
-import { useEffect, useRef, useState } from "react"
-import { Mic, MicOff, Video, VideoOff, PhoneOff, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import io from "socket.io-client"
 
-interface Participant {
-  id: string
-  stream: MediaStream | null
-  isMuted: boolean
-  isVideoOff: boolean
-  name: string
+import { useEffect, useRef, useState } from "react";
+import { Mic, MicOff, Video, VideoOff, PhoneOff, Monitor } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import io from "socket.io-client";
+import Peer from "simple-peer";
+
+interface ParticipantView {
+  id: string;
+  stream: MediaStream;
 }
 
-export default function VideoCallInterface({ roomId }: { roomId: string }) {
-  const [participants, setParticipants] = useState<Participant[]>([])
-  const [isMuted, setIsMuted] = useState(false)
-  const [isVideoOff, setIsVideoOff] = useState(false)
-  const [socket, setSocket] = useState<any>(null)
-  const localVideoRef = useRef<HTMLVideoElement>(null)
-  const peerConnections = useRef<{[key: string]: RTCPeerConnection}>({})
-  const localStream = useRef<MediaStream | null>(null)
+export default function MentorVideoCall({ roomId }: { roomId: string }) {
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [participants, setParticipants] = useState<ParticipantView[]>([]);
+  const [connectionStatus, setConnectionStatus] = useState<string>("Connecting...");
+  
+  const socketRef = useRef<any>(null);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const localStreamRef = useRef<MediaStream | null>(null);
+  const screenStreamRef = useRef<MediaStream | null>(null);
+  const peersRef = useRef<Record<string, Peer.Instance>>({});
+  const pendingSignalsRef = useRef<Record<string, any[]>>({});
 
-  // Initialize socket connection
+  // Initialize socket and media
   useEffect(() => {
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER || "http://localhost:3001")
-    setSocket(newSocket)
+    const socket = io("http://localhost:4000");
+    socketRef.current = socket;
 
-    return () => {
-      newSocket.disconnect()
-    }
-  }, [])
-  useEffect(() => {
-    if (!socket) return
-
-    const initMedia = async () => {
+    const initializeMedia = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true
-        })
+        setConnectionStatus("Getting media devices...");
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: true, 
+          audio: true 
+        });
+        localStreamRef.current = stream;
+        if (localVideoRef.current) localVideoRef.current.srcObject = stream;
         
-        localStream.current = stream
-        if (localVideoRef.current) {
-          localVideoRef.current.srcObject = stream
-        }
-        setParticipants(prev => [...prev, {
-          id: socket.id,
-          stream,
-          isMuted: false,
-          isVideoOff: false,
-          name: "Mentor"
-        }])
-        socket.emit("join-room", roomId, socket.id)
-
-      } catch (error) {
-        console.error("Error accessing media devices:", error)
+        setConnectionStatus("Joining room...");
+        socket.emit("join-room", roomId, "mentor", "mentor");
+        setConnectionStatus("Waiting for participants...");
+      } catch (err) {
+        console.error("Failed to get media", err);
+        setConnectionStatus("Failed to access media devices");
       }
-    }
+    };
 
-    initMedia()
-    socket.on("user-connected", (userId: string) => {
-      createPeerConnection(userId)
-    })
-
-    socket.on("offer", async (userId: string, offer: RTCSessionDescriptionInit) => {
-      if (!peerConnections.current[userId]) {
-        createPeerConnection(userId)
-      }
+    socket.on("user-joined", (userId: string) => {
+      setConnectionStatus(`User ${userId} joining...`);
+      console.log(`User ${userId} joined`);
       
-      const pc = peerConnections.current[userId]
-      await pc.setRemoteDescription(new RTCSessionDescription(offer))
-      const answer = await pc.createAnswer()
-      await pc.setLocalDescription(answer)
-      socket.emit("answer", userId, answer)
-    })
+      const peer = new Peer({
+        initiator: true,
+        trickle: false,
+        stream: isScreenSharing ? screenStreamRef.current || localStreamRef.current || undefined : localStreamRef.current || undefined,
+      });
 
-    socket.on("answer", async (userId: string, answer: RTCSessionDescriptionInit) => {
-      const pc = peerConnections.current[userId]
-      await pc.setRemoteDescription(new RTCSessionDescription(answer))
-    })
+      peer.on("signal", signal => {
+        socket.emit("signal", userId, signal);
+      });
 
-    socket.on("ice-candidate", (userId: string, candidate: RTCIceCandidateInit) => {
-      const pc = peerConnections.current[userId]
-      if (pc) {
-        pc.addIceCandidate(new RTCIceCandidate(candidate))
+      peer.on("stream", stream => {
+        setParticipants(prev => [...prev, { id: userId, stream }]);
+        setConnectionStatus(`Connected with ${prev.length + 1} participants`);
+      });
+
+      peer.on("error", err => {
+        console.error("Peer error:", err);
+        setConnectionStatus(`Error with user ${userId}`);
+        removePeer(userId);
+      });
+
+      peer.on("close", () => {
+        removePeer(userId);
+      });
+
+      // Handle any pending signals
+      if (pendingSignalsRef.current[userId]?.length) {
+        pendingSignalsRef.current[userId].forEach(signal => {
+          peer.signal(signal);
+        });
+        delete pendingSignalsRef.current[userId];
       }
-    })
 
-    socket.on("user-disconnected", (userId: string) => {
-      if (peerConnections.current[userId]) {
-        peerConnections.current[userId].close()
-        delete peerConnections.current[userId]
+      peersRef.current[userId] = peer;
+    });
+
+    socket.on("signal", (userId: string, signal: any) => {
+      if (peersRef.current[userId]) {
+        try {
+          peersRef.current[userId].signal(signal);
+        } catch (err) {
+          console.error("Error processing signal:", err);
+        }
+      } else {
+        // Store signal if peer doesn't exist yet
+        if (!pendingSignalsRef.current[userId]) {
+          pendingSignalsRef.current[userId] = [];
+        }
+        pendingSignalsRef.current[userId].push(signal);
       }
-      setParticipants(prev => prev.filter(p => p.id !== userId))
-    })
+    });
+
+    socket.on("user-left", (userId: string) => {
+      setConnectionStatus(`User ${userId} left`);
+      removePeer(userId);
+    });
+
+    initializeMedia();
 
     return () => {
-      if (localStream.current) {
-        localStream.current.getTracks().forEach(track => track.stop())
-      }
-      Object.values(peerConnections.current).forEach(pc => pc.close())
-    }
-  }, [socket, roomId])
+      cleanup();
+    };
+  }, [roomId]);
 
-  const createPeerConnection = async (userId: string) => {
-    const pc = new RTCPeerConnection({
-      iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-      ]
-    })
-
-    peerConnections.current[userId] = pc
-    if (localStream.current) {
-      localStream.current.getTracks().forEach(track => {
-        pc.addTrack(track, localStream.current!)
-      })
+  const removePeer = (userId: string) => {
+    if (peersRef.current[userId]) {
+      peersRef.current[userId].destroy();
+      delete peersRef.current[userId];
     }
+    setParticipants(prev => prev.filter(p => p.id !== userId));
+  };
 
-    pc.onicecandidate = (event) => {
-      if (event.candidate) {
-        socket.emit("ice-candidate", userId, event.candidate)
-      }
-    }
-
-    pc.ontrack = (event) => {
-      setParticipants(prev => {
-        const existing = prev.find(p => p.id === userId)
-        if (existing) {
-          return prev.map(p => 
-            p.id === userId ? { ...p, stream: event.streams[0] } : p
-          )
-        } else {
-          return [...prev, {
-            id: userId,
-            stream: event.streams[0],
-            isMuted: false,
-            isVideoOff: false,
-            name: `Student ${prev.length}`
-          }]
-        }
-      })
-    }
-
-    if (socket.id < userId) { 
-      const offer = await pc.createOffer()
-      await pc.setLocalDescription(offer)
-      socket.emit("offer", userId, offer)
-    }
-  }
+  const cleanup = () => {
+    socketRef.current?.disconnect();
+    localStreamRef.current?.getTracks().forEach(track => track.stop());
+    screenStreamRef.current?.getTracks().forEach(track => track.stop());
+    Object.values(peersRef.current).forEach(peer => peer.destroy());
+  };
 
   const toggleMute = () => {
-    if (localStream.current) {
-      const audioTracks = localStream.current.getAudioTracks()
-      audioTracks.forEach(track => {
-        track.enabled = !track.enabled
-      })
-      setIsMuted(!isMuted)
+    if (localStreamRef.current) {
+      localStreamRef.current.getAudioTracks().forEach(track => {
+        track.enabled = !track.enabled;
+      });
+      setIsMuted(!isMuted);
     }
-  }
+  };
 
   const toggleVideo = () => {
-    if (localStream.current) {
-      const videoTracks = localStream.current.getVideoTracks()
-      videoTracks.forEach(track => {
-        track.enabled = !track.enabled
-      })
-      setIsVideoOff(!isVideoOff)
+    if (localStreamRef.current) {
+      localStreamRef.current.getVideoTracks().forEach(track => {
+        track.enabled = !track.enabled;
+      });
+      setIsVideoOff(!isVideoOff);
     }
-  }
+  };
+
+  const toggleScreenShare = async () => {
+    if (isScreenSharing) {
+      // Stop screen sharing
+      screenStreamRef.current?.getTracks().forEach(track => track.stop());
+      screenStreamRef.current = null;
+      
+      // Switch back to camera
+      if (localStreamRef.current) {
+        Object.values(peersRef.current).forEach(peer => {
+          const videoTrack = localStreamRef.current?.getVideoTracks()[0];
+          if (videoTrack) {
+            peer.replaceTrack(
+              peer.streams[0].getVideoTracks()[0],
+              videoTrack,
+              peer.streams[0]
+            );
+          }
+        });
+        
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = localStreamRef.current;
+        }
+      }
+      
+      setIsScreenSharing(false);
+    } else {
+      try {
+        setConnectionStatus("Starting screen share...");
+        // Start screen sharing
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+          audio: false,
+        });
+        
+        screenStreamRef.current = screenStream;
+        
+        // Replace video track in all peer connections
+        Object.values(peersRef.current).forEach(peer => {
+          const videoTrack = screenStream.getVideoTracks()[0];
+          if (videoTrack) {
+            peer.replaceTrack(
+              peer.streams[0].getVideoTracks()[0],
+              videoTrack,
+              peer.streams[0]
+            );
+          }
+        });
+        
+        // Create combined stream with screen video and mic audio
+        const combinedStream = new MediaStream();
+        screenStream.getVideoTracks().forEach(track => combinedStream.addTrack(track));
+        if (localStreamRef.current) {
+          localStreamRef.current.getAudioTracks().forEach(track => combinedStream.addTrack(track));
+        }
+        
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = combinedStream;
+        }
+        
+        screenStream.getVideoTracks()[0].onended = () => {
+          toggleScreenShare();
+        };
+        
+        setIsScreenSharing(true);
+        setConnectionStatus("Screen sharing active");
+      } catch (err) {
+        console.error("Failed to share screen", err);
+        setConnectionStatus("Screen share failed");
+      }
+    }
+  };
 
   const endCall = () => {
-    if (localStream.current) {
-      localStream.current.getTracks().forEach(track => track.stop())
-    }
-    socket.emit("leave-room", roomId)
-    // Redirect or handle call end
-  }
+    cleanup();
+    window.location.href = "/";
+  };
 
   return (
-    <div className="flex flex-col h-full bg-slate-100 dark:bg-slate-800">
-      {/* Video Grid */}
-      <div className="flex-1 p-4 overflow-y-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-fr">
-          {/* Local video */}
-          <div className="relative rounded-lg overflow-hidden shadow-md bg-black">
-          <video
-  ref={localVideoRef}
-  autoPlay
-  playsInline
-  muted
-  className="w-full h-full object-cover"
-  style={{ transform: 'scaleX(-1)' }} // <- this mirrors the video
-/>
-
-            <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 text-xs rounded-md">
-              You (Mentor)
-            </div>
-            {isMuted && (
-              <div className="absolute bottom-2 right-2 bg-red-500 rounded-full p-1">
-                <MicOff size={16} className="text-white" />
-              </div>
-            )}
-            {isVideoOff && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-                <VideoOff size={48} className="text-white" />
-              </div>
-            )}
-          </div>
-
-          {/* Remote participants */}
-          {participants.filter(p => p.id !== socket?.id).map((participant) => (
-            <div key={participant.id} className="relative rounded-lg overflow-hidden shadow-md bg-black">
-              {participant.stream ? (
-                <>
-                  <video
-                    autoPlay
-                    playsInline
-                    ref={video => {
-                      if (video && participant.stream) video.srcObject = participant.stream
-                    }}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 text-xs rounded-md">
-                    {participant.name}
-                  </div>
-                  {participant.isMuted && (
-                    <div className="absolute bottom-2 right-2 bg-red-500 rounded-full p-1">
-                      <MicOff size={16} className="text-white" />
-                    </div>
-                  )}
-                  {participant.isVideoOff && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-                      <VideoOff size={48} className="text-white" />
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-800">
-                  <Users size={48} className="text-gray-500" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+    <div className="container mx-auto p-4 min-h-screen">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Mentor Room: {roomId}</h1>
+        <div className="text-sm text-gray-600">{connectionStatus}</div>
+      </div>
+      
+      <div className="flex gap-2 mb-4">
+        <Button
+          variant={isMuted ? "destructive" : "outline"}
+          onClick={toggleMute}
+          size="icon"
+          title={isMuted ? "Unmute" : "Mute"}
+        >
+          {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+        </Button>
+        <Button
+          variant={isVideoOff ? "destructive" : "outline"}
+          onClick={toggleVideo}
+          size="icon"
+          title={isVideoOff ? "Enable Video" : "Disable Video"}
+        >
+          {isVideoOff ? <VideoOff className="h-5 w-5" /> : <Video className="h-5 w-5" />}
+        </Button>
+        <Button
+          variant={isScreenSharing ? "destructive" : "outline"}
+          onClick={toggleScreenShare}
+          size="icon"
+          title={isScreenSharing ? "Stop Sharing" : "Share Screen"}
+        >
+          <Monitor className="h-5 w-5" />
+        </Button>
+        <Button 
+          variant="destructive" 
+          onClick={endCall}
+          size="icon"
+          title="End Call"
+        >
+          <PhoneOff className="h-5 w-5" />
+        </Button>
       </div>
 
-      {/* Controls */}
-      <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
-        <div className="flex justify-center space-x-4">
-          <Button
-            variant={isMuted ? "destructive" : "secondary"}
-            size="icon"
-            onClick={toggleMute}
-            className="rounded-full h-12 w-12"
-          >
-            {isMuted ? <MicOff /> : <Mic />}
-          </Button>
-          <Button
-            variant={isVideoOff ? "destructive" : "secondary"}
-            size="icon"
-            onClick={toggleVideo}
-            className="rounded-full h-12 w-12"
-          >
-            {isVideoOff ? <VideoOff /> : <Video />}
-          </Button>
-          <Button 
-            variant="destructive" 
-            size="icon" 
-            className="rounded-full h-12 w-12"
-            onClick={endCall}
-          >
-            <PhoneOff />
-          </Button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
+          <video
+            ref={localVideoRef}
+            autoPlay
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute bottom-2 left-2 bg-black/50 px-2 py-1 rounded text-white">
+            You (Mentor)
+          </div>
         </div>
+
+        {participants.map(participant => (
+          <div key={participant.id} className="relative bg-black rounded-lg overflow-hidden aspect-video">
+            <video
+              autoPlay
+              playsInline
+              className="w-full h-full object-cover"
+              ref={videoRef => {
+                if (videoRef) {
+                  videoRef.srcObject = participant.stream;
+                }
+              }}
+            />
+            <div className="absolute bottom-2 left-2 bg-black/50 px-2 py-1 rounded text-white">
+              User {participant.id.slice(0, 5)}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
-  )
+  );
 }

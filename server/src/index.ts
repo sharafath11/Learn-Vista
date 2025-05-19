@@ -10,7 +10,7 @@ import userRoutes from "./routes/userRoutes/user.Routes";
 import mentorRoutes from "./routes/mentor/mentor.Routes";
 import adminRoutes from "./routes/adminRoutes/admin.Routes";
 import { refreshAccessToken, setTokensInCookies } from "./utils/JWTtoken";
-import socketHandler from "./config/ socket";
+import { socketHandler } from "./config/ socket";
 
 dotenv.config();
 
