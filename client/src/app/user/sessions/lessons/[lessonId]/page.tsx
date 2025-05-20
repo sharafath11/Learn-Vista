@@ -24,7 +24,7 @@ export default function LessonPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     // Get lesson data
     const lessonData = getLessonById(Number.parseInt(params.id));
-    alert(lesson?.id)
+   
     if (lessonData) {
       setLesson(lessonData)
     } else {

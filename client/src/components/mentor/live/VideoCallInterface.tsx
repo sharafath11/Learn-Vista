@@ -34,13 +34,14 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         localStreamRef.current = stream
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream
+          localVideoRef.current.play().catch(e => console.error("Mentor: Error playing local video:", e)); // Ensure mentor's local video plays
         }
 
         console.log("MentorStream: Connecting to socket server...")
         const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000")
         socketRef.current = socket
 
-        // *** CRITICAL CHANGE: Emit join-room AFTER 'connect' event ***
+        // Emit join-room AFTER 'connect' event
         socket.on('connect', () => {
           console.log(`MentorStream: Socket connected with ID: ${socket.id}`);
           socket.emit("join-room", roomId, socket.id, "mentor") // Pass socket.id as clientProvidedId
@@ -63,7 +64,15 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           const peer = new Peer({
             initiator: true, // Mentor initiates the connection
             trickle: false,
-            stream: isScreenSharing ? screenStreamRef.current! : localStreamRef.current!
+            stream: isScreenSharing ? screenStreamRef.current! : localStreamRef.current!,
+            // CORRECT: Pass iceServers within the 'config' object
+            config: {
+              iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                // { urls: 'turn:YOUR_TURN_SERVER_ADDRESS:PORT', username: 'user', credential: 'password' }
+              ]
+            },
           });
 
           peer.on("signal", signal => {

@@ -12,6 +12,7 @@ import { MediaSection } from "./media-section"
 import { DetailsSection } from "./details-section"
 import { ScheduleSection } from "./schedule-section"
 import { FormActions } from "./form-actions"
+import { showInfoToast } from "@/src/utils/Toast"
 
 interface CourseFormProps {
   courseId?: string
@@ -132,7 +133,7 @@ export function CourseForm({ courseId }: CourseFormProps) {
         setThumbnail(file)
         setThumbnailPreview(URL.createObjectURL(file))
       } else {
-        alert("Please upload a valid image file (JPEG, PNG, WEBP, JPG, GIF)")
+        showInfoToast("Please upload a valid image file (JPEG, PNG, WEBP, JPG, GIF)")
       }
     }
   }
