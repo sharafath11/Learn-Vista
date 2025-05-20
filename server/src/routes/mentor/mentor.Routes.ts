@@ -25,6 +25,7 @@ router.post("/forget-password", (req, res) => mentorAuthController.forgetPasswor
 router.post("/reset-password", (req, res) => mentorAuthController.restartPassword(req, res));
 router.get("/courses", verifyMentor, mentorController.getCourses.bind(mentorController));
 router.patch("/course/status-change",verifyMentor, mentorController.statusChange.bind(mentorController));
-router.get("/live-session/start/:courseId",verifyMentor,mentorCourseController.startLiveController.bind(mentorCourseController))
+router.get("/live-session/start/:courseId", verifyMentor, mentorCourseController.startLiveController.bind(mentorCourseController));
+router.post("/change/password",verifyMentor,mentorProfileController.changePassword.bind(mentorProfileController))
 
 export default router;

@@ -10,6 +10,7 @@ import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMe
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import bcrypt from "bcrypt"
 @injectable()
 export class ProfileService implements IProfileService {
   constructor(
@@ -111,5 +112,26 @@ export class ProfileService implements IProfileService {
       username: updatedUsername,
       image: safeImageUrl,
     };
+  }
+  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+    const user = await this.userRepository.findById(userId);
+    console.log(userId, currentPassword, newPassword);
+    
+    if (!user) {
+      throwError("User not found", StatusCode.NOT_FOUND);
+    }
+    if (!newPassword.match(/[A-Z]/)) {
+      throwError("New password must contain at least one uppercase letter", StatusCode.BAD_REQUEST);
+    }
+    if (!newPassword.match(/[0-9]/)) {
+      throwError("New password must contain at least one number", StatusCode.BAD_REQUEST);
+    }
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+      throwError("Invalid current password", StatusCode.BAD_REQUEST);
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log(hashedPassword)
+    await this.userRepository.update(userId, { password: hashedPassword });
   }
 }

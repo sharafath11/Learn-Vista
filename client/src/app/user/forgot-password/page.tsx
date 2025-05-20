@@ -17,7 +17,7 @@ export default function ForgotPassword() {
   const formRef = useRef<HTMLFormElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Entrance animation
+
   useEffect(() => {
     setAnimateIn(true)
     if (inputRef.current) {

@@ -19,6 +19,7 @@ export const UserAPIMethods = {
   logout: () => post("/logout", {}),
   forgotPassword: (email: string) => post("/forgot-password", { email }),
   resetPassword: (token: string, password: string) => post("/reset-password", { token, password }),
+  changePassword:(password:string,newPassword:string)=>post("/change/password",{password,newPassword}),
   fetchAllCourse: (params: {
     page?: number;
     limit?: number;
@@ -84,6 +85,7 @@ export const MentorAPIMethods = {
   editProfile: (data: FormData) => post("/mentor/edit-profile", data),
   forgotPassword: (email: string) => post("/mentor/forget-password", { email }),
   resetPassword: (token: string, password: string) => post("/mentor/reset-password", { token, password }),
+  changePassword:(password:string,newPassword:string)=>post("/mentor/change/password",{password,newPassword}),
   getCourses: () => get("/mentor/courses"),
   courseStatusChange: (courseId: string, status: string, reson: string) => patch("/mentor/course/status-change", { courseId: courseId, status: status, courseRejectReson: reson }),
   startLiveSession:(courseId:string)=>get(`/mentor/live-session/start/${courseId}`)

@@ -98,4 +98,16 @@ export class ProfileController implements IProfileController {
       handleControllerError(res, error);
     }
   }
+  async changePassword(req: Request, res: Response): Promise<void> {
+   try {
+     const { password, newPassword } = req.body;
+     console.log(req.body)
+     const decoded = decodeToken(req.cookies.token);
+     if (!decodeToken) throwError("User not found", StatusCode.BAD_REQUEST);
+     await this.profileService.changePassword(decoded?.id as string, password, newPassword);
+     sendResponse(res,StatusCode.OK,"Succesfully change Password ",true)
+   } catch (error) {
+    handleControllerError(res,error)
+   }
+  }
 }

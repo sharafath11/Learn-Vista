@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils"; //Added
 
 type View = "profile" | "forgotPassword" | "resetSent";
 
@@ -37,6 +38,8 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
   const [currentView, setCurrentView] = useState<View>("profile");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+    const [expertise, setExpertise] = useState<string[]>(mentor?.expertise || []); // Added state for expertise
+  const [newExpertise, setNewExpertise] = useState(""); // Added state for new expertise input
 
   const resetState = useCallback(() => {
     setName(mentor?.username || "");
@@ -45,7 +48,9 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     setSelectedImage(null);
     setImagePreview(null);
     setIsLoading(false);
-  }, [mentor?.username, mentor?.bio]);
+        setExpertise(mentor?.expertise || []); // Reset expertise
+        setNewExpertise("");
+  }, [mentor?.username, mentor?.bio, mentor?.expertise]);
 
   useEffect(() => {
     if (isOpen) resetState();
@@ -63,6 +68,17 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     setSelectedImage(file);
     setImagePreview(URL.createObjectURL(file));
   }, []);
+
+    const handleAddExpertise = () => { //Added
+        if (newExpertise.trim() && !expertise.includes(newExpertise.trim())) {
+            setExpertise([...expertise, newExpertise.trim()]);
+            setNewExpertise("");
+        }
+    };
+
+    const handleRemoveExpertise = (expert: string) => {  //Added
+        setExpertise(expertise.filter(e => e !== expert));
+    };
 
   const handleForgotPassword = useCallback(async () => {
     if (!mentor?.email) return;
@@ -89,7 +105,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     const validationResult = validateMentorProfile({ 
       username: name, 
       bio, 
-      image: selectedImage 
+      image: selectedImage,
     });
     
     if (!validationResult) return;
@@ -99,6 +115,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
       const formData = new FormData();
       formData.append("username", name);
       formData.append("bio", bio);
+        formData.append("expertise", JSON.stringify(expertise)); // Send expertise as JSON string
       if (selectedImage) formData.append("image", selectedImage);
     
       const res = await MentorAPIMethods.editProfile(formData);
@@ -108,7 +125,8 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
           ...prev, 
           username: res.data.username, 
           bio: res.data.bio,
-          profilePicture: res.data.image 
+          profilePicture: res.data.image,
+                    expertise: res.data.expertise
         } : null);
         showSuccessToast(res.msg);
         onClose();
@@ -117,13 +135,13 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
       }
     setIsLoading(false);
     
-  }, [name, bio, selectedImage, mentor, setMentor, onClose]);
+  }, [name, bio, selectedImage, mentor, setMentor, onClose, expertise]);
 
   if (!isOpen || !mentor) return null;
 
   const views: Record<View, React.ReactNode> = {
     profile: (
-      <Card>
+      <Card className="max-h-[600px] overflow-y-auto"> {/* Added max-h and overflow-y */}
         <CardHeader className="flex flex-col items-center">
           <div className="relative group">
             <Avatar className="h-28 w-28 border-4 border-white">
@@ -189,8 +207,52 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
             />
           </div>
 
-          <Button
-            variant="link"
+            {/* Expertise Section */}
+            <div>
+                <h4 className="font-semibold text-gray-700 mb-2">Expertise</h4>
+                <div className="flex flex-wrap gap-2 mb-2">
+                    {expertise.map(exp => (
+                        <div
+                            key={exp}
+                            className={cn(
+                                "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium",
+                                "bg-indigo-100 text-indigo-800",
+                                "border border-indigo-300",
+                                "mr-2"
+                            )}
+                        >
+                            {exp}
+                            <button
+                                type="button"
+                                onClick={() => handleRemoveExpertise(exp)}
+                                className="inline-flex items-center justify-center w-4 h-4 ml-2 text-indigo-500 hover:text-indigo-700"
+                            >
+                                <X className="h-3 w-3" />
+                                <span className="sr-only">Remove</span>
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                <div className="flex flex-col sm:flex-row items-end gap-2">
+                    <Input
+                        value={newExpertise}
+                        onChange={(e) => setNewExpertise(e.target.value)}
+                        placeholder="Add expertise"
+                        className="flex-1"
+                    />
+                    <Button
+                        type="button"
+                        onClick={handleAddExpertise}
+                        disabled={!newExpertise.trim()}
+                        className="w-full sm:w-auto"
+                    >
+                        Add
+                    </Button>
+                </div>
+            </div>
+
+          <Button 
+            variant="link" 
             className="w-full text-red-600 hover:text-red-800 p-0 justify-start"
             onClick={() => setCurrentView("forgotPassword")}
           >
@@ -262,7 +324,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="relative w-full max-w-md"
+            className="relative w-full max-w-md max-h-[80vh] overflow-y-auto" // Added max-h and overflow-y to the modal container
           >
             <Button
               variant="ghost"
@@ -299,3 +361,4 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     </AnimatePresence>
   );
 }
+

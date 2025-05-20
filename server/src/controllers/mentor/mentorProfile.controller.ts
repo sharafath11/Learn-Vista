@@ -16,7 +16,7 @@ export class MentorProfileController implements IMentorProfileController {
 
   async editProfile(req: Request, res: Response): Promise<void> {
     try {
-      const { username, bio } = req.body;
+      const { username, bio,expertise } = req.body;
       const decoded = decodeToken(req.cookies.token);
 
       if (!decoded || decoded.role !== "mentor") {
@@ -33,6 +33,7 @@ export class MentorProfileController implements IMentorProfileController {
         username,
         bio,
         req.file?.buffer,
+        expertise,
         decoded.id as string
       );
 
@@ -41,4 +42,15 @@ export class MentorProfileController implements IMentorProfileController {
       handleControllerError(res, error);
     }
   }
+  async changePassword(req: Request, res: Response): Promise<void> {
+    try {
+     const { password, newPassword } = req.body;
+      const decoded = decodeToken(req.cookies.token);
+      if (!decodeToken) throwError("User not found", StatusCode.BAD_REQUEST);
+      await this.mentorProfileService.changePassword(decoded?.id as string, password, newPassword);
+      sendResponse(res,StatusCode.OK,"Succesfully change Password ",true)
+    } catch (error) {
+     handleControllerError(res,error)
+    }
+   }
 }

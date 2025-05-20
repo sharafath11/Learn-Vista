@@ -35,6 +35,8 @@ router.post("/apply-mentor",
 router.post('/edit-profile', authenticateToken, uploadImage.single('image'), profileController.editProfile.bind(profileController))
 router.get("/courses",authenticateToken, userCourseController.getAllCourse.bind(userCourseController));
 router.patch("/update-course", authenticateToken, userCourseController.updateUserCourse.bind(userCourseController));
-router.get("/start-live/vc/:courseId",authenticateToken,userLiveController.getRoomId.bind(userLiveController))
+router.get("/start-live/vc/:courseId", authenticateToken, userLiveController.getRoomId.bind(userLiveController));
+router.post("/change/password", authenticateToken, profileController.changePassword.bind(profileController));
+
 
 export default router;
