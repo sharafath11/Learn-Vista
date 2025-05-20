@@ -1,6 +1,7 @@
 "use client"
 
-import { MentorStream } from "./VideoCallInterface"
+import MentorStream from "./VideoCallInterface"
+
 
 
 

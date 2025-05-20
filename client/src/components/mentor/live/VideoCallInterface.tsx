@@ -1,541 +1,288 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Mic, MicOff, Video, VideoOff, PhoneOff, Monitor, MessageSquare } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { toast, ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import { Mic, MicOff, Video, VideoOff, Phone, Monitor, MessageSquare, Badge } from "lucide-react"
+
+import { toast } from "sonner"
 import io from "socket.io-client"
 import Peer from "simple-peer"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
 
-// Types
-interface Participant {
-  id: string
-  stream?: MediaStream
-}
-
-interface Comment {
-  text: string
-  timestamp: string
-  sender: string
-  isMentor: boolean
-}
-
-export function MentorStream({ roomId }: { roomId: string }) {
+export default function MentorStream({ roomId }: { roomId: string }) {
   const [isMuted, setIsMuted] = useState(false)
   const [isVideoOff, setIsVideoOff] = useState(false)
   const [isScreenSharing, setIsScreenSharing] = useState(false)
-  const [participants, setParticipants] = useState<Participant[]>([])
-  const [comments, setComments] = useState<Comment[]>([])
-  const [connectionStatus, setConnectionStatus] = useState("Initializing...")
+  const [participants, setParticipants] = useState<string[]>([]) // Store userId for display
+  const [comments, setComments] = useState<{text: string, sender: string}[]>([])
   const [newComment, setNewComment] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [debugMessages, setDebugMessages] = useState<string[]>([])
-  const [isDebugOpen, setIsDebugOpen] = useState(false)
-
   const socketRef = useRef<any>(null)
   const localVideoRef = useRef<HTMLVideoElement>(null)
-  const localStreamRef = useRef<MediaStream | null>(null)
-  const screenStreamRef = useRef<MediaStream | null>(null)
+  const localStreamRef = useRef<MediaStream | null>(null) // Mentor's camera/mic stream
+  const screenStreamRef = useRef<MediaStream | null>(null) // Mentor's screen share stream
+  // peersRef will store peer connections, indexed by the *other* peer's Socket ID
   const peersRef = useRef<Record<string, Peer.Instance>>({})
-  const commentsEndRef = useRef<HTMLDivElement>(null)
+  const userIdToSocketIdMap = useRef<Record<string, string>>({});
 
-  // Add debug message
-  const addDebugMessage = (message: string) => {
-    const timestampedMsg = `${new Date().toLocaleTimeString()}: ${message}`
-    setDebugMessages((prev) => [...prev.slice(-100), timestampedMsg])
-    console.log(timestampedMsg)
-  }
 
-  // Auto-scroll to latest comment
   useEffect(() => {
-    commentsEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [comments])
-
-  // Initialize media and socket connection
-  useEffect(() => {
-    const initializeMedia = async () => {
+    const init = async () => {
       try {
-        addDebugMessage("Initializing connection...")
-        setConnectionStatus("Accessing camera and microphone...")
-
-        // Get user media
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        })
-
-        addDebugMessage("Media access successful")
+        console.log("MentorStream: Requesting local media...")
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         localStreamRef.current = stream
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream
         }
 
-        // Connect to socket server
-        setConnectionStatus("Connecting to server...")
-        addDebugMessage("Creating Socket.IO connection")
-        const socket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER || "http://localhost:4000", {
-          reconnectionAttempts: 5,
-          reconnectionDelay: 1000,
-          transports: ["websocket", "polling"],
-        })
-
+        console.log("MentorStream: Connecting to socket server...")
+        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000")
         socketRef.current = socket
 
-        socket.on("connect", () => {
-          addDebugMessage(`Socket connected with ID: ${socket.id}`)
+        // *** CRITICAL CHANGE: Emit join-room AFTER 'connect' event ***
+        socket.on('connect', () => {
+          console.log(`MentorStream: Socket connected with ID: ${socket.id}`);
+          socket.emit("join-room", roomId, socket.id, "mentor") // Pass socket.id as clientProvidedId
+          console.log("MentorStream: Mentor joined room:", roomId, "with ID:", socket.id)
+        });
 
-          // Join room as mentor
-          socket.emit("join-room", roomId, "mentor")
-          addDebugMessage(`Emitted join-room for room ${roomId}`)
+        // Event for a user joining the room (this is for *other* users joining)
+        socket.on("user-joined", (socketId: string, userId: string) => {
+          console.log(`MentorStream: User (socket: ${socketId}, userId: ${userId}) joined.`);
+          userIdToSocketIdMap.current[userId] = socketId; // Store mapping for display
+          setParticipants(prev => {
+            if (!prev.includes(userId)) {
+              return [...prev, userId];
+            }
+            return prev;
+          });
+          toast.success(`Viewer ${userId.slice(0, 5)} joined`);
 
-          setConnectionStatus("Room created. Waiting for participants...")
-          toast.success("Room created successfully!")
-        })
-
-        // Handle user joining
-        socket.on("user-joined", (userId: string) => {
-          addDebugMessage(`User joined: ${userId}`)
-
-          if (!localStreamRef.current && !screenStreamRef.current) {
-            addDebugMessage("No media stream available for sharing")
-            toast.error("No media stream available for sharing")
-            return
-          }
-
-          // Create a new peer connection
-          addDebugMessage(`Creating new peer connection for user ${userId}`)
+          // For each new user, the mentor initiates a Peer connection
           const peer = new Peer({
-            initiator: true,
-            trickle: true,
-            stream: isScreenSharing ? screenStreamRef.current! : localStreamRef.current!,
-            config: {
-              iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:global.stun.twilio.com:3478" }],
-            },
-          })
+            initiator: true, // Mentor initiates the connection
+            trickle: false,
+            stream: isScreenSharing ? screenStreamRef.current! : localStreamRef.current!
+          });
 
-          // Handle peer signaling
-          peer.on("signal", (signal) => {
-            addDebugMessage(`Generated ${signal.type || "candidate"} for user ${userId}`)
-            socketRef.current.emit("rtc-offer", userId, signal)
-          })
+          peer.on("signal", signal => {
+            console.log(`MentorStream: Sending offer signal to user ${userId} (socket: ${socketId})`);
+            socket.emit("rtc-offer", socketId, signal); // Send offer to the specific user's socket
+          });
 
-          // Handle errors
-          peer.on("error", (err) => {
-            addDebugMessage(`Peer error for ${userId}: ${err.message}`)
-            toast.error(`Connection issue with user ${userId.slice(0, 5)}`)
-            removePeer(userId)
-          })
+          peer.on("connect", () => {
+            console.log(`MentorStream: Peer connection established with user (socket: ${socketId})`);
+          });
 
-          // Store the peer
-          peersRef.current[userId] = peer
-          setParticipants((prev) => [...prev, { id: userId }])
+          peer.on("error", err => {
+            console.error(`MentorStream: Peer error for user ${userId} (socket: ${socketId}):`, err);
+            removePeer(socketId);
+            toast.error(`Viewer ${userId.slice(0,5)} connection error.`);
+          });
 
-          toast.info(`User ${userId.slice(0, 5)} joined the session`)
-        })
+          peer.on('close', () => {
+              console.log(`MentorStream: Peer connection with user (socket: ${socketId}) closed.`);
+              removePeer(socketId);
+              toast.info(`Viewer ${userId.slice(0,5)} disconnected.`);
+          });
 
-        // Handle RTC answers
-        socket.on("rtc-answer", (userId: string, answer: any) => {
-          addDebugMessage(`Received answer from user ${userId}`)
-          if (peersRef.current[userId]) {
-            try {
-              peersRef.current[userId].signal(answer)
-            } catch (err) {
-              addDebugMessage(
-                `Error processing answer from ${userId}: ${err instanceof Error ? err.message : String(err)}`,
-              )
-              toast.error(`Failed to connect with user ${userId.slice(0, 5)}`)
-            }
+          peersRef.current[socketId] = peer; // Store peer by their socket ID
+        });
+
+        socket.on("rtc-answer", (fromSocketId: string, answer: any) => {
+          console.log(`MentorStream: Received answer from user (socket: ${fromSocketId})`);
+          if (peersRef.current[fromSocketId]) {
+            peersRef.current[fromSocketId].signal(answer);
           }
-        })
+        });
 
-        // Handle ICE candidates
-        socket.on("ice-candidate", (userId: string, candidate: any) => {
-          addDebugMessage(`Received ICE candidate from user ${userId}`)
-          if (peersRef.current[userId]) {
-            try {
-              peersRef.current[userId].signal(candidate)
-            } catch (err) {
-              addDebugMessage(
-                `Error processing ICE candidate from ${userId}: ${err instanceof Error ? err.message : String(err)}`,
-              )
-            }
+        socket.on("ice-candidate", (fromSocketId: string, candidate: any) => {
+          console.log(`MentorStream: Received ICE candidate from ${fromSocketId}`);
+          if (peersRef.current[fromSocketId]) {
+            peersRef.current[fromSocketId].signal(candidate);
           }
-        })
+        });
 
-        // Handle user leaving
-        socket.on("user-left", (userId: string) => {
-          addDebugMessage(`User left: ${userId}`)
-          toast.warning(`User ${userId.slice(0, 5)} left the session`)
-          removePeer(userId)
-        })
+        socket.on("user-left", (socketId: string) => {
+          console.log(`MentorStream: User (socket: ${socketId}) left.`);
+          const leavingUserId = Object.keys(userIdToSocketIdMap.current).find(key => userIdToSocketIdMap.current[key] === socketId);
+          if (leavingUserId) {
+            setParticipants(prev => prev.filter(id => id !== leavingUserId));
+            delete userIdToSocketIdMap.current[leavingUserId];
+          }
+          removePeer(socketId);
+        });
 
-        // Handle new comments
-        socket.on("receive-comment", (comment: string, sender: string) => {
-          addDebugMessage(`Received comment from ${sender}: ${comment}`)
-          setComments((prev) => [
-            ...prev,
-            {
-              text: comment,
-              timestamp: new Date().toLocaleTimeString(),
-              sender: sender,
-              isMentor: false,
-            },
-          ])
-        })
+        socket.on("receive-comment", (message: string, sender: string) => {
+          console.log("MentorStream: Received comment:", message, "from", sender);
+          setComments(prev => [...prev, { text: message, sender }]);
+        });
 
-        // Handle connection errors
-        socket.on("connect_error", (err: Error) => {
-          addDebugMessage(`Socket connection error: ${err.message}`)
-          toast.error("Failed to connect to server. Retrying...")
-          setConnectionStatus("Connection failed")
-        })
+        // Handle socket disconnection (e.g., server restart or network issue)
+        socket.on('disconnect', (reason: any) => {
+          console.warn(`MentorStream: Socket disconnected: ${reason}`);
+          toast.error("Disconnected from server. Please refresh.");
+          // You might want to try to reconnect or destroy peers here
+        });
 
-        // Handle reconnection
-        socket.on("reconnect", (attemptNumber: number) => {
-          addDebugMessage(`Reconnected after ${attemptNumber} attempts`)
-          toast.success(`Reconnected to server after ${attemptNumber} attempts`)
-          setConnectionStatus("Connected")
-        })
-
-        // Handle disconnect
-        socket.on("disconnect", (reason: string) => {
-          addDebugMessage(`Socket disconnected: ${reason}`)
-          setConnectionStatus("Disconnected from server")
-        })
       } catch (err) {
-        addDebugMessage(`Media access error: ${err instanceof Error ? err.message : String(err)}`)
-        console.error("Media access error:", err)
-        toast.error("Failed to access camera or microphone. Please check permissions.")
-        setConnectionStatus("Media access failed")
+        console.error("MentorStream: Error during initialization:", err);
+        toast.error("Failed to initialize stream");
       }
-    }
+    };
 
-    initializeMedia()
+    init();
 
-    // Cleanup on unmount
     return () => {
-      endCall()
-    }
-  }, [roomId])
+      console.log("MentorStream: Cleaning up...");
+      // Ensure socket is disconnected properly, especially if init() partially ran
+      if (socketRef.current) {
+        socketRef.current.off('connect'); // Remove listener to prevent re-emission on quick re-mount
+        socketRef.current.disconnect();
+      }
+      localStreamRef.current?.getTracks().forEach(track => track.stop());
+      screenStreamRef.current?.getTracks().forEach(track => track.stop());
+      Object.values(peersRef.current).forEach(peer => peer.destroy());
+      peersRef.current = {};
+      userIdToSocketIdMap.current = {};
+    };
+  }, [roomId]);
 
-  // Remove peer connection
-  const removePeer = (userId: string) => {
-    addDebugMessage(`Removing peer for user ${userId}`)
-    if (peersRef.current[userId]) {
-      peersRef.current[userId].destroy()
-      delete peersRef.current[userId]
-    }
-    setParticipants((prev) => prev.filter((p) => p.id !== userId))
-  }
-
-  // Toggle microphone
-  const toggleMute = () => {
-    if (localStreamRef.current) {
-      localStreamRef.current.getAudioTracks().forEach((track) => {
-        track.enabled = !track.enabled
-      })
-      setIsMuted(!isMuted)
-      addDebugMessage(isMuted ? "Microphone unmuted" : "Microphone muted")
-      toast.info(isMuted ? "Microphone unmuted" : "Microphone muted")
-    } else {
-      addDebugMessage("No audio stream available")
-      toast.error("No audio stream available")
-    }
-  }
-
-  // Toggle video
-  const toggleVideo = () => {
-    if (localStreamRef.current) {
-      localStreamRef.current.getVideoTracks().forEach((track) => {
-        track.enabled = !track.enabled
-      })
-      setIsVideoOff(!isVideoOff)
-      addDebugMessage(isVideoOff ? "Camera enabled" : "Camera disabled")
-      toast.info(isVideoOff ? "Camera enabled" : "Camera disabled")
-    } else {
-      addDebugMessage("No video stream available")
-      toast.error("No video stream available")
-    }
-  }
-
-  // Toggle screen sharing
   const toggleScreenShare = async () => {
-    if (isLoading) return
-    setIsLoading(true)
-
     try {
       if (isScreenSharing) {
-        addDebugMessage("Stopping screen sharing")
-        // Stop screen sharing
-        screenStreamRef.current?.getTracks().forEach((track) => track.stop())
-        screenStreamRef.current = null
+        console.log("MentorStream: Stopping screen share");
+        screenStreamRef.current?.getTracks().forEach(track => track.stop());
+        screenStreamRef.current = null;
 
-        // Replace tracks in all peer connections
-        if (localStreamRef.current) {
-          const videoTrack = localStreamRef.current.getVideoTracks()[0]
-          if (videoTrack) {
-            addDebugMessage("Replacing screen share track with camera track for all peers")
-            Object.entries(peersRef.current).forEach(([userId, peer]) => {
-              try {
-                peer.replaceTrack(peer.streams[0].getVideoTracks()[0], videoTrack, peer.streams[0])
-                addDebugMessage(`Successfully replaced track for user ${userId}`)
-              } catch (err) {
-                addDebugMessage(
-                  `Failed to replace track for user ${userId}: ${err instanceof Error ? err.message : String(err)}`,
-                )
-              }
-            })
-          }
-
-          // Update local video
-          if (localVideoRef.current) {
-            localVideoRef.current.srcObject = localStreamRef.current
-          }
-        }
-
-        setIsScreenSharing(false)
-        toast.success("Screen sharing stopped")
-      } else {
-        addDebugMessage("Starting screen sharing")
-        // Start screen sharing
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({
-          video: true,
-          audio: true,
-        })
-        screenStreamRef.current = screenStream
-
-        // Replace tracks in all peer connections
-        const videoTrack = screenStream.getVideoTracks()[0]
-        if (videoTrack) {
-          addDebugMessage("Replacing camera track with screen share track for all peers")
-          Object.entries(peersRef.current).forEach(([userId, peer]) => {
-            try {
-              peer.replaceTrack(peer.streams[0].getVideoTracks()[0], videoTrack, peer.streams[0])
-              addDebugMessage(`Successfully replaced track for user ${userId}`)
-            } catch (err) {
-              addDebugMessage(
-                `Failed to replace track for user ${userId}: ${err instanceof Error ? err.message : String(err)}`,
-              )
+        Object.values(peersRef.current).forEach(peer => {
+            peer.streams.forEach(s => peer.removeStream(s)); // Remove all current streams
+            if (localStreamRef.current) {
+                peer.addStream(localStreamRef.current); // Add the local camera/mic stream
             }
-          })
+        });
+
+        if (localVideoRef.current && localStreamRef.current) {
+          localVideoRef.current.srcObject = localStreamRef.current;
         }
 
-        // Create a combined stream for local preview
-        const combinedStream = new MediaStream()
-        screenStream.getVideoTracks().forEach((track) => combinedStream.addTrack(track))
-        localStreamRef.current?.getAudioTracks().forEach((track) => combinedStream.addTrack(track))
+        setIsScreenSharing(false);
+        toast.success("Screen sharing stopped");
+      } else {
+        console.log("MentorStream: Starting screen share");
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        screenStreamRef.current = screenStream;
 
-        // Update local video
+        const combinedStreamForPeers = new MediaStream();
+        screenStream.getVideoTracks().forEach(track => combinedStreamForPeers.addTrack(track));
+        localStreamRef.current?.getAudioTracks().forEach(track => combinedStreamForPeers.addTrack(track));
+
+        Object.values(peersRef.current).forEach(peer => {
+            peer.streams.forEach(s => peer.removeStream(s)); // Remove all current streams
+            peer.addStream(combinedStreamForPeers); // Add the combined screen+audio stream
+        });
+
         if (localVideoRef.current) {
-          localVideoRef.current.srcObject = combinedStream
+          localVideoRef.current.srcObject = combinedStreamForPeers;
         }
 
-        // Handle screen sharing ended by user
         screenStream.getVideoTracks()[0].onended = () => {
-          addDebugMessage("Screen sharing ended by system event")
-          toggleScreenShare()
-        }
+          console.log("MentorStream: Screen share ended by user interaction.");
+          if (isScreenSharing) {
+            toggleScreenShare();
+          }
+        };
 
-        setIsScreenSharing(true)
-        toast.success("Screen sharing started")
+        setIsScreenSharing(true);
+        toast.success("Screen sharing started");
       }
     } catch (err) {
-      addDebugMessage(`Screen share error: ${err instanceof Error ? err.message : String(err)}`)
-      console.error("Screen share error:", err)
-      toast.error("Failed to share screen. Please try again.")
-    } finally {
-      setIsLoading(false)
+      console.error("MentorStream: Error during screen sharing:", err);
+      toast.error("Failed to toggle screen share");
     }
-  }
+  };
 
-  // End call
-  const endCall = () => {
-    addDebugMessage("Ending call and cleaning up")
-
-    // Emit leave room event
-    if (socketRef.current) {
-      socketRef.current.emit("leave-room", roomId)
-      socketRef.current.disconnect()
-    }
-
-    // Stop all media tracks
-    localStreamRef.current?.getTracks().forEach((track) => track.stop())
-    screenStreamRef.current?.getTracks().forEach((track) => track.stop())
-
-    // Destroy all peer connections
-    Object.values(peersRef.current).forEach((peer) => peer.destroy())
-    peersRef.current = {}
-
-    toast.info("Session ended")
-
-    // Redirect to home page
-    window.location.href = "/mentor/upcomming"
-  }
-
-  // Submit comment
   const submitComment = () => {
-    if (!newComment.trim()) {
-      toast.error("Please enter a message")
-      return
+    if (newComment.trim()) {
+      console.log("MentorStream: Sending comment:", newComment);
+      socketRef.current?.emit("send-comment", roomId, newComment, "Mentor");
+      setNewComment("");
     }
+  };
 
-    addDebugMessage(`Sending comment: ${newComment}`)
-    socketRef.current?.emit("send-comment", roomId, newComment, "Mentor")
-
-    // Add comment to local state
-    setComments((prev) => [
-      ...prev,
-      {
-        text: newComment,
-        timestamp: new Date().toLocaleTimeString(),
-        sender: "Mentor",
-        isMentor: true,
-      },
-    ])
-
-    setNewComment("")
-  }
+  const removePeer = (socketId: string) => {
+    if (peersRef.current[socketId]) {
+      peersRef.current[socketId].destroy();
+      delete peersRef.current[socketId];
+      console.log(`MentorStream: Peer connection with ${socketId} destroyed.`);
+    }
+  };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen p-4 gap-4 bg-gray-100 dark:bg-gray-900">
-      <ToastContainer position="top-right" autoClose={3000} />
-      <div className="flex-1">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Mentor Room: {roomId}</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="text-sm text-gray-600 dark:text-gray-300">{connectionStatus}</div>
-              <Badge variant="outline">{participants.length} Viewers</Badge>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex gap-2 mb-4">
-          <Button
-            variant={isMuted ? "destructive" : "outline"}
-            onClick={toggleMute}
-            size="icon"
-            disabled={isLoading || !localStreamRef.current}
-            title={isMuted ? "Unmute" : "Mute"}
-          >
-            {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-          </Button>
-          <Button
-            variant={isVideoOff ? "destructive" : "outline"}
-            onClick={toggleVideo}
-            size="icon"
-            disabled={isLoading || !localStreamRef.current}
-            title={isVideoOff ? "Enable Camera" : "Disable Camera"}
-          >
-            {isVideoOff ? <VideoOff className="h-5 w-5" /> : <Video className="h-5 w-5" />}
-          </Button>
-          <Button
-            variant={isScreenSharing ? "destructive" : "outline"}
-            onClick={toggleScreenShare}
-            size="icon"
-            disabled={isLoading}
-            title={isScreenSharing ? "Stop Screen Share" : "Start Screen Share"}
-          >
-            <Monitor className="h-5 w-5" />
-          </Button>
-          <Button variant="destructive" onClick={endCall} size="icon" title="End Session">
-            <PhoneOff className="h-5 w-5" />
-          </Button>
-        </div>
-
-        <div className="bg-black rounded-lg overflow-hidden aspect-video mb-4 relative">
+    <div className="flex flex-col lg:flex-row min-h-screen p-4 gap-4">
+      <div className="flex-1 flex flex-col gap-4">
+        <div className="bg-black rounded-lg overflow-hidden aspect-video">
           <video ref={localVideoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
-          <div className="absolute bottom-2 left-2 bg-black/50 px-2 py-1 rounded text-white text-sm">
-            You (Mentor) {isScreenSharing && "- Screen Sharing"}
-          </div>
         </div>
 
-        {participants.length > 0 ? (
-          <Card className="p-4">
-            <h2 className="text-lg font-semibold mb-2">Connected Viewers: {participants.length}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {participants.map((participant) => (
-                <div key={participant.id} className="bg-gray-200 dark:bg-gray-700 p-2 rounded-md text-center">
-                  Viewer {participant.id.slice(0, 5)}
-                </div>
-              ))}
-            </div>
-          </Card>
-        ) : (
-          <Card className="p-4 text-center">
-            <p className="text-gray-500">No viewers connected yet. Share your room ID to get started.</p>
-            <p className="font-mono mt-2 select-all bg-gray-100 dark:bg-gray-800 p-2 rounded">{roomId}</p>
-          </Card>
-        )}
+        <div className="flex gap-2">
+          <Button onClick={() => {
+            if (localStreamRef.current) {
+              const audioTrack = localStreamRef.current.getAudioTracks()[0];
+              if (audioTrack) {
+                audioTrack.enabled = !isMuted;
+                setIsMuted(!isMuted);
+                console.log("MentorStream: Microphone toggled, muted:", !isMuted);
+              }
+            }
+          }}>{isMuted ? <MicOff size={18} /> : <Mic size={18} />}</Button>
 
-        {/* Debug Console */}
-        <Card className="mt-4 overflow-hidden">
-          <div className="flex justify-between items-center p-3 bg-gray-800 text-white">
-            <h3 className="font-mono font-bold">Debug Console</h3>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsDebugOpen(!isDebugOpen)}
-              className="text-white border-white/50"
-            >
-              {isDebugOpen ? "Hide" : "Show"}
-            </Button>
+          <Button onClick={() => {
+            if (localStreamRef.current) {
+              const videoTrack = localStreamRef.current.getVideoTracks()[0];
+              if (videoTrack) {
+                videoTrack.enabled = !isVideoOff;
+                setIsVideoOff(!isVideoOff);
+                console.log("MentorStream: Video toggled, off:", !isVideoOff);
+              }
+            }
+          }}>{isVideoOff ? <VideoOff size={18} /> : <Video size={18} />}</Button>
+
+          <Button onClick={toggleScreenShare}>{isScreenSharing ? <Monitor size={18} className="text-blue-500" /> : <Monitor size={18} />}</Button>
+
+          <Button variant="destructive" onClick={() => {
+            console.log("MentorStream: Disconnecting and redirecting");
+            socketRef.current?.disconnect();
+            window.location.href = "/"
+          }}><Phone size={18} /></Button>
+        </div>
+
+        <Card className="p-4">
+          <h3 className="font-medium mb-2">Viewers ({participants.length})</h3>
+          <div className="flex flex-wrap gap-2">
+            {participants.map(id => (
+              <Badge key={id}>{id.slice(0, 5)}</Badge>
+            ))}
           </div>
-          {isDebugOpen && (
-            <div className="font-mono text-xs max-h-60 overflow-y-auto space-y-1 p-3 bg-gray-900 text-gray-200">
-              {debugMessages.length > 0 ? (
-                debugMessages.map((msg, index) => (
-                  <div key={index} className="border-b border-gray-700 pb-1">
-                    {msg}
-                  </div>
-                ))
-              ) : (
-                <div className="text-gray-400">No debug messages yet</div>
-              )}
-            </div>
-          )}
         </Card>
       </div>
 
-      <div className="w-full lg:w-1/3 bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden flex flex-col">
-        <div className="p-4 border-b flex items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-          <h2 className="font-semibold text-gray-800 dark:text-white">Session Chat</h2>
+      <div className="w-full lg:w-80 flex flex-col border rounded-lg">
+        <div className="p-3 border-b"><h3 className="font-medium">Chat</h3></div>
+        <div className="flex-1 overflow-y-auto p-3 space-y-2">
+          {comments.map((comment, i) => (
+            <div key={i} className={`p-2 rounded ${comment.sender === "Mentor" ? "bg-blue-100" : "bg-gray-100"}`}>
+              <p className="font-medium text-sm">{comment.sender}</p>
+              <p>{comment.text}</p>
+            </div>
+          ))}
         </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {comments.length > 0 ? (
-            comments.map((item, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded ${
-                  item.isMentor ? "bg-blue-100 dark:bg-blue-900/30 ml-6" : "bg-gray-100 dark:bg-gray-700 mr-6"
-                }`}
-              >
-                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-                  <span className="font-semibold">{item.sender}</span>
-                  <span>{item.timestamp}</span>
-                </div>
-                <p className="text-gray-800 dark:text-white">{item.text}</p>
-              </div>
-            ))
-          ) : (
-            <div className="text-center text-gray-500 dark:text-gray-400 py-8">No messages yet</div>
-          )}
-          <div ref={commentsEndRef} />
-        </div>
-
-        <div className="p-4 border-t">
+        <div className="p-3 border-t">
           <Textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Type your message..."
-            className="mb-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
-            disabled={isLoading || !socketRef.current?.connected}
+            placeholder="Type a message..."
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault()
@@ -543,9 +290,7 @@ export function MentorStream({ roomId }: { roomId: string }) {
               }
             }}
           />
-          <Button onClick={submitComment} className="w-full" disabled={isLoading || !socketRef.current?.connected}>
-            Send
-          </Button>
+          <Button onClick={submitComment} className="w-full mt-2">Send</Button>
         </div>
       </div>
     </div>

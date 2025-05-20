@@ -1,13 +1,17 @@
+// socketHandler.ts
 import { Server, Socket } from "socket.io";
 
 interface Participant {
-  id: string;
+  socketId: string; // The unique ID of the socket connection
   role: 'mentor' | 'user';
+  // You can add a display name or database ID here if needed later:
+  // displayName?: string;
+  // dbUserId?: string;
 }
 
 interface Room {
-  mentorId: string;
-  participants: Record<string, Participant>;
+  mentorSocketId: string | null; // Stores the socket.id of the mentor
+  participants: Record<string, Participant>; // Key by socketId for easier lookup
 }
 
 const rooms: Record<string, Room> = {};
@@ -16,94 +20,120 @@ export function socketHandler(io: Server) {
   io.on('connection', (socket: Socket) => {
     console.log(`New connection: ${socket.id}`);
 
-    // Store the current room for this socket
-    let currentRoomId: string | null = null;
+    socket.on('join-room', (roomId: string, clientProvidedId: string, role: 'mentor' | 'user') => {
+      const currentSocketId = socket.id;
 
-    // Join room handler
-    socket.on('join-room', (roomId: string, userId: string, role: 'mentor' | 'user') => {
-      console.log(`${role} ${userId} joined room ${roomId} with socket ${socket.id}`);
+      // --- CRITICAL: Clean up any previous room the socket was in ---
+      for (const existingRoomId in rooms) {
+        if (rooms[existingRoomId].participants[currentSocketId]) {
+          console.log(`Socket ${currentSocketId} leaving previous room ${existingRoomId}`);
+          socket.leave(existingRoomId);
+          delete rooms[existingRoomId].participants[currentSocketId];
 
-      // Leave previous room if any
-      if (currentRoomId && rooms[currentRoomId]) {
-        socket.leave(currentRoomId);
-        delete rooms[currentRoomId].participants[socket.id];
-        io.to(currentRoomId).emit('user-left', socket.id);
-
-        if (rooms[currentRoomId].mentorId === socket.id) {
-          rooms[currentRoomId].mentorId = '';
-          io.to(currentRoomId).emit('mentor-disconnected');
-        }
-
-        // Delete room if empty
-        if (Object.keys(rooms[currentRoomId].participants).length === 0) {
-          delete rooms[currentRoomId];
+          if (rooms[existingRoomId].mentorSocketId === currentSocketId) {
+            rooms[existingRoomId].mentorSocketId = null;
+            io.to(existingRoomId).emit('mentor-disconnected');
+            console.log(`Mentor ${currentSocketId} disconnected from room ${existingRoomId}`);
+          }
+          io.to(existingRoomId).emit('user-left', currentSocketId);
+          
+          if (Object.keys(rooms[existingRoomId].participants).length === 0) {
+            console.log(`Room ${existingRoomId} is empty, deleting.`);
+            delete rooms[existingRoomId];
+          }
+          break;
         }
       }
+      // --- End Cleanup ---
 
-      // Join the new room
+      // Check if room exists and if a mentor is already present
+      if (role === 'mentor' && rooms[roomId] && rooms[roomId].mentorSocketId) {
+        console.warn(`Mentor ${currentSocketId} tried to join room ${roomId}, but a mentor (${rooms[roomId].mentorSocketId}) is already present.`);
+        socket.emit('mentor-already-present', rooms[roomId].mentorSocketId); // Notify the joining mentor
+        socket.disconnect(true); // Disconnect the unauthorized mentor
+        return; // Stop processing this join request
+      }
+
       socket.join(roomId);
-      currentRoomId = roomId;
+      console.log(`Socket ${currentSocketId} (role: ${role}, clientProvidedId: ${clientProvidedId}) joined room: ${roomId}`);
 
-      // Create room if doesn't exist
       if (!rooms[roomId]) {
         rooms[roomId] = {
-          mentorId: role === 'mentor' ? socket.id : '',
+          mentorSocketId: null,
           participants: {},
         };
+        console.log(`Room ${roomId} created.`);
       }
 
-      // Update mentor if needed
+      rooms[roomId].participants[currentSocketId] = { socketId: currentSocketId, role };
+      console.log(`Current participants in room ${roomId}:`, Object.keys(rooms[roomId].participants).map(id => rooms[roomId].participants[id].role === 'mentor' ? `${id} (Mentor)` : `${id} (User)`));
+
       if (role === 'mentor') {
-        rooms[roomId].mentorId = socket.id;
-        io.to(roomId).emit('mentor-available', socket.id);
+        rooms[roomId].mentorSocketId = currentSocketId;
+        io.to(roomId).emit('mentor-available', currentSocketId);
+        console.log(`Mentor ${currentSocketId} is now available in room ${roomId}`);
+      } else {
+        if (rooms[roomId].mentorSocketId) {
+          io.to(rooms[roomId].mentorSocketId!).emit('user-joined', currentSocketId, currentSocketId);
+          console.log(`Notified mentor ${rooms[roomId].mentorSocketId} about new user ${currentSocketId}`);
+        } else {
+            console.log(`User ${currentSocketId} joined room ${roomId} but no mentor is currently available.`);
+        }
       }
-
-      // Add to participants
-      rooms[roomId].participants[socket.id] = { id: userId, role };
-
-      // Send current room state to the user
-      socket.emit('room-info', {
-        mentorId: rooms[roomId].mentorId,
-        participants: rooms[roomId].participants,
-      });
-
-      // Notify others
-      socket.to(roomId).emit('user-joined', socket.id, role);
     });
 
     // WebRTC Signaling
     socket.on('rtc-offer', (targetSocketId: string, offer: any) => {
+      console.log(`Relaying RTC offer from ${socket.id} to ${targetSocketId}`);
       io.to(targetSocketId).emit('rtc-offer', socket.id, offer);
     });
 
     socket.on('rtc-answer', (targetSocketId: string, answer: any) => {
+      console.log(`Relaying RTC answer from ${socket.id} to ${targetSocketId}`);
       io.to(targetSocketId).emit('rtc-answer', socket.id, answer);
     });
 
     socket.on('ice-candidate', (targetSocketId: string, candidate: any) => {
+      console.log(`Relaying ICE candidate from ${socket.id} to ${targetSocketId}`);
+      if (socket.id === targetSocketId) { // Prevent self-signaling if somehow target is self
+        console.warn(`ICE candidate from ${socket.id} targeting self. Skipping.`);
+        return;
+      }
       io.to(targetSocketId).emit('ice-candidate', socket.id, candidate);
     });
 
-    // Chat messages
-    socket.on("send-comment", (roomId: string, message: string) => {
-      socket.to(roomId).emit("receive-comment", message);
+    // Chat
+    socket.on('send-comment', (roomId: string, message: string, sender: string) => {
+      console.log(`Received comment in room ${roomId} from ${sender} (socket: ${socket.id}): "${message}"`);
+      // Use io.to(roomId).emit to send to everyone in the room, including the sender
+      io.to(roomId).emit('receive-comment', message, sender);
     });
 
-    // Disconnect handling
+    // Cleanup on disconnect
     socket.on('disconnect', () => {
-      if (currentRoomId && rooms[currentRoomId]) {
-        const wasMentor = rooms[currentRoomId].mentorId === socket.id;
+      console.log(`Socket disconnected: ${socket.id}`);
+      for (const roomId in rooms) {
+        // Find if this socket.id was a participant in any room
+        if (rooms[roomId].participants[socket.id]) {
+          const disconnectedParticipant = rooms[roomId].participants[socket.id];
+          const wasMentor = rooms[roomId].mentorSocketId === socket.id;
 
-        delete rooms[currentRoomId].participants[socket.id];
-        io.to(currentRoomId).emit('user-left', socket.id);
+          delete rooms[roomId].participants[socket.id];
+          console.log(`Participant ${socket.id} (role: ${disconnectedParticipant.role}) left room ${roomId}.`);
+          io.to(roomId).emit('user-left', socket.id); // Notify everyone in the room
 
-        if (wasMentor) {
-          rooms[currentRoomId].mentorId = '';
-          io.to(currentRoomId).emit('mentor-disconnected');
-        }
+          if (wasMentor) {
+            rooms[roomId].mentorSocketId = null; // Clear mentor ID
+            console.log(`Mentor (socket ${socket.id}) disconnected from room ${roomId}.`);
+            io.to(roomId).emit('mentor-disconnected'); // Notify users that mentor disconnected
+          }
 
-        if (Object.keys(rooms[currentRoomId].participants).length === 0) {
-          delete rooms[currentRoomId];
+          // If no participants left, clean up the room
+          if (Object.keys(rooms[roomId].participants).length === 0) {
+            console.log(`Room ${roomId} is empty, deleting.`);
+            delete rooms[roomId];
+          }
+          break; // Stop iterating once the socket's room is found and processed
         }
       }
     });

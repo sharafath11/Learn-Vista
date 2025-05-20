@@ -1,6 +1,6 @@
 "use client";
 import { MobileView } from "@/src/components/mentor/live/MobailVC";
-import {MentorStream} from "@/src/components/mentor/live/VideoCallInterface";
+import MentorStream from "@/src/components/mentor/live/VideoCallInterface";
 
 import { useParams } from "next/navigation";
 

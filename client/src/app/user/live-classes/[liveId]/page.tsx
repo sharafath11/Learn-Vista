@@ -1,4 +1,4 @@
-import { UserLiveSession } from "@/src/components/user/live/live-session";
+import UserLiveSession from "@/src/components/user/live/live-session";
 
 export default async function LiveSessionPage({ params }: { params: { liveId: string } }) {
   return (
