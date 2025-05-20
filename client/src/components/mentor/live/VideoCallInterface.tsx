@@ -14,14 +14,13 @@ export default function MentorStream({ roomId }: { roomId: string }) {
   const [isMuted, setIsMuted] = useState(false)
   const [isVideoOff, setIsVideoOff] = useState(false)
   const [isScreenSharing, setIsScreenSharing] = useState(false)
-  const [participants, setParticipants] = useState<string[]>([]) // Store userId for display
+  const [participants, setParticipants] = useState<string[]>([]) 
   const [comments, setComments] = useState<{text: string, sender: string}[]>([])
   const [newComment, setNewComment] = useState("")
   const socketRef = useRef<any>(null)
   const localVideoRef = useRef<HTMLVideoElement>(null)
-  const localStreamRef = useRef<MediaStream | null>(null) // Mentor's camera/mic stream
-  const screenStreamRef = useRef<MediaStream | null>(null) // Mentor's screen share stream
-  // peersRef will store peer connections, indexed by the *other* peer's Socket ID
+  const localStreamRef = useRef<MediaStream | null>(null) 
+  const screenStreamRef = useRef<MediaStream | null>(null) 
   const peersRef = useRef<Record<string, Peer.Instance>>({})
   const userIdToSocketIdMap = useRef<Record<string, string>>({});
 
@@ -40,18 +39,14 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         console.log("MentorStream: Connecting to socket server...")
         const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000")
         socketRef.current = socket
-
-        // Emit join-room AFTER 'connect' event
         socket.on('connect', () => {
           console.log(`MentorStream: Socket connected with ID: ${socket.id}`);
-          socket.emit("join-room", roomId, socket.id, "mentor") // Pass socket.id as clientProvidedId
+          socket.emit("join-room", roomId, socket.id, "mentor") 
           console.log("MentorStream: Mentor joined room:", roomId, "with ID:", socket.id)
         });
-
-        // Event for a user joining the room (this is for *other* users joining)
         socket.on("user-joined", (socketId: string, userId: string) => {
           console.log(`MentorStream: User (socket: ${socketId}, userId: ${userId}) joined.`);
-          userIdToSocketIdMap.current[userId] = socketId; // Store mapping for display
+          userIdToSocketIdMap.current[userId] = socketId; 
           setParticipants(prev => {
             if (!prev.includes(userId)) {
               return [...prev, userId];
@@ -59,25 +54,22 @@ export default function MentorStream({ roomId }: { roomId: string }) {
             return prev;
           });
           toast.success(`Viewer ${userId.slice(0, 5)} joined`);
-
-          // For each new user, the mentor initiates a Peer connection
+          const streamToSend = isScreenSharing && screenStreamRef.current ? screenStreamRef.current : localStreamRef.current;
           const peer = new Peer({
-            initiator: true, // Mentor initiates the connection
+            initiator: true,
             trickle: false,
-            stream: isScreenSharing ? screenStreamRef.current! : localStreamRef.current!,
-            // CORRECT: Pass iceServers within the 'config' object
+            stream: streamToSend!, 
             config: {
               iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
                 { urls: 'stun:stun1.l.google.com:19302' },
-                // { urls: 'turn:YOUR_TURN_SERVER_ADDRESS:PORT', username: 'user', credential: 'password' }
               ]
             },
           });
 
           peer.on("signal", signal => {
             console.log(`MentorStream: Sending offer signal to user ${userId} (socket: ${socketId})`);
-            socket.emit("rtc-offer", socketId, signal); // Send offer to the specific user's socket
+            socket.emit("rtc-offer", socketId, signal);
           });
 
           peer.on("connect", () => {
@@ -96,7 +88,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
               toast.info(`Viewer ${userId.slice(0,5)} disconnected.`);
           });
 
-          peersRef.current[socketId] = peer; // Store peer by their socket ID
+          peersRef.current[socketId] = peer; 
         });
 
         socket.on("rtc-answer", (fromSocketId: string, answer: any) => {
@@ -127,12 +119,9 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           console.log("MentorStream: Received comment:", message, "from", sender);
           setComments(prev => [...prev, { text: message, sender }]);
         });
-
-        // Handle socket disconnection (e.g., server restart or network issue)
         socket.on('disconnect', (reason: any) => {
           console.warn(`MentorStream: Socket disconnected: ${reason}`);
           toast.error("Disconnected from server. Please refresh.");
-          // You might want to try to reconnect or destroy peers here
         });
 
       } catch (err) {
@@ -145,9 +134,9 @@ export default function MentorStream({ roomId }: { roomId: string }) {
 
     return () => {
       console.log("MentorStream: Cleaning up...");
-      // Ensure socket is disconnected properly, especially if init() partially ran
+
       if (socketRef.current) {
-        socketRef.current.off('connect'); // Remove listener to prevent re-emission on quick re-mount
+        socketRef.current.off('connect'); 
         socketRef.current.disconnect();
       }
       localStreamRef.current?.getTracks().forEach(track => track.stop());
@@ -164,14 +153,12 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         console.log("MentorStream: Stopping screen share");
         screenStreamRef.current?.getTracks().forEach(track => track.stop());
         screenStreamRef.current = null;
-
         Object.values(peersRef.current).forEach(peer => {
-            peer.streams.forEach(s => peer.removeStream(s)); // Remove all current streams
+            peer.streams.forEach(s => peer.removeStream(s)); 
             if (localStreamRef.current) {
-                peer.addStream(localStreamRef.current); // Add the local camera/mic stream
+                peer.addStream(localStreamRef.current); 
             }
         });
-
         if (localVideoRef.current && localStreamRef.current) {
           localVideoRef.current.srcObject = localStreamRef.current;
         }
@@ -186,20 +173,24 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         const combinedStreamForPeers = new MediaStream();
         screenStream.getVideoTracks().forEach(track => combinedStreamForPeers.addTrack(track));
         localStreamRef.current?.getAudioTracks().forEach(track => combinedStreamForPeers.addTrack(track));
-
-        Object.values(peersRef.current).forEach(peer => {
-            peer.streams.forEach(s => peer.removeStream(s)); // Remove all current streams
-            peer.addStream(combinedStreamForPeers); // Add the combined screen+audio stream
+        screenStream.getAudioTracks().forEach(track => {
+            if (!combinedStreamForPeers.getAudioTracks().some(t => t.id === track.id)) { 
+                combinedStreamForPeers.addTrack(track);
+            }
         });
 
+        
+        Object.values(peersRef.current).forEach(peer => {
+            peer.streams.forEach(s => peer.removeStream(s)); 
+            peer.addStream(combinedStreamForPeers); 
+        });
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = combinedStreamForPeers;
         }
-
         screenStream.getVideoTracks()[0].onended = () => {
           console.log("MentorStream: Screen share ended by user interaction.");
-          if (isScreenSharing) {
-            toggleScreenShare();
+          if (isScreenSharing) { 
+            toggleScreenShare(); 
           }
         };
 
@@ -208,7 +199,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
       }
     } catch (err) {
       console.error("MentorStream: Error during screen sharing:", err);
-      toast.error("Failed to toggle screen share");
+      toast.error("Failed to toggle screen share. Ensure permissions are granted.");
     }
   };
 
@@ -232,7 +223,14 @@ export default function MentorStream({ roomId }: { roomId: string }) {
     <div className="flex flex-col lg:flex-row min-h-screen p-4 gap-4">
       <div className="flex-1 flex flex-col gap-4">
         <div className="bg-black rounded-lg overflow-hidden aspect-video">
-          <video ref={localVideoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
+          <video
+            ref={localVideoRef}
+            autoPlay
+            muted
+            playsInline
+            className="w-full h-full object-cover"
+            style={{ transform: 'scaleX(-1)' }} 
+          />
         </div>
 
         <div className="flex gap-2">
@@ -243,7 +241,11 @@ export default function MentorStream({ roomId }: { roomId: string }) {
                 audioTrack.enabled = !isMuted;
                 setIsMuted(!isMuted);
                 console.log("MentorStream: Microphone toggled, muted:", !isMuted);
+              } else {
+                toast.warning("No microphone audio track found to toggle.");
               }
+            } else {
+                toast.warning("Local stream not available to toggle microphone.");
             }
           }}>{isMuted ? <MicOff size={18} /> : <Mic size={18} />}</Button>
 
@@ -254,7 +256,11 @@ export default function MentorStream({ roomId }: { roomId: string }) {
                 videoTrack.enabled = !isVideoOff;
                 setIsVideoOff(!isVideoOff);
                 console.log("MentorStream: Video toggled, off:", !isVideoOff);
+              } else {
+                toast.warning("No video track found to toggle.");
               }
+            } else {
+                toast.warning("Local stream not available to toggle video.");
             }
           }}>{isVideoOff ? <VideoOff size={18} /> : <Video size={18} />}</Button>
 
@@ -263,7 +269,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           <Button variant="destructive" onClick={() => {
             console.log("MentorStream: Disconnecting and redirecting");
             socketRef.current?.disconnect();
-            window.location.href = "/"
+            window.location.href = "/mentor/upcoming"
           }}><Phone size={18} /></Button>
         </div>
 
