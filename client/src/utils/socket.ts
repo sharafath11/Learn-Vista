@@ -1,9 +1,14 @@
-
+// utils/socketClient.ts
 import io from "socket.io-client";
+import type { Socket } from "socket.io-client";
 
-const socket = io("http://localhost:5000", {
-  transports: ["websocket"],
-  // withCredentials: true,  
-});
+export const initializeSocket = (roomId: string, userType = "user"):typeof Socket => {
+  const socket = io("http://localhost:4000", {
+    reconnectionAttempts: 5,
+    reconnectionDelay: 1000,
+    transports: ["websocket"],
+    query: { roomId, userType }
+  });
 
-export default socket;
+  return socket;
+};

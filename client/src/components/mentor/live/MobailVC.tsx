@@ -1,6 +1,10 @@
 "use client"
 
-import VideoCallInterface from "./VideoCallInterface"
+import { MentorStream } from "./VideoCallInterface"
+
+
+
+
 
 
 
@@ -8,7 +12,7 @@ export function MobileView({roomId}:{roomId:string}) {
   return (
     <div className="flex flex-col h-screen w-full p-4">
       <div className="h-full rounded-xl overflow-hidden shadow-lg">
-        <VideoCallInterface roomId={roomId} />
+        <MentorStream roomId={roomId} />
       </div>
     </div>
   )

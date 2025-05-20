@@ -16,70 +16,94 @@ export function socketHandler(io: Server) {
   io.on('connection', (socket: Socket) => {
     console.log(`New connection: ${socket.id}`);
 
+    // Store the current room for this socket
+    let currentRoomId: string | null = null;
+
+    // Join room handler
     socket.on('join-room', (roomId: string, userId: string, role: 'mentor' | 'user') => {
-      // Leave any previous room
-      if (socket.rooms.size > 1) {
-        const [previousRoom] = Array.from(socket.rooms).filter(room => room !== socket.id);
-        socket.leave(previousRoom);
-        
-        if (rooms[previousRoom]) {
-          delete rooms[previousRoom].participants[socket.id];
-          io.to(previousRoom).emit('user-left', socket.id);
+      console.log(`${role} ${userId} joined room ${roomId} with socket ${socket.id}`);
+
+      // Leave previous room if any
+      if (currentRoomId && rooms[currentRoomId]) {
+        socket.leave(currentRoomId);
+        delete rooms[currentRoomId].participants[socket.id];
+        io.to(currentRoomId).emit('user-left', socket.id);
+
+        if (rooms[currentRoomId].mentorId === socket.id) {
+          rooms[currentRoomId].mentorId = '';
+          io.to(currentRoomId).emit('mentor-disconnected');
+        }
+
+        // Delete room if empty
+        if (Object.keys(rooms[currentRoomId].participants).length === 0) {
+          delete rooms[currentRoomId];
         }
       }
 
-      // Join new room
+      // Join the new room
       socket.join(roomId);
-      
-      // Initialize room if it doesn't exist
+      currentRoomId = roomId;
+
+      // Create room if doesn't exist
       if (!rooms[roomId]) {
         rooms[roomId] = {
           mentorId: role === 'mentor' ? socket.id : '',
-          participants: {}
+          participants: {},
         };
       }
 
-      // Update mentor if joining as mentor
+      // Update mentor if needed
       if (role === 'mentor') {
         rooms[roomId].mentorId = socket.id;
+        io.to(roomId).emit('mentor-available', socket.id);
       }
 
-      // Add participant
+      // Add to participants
       rooms[roomId].participants[socket.id] = { id: userId, role };
 
-      // Notify others in the room
-      socket.to(roomId).emit('user-joined', socket.id, role);
-
-      // Send current participants to the new user
+      // Send current room state to the user
       socket.emit('room-info', {
         mentorId: rooms[roomId].mentorId,
-        participants: rooms[roomId].participants
+        participants: rooms[roomId].participants,
       });
 
-      console.log(`${role} ${userId} joined room ${roomId}`);
+      // Notify others
+      socket.to(roomId).emit('user-joined', socket.id, role);
     });
 
-    socket.on('signal', (targetId: string, signal: any) => {
-      io.to(targetId).emit('signal', socket.id, signal);
+    // WebRTC Signaling
+    socket.on('rtc-offer', (targetSocketId: string, offer: any) => {
+      io.to(targetSocketId).emit('rtc-offer', socket.id, offer);
     });
 
+    socket.on('rtc-answer', (targetSocketId: string, answer: any) => {
+      io.to(targetSocketId).emit('rtc-answer', socket.id, answer);
+    });
+
+    socket.on('ice-candidate', (targetSocketId: string, candidate: any) => {
+      io.to(targetSocketId).emit('ice-candidate', socket.id, candidate);
+    });
+
+    // Chat messages
+    socket.on("send-comment", (roomId: string, message: string) => {
+      socket.to(roomId).emit("receive-comment", message);
+    });
+
+    // Disconnect handling
     socket.on('disconnect', () => {
-      console.log(`User disconnected: ${socket.id}`);
-      
-      // Find and clean up rooms
-      for (const roomId in rooms) {
-        if (rooms[roomId].participants[socket.id]) {
-          // Notify room
-          io.to(roomId).emit('user-left', socket.id);
-          
-          // Remove participant
-          delete rooms[roomId].participants[socket.id];
-          
-          // Clean up empty rooms
-          if (Object.keys(rooms[roomId].participants).length === 0) {
-            delete rooms[roomId];
-          }
-          break;
+      if (currentRoomId && rooms[currentRoomId]) {
+        const wasMentor = rooms[currentRoomId].mentorId === socket.id;
+
+        delete rooms[currentRoomId].participants[socket.id];
+        io.to(currentRoomId).emit('user-left', socket.id);
+
+        if (wasMentor) {
+          rooms[currentRoomId].mentorId = '';
+          io.to(currentRoomId).emit('mentor-disconnected');
+        }
+
+        if (Object.keys(rooms[currentRoomId].participants).length === 0) {
+          delete rooms[currentRoomId];
         }
       }
     });
