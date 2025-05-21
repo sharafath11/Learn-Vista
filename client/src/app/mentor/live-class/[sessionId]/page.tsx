@@ -28,8 +28,6 @@ export default function LiveStarterPage() {
   const [selectedDevice, setSelectedDevice] = useState<string>("");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Handle device enumeration
   const handleDevices = (mediaDevices: MediaDeviceInfo[]) => {
     const videoDevices = mediaDevices
       .filter(({ kind }) => kind === "videoinput")
@@ -50,6 +48,11 @@ export default function LiveStarterPage() {
   }, []);
 
   const startLiveStream = async () => {
+    const liveId=localStorage.getItem("liveId")
+    if (liveId) {
+      router.push(`/mentor/live/${liveId}`);
+      return 
+    }
     const res = await MentorAPIMethods.startLiveSession(courseId);
 
     if (res.ok) {

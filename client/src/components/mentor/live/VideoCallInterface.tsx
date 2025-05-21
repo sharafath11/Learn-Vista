@@ -9,6 +9,9 @@ import Peer from "simple-peer"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
+import { MentorAPIMethods } from "@/src/services/APImethods"
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
+import { useRouter } from "next/router"
 
 export default function MentorStream({ roomId }: { roomId: string }) {
   const [isMuted, setIsMuted] = useState(false)
@@ -23,7 +26,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
   const screenStreamRef = useRef<MediaStream | null>(null) 
   const peersRef = useRef<Record<string, Peer.Instance>>({})
   const userIdToSocketIdMap = useRef<Record<string, string>>({});
-
+ const router=useRouter()
 
   useEffect(() => {
     const init = async () => {
@@ -146,6 +149,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
       userIdToSocketIdMap.current = {};
     };
   }, [roomId]);
+ 
 
   const toggleScreenShare = async () => {
     try {
@@ -218,6 +222,15 @@ export default function MentorStream({ roomId }: { roomId: string }) {
       console.log(`MentorStream: Peer connection with ${socketId} destroyed.`);
     }
   };
+  const handleEndCall = async () => {
+    const res = await MentorAPIMethods.endStream(roomId);
+    if (res.ok) {
+     socketRef.current?.disconnect();
+      router.push("/mentor/upcoming");
+      showSuccessToast("Stream ended");
+    }
+    else showErrorToast(res.msg)
+  }
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen p-4 gap-4">
@@ -266,11 +279,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
 
           <Button onClick={toggleScreenShare}>{isScreenSharing ? <Monitor size={18} className="text-blue-500" /> : <Monitor size={18} />}</Button>
 
-          <Button variant="destructive" onClick={() => {
-            console.log("MentorStream: Disconnecting and redirecting");
-            socketRef.current?.disconnect();
-            window.location.href = "/mentor/upcoming"
-          }}><Phone size={18} /></Button>
+          <Button variant="destructive" onClick={handleEndCall}><Phone size={18} /></Button>
         </div>
 
         <Card className="p-4">

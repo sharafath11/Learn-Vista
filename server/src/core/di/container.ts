@@ -61,17 +61,13 @@ import { IAdminCourserRepository } from '../interfaces/repositories/admin/IAdmin
 import { IAdminCategoriesRepostory } from '../interfaces/repositories/admin/IAdminCategoryRepository';
 import { AdminCourseRepository } from '../../repositories/admin/AdminCourseRepo';
 import { AdminCategoriesRepo } from '../../repositories/admin/AdminCategoriesRepo';
-import { IMentorCourseRepo } from '../interfaces/repositories/mentor/IMentorCourseRepo';
 import { ICourseRepository } from '../interfaces/repositories/course/ICourseRepository';
 import { CourseRepository } from '../../repositories/course/CourseRepository';
 import { ILiveRepository } from '../interfaces/repositories/course/ILiveRepository';
 import { LiveRepository } from '../../repositories/course/LiveRepository';
 import { ISessionRepository } from '../interfaces/repositories/course/ISessionRepository';
 import { SessionRepository } from '../../repositories/course/SessionRepository';
-import { IMentorCourseController } from '../interfaces/controllers/mentor/IMentorCourse.controller';
-import { MentorCourseController } from '../../controllers/mentor/MentorCourse.controller';
-import { IMentorCourseService } from '../interfaces/services/mentor/ImentorCourse.service';
-import { MentorCourseService } from '../../services/mentor/mentorCourse.service';
+import { MentorStreamController } from '../../controllers/mentor/MentorStream.controller';
 import { IUserCourseController } from '../interfaces/controllers/user/IUserCourseController';
 import { UserCourseController } from '../../controllers/user/userCourse.controller';
 import { IUserCourseService } from '../interfaces/services/user/IUserCourseController';
@@ -80,6 +76,9 @@ import { IUserLiveController } from '../interfaces/controllers/user/IUserLiveVid
 import { UserLiveCallController } from '../../controllers/user/liveVideo.Controller';
 import { IUserLiveService } from '../interfaces/services/user/IUserLiveService';
 import { LiveUserService } from '../../services/user/LiveUser.Service';
+import { IMentorStreamService } from '../interfaces/services/mentor/ImentorStream.service';
+import { MentorStreamService } from '../../services/mentor/mentorLive.service';
+import { IMentorStreamController } from '../interfaces/controllers/mentor/IMentorStream.controller';
 
 const container = new Container();
 
@@ -94,7 +93,7 @@ container.bind<IProfileController>(TYPES.ProfileController).to(ProfileController
 container.bind<IAdminAuthController>(TYPES.AdminAuthController).to(AdminAuthController),
 container.bind<IMentorProfileController>(TYPES.MentorProfileController).to(MentorProfileController)
 container.bind<IAdminCourseController>(TYPES.AdminCourseController).to(AdminCourseController)
-container.bind<IMentorCourseController>(TYPES.MentorCourseController).to(MentorCourseController)
+container.bind<IMentorStreamController>(TYPES.MentorStreamController).to(MentorStreamController)
 container.bind<IUserCourseController>(TYPES.UserCourseController).to(UserCourseController);
 container.bind<IUserLiveController>(TYPES.UserLiveCOntroller).to(UserLiveCallController)
 // Service Bindings
@@ -108,7 +107,7 @@ container.bind<IUserService>(TYPES.UserService).to(UserService);
 container.bind<IAdminAuthService>(TYPES.AdminAuthService).to(AdminAuthService)
 container.bind<IMentorProfileService>(TYPES.MentorProfileService).to(MentorProfileService)
 container.bind<IAdminCourseServices>(TYPES.AdminCourseService).to(AdminCourseServices);
-container.bind<IMentorCourseService>(TYPES.MentorCourseService).to(MentorCourseService);
+container.bind<IMentorStreamService>(TYPES.MentorStreamService).to(MentorStreamService);
 container.bind<IUserCourseService>(TYPES.UserCourseService).to(UserCourseService),
 container.bind<IUserLiveService>(TYPES.UserLiveService).to(LiveUserService)
 // Repository Bindings

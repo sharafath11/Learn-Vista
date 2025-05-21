@@ -1,120 +1,113 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Calendar, Clock, Users } from "lucide-react"
+import { Calendar, Clock, Users, BookOpen } from "lucide-react" // Added BookOpen for category
 import { useUserContext } from "@/src/context/userAuthContext"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card } from "@/components/ui/card" // Assuming Card is from shadcn/ui or similar
+import { Badge } from "@/components/ui/badge" // Assuming Badge is from shadcn/ui or similar
+import { Button } from "@/components/ui/button" // Assuming Button is from shadcn/ui or similar
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 
 export default function UpcomingSessions() {
   const { allCourses } = useUserContext()
-  const route=useRouter()
+  const route = useRouter()
   const [currentTime, setCurrentTime] = useState(new Date())
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date())
-    }, 60000) 
+    }, 60000) // Update every minute
 
     return () => clearInterval(interval)
   }, [])
+
   const handleJoinCall = async (courseId: string) => {
-    let liveId=""
+    let liveId = ""
     const res = await UserAPIMethods.getUserRoomId(courseId);
     if (res.ok) {
-      liveId=res.data
+      liveId = res.data
       showSuccessToast(res.msg);
-     route.push(`/user/live-classes/${liveId}`)
-
+      route.push(`/user/live-classes/${liveId}`)
     }
   };
-  
-  const canStartSession = (sessionDate: string, startTime: string): boolean => {
-    if (!sessionDate || !startTime) return false
-    const sessionDateTime = new Date(`${sessionDate}T${startTime}`)
-    const fifteenMinBefore = new Date(sessionDateTime.getTime() - 15 * 60000)
-    return currentTime >= fifteenMinBefore && currentTime <= sessionDateTime
-  }
 
   return (
-    <Card className="p-6">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-900">Upcoming Sessions</h2>
+    <Card className="p-6 bg-white shadow-lg rounded-xl">
+      <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b pb-4">Upcoming Sessions</h2>
 
-      <div className="border border-gray-200 rounded-lg">
-        <div className="bg-gray-50 px-6 py-3 grid grid-cols-12 gap-4 text-sm font-semibold text-gray-600 border-b">
-          <div className="col-span-4">Session</div>
-          <div className="col-span-2">Starting Date</div>
+      <div className="overflow-hidden rounded-lg border border-gray-200">
+        {/* Table Header */}
+        <div className="bg-gray-100 px-6 py-4 grid grid-cols-12 gap-4 text-sm font-semibold text-gray-700 border-b border-gray-200">
+          <div className="col-span-4">Session Details</div>
+          <div className="col-span-2">Date</div>
           <div className="col-span-2">Time</div>
           <div className="col-span-2">Category</div>
-          <div className="col-span-2">Status</div>
+          <div className="col-span-2 text-center">Action</div>
         </div>
 
-        <div className="divide-y">
-          {allCourses.map((session) => {
-            const canStart = canStartSession(session.startDate || "", session.startTime)
-
-            return (
-              <div key={session._id} className="px-6 py-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-50 transition">
+        {/* Sessions List */}
+        <div className="divide-y divide-gray-100">
+          {allCourses.length > 0 ? (
+            allCourses.map((session) => (
+              <div 
+                key={session._id} 
+                className="px-6 py-5 grid grid-cols-12 gap-4 items-center bg-white hover:bg-gray-50 transition-colors duration-200"
+              >
                 {/* Session Info */}
-                <div className="col-span-4">
-                  <div className="text-gray-900 font-medium">{session.title}</div>
-                  <p className="text-sm text-gray-500">{session.description}</p>
-                  <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
-                    <Users className="w-3 h-3" />
-                    {session.sessions.length} session{session.sessions.length !== 1 ? "s" : ""}
+                <div className="col-span-4 flex flex-col">
+                  <h3 className="text-lg font-semibold text-gray-900 leading-snug">{session.title}</h3>
+                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">{session.description}</p>
+                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
+                    <Users className="w-3.5 h-3.5 text-gray-400" />
+                    <span>{session.sessions.length} session{session.sessions.length !== 1 ? "s" : ""}</span>
                   </div>
                 </div>
 
                 {/* Date */}
-                <div className="col-span-2 flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar className="w-4 h-4 text-gray-400" />
+                <div className="col-span-2 flex items-center gap-2 text-sm text-gray-700">
+                  <Calendar className="w-4 h-4 text-gray-500" />
                   {session.startDate ? new Date(session.startDate).toLocaleDateString('en-US', {
                     day: 'numeric', month: 'short', year: 'numeric'
                   }) : "N/A"}
                 </div>
 
                 {/* Time */}
-                <div className="col-span-2 flex items-center gap-2 text-sm text-gray-600">
-                  <Clock className="w-4 h-4 text-gray-400" />
+                <div className="col-span-2 flex items-center gap-2 text-sm text-gray-700">
+                  <Clock className="w-4 h-4 text-gray-500" />
                   {session.startTime || "N/A"}
                 </div>
 
                 {/* Category */}
                 <div className="col-span-2">
-                  <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50">
+                  <Badge variant="outline" className="flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-200 px-3 py-1 rounded-full text-xs font-medium">
+                    <BookOpen className="w-3.5 h-3.5" />
                     {session.categoryId?.title || "General"}
                   </Badge>
                 </div>
 
-                {/* Status */}
+                {/* Action Button */}
                 <div className="col-span-2 text-center">
-  <div
-    className="inline-block cursor-pointer"
-    onClick={() => {
-      if (canStart) {
-        // 👇 Navigate or trigger join call logic
-        handleJoinCall(session._id);
-      }
-    }}
-  >
-    <Badge
-      className={
-        canStart
-          ? "bg-green-100 text-green-700"
-          : "bg-muted text-muted-foreground"
-      }
-    >
-      {canStart ? "Start Now" : "Upcoming"}
-    </Badge>
-  </div>
-</div>
-
+                  {/* Since canStartSession is removed, we default to Upcoming or a static Join button */}
+                  {/* You'll need to re-introduce logic for "Start Now" if that's desired without canStartSession */}
+                  <Button
+                    onClick={() => handleJoinCall(session._id)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                    // If you want to disable it based on time, you'll need to add back some time logic
+                    // For now, it's always enabled if you don't have 'canStartSession'
+                  >
+                    Join Session
+                  </Button>
+                </div>
               </div>
-            )
-          })}
+            ))
+          ) : (
+            <div className="p-6 text-center text-gray-500">
+              <p className="text-lg">No upcoming sessions found.</p>
+              <p className="text-sm mt-2">Check back later or explore other courses!</p>
+            </div>
+          )}
         </div>
       </div>
     </Card>

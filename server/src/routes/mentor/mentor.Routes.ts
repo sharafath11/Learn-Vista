@@ -6,12 +6,12 @@ import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/
 import container from '../../core/di/container';
 import { IMentorProfileController } from '../../core/interfaces/controllers/mentor/IMentorProfile.controller';
 import upload, { uploadImage } from '../../middlewares/upload';
-import { IMentorCourseController } from '../../core/interfaces/controllers/mentor/IMentorCourse.controller';
+import {  IMentorStreamController } from '../../core/interfaces/controllers/mentor/IMentorStream.controller';
 const router = express.Router();
 const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
 const mentorController = container.get<IMentorController>(TYPES.MentorController);
 const mentorProfileController = container.get<IMentorProfileController>(TYPES.MentorProfileController)
-const mentorCourseController=container.get<IMentorCourseController>(TYPES.MentorCourseController)
+const mentorStreamController=container.get<IMentorStreamController>(TYPES.MentorStreamController)
 router.post('/signup', (req, res) => mentorAuthController.signupController(req, res));
 router.post('/send-otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
 router.post('/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
@@ -25,7 +25,7 @@ router.post("/forget-password", (req, res) => mentorAuthController.forgetPasswor
 router.post("/reset-password", (req, res) => mentorAuthController.restartPassword(req, res));
 router.get("/courses", verifyMentor, mentorController.getCourses.bind(mentorController));
 router.patch("/course/status-change",verifyMentor, mentorController.statusChange.bind(mentorController));
-router.get("/live-session/start/:courseId", verifyMentor, mentorCourseController.startLiveController.bind(mentorCourseController));
+router.get("/live-session/start/:courseId", verifyMentor, mentorStreamController.startStreamController.bind(mentorStreamController));
 router.post("/change/password",verifyMentor,mentorProfileController.changePassword.bind(mentorProfileController))
 
 export default router;

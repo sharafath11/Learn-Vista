@@ -19,17 +19,13 @@ export class LiveUserService implements IUserLiveService {
 
   async getRoomIdService(courseId: string, userId: string): Promise<string> {
    
-    try {
+   
       await this.validateCourseEnrollment(courseId, userId);
       const liveSession = await this.validateLiveSession(courseId);
       await this.addParticipant(liveSession.id, userId);
-      
-   
+        
       return liveSession.liveId;
-    } catch (error) {
-     
-      throw error;
-    }
+  
   }
 
   private async validateCourseEnrollment(courseId: string, userId: string): Promise<void> {
@@ -47,9 +43,9 @@ export class LiveUserService implements IUserLiveService {
     const liveSession = await this.liveRepo.findOne({ courseId });
     
     if (!liveSession) {
-   
       throwError("Live session not available");
     }
+    if(!liveSession.isActive) throwError("This stream desnot start please try after some time")
     
     return liveSession;
   }
