@@ -39,7 +39,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }, [fetchUserData]);
   const fetchCourses = async () => {
     const res = await UserAPIMethods.fetchAllCourse({});
-    if (res.ok) setAllCourses(res.data);
+    console.log("contecxt",res)
+    if (res.ok) setAllCourses(res.data.data);
     else showErrorToast(res.msg)
   }
 

@@ -1,10 +1,10 @@
 import { inject, injectable } from "inversify";
-import mongoose from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController";
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import { IPopulatedCourse } from "../../types/classTypes";
+import { ICourse, IPopulatedCourse } from "../../types/classTypes";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 
@@ -15,8 +15,25 @@ export class UserCourseService implements IUserCourseService {
     @inject(TYPES.UserRepository) private _baseUserRepo: IUserRepository
   ) {}
 
-  async getAllCourses(): Promise<IPopulatedCourse[]> {
-    return await this._baseCourseRepo.populateWithAllFildes();
+  async getAllCourses( page: number = 1,
+      limit: number = 1,
+      search?: string,
+      filters: FilterQuery<IPopulatedCourse> = {},
+      sort: Record<string, 1 | -1> = { createdAt: -1 }):Promise<{ data: IPopulatedCourse[]; total: number; totalPages?: number }> {
+        const queryParams = {
+          page,
+          limit,
+          search,
+          filters,
+          sort,
+        };
+       
+    console.log("in backend",queryParams)
+    const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(
+         queryParams 
+        );
+        if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
+        return { data, total, totalPages };
   }
 
   async updateUserCourse(courseId: string, userId: string): Promise<void> {

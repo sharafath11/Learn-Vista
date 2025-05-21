@@ -5,7 +5,6 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Sparkles, Users } from "lucide-react"
 import { useInView } from "react-intersection-observer"
-import { Skeleton } from "@/components/ui/skeleton"
 import {
   Card, CardHeader, CardTitle, CardDescription,
   CardContent, CardFooter
@@ -22,95 +21,117 @@ import { showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 
 const Page = () => {
-  const route=useRouter()
+  const route = useRouter()
   const [courses, setCourses] = useState<IPopulatedCourse[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
-  const [filters, setFilters] = useState({ 
-    search: '', 
-    category: '', 
-    sort: 'latest' 
+  const [totalCourses, setTotalCourses] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
+  const [filters, setFilters] = useState({
+    search: '',
+    category: '',
+    sort: 'ASC'
   })
   const [selectedCourse, setSelectedCourse] = useState<IPopulatedCourse | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [ref, inView] = useInView()
-  const { allCourses, user, setUser } = useUserContext();
-  console.log(user)
+  const { user, setUser } = useUserContext();
+
   const handleStartNewCourse = async (id: string) => {
     const res = await UserAPIMethods.updateCourse(id);
-  
+
     if (res.ok) {
       showSuccessToast(res.msg);
-  
+
       setUser((prev) => {
-        if (!prev) return prev; 
-  
+        if (!prev) return prev;
+
         return {
           ...prev,
           enrolledCourses: [...(prev.enrolledCourses || []), id],
         };
       });
-  
+
       route.push("/user/sessions");
     }
   };
-  
-  
-  console.log("user",user)
+
   const fetchCourses = async () => {
-   
+    setLoading(true);
+    try {
+      let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
+      if (filters.sort === "ASC") {
+        mongoSort = { createdAt: -1 };
+      } else if (filters.sort === "DESC") {
+        mongoSort = { createdAt: 1 };
+      }
+
       const res = await UserAPIMethods.fetchAllCourse({
         page,
-        limit: 6,
+        limit: 1,
         search: filters.search || '',
         filters: {
-          category: filters.category,
+          category: filters.category === 'All' ? '' : filters.category,
         },
-        sort: filters.sort === "latest" ? { createdAt: -1 } : {},
+        sort: mongoSort,
       });
-  
+
       if (res.ok) {
-        const newCourses = res.data;
+        const { data: newCourses, total, totalPages } = res.data;
+        // alert(total)
         setCourses(prev => (page === 1 ? newCourses : [...prev, ...newCourses]));
-        setHasMore(newCourses.length >= 6);
+        setTotalCourses(total);
+        setTotalPages(totalPages);
+        setHasMore(page < totalPages);
       } else {
         console.error(res.msg);
+        setCourses([]);
+        setTotalCourses(0);
+        setTotalPages(0);
+        setHasMore(false);
       }
+    } catch (error) {
+      console.error("Failed to fetch courses:", error);
+      setCourses([]);
+      setTotalCourses(0);
+      setTotalPages(0);
+      setHasMore(false);
+    } finally {
       setLoading(false);
+    }
   };
-  
-  
+
   useEffect(() => {
-    fetchCourses()
-  }, [])
+    fetchCourses();
+  }, [page, filters]);
 
   useEffect(() => {
     if (inView && hasMore && !loading) {
-      setPage(prev => prev + 1)
+      setPage(prev => prev + 1);
     }
-  }, [inView, hasMore, loading])
+  }, [inView, hasMore, loading]);
 
   const handleDetailsClick = (course: IPopulatedCourse) => {
-    setSelectedCourse(course)
-    setIsModalOpen(true)
-  }
+    setSelectedCourse(course);
+    setIsModalOpen(true);
+  };
 
   const handleEnroll = () => {
-    console.log("Enrolling in course:", selectedCourse?._id)
-    setIsModalOpen(false)
-  }
+    console.log("Enrolling in course:", selectedCourse?._id);
+    setIsModalOpen(false);
+  };
 
-  const handleFilterChange = (newFilters: any) => {
-    setPage(1) 
+  const handleFilterChange = (newFilters: { search: string; category: string; sort: string }) => {
+    setPage(1);
+    setCourses([]);
+    setHasMore(true);
     setFilters(newFilters);
-
-  }
+  };
 
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-16">
           <div className="mb-8 md:mb-0">
             <div className="flex items-center gap-2 mb-2">
@@ -128,15 +149,16 @@ const Page = () => {
             View All Courses
           </Button>
         </div>
-        <CourseFilter 
-  categories={Array.from(new Set(courses.map(c => c.categoryId?.title).filter(Boolean)))} 
-  onFilter={handleFilterChange} 
-/>
-        {/* Courses Grid */}
+
+        <CourseFilter
+          categories={Array.from(new Set(courses.map(c => c.categoryId?.title).filter(Boolean)))}
+          onFilter={handleFilterChange}
+        />
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allCourses.map((course) => (
+          {courses?.map((course) => (
             <Card key={course._id} className="h-full overflow-hidden rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-              <div className="relative h-48 w-full cursor-pointer" onClick={()=>handleDetailsClick(course)}>
+              <div className="relative h-48 w-full cursor-pointer" onClick={() => handleDetailsClick(course)}>
                 <Image
                   src={course.thumbnail || "/images/course-placeholder.jpg"}
                   alt={course.title}
@@ -175,9 +197,9 @@ const Page = () => {
                   </div>
                 </div>
 
-                <Progress 
-                  value={(course.sessions?.length || 0) * 10} 
-                  className="h-2 bg-gray-200" 
+                <Progress
+                  value={(course.sessions?.length || 0) * 10}
+                  className="h-2 bg-gray-200"
                 />
               </CardContent>
 
@@ -186,58 +208,75 @@ const Page = () => {
                   <span className="font-bold">₹{course.price || 0}</span>
                   {course.price !== 0 && (
                     <span className="text-sm text-gray-500 line-through">
-                      ₹{Math.round(course.price||0 * 1.5)}
+                      ₹{Math.round(course.price || 0 * 1.5)}
                     </span>
                   )}
                 </div>
                 <div className="flex gap-2">
-  <Button  
-    className="cursor-pointer"
-    variant="outline" 
-    size="sm"
-    onClick={() => handleDetailsClick(course)}
-  >
-    Details
-  </Button>
+                  <Button
+                    className="cursor-pointer"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDetailsClick(course)}
+                  >
+                    Details
+                  </Button>
 
-  {(() => {
-   
-    const isEnrolled = course?.enrolledUsers?.filter((i)=>i===user?.id);
+                  {(() => {
+                    const isEnrolled = user?.enrolledCourses?.includes(course._id);
 
-    console.log("Is User Enrolled in This Course?", isEnrolled);
-
-    return isEnrolled ? (
-      <Button 
-        size="sm" 
-        className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
-        onClick={() => route.push("/user/sessions")}
-      >
-        Continue Learning
-      </Button>
-    ) : (
-      <Button 
-        size="sm" 
-        className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
-        onClick={() => handleStartNewCourse(course._id)}
-      >
-        Start Learning
-      </Button>
-    );
-  })()}
-</div>
-
-
+                    return isEnrolled ? (
+                      <Button
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                        onClick={() => route.push("/user/sessions")}
+                      >
+                        Continue Learning
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                        onClick={() => handleStartNewCourse(course._id)}
+                      >
+                        Start Learning
+                      </Button>
+                    );
+                  })()}
+                </div>
               </CardFooter>
             </Card>
           ))}
-
-         
         </div>
 
-        {/* Infinite scroll trigger */}
-        <div ref={ref} className="h-10 w-full"></div>
+        <div className="h-10 w-full flex flex-col items-center justify-center mt-8">
+          {loading && courses.length > 0 && (
+            <p className="text-gray-500">Loading more courses...</p>
+          )}
 
-        {/* No results */}
+          {hasMore && !loading && <div ref={ref} className="h-1" />}
+
+          {!hasMore && totalPages > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-8">
+              <Button
+                onClick={() => setPage(prev => Math.max(1, prev - 1))}
+                disabled={page === 1 || loading}
+                variant="outline"
+              >
+                Previous
+              </Button>
+              <span className="text-gray-700">Page {page} of {totalPages}</span>
+              <Button
+                onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={page === totalPages || loading}
+                variant="outline"
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </div>
+
         {!loading && courses.length === 0 && (
           <div className="text-center py-20">
             <Image
@@ -254,7 +293,6 @@ const Page = () => {
           </div>
         )}
 
-        {/* Course Modal */}
         {selectedCourse && (
           <CourseDetailsModal
             course={selectedCourse}

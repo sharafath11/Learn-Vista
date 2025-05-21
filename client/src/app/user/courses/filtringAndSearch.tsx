@@ -51,14 +51,14 @@ const CourseFilter: React.FC<CourseFilterProps> = ({ categories, onFilter }) => 
       </Select>
 
       <Select value={sort} onValueChange={setSort}>
-        <SelectTrigger className="w-full md:w-[20%] h-9 text-sm px-3">
-          <SelectValue placeholder="Sort by" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="latest">Latest</SelectItem>
-          <SelectItem value="oldest">Oldest</SelectItem>
-        </SelectContent>
-      </Select>
+  <SelectTrigger className="w-full md:w-[20%] h-9 text-sm px-3">
+    <SelectValue placeholder="Sort by" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="ASC">Latest</SelectItem>
+    <SelectItem value="DESC">Oldest</SelectItem>
+  </SelectContent>
+</Select>
     </div>
   )
 }

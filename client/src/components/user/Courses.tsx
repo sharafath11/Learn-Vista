@@ -29,7 +29,7 @@ const Courses = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {allCourses.slice(0, 3).map((course) => (
+          {allCourses?.slice(0, 3).map((course) => (
             <Card key={course._id} className="h-full overflow-hidden hover:shadow-lg transition-all">
               <div className="relative h-48 w-full">
                 <Image

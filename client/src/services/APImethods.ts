@@ -26,7 +26,7 @@ export const UserAPIMethods = {
     search?: string;
     filters?: Record<string, any>;
     sort?: Record<string, 1 | -1>
-  }) => get("/courses"),
+  }) => get(`/courses`,{params}),
   updateCourse: (courseId: string) => patch("/update-course", { courseId }),
   getUserRoomId:(courseId:string)=>get(`/start-live/vc/${courseId}`)
 } as const;
