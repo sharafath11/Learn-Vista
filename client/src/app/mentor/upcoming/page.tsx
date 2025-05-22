@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { format, parseISO, differenceInMinutes, addMinutes } from "date-fns"
+import { format, parseISO, differenceInMinutes, addMinutes, startOfDay } from "date-fns"
 import { Calendar, Clock, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useMentorContext } from "@/src/context/mentorContext"
@@ -18,50 +18,29 @@ export default function UpcomingSessions() {
     return () => clearInterval(timer)
   }, [])
 
-  const canStartSession = (
-    sessionStartDateStr: string,
-    sessionStartTimeStr: string,
-    sessionEndDateStr: string
-  ): boolean => {
-    if (!sessionStartDateStr || !sessionStartTimeStr || !sessionEndDateStr) {
-      console.warn("canStartSession: Missing start date, start time, or end date. Returning false.");
-      console.warn({ sessionStartDateStr, sessionStartTimeStr, sessionEndDateStr });
-      return false;
-    }
-    const currentDateTime = new Date();
-    const sessionStartDateTime = new Date(`${sessionStartDateStr}T${sessionStartTimeStr}`);  
-    const sessionEndDateTime = new Date(`${sessionEndDateStr}T23:59:59`);  
-    if (isNaN(sessionStartDateTime.getTime())) {
-      console.error(`canStartSession: Invalid sessionStartDateTime created from date: "${sessionStartDateStr}", time: "${sessionStartTimeStr}".`);
-      return false;
-    }
-    if (isNaN(sessionEndDateTime.getTime())) {
-      console.error(`canStartSession: Invalid sessionEndDateTime created from date: "${sessionEndDateStr}". Check your endDate format.`);
-      return false;
-    }
-    const fifteenMinBeforeStart = new Date(sessionStartDateTime.getTime() - 15 * 60 * 1000);
-    const tenMinAfterStart = new Date(sessionStartDateTime.getTime() + 10 * 60 * 1000);
-    const isWithinPreSessionWindow =
-      currentDateTime >= fifteenMinBeforeStart && currentDateTime < sessionStartDateTime;
-    const isDuringSession =
-      currentDateTime >= tenMinAfterStart && currentDateTime <= sessionEndDateTime;
-    const canJoin = isWithinPreSessionWindow || isDuringSession;
-    return canJoin;
-  };
+  
 
   const getTimeUntilCanStart = (sessionDate: string, startTime: string): string => {
-    if (!sessionDate || !startTime) return "No time specified"
-    
+    if (!sessionDate || !startTime) return "N/A"
+
     const sessionDateTime = parseISO(`${sessionDate}T${startTime}`)
     const fifteenMinutesBefore = addMinutes(sessionDateTime, -15)
+    const oneHourAfterStart = addMinutes(sessionDateTime, 60)
+    const dayAfterSessionStart = addMinutes(startOfDay(addMinutes(sessionDateTime, 24 * 60)), -currentTime.getTimezoneOffset());
 
     if (currentTime < fifteenMinutesBefore) {
       const minutesRemaining = differenceInMinutes(fifteenMinutesBefore, currentTime)
       const hours = Math.floor(minutesRemaining / 60)
       const minutes = minutesRemaining % 60
       return hours > 0 ? `${hours}h ${minutes}m until start` : `${minutes}m until start`
+    } else if (currentTime >= fifteenMinutesBefore && currentTime <= oneHourAfterStart) {
+      return "Start Now"
+    } else if (currentTime > oneHourAfterStart && currentTime < dayAfterSessionStart) {
+      return "Session Ended"
+    } else if (currentTime >= dayAfterSessionStart && currentTime <= parseISO(`${sessionDate}T23:59:59`)) {
+      return "Start Now"
     }
-    return "Ready to start"
+    return "Session Ended";
   }
 
   const handleStartSession = (courseId: string) => {
@@ -88,11 +67,11 @@ export default function UpcomingSessions() {
               const sessionStartTime = session.startTime || "";
               const sessionEndDate = session.endDate || "";
 
-              const canStart = canStartSession(sessionStartDate, sessionStartTime, sessionEndDate);
+              const buttonText = getTimeUntilCanStart(sessionStartDate, sessionStartTime);
 
               return (
-                <div 
-                  key={session._id} 
+                <div
+                  key={session._id}
                   className="px-4 py-4 grid grid-cols-12 gap-4 items-center hover:bg-gray-800 transition"
                 >
                   <div className="col-span-4">
@@ -105,7 +84,7 @@ export default function UpcomingSessions() {
                   </div>
                   <div className="col-span-2 flex items-center gap-2 text-sm">
                     <Calendar className="w-4 h-4 text-gray-400" />
-                    {session.startDate ? format(parseISO(session.startDate), "dd MMM yyyy") : "N/A"}
+                    {session.startDate ? format(parseISO(session.startDate), "dd MMM, yyyy") : "N/A"}
                   </div>
                   <div className="col-span-2 flex items-center gap-2 text-sm">
                     <Clock className="w-4 h-4 text-gray-400" />
@@ -119,16 +98,14 @@ export default function UpcomingSessions() {
                   <div className="col-span-2">
                     <button
                       onClick={() => handleStartSession(session._id)}
-                      disabled={!canStart}
+                      disabled={buttonText !== "Start Now"}
                       className={`px-4 py-2 rounded-md text-sm font-medium w-full ${
-                        canStart
+                        buttonText === "Start Now"
                           ? "bg-blue-600 hover:bg-blue-700 text-white"
                           : "bg-gray-600 text-gray-400 cursor-not-allowed"
                       }`}
                     >
-                      {canStart
-                        ? "Start Now"
-                        : getTimeUntilCanStart(session.startDate || "", session.startTime || "")}
+                      {buttonText}
                     </button>
                   </div>
                 </div>

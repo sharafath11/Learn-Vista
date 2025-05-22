@@ -39,7 +39,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       categoryId: course.categoryId as unknown as ICategory,
     }));
     
-    return populatedCourses;
+    return populatedCourses ;
   }
   async populateWithAllFildes(): Promise<IPopulatedCourse[]> {
     const courses = await CourseModel.find()
@@ -55,8 +55,12 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
     
     return populatedCourses;
   }
-  async fetchAllCoursesWithFilters(params: CourseQueryParams): Promise<{ data: IPopulatedCourse[]; total: number; totalPages: number }> {
-    const { page = 1, limit = 1, search, filters, sort } = params;
+  async fetchAllCoursesWithFilters(params: CourseQueryParams): Promise<{
+    data: IPopulatedCourse[];
+    total: number;
+    totalPages: number;
+  }> {
+    const { page = 1, limit = 10, search, filters, sort } = params;
     const query: any = {};
     if (search) {
       query.title = { $regex: search, $options: 'i' };
@@ -66,12 +70,9 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       if (categoryDoc) {
         query.categoryId = categoryDoc._id;
       } else {
-
         return { data: [], total: 0, totalPages: 0 };
       }
     }
-    const total = await CourseModel.countDocuments(query);
-    const totalPages = Math.ceil(total / limit);
     let courseQuery = CourseModel.find(query)
       .populate('mentorId')
       .populate('categoryId');
@@ -80,17 +81,26 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
     } else {
       courseQuery = courseQuery.sort({ createdAt: -1 }); 
     }
+
+    const allCourses = await courseQuery.lean();
+  
+   
+    const filteredCourses: IPopulatedCourse[] = allCourses
+      .map((course) => ({
+        ...course,
+        mentorId: course.mentorId as unknown as IMentor,
+        categoryId: course.categoryId as unknown as ICategory,
+      }))
+      .filter((course) => !course.isBlock && !course.categoryId.isBlock);
+  
+    const total = filteredCourses.length;
+    const totalPages = Math.ceil(total / limit);
     const skip = (page - 1) * limit;
-    courseQuery = courseQuery.skip(skip).limit(limit);
-
-    const courses = await courseQuery.lean();
-
-    const populatedCourses: IPopulatedCourse[] = courses.map(course => ({
-      ...course,
-      mentorId: course.mentorId as unknown as IMentor,
-      categoryId: course.categoryId as unknown as ICategory,
-    }));
-
-    return { data: populatedCourses, total, totalPages }; 
+  
+    
+    const paginatedCourses = filteredCourses.slice(skip, skip + limit);
+  
+    return { data: paginatedCourses, total, totalPages };
   }
+  
 }

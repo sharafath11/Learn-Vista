@@ -4,13 +4,24 @@ import { ILiveRepository } from "../../core/interfaces/repositories/course/ILive
 import { Types } from "mongoose";
 import { IMentorStreamService } from "../../core/interfaces/services/mentor/ImentorStream.service";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
+import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
+import { throwError } from "../../utils/ResANDError";
 @injectable()
 export class MentorStreamService implements IMentorStreamService{
     constructor(
         @inject(TYPES.LiveRepository) private _baseLiveRepo: ILiveRepository ,
-        @inject(TYPES.MentorRepository) private _baseMentorRepo:IMentorRepository
+        @inject(TYPES.MentorRepository) private _baseMentorRepo: IMentorRepository,
+        @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository
     ){}
     async startStreamSession(courseId: string, mentorId: string): Promise<string> {
+        const course = await this._courseRepo.findWithMenorIdgetAllWithPopulatedFields(mentorId)
+        course.map((i) => {
+            if (i.id === courseId) {
+                if (i.isBlock || i.categoryId.isBlock) {
+                    throwError("This curently blocked")
+                }
+            }
+        })
         const liveId = `live-${Date.now()}`;
         const currentDate = new Date();
         await this._baseLiveRepo.create({

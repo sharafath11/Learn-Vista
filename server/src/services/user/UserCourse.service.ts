@@ -20,18 +20,20 @@ export class UserCourseService implements IUserCourseService {
       search?: string,
       filters: FilterQuery<IPopulatedCourse> = {},
       sort: Record<string, 1 | -1> = { createdAt: -1 }):Promise<{ data: IPopulatedCourse[]; total: number; totalPages?: number }> {
-        const queryParams = {
+     console.log("filter",filters,"sort",sort)   
+    const queryParams = {
           page,
           limit,
           search,
           filters,
-          sort,
+          sort:filters
         };
        
-    console.log("in backend",queryParams)
+   
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(
          queryParams 
-        );
+    );
+  
         if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
         return { data, total, totalPages };
   }
