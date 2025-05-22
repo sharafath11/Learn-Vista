@@ -45,23 +45,19 @@ export class LiveUserService implements IUserLiveService {
     if (!liveSession) {
       throwError("Live session not available");
     }
-    if(!liveSession.isActive) throwError("This stream desnot start please try after some time")
+    if (!liveSession.isActive) throwError(`This stream desnot start please try after `);
+    if(liveSession.isEnd) throwError("This stream was ended")
     
     return liveSession;
   }
 
   private async addParticipant(liveId: Types.ObjectId, userId: string): Promise<void> {
-    try {
+   
      
       await this.liveRepo.update(
         liveId.toString(),
         { $addToSet: { participants: new Types.ObjectId(userId) } }
       );
       
-     
-    } catch (error) {
-    
-      throw error;
-    }
   }
 }

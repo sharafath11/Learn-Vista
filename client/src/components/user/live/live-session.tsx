@@ -7,6 +7,7 @@ import io from "socket.io-client"
 import Peer from "simple-peer"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { showInfoToast } from "@/src/utils/Toast"
 
 export default function UserLiveSession({ roomId }: { roomId: string }) {
   const [mentorStream, setMentorStream] = useState<MediaStream | null>(null)
@@ -156,6 +157,10 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           console.log(`User: Received comment: "${message}" from ${sender}`);
           setComments(prev => [...prev, { text: message, sender }]);
         });
+        socket.on("end-stream", (msg:string) => {
+          showInfoToast(msg);
+          window.location.href="/user/live-classes"
+        })
         socket.on('disconnect', (reason: any) => {
           console.warn(`UserLiveSession: Socket disconnected: ${reason}`);
           toast.error("Disconnected from server. Please refresh.");
@@ -164,6 +169,7 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
       } catch (err) {
         console.error("User: Init error:", err);
         toast.error("Failed to join session");
+        window.location.href="/user/live-classes"
       }
     };
 

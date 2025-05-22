@@ -77,7 +77,7 @@ import { UserLiveCallController } from '../../controllers/user/liveVideo.Control
 import { IUserLiveService } from '../interfaces/services/user/IUserLiveService';
 import { LiveUserService } from '../../services/user/LiveUser.Service';
 import { IMentorStreamService } from '../interfaces/services/mentor/ImentorStream.service';
-import { MentorStreamService } from '../../services/mentor/mentorLive.service';
+import { MentorStreamService } from '../../services/mentor/mentorStream.service';
 import { IMentorStreamController } from '../interfaces/controllers/mentor/IMentorStream.controller';
 
 const container = new Container();

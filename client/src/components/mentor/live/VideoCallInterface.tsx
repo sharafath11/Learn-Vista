@@ -4,14 +4,14 @@ import { useEffect, useRef, useState } from "react"
 import { Mic, MicOff, Video, VideoOff, Phone, Monitor, MessageSquare, Badge } from "lucide-react"
 
 import { toast } from "sonner"
-import io from "socket.io-client"
+import io, { Socket } from "socket.io-client"
 import Peer from "simple-peer"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { MentorAPIMethods } from "@/src/services/APImethods"
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import { useRouter } from "next/router"
+import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast"
+
 
 export default function MentorStream({ roomId }: { roomId: string }) {
   const [isMuted, setIsMuted] = useState(false)
@@ -26,7 +26,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
   const screenStreamRef = useRef<MediaStream | null>(null) 
   const peersRef = useRef<Record<string, Peer.Instance>>({})
   const userIdToSocketIdMap = useRef<Record<string, string>>({});
- const router=useRouter()
+ 
 
   useEffect(() => {
     const init = async () => {
@@ -122,6 +122,9 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           console.log("MentorStream: Received comment:", message, "from", sender);
           setComments(prev => [...prev, { text: message, sender }]);
         });
+        socket.on("end-stream", (msg:string) => {
+          showInfoToast(msg)
+        })
         socket.on('disconnect', (reason: any) => {
           console.warn(`MentorStream: Socket disconnected: ${reason}`);
           toast.error("Disconnected from server. Please refresh.");
@@ -147,6 +150,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
       Object.values(peersRef.current).forEach(peer => peer.destroy());
       peersRef.current = {};
       userIdToSocketIdMap.current = {};
+      
     };
   }, [roomId]);
  
@@ -225,11 +229,15 @@ export default function MentorStream({ roomId }: { roomId: string }) {
   const handleEndCall = async () => {
     const res = await MentorAPIMethods.endStream(roomId);
     if (res.ok) {
-     socketRef.current?.disconnect();
-      router.push("/mentor/upcoming");
+      socketRef.current.emit("stream-ended");
+      
+      socketRef.current?.disconnect();
+      window.location.href = "/mentor/upcoming";
       showSuccessToast("Stream ended");
+      localStorage.removeItem("liveId")
     }
-    else showErrorToast(res.msg)
+    else showErrorToast(res.msg);
+
   }
 
   return (

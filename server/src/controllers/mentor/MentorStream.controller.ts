@@ -47,12 +47,13 @@ export class MentorStreamController implements IMentorStreamController {
       const mentorId = decoded?.id;
   
       if (!mentorId) {
-         sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized access", false);
+        sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized access", false);
+        return 
       }
   
-       await this._mentorStreamService.endStream(liveId);
+       await this._mentorStreamService.endStream(liveId,mentorId);
   
-      sendResponse(res, StatusCode.OK, "Live session started", true, { liveId });
+      sendResponse(res, StatusCode.OK, "Live session Ended", true, { liveId });
     } catch (error) {
       handleControllerError(res, error);
     }

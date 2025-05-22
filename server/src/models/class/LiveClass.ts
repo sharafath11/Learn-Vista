@@ -13,7 +13,8 @@ const LiveClassSchema: Schema = new Schema(
         userId: { type: Schema.Types.ObjectId, ref: 'User', required: true }
       }
     ],
-    isActive: { type: Boolean, default: false }
+    isActive: { type: Boolean, default: false },
+    isEnd:{type:Boolean,default:false}
   },
   { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } }
 );

@@ -90,6 +90,8 @@ export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
+    isEnd:boolean
+
   }
   
   export interface ISession extends Document {
