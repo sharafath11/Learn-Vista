@@ -37,7 +37,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       ...course,
       mentorId: course.mentorId as unknown as IMentor,
       categoryId: course.categoryId as unknown as ICategory,
-    }));
+    })).filter((i)=>!i.isBlock && !i.categoryId.isBlock);
     
     return populatedCourses ;
   }
@@ -91,7 +91,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
         mentorId: course.mentorId as unknown as IMentor,
         categoryId: course.categoryId as unknown as ICategory,
       }))
-      .filter((course) => !course.isBlock && !course.categoryId.isBlock);
+      .filter((course) => !course.isBlock && !course.categoryId.isBlock &&course.mentorStatus=="approved");
   
     const total = filteredCourses.length;
     const totalPages = Math.ceil(total / limit);

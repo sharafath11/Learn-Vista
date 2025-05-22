@@ -116,6 +116,23 @@ export default function CoursesAdminPage() {
                         <Badge variant={course.isBlock ? "destructive" : "default"} className="text-xs">
                           {course.isBlock ? "Blocked" : "Active"}
                         </Badge>
+                        <span
+  className={`
+    text-xs
+    px-2 py-1
+    rounded-full
+    font-medium
+    ${
+      course.mentorStatus === "approved"
+        ? "bg-green-100 text-green-800"
+        : course.mentorStatus === "rejected"
+        ? "bg-red-100 text-red-800"
+        : "bg-yellow-100 text-yellow-800"
+    }
+  `}
+>
+  {course.mentorStatus}
+</span>
                         <Badge variant="outline" className="text-xs bg-amber-50">
                           {course.courseLanguage}
                         </Badge>

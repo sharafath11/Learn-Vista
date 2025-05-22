@@ -10,7 +10,7 @@ export default function UpcomingSessions() {
   const router = useRouter()
   const [currentTime, setCurrentTime] = useState(new Date())
   const { courses } = useMentorContext()
-
+  const approvedCourses=courses.filter((i)=>i.mentorStatus==="approved")
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date())
@@ -60,7 +60,7 @@ export default function UpcomingSessions() {
           <div className="col-span-2">Actions</div>
         </div>
 
-        {courses.length > 0 ? (
+        {approvedCourses.length > 0 ? (
           <div className="divide-y divide-gray-700">
             {courses.map((session) => {
               const sessionStartDate = session.startDate || "";

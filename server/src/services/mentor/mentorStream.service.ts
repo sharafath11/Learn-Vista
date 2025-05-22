@@ -14,14 +14,8 @@ export class MentorStreamService implements IMentorStreamService{
         @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository
     ){}
     async startStreamSession(courseId: string, mentorId: string): Promise<string> {
-        const course = await this._courseRepo.findWithMenorIdgetAllWithPopulatedFields(mentorId)
-        course.map((i) => {
-            if (i.id === courseId) {
-                if (i.isBlock || i.categoryId.isBlock) {
-                    throwError("This curently blocked")
-                }
-            }
-        })
+        const course = (await this._courseRepo.findWithMenorIdgetAllWithPopulatedFields(mentorId)).filter((i)=>i.mentorStatus==="approved")
+        
         const liveId = `live-${Date.now()}`;
         const currentDate = new Date();
         await this._baseLiveRepo.create({
