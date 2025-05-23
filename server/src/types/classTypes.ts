@@ -38,15 +38,16 @@ export interface ICourse extends Document {
   tags?: string[];
   enrolledUsers:string[]
   // mentorApproved: boolean
+  lessons:ObjectId[]|string[],
   category:ICategory
   mentorStatus: "approved" | "rejected"|"pending";
   isCompleted:boolean
-  currentTag?: string;     // frontend use
-  startDate?: string;      // from form
-  endDate?: string;        // from form
-  startTime?: string;      // from form
+  currentTag?: string;    
+  startDate?: string;      
+  endDate?: string;       
+  startTime?: string;      
   thumbnail?: string;
-  thumbnailPreview?: string | null; // frontend use
+  thumbnailPreview?: string | null; 
   createdAt: Date;
   updatedAt: Date;
 }

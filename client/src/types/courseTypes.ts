@@ -1,5 +1,6 @@
 
 import { ICategory } from "./categoryTypes";
+import { ILessons } from "./lessons";
 import { IMentor } from "./mentorTypes";
 
 export interface ICourse {
@@ -23,6 +24,7 @@ export interface ICourse {
   startTime: string;
   thumbnail?: string;
   thumbnailPreview?: string | null;
+  Lessons:string[]|ILessons[]
   createdAt: Date;
   updatedAt: Date;
 }

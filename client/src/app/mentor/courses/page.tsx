@@ -1,26 +1,28 @@
 "use client"
+
 import { useMentorContext } from "@/src/context/mentorContext"
-import { CheckCircle2, XCircle, Calendar, Tag, Layers, Clock } from "lucide-react"
+import { CheckCircle2, XCircle, Calendar, Tag, Layers, Clock, BookText } from "lucide-react" // Import BookText icon
 import Image from "next/image"
+import Link from "next/link" 
 import { format } from "date-fns"
 import { MentorAPIMethods } from "@/src/services/APImethods"
-import { showSuccessToast } from "@/src/utils/Toast"
+import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import { useState } from "react"
-import { 
-  Card, 
-  CardHeader, 
-  CardContent, 
-  CardFooter 
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
 } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -32,8 +34,8 @@ export default function CoursesPage() {
   const [rejectionReason, setRejectionReason] = useState("")
 
   const handleStatusChange = async (id: string, status: "approved" | "rejected", reason?: string) => {
-    const res = await MentorAPIMethods.courseStatusChange(id, status, reason as string);
-   
+    const res = await MentorAPIMethods.courseStatusChange(id, status, reason as string)
+
     if (res.ok) {
       showSuccessToast(`Course ${status}`)
       setCourses((prevCourses) =>
@@ -41,31 +43,41 @@ export default function CoursesPage() {
           course._id === id ? { ...course, mentorStatus: status } : course
         )
       )
+    } else {
+      showErrorToast("Something went wrong with the status update")
     }
   }
 
   const handleReasonSubmit = async () => {
-    if (!selectedCourseId || !rejectionReason.trim()) return
+    if (!selectedCourseId || !rejectionReason.trim()) {
+      showErrorToast("Rejection reason cannot be empty")
+      return
+    }
     await handleStatusChange(selectedCourseId, "rejected", rejectionReason)
     setShowReasonModal(false)
     setSelectedCourseId(null)
     setRejectionReason("")
   }
 
-  const statusVariants = {
+  const statusVariants: Record<string, string> = {
     approved: "bg-emerald-500 hover:bg-emerald-600",
     rejected: "bg-rose-500 hover:bg-rose-600",
     pending: "bg-amber-500 hover:bg-amber-600"
   }
 
-  const formatCourseDate = (date: string, time?: string) => {
-    if (!date) return "Not specified"
-    return time ? format(new Date(`${date}T${time}`), "PPPp") : format(new Date(date), "PPP")
+  const formatCourseDate = (dateString: string) => {
+    if (!dateString) return "Not specified"
+    try {
+      return format(new Date(dateString), "MMM dd, yyyy")
+    } catch (error) {
+      console.error("Error formatting date:", dateString, error)
+      return "Invalid date"
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-gray-900 text-gray-200 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div className="flex items-center gap-3">
             <div className="h-8 w-1.5 rounded-full bg-gradient-to-b from-purple-500 to-violet-600"></div>
@@ -90,8 +102,8 @@ export default function CoursesPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => (
-              <Card 
-                key={course.id} 
+              <Card
+                key={course._id}
                 className="group relative bg-gray-800/40 backdrop-blur-sm border-gray-700 hover:shadow-lg hover:border-gray-600 transition-all"
               >
                 <CardHeader className="relative p-0 aspect-video">
@@ -116,88 +128,92 @@ export default function CoursesPage() {
                 </CardHeader>
 
                 <CardContent className="p-6 space-y-4">
-  <h2 className="text-xl font-bold text-white line-clamp-2 group-hover:text-purple-300 transition-colors">
-    {course.title}
-  </h2>
+                  <h2 className="text-xl font-bold text-white line-clamp-2 group-hover:text-purple-300 transition-colors">
+                    {course.title}
+                  </h2>
 
-  <p className="text-sm text-gray-300 line-clamp-3">{course.description}</p>
+                  <p className="text-sm text-gray-300 line-clamp-3">{course.description}</p>
 
-  <div className="grid grid-cols-2 gap-3 text-sm">
-    {/* Sessions */}
-    <div className="flex items-center gap-2 text-gray-300">
-      <Avatar className="w-8 h-8 bg-gray-700/50">
-        <AvatarFallback className="bg-transparent">
-          <Layers className="w-4 h-4 text-purple-400" />
-        </AvatarFallback>
-      </Avatar>
-      <span>{course.sessions?.join(", ") || "No sessions"}</span>
-    </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2 text-gray-300">
+                      <Avatar className="w-8 h-8 bg-gray-700/50">
+                        <AvatarFallback className="bg-transparent">
+                          <Layers className="w-4 h-4 text-purple-400" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>{course.sessions?.join(", ") || "No sessions"}</span>
+                    </div>
 
-    {/* Price */}
-    <div className="flex items-center gap-2 text-gray-300">
-      <Avatar className="w-8 h-8 bg-gray-700/50">
-        <AvatarFallback className="bg-transparent">
-          <Tag className="w-4 h-4 text-teal-400" />
-        </AvatarFallback>
-      </Avatar>
-      <span>{course.price ? `₹${course.price}` : "Free"}</span>
-    </div>
+                    <div className="flex items-center gap-2 text-gray-300">
+                      <Avatar className="w-8 h-8 bg-gray-700/50">
+                        <AvatarFallback className="bg-transparent">
+                          <Tag className="w-4 h-4 text-teal-400" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>{course.price ? `₹${course.price}` : "Free"}</span>
+                    </div>
 
-    {/* Start Date */}
-    <div className="flex items-center gap-2 text-gray-300">
-      <Avatar className="w-8 h-8 bg-gray-700/50">
-        <AvatarFallback className="bg-transparent">
-          <Calendar className="w-4 h-4 text-pink-400" />
-        </AvatarFallback>
-      </Avatar>
-      <span className="truncate">{formatCourseDate(course.startDate || "").split(",")[0]}</span>
-    </div>
+                    <div className="flex items-center gap-2 text-gray-300">
+                      <Avatar className="w-8 h-8 bg-gray-700/50">
+                        <AvatarFallback className="bg-transparent">
+                          <Calendar className="w-4 h-4 text-pink-400" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="truncate">{formatCourseDate(course.startDate)}</span>
+                    </div>
 
-    {/* Start Time (Styled Inline) */}
-    <div className="flex items-center gap-2 text-gray-300">
-      <Avatar className="w-8 h-8 bg-gray-700/50">
-        <AvatarFallback className="bg-transparent">
-          <Clock className="w-4 h-4 text-yellow-400" />
-        </AvatarFallback>
-      </Avatar>
-      <span><strong>Time :</strong>{course?.startTime || "N/A"}</span>
-    </div>
+                    <div className="flex items-center gap-2 text-gray-300">
+                      <Avatar className="w-8 h-8 bg-gray-700/50">
+                        <AvatarFallback className="bg-transparent">
+                          <Clock className="w-4 h-4 text-yellow-400" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span><strong>Time :</strong>{course?.startTime || "N/A"}</span>
+                    </div>
 
-    {/* End Date */}
-    <div className="flex items-center gap-2 text-gray-300 col-span-2">
-      <Avatar className="w-8 h-8 bg-gray-700/50">
-        <AvatarFallback className="bg-transparent">
-          <Clock className="w-4 h-4 text-amber-400" />
-        </AvatarFallback>
-      </Avatar>
-      <span className="truncate">{formatCourseDate(course.endDate || "").split(",")[0]}</span>
-    </div>
-  </div>
-</CardContent>
+                    <div className="flex items-center gap-2 text-gray-300 col-span-2">
+                      <Avatar className="w-8 h-8 bg-gray-700/50">
+                        <AvatarFallback className="bg-transparent">
+                          <Clock className="w-4 h-4 text-amber-400" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="truncate">{formatCourseDate(course.endDate)}</span>
+                    </div>
+                  </div>
+                </CardContent>
 
-
-                {course.mentorStatus === "pending" && (
-                  <CardFooter className="flex gap-3 pt-2">
-                    <Button 
-                      onClick={() => handleStatusChange(course._id, "approved")}
-                      className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-500"
-                    >
-                      <CheckCircle2 size={18} />
-                      <span>Approve</span>
-                    </Button>
-                    <Button 
-                      variant="destructive"
-                      onClick={() => {
-                        setSelectedCourseId(course._id)
-                        setShowReasonModal(true)
-                      }}
-                      className="flex-1 gap-2"
-                    >
-                      <XCircle size={18} />
-                      <span>Reject</span>
-                    </Button>
-                  </CardFooter>
-                )}
+                <CardFooter className="flex flex-col gap-3 pt-2">
+                  {course.mentorStatus === "pending" && (
+                    <div className="flex gap-3 w-full">
+                      <Button
+                        onClick={() => handleStatusChange(course._id, "approved")}
+                        className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-500"
+                      >
+                        <CheckCircle2 size={18} />
+                        <span>Approve</span>
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        onClick={() => {
+                          setSelectedCourseId(course._id)
+                          setShowReasonModal(true)
+                        }}
+                        className="flex-1 gap-2"
+                      >
+                        <XCircle size={18} />
+                        <span>Reject</span>
+                      </Button>
+                    </div>
+                  )}
+                  {course.mentorStatus === "approved" && (
+                    <Link href={`/mentor/courses/${course._id}`} className="w-full">
+                      <Button className="w-full gap-2 bg-purple-600 hover:bg-purple-500">
+                        <BookText size={18} />
+                        <span>Go to Lessons</span>
+                      </Button>
+                    </Link>
+                  )}
+                </CardFooter>
               </Card>
             ))}
           </div>
@@ -217,8 +233,8 @@ export default function CoursesPage() {
               placeholder="Type reason..."
             />
             <DialogFooter>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
                   setShowReasonModal(false)
                   setRejectionReason("")
@@ -228,7 +244,7 @@ export default function CoursesPage() {
               >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={handleReasonSubmit}
                 className="bg-purple-600 hover:bg-purple-500"
               >

@@ -79,6 +79,12 @@ import { LiveUserService } from '../../services/user/LiveUser.Service';
 import { IMentorStreamService } from '../interfaces/services/mentor/ImentorStream.service';
 import { MentorStreamService } from '../../services/mentor/mentorStream.service';
 import { IMentorStreamController } from '../interfaces/controllers/mentor/IMentorStream.controller';
+import { LessonsRepository } from '../../repositories/lesson/lessonsRepository';
+import { ILessonsRepository } from '../interfaces/repositories/lessons/ILessonRepository';
+import { IMentorLessonService } from '../interfaces/services/mentor/IMentorLesson.Service';
+import { MentorLessonService } from '../../services/mentor/MentorLesson.Service';
+import { IMentorLessonsController } from '../interfaces/controllers/mentor/IMentorLesson.Controller';
+import { MentorLessonsController } from '../../controllers/mentor/MentorLessons.Controller';
 
 const container = new Container();
 
@@ -95,7 +101,8 @@ container.bind<IMentorProfileController>(TYPES.MentorProfileController).to(Mento
 container.bind<IAdminCourseController>(TYPES.AdminCourseController).to(AdminCourseController)
 container.bind<IMentorStreamController>(TYPES.MentorStreamController).to(MentorStreamController)
 container.bind<IUserCourseController>(TYPES.UserCourseController).to(UserCourseController);
-container.bind<IUserLiveController>(TYPES.UserLiveCOntroller).to(UserLiveCallController)
+container.bind<IUserLiveController>(TYPES.UserLiveCOntroller).to(UserLiveCallController);
+container.bind<IMentorLessonsController>(TYPES.MentorLessonsController).to(MentorLessonsController)
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -110,6 +117,7 @@ container.bind<IAdminCourseServices>(TYPES.AdminCourseService).to(AdminCourseSer
 container.bind<IMentorStreamService>(TYPES.MentorStreamService).to(MentorStreamService);
 container.bind<IUserCourseService>(TYPES.UserCourseService).to(UserCourseService),
 container.bind<IUserLiveService>(TYPES.UserLiveService).to(LiveUserService)
+container.bind<IMentorLessonService>(TYPES.MentorLessonsService).to(MentorLessonService),
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);
@@ -122,7 +130,8 @@ container.bind<ICourseRepository>(TYPES.CourseRepository).to(CourseRepository)
 container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository).to(AdminCourseRepository);
 container.bind<IAdminCategoriesRepostory>(TYPES.AdminCategoriesRepository).to(AdminCategoriesRepo);
 container.bind<ILiveRepository>(TYPES.LiveRepository).to(LiveRepository);
-container.bind<ISessionRepository>(TYPES.SessionRepository).to(SessionRepository)
+container.bind<ISessionRepository>(TYPES.SessionRepository).to(SessionRepository);
+container.bind<ILessonsRepository>(TYPES.LessonsRepository).to(LessonsRepository)
 
 
 export default container;

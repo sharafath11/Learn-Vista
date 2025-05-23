@@ -1,5 +1,6 @@
 import {   UserBlock,  } from "../types/adminTypes";
 import { ILogin, IUserRegistration } from "../types/authTypes";
+import { ILessons } from "../types/lessons";
 import { IMentorSignupData } from "../types/mentorTypes";
 
 import { getRequest, patchRequest, postRequest } from "./api";
@@ -89,5 +90,11 @@ export const MentorAPIMethods = {
   getCourses: () => get("/mentor/courses"),
   courseStatusChange: (courseId: string, status: string, reson: string) => patch("/mentor/course/status-change", { courseId: courseId, status: status, courseRejectReson: reson }),
   startLiveSession: (courseId: string) => get(`/mentor/live-session/start/${courseId}`),
-  endStream:(liveId:string)=>get(`/mentor/end/stream/${liveId}`)
+  endStream: (liveId: string) => get(`/mentor/end/stream/${liveId}`),
+  getLessons: (courseId: string) => get(`/mentor/courses/lessons/${courseId}`),
+  addLesson: (courseId: string, lesson: Partial<ILessons>) => post("mentor/add-lessons", { courseId, lesson }),
+  updateLesson: (lessonId: string, updateLesson: Partial<ILessons>) => patch("/mentor/edit/lessons", {
+    lessonId,
+    updateLesson
+  })
 } as const;

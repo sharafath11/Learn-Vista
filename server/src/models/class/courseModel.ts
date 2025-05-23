@@ -19,6 +19,7 @@ const CourseSchema: Schema = new Schema(
       default: 'pending',
       required: true,
     },
+    lessons:[{ type: Schema.Types.ObjectId, ref: 'Lessons' }],
     isCompleted:{type:Boolean,default:false},
     courseLanguage: { type: String },
     isBlock: { type: Boolean, required: true, default: false },
