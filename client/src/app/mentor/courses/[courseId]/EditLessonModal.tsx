@@ -1,4 +1,3 @@
-// src/app/mentor/courses/[courseId]/lessons/AddLessonModal.tsx
 "use client"
 
 import { useEffect, useState } from "react"
@@ -17,12 +16,14 @@ import { Textarea } from "@/components/ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { FileImage, PlayCircle } from "lucide-react"
-import { ILessons } from "@/src/types/lessons" // CORRECTED: Removed `=>`
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
+import { FileImage, Loader2, PlayCircle } from "lucide-react"
+import { ILessons } from "@/src/types/lessons"
 import { MentorAPIMethods } from "@/src/services/APImethods"
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
+import axios from "axios"
 
 const lessonFormSchema = z.object({
+  id: z.string().optional(),
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   order: z.coerce.number().int().positive("Order must be a positive number"),
@@ -33,27 +34,27 @@ const lessonFormSchema = z.object({
 
 type LessonFormValues = z.infer<typeof lessonFormSchema>
 
-interface AddLessonModalProps {
+interface EditLessonModalProps {
   open: boolean
   setOpen: (open: boolean) => void
-  nextOrder: number
+  selectedLesson: ILessons | null
+  onLessonUpdated: () => void
   courseId: string
-  onLessonAdded: () => void
 }
 
-export function AddLessonModal({
+export function EditLessonModal({
   open,
   setOpen,
-  nextOrder,
+  selectedLesson,
+  onLessonUpdated,
   courseId,
-  onLessonAdded,
-}: AddLessonModalProps) {
+}: EditLessonModalProps) {
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonFormSchema),
     defaultValues: {
       title: "",
       description: "",
-      order: nextOrder,
+      order: 1,
       thumbnail: "",
       videoUrl: "",
       duration: "",
@@ -61,87 +62,82 @@ export function AddLessonModal({
   })
 
   const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(null)
 
   useEffect(() => {
-    if (open) {
+    if (selectedLesson && open) {
       form.reset({
-        title: "",
-        description: "",
-        order: nextOrder,
-        thumbnail: "",
-        videoUrl: "",
-        duration: "",
+        id: selectedLesson.id,
+        title: selectedLesson.title,
+        description: selectedLesson.description || "",
+        order: selectedLesson.order,
+        thumbnail: selectedLesson.thumbnail || "",
+        videoUrl: selectedLesson.videoUrl || "",
+        duration: selectedLesson.duration || "",
       })
+      setUploadedS3VideoUrl(selectedLesson.videoUrl || null)
+    } else if (!open) {
+      form.reset()
       setUploadedS3VideoUrl(null)
-      setIsUploading(false)
     }
-  }, [open, nextOrder, form])
+  }, [selectedLesson, open, form])
 
   const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
 
     setIsUploading(true)
+    setUploadProgress(0)
     setUploadedS3VideoUrl(null)
 
-    try { // Added try-catch for better error handling during S3 upload
-      const res = await MentorAPIMethods.getS3DirectUploadUrl(file.name, file.type); // Pass courseId here
-      console.log("andimukk shaga",res)
-      if (!res.ok || !res.data) { 
-        throw new Error(res.error?.message || 'Failed to get S3 upload URL from backend.');
-      }
+    try {
+      const { data } = await axios.post("/api/mentor/lessons/s3-upload", {
+        fileName: file.name,
+        fileType: file.type,
+      })
 
-      const  uploadURL  = res.data;
-      const finalS3Url = await MentorAPIMethods.uploadFileToS3(uploadURL, file); // Simplified call
+      const { uploadURL, videoUrl } = data
 
-      form.setValue("videoUrl", finalS3Url, { shouldValidate: true });
-      console.log("uploadedS3VideoUrl",uploadedS3VideoUrl)
-      setUploadedS3VideoUrl(finalS3Url);
-      showSuccessToast("Video uploaded!");
+      await axios.put(uploadURL, file, {
+        headers: { "Content-Type": file.type },
+        onUploadProgress: (progressEvent) => {
+          const progress = (progressEvent.loaded / progressEvent.total!) * 100
+          setUploadProgress(progress)
+        },
+      })
 
+      form.setValue("videoUrl", videoUrl)
+      setUploadedS3VideoUrl(videoUrl)
+      showSuccessToast("Video uploaded to S3!")
     } catch (error: any) {
-      console.error("Video upload error:", error); // Log the error for debugging
-      showErrorToast(`Video Upload Failed: ${error.message || "An unexpected error occurred during video upload."}`);
-      form.setValue("videoUrl", ""); // Clear URL on error
-      setUploadedS3VideoUrl(null);
+      console.error("S3 Upload Failed:", error)
+      showErrorToast("Video upload failed. Please try again.")
+      form.setValue("videoUrl", "")
     } finally {
-      setIsUploading(false);
+      setIsUploading(false)
+      setUploadProgress(0)
     }
   }
 
   const handleRemoveVideo = async () => {
-    const currentVideoUrl = form.getValues("videoUrl")
-    if (!currentVideoUrl) return
-
-    try { // Added try-catch for remove video
-      const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl)
-      if (deleteResult.ok) {
-        showSuccessToast("Video successfully removed from S3.")
-      } else {
-        showErrorToast(`Failed to delete video from S3: ${deleteResult.error?.message || 'Unknown error'}`)
-      }
-    } catch (error: any) {
-      console.error("Video removal error:", error); // Log for debugging
-      showErrorToast(`Error deleting video: ${error.message || 'An unexpected error occurred.'}`);
-    } finally {
-      form.setValue("videoUrl", "")
-      setUploadedS3VideoUrl(null)
-    }
+    form.setValue("videoUrl", "")
+    setUploadedS3VideoUrl(null)
+    showSuccessToast("Video removed from form.")
   }
 
   const handleSubmit = async (data: LessonFormValues) => {
     if (isUploading) {
-      showErrorToast("Upload in Progress: Please wait for the video upload to complete before saving.")
+      showErrorToast("Upload in Progress: Please wait before saving.")
       return
     }
 
-    if (!data.videoUrl && (data.duration || data.thumbnail)) {
-      showErrorToast("Please upload a video file or ensure video URL is present.")
+    if (!selectedLesson?.id) {
+      showErrorToast("Lesson ID missing.")
       return
     }
 
-    const newLessonData: Partial<ILessons> = {
+    const updatedLessonData: Partial<ILessons> = {
       title: data.title,
       description: data.description,
       order: data.order,
@@ -150,13 +146,13 @@ export function AddLessonModal({
       duration: data.duration || "",
     }
 
-    const res = await MentorAPIMethods.addLesson(courseId, newLessonData)
+    const res = await MentorAPIMethods.updateLesson(selectedLesson.id, updatedLessonData)
     if (res.ok) {
-      showSuccessToast("Lesson Added!")
-      onLessonAdded()
+      showSuccessToast("Lesson Updated!")
+      onLessonUpdated()
       setOpen(false)
     } else {
-      showErrorToast("Failed to add lesson.")
+      showErrorToast("Failed to update lesson.")
     }
   }
 
@@ -164,8 +160,8 @@ export function AddLessonModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
-          <DialogTitle>Add New Lesson</DialogTitle>
-          <DialogDescription>Create a new lesson for this course.</DialogDescription>
+          <DialogTitle>Edit Lesson</DialogTitle>
+          <DialogDescription>Edit the details of this lesson.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -223,12 +219,14 @@ export function AddLessonModal({
                   />
                   {isUploading && (
                     <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <span>Uploading video... Please wait.</span>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Uploading: {uploadProgress.toFixed(0)}%</span>
+                      {uploadProgress < 100 && <span className="ml-2">Please wait...</span>}
                     </div>
                   )}
                 </div>
               </FormControl>
-              <FormDescription>Upload your video file directly to S3 using a pre-signed URL.</FormDescription>
+              <FormDescription>Upload your video file to AWS S3</FormDescription>
               {uploadedS3VideoUrl && !isUploading && (
                 <div className="flex items-center justify-between mt-2 p-2 border rounded-md bg-green-50/50">
                   <div className="flex items-center gap-2">
@@ -287,7 +285,7 @@ export function AddLessonModal({
             />
             <DialogFooter>
               <Button type="submit" disabled={isUploading}>
-                Save Lesson
+                Save Changes
               </Button>
             </DialogFooter>
           </form>

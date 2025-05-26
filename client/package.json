@@ -40,6 +40,7 @@
     "clsx": "^2.1.1",
     "cookies-next": "^5.1.0",
     "date-fns": "^3.6.0",
+    "firebase": "^11.8.1",
     "framer-motion": "^12.10.5",
     "jose": "^6.0.10",
     "jsonwebtoken": "^9.0.2",

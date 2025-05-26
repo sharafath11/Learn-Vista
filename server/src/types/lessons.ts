@@ -7,7 +7,7 @@ export interface ILesson extends Document {
     thumbnail?: string;  
     duration?: string;
     description?: string;
-    courseId: mongoose.Types.ObjectId;
+    courseId: mongoose.Types.ObjectId|string;
     order?: number;
     isFree: boolean;
     createdAt?: Date;

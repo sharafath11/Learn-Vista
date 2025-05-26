@@ -34,25 +34,20 @@ export class MentorStreamController implements IMentorStreamController {
           handleControllerError(res, error);
         }
     }
-    async endStreamController(req: Request, res: Response): Promise<void> {
+    async endStreamController(req:Request,res:Response):Promise<void> {
     try {
       const { liveId } = req.params;
       const token = req.cookies?.token;
-  
       if (!liveId || !token) {
          sendResponse(res, StatusCode.BAD_REQUEST, "Missing LiveId or token", false);
       }
-  
       const decoded = decodeToken(token);
       const mentorId = decoded?.id;
-  
       if (!mentorId) {
         sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized access", false);
         return 
       }
-  
-       await this._mentorStreamService.endStream(liveId,mentorId);
-  
+      await this._mentorStreamService.endStream(liveId,mentorId);
       sendResponse(res, StatusCode.OK, "Live session Ended", true, { liveId });
     } catch (error) {
       handleControllerError(res, error);

@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["http://localhost:3000", "http://127.0.0.1:3000", "https://YOUR_PRODUCTION_DOMAIN.com"],
+    "method": ["GET", "PUT", "POST", "DELETE", "HEAD"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "x-firebase-storage-upload-status"]
+  }
+]

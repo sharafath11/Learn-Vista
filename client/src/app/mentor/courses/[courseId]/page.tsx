@@ -1,9 +1,9 @@
+// src/app/mentor/courses/[courseId]/lessons/page.tsx
 "use client"
 
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-// Removed DialogTrigger import as it's now internal to LessonFormModal
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import { ArrowLeft, Pencil, PlusCircle } from "lucide-react"
 import Link from "next/link"
@@ -12,12 +12,14 @@ import { useParams } from "next/navigation"
 import { MentorAPIMethods } from "@/src/services/APImethods"
 import { ILessons } from "@/src/types/lessons"
 import { ICourse } from "@/src/types/courseTypes"
-import { LessonFormModal } from "./addLessonModal"
+import { EditLessonModal } from "./EditLessonModal" // New import
+import { AddLessonModal } from "./addLessonModal"
 
 export default function CourseLessonsPage() {
-  const [open, setOpen] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   const [lessons, setLessons] = useState<ILessons[]>([])
-  const [selectedLesson, setSelectedLesson] = useState<ILessons | null>(null)
+  const [selectedLesson, setSelectedLesson] = useState<ILessons | null>(null) // Used for editing
   const { courses } = useMentorContext()
   const params = useParams()
   const courseId = params.courseId as string
@@ -40,62 +42,20 @@ export default function CourseLessonsPage() {
   }
 
   const handleAddLessonClick = () => {
-    setSelectedLesson(null)
-    setOpen(true)
+    setShowAddModal(true)
   }
 
   const handleEditLessonClick = (lesson: ILessons) => {
-    setSelectedLesson(lesson)
-    setOpen(true)
+    setSelectedLesson(lesson) // Set the lesson to be edited
+    setShowEditModal(true)
   }
 
-  // Define LessonFormValues type here, or import it if needed from LessonFormModal
-  // For simplicity, directly using Partial<ILessons> for the data received from modal
-  const handleSaveLesson = async (data: Partial<ILessons>) => {
-    if (!course) {
-      showErrorToast("Course not found. Cannot perform action.")
-      return
-    }
-
-    if (selectedLesson) {
-      const updatedLesson: ILessons = {
-        ...selectedLesson,
-        title: data.title || "",
-        description: data.description || "",
-        order: data.order,
-        thumbnail: data.thumbnail || "/placeholder.svg?height=80&width=120",
-        videoUrl: data.videoUrl || "",
-        duration: data.duration || "",
-      }
-      const res = await MentorAPIMethods.updateLesson(selectedLesson.id, updatedLesson)
-      if (res.ok) {
-        showSuccessToast("Lesson Updated!")
-        setLessons((prev) => prev.map((l) => (l.id === selectedLesson.id ? updatedLesson : l)))
-      } else {
-        showErrorToast("Failed to update lesson.")
-      }
-    } else {
-      const newLessonData = {
-        title: data.title,
-        description: data.description || "",
-        order: data.order,
-        thumbnail: data.thumbnail || "/placeholder.svg?height=80&width=120",
-        videoUrl: data.videoUrl || "",
-        duration: data.duration || "",
-        courseId: course._id,
-      }
-      const res = await MentorAPIMethods.addLesson(course._id, newLessonData)
-      if (res.ok) {
-        showSuccessToast("Lesson Added!")
-        // Assuming API returns the new lesson with its ID, update state accordingly
-        // You might need to refetch all lessons if the API doesn't return the full new lesson object with ID
-        getLessons(course._id);
-      } else {
-        showErrorToast("Failed to add lesson.")
-      }
-    }
-    setOpen(false)
-    setSelectedLesson(null)
+  const handleLessonActionCompleted = () => {
+    // This callback is triggered by both modals after a successful save/update
+    setShowAddModal(false) // Close add modal if open
+    setShowEditModal(false) // Close edit modal if open
+    setSelectedLesson(null) // Clear selected lesson
+    getLessons(courseId) // Refresh the list of lessons
   }
 
   if (!course) {
@@ -108,6 +68,8 @@ export default function CourseLessonsPage() {
       </div>
     )
   }
+
+  const nextLessonOrder = lessons.length > 0 ? Math.max(...lessons.map((l) => l.order || 0)) + 1 : 1
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -161,35 +123,44 @@ export default function CourseLessonsPage() {
               </Card>
             ))}
 
-            {/* The button that triggers the modal */}
             <Button className="mt-4" onClick={handleAddLessonClick}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Lesson
             </Button>
-            <LessonFormModal
-              open={open}
-              setOpen={setOpen}
-              selectedLesson={selectedLesson}
-              onSave={handleSaveLesson}
-              nextOrder={lessons.length > 0 ? Math.max(...lessons.map((l) => l.order || 0)) + 1 : 1}
+
+            <AddLessonModal
+              open={showAddModal}
+              setOpen={setShowAddModal}
+              onLessonAdded={handleLessonActionCompleted}
+              nextOrder={nextLessonOrder}
+              courseId={courseId}
             />
+
+            {selectedLesson && ( // Only render Edit modal if a lesson is selected
+              <EditLessonModal
+                open={showEditModal}
+                setOpen={setShowEditModal}
+                selectedLesson={selectedLesson}
+                onLessonUpdated={handleLessonActionCompleted}
+                courseId={courseId}
+              />
+            )}
           </div>
         ) : (
           <div className="text-center py-12 border rounded-lg">
             <h3 className="text-lg font-medium mb-2">No lessons yet</h3>
             <p className="text-muted-foreground mb-6">Get started by adding your first lesson</p>
 
-            {/* The button that triggers the modal */}
             <Button onClick={handleAddLessonClick}>
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Lesson
             </Button>
-            <LessonFormModal
-              open={open}
-              setOpen={setOpen}
-              selectedLesson={selectedLesson}
-              onSave={handleSaveLesson}
-              nextOrder={1}
+            <AddLessonModal
+              open={showAddModal}
+              setOpen={setShowAddModal}
+              onLessonAdded={handleLessonActionCompleted}
+              nextOrder={nextLessonOrder}
+              courseId={courseId}
             />
           </div>
         )}

@@ -96,5 +96,8 @@ export const MentorAPIMethods = {
   updateLesson: (lessonId: string, updateLesson: Partial<ILessons>) => patch("/mentor/edit/lessons", {
     lessonId,
     updateLesson
-  })
+  }),
+  getS3DirectUploadUrl: (fileName: string, fileType: string) => post("/mentor/generate-s3-upload-url", { fileName, fileType }),
+  deleteS3file: (fileUrl: string) => post("/mentor/delete-s3-file", { fileUrl }),
+  uploadFileToS3:(uploadURL: string, file: File)=>post("mentor/uploadfiles-to-s3",{uploadURL}),
 } as const;
