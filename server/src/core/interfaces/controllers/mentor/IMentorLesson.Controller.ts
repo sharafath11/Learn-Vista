@@ -6,5 +6,5 @@ export interface IMentorLessonsController {
   addLesson(req: Request, res: Response): Promise<void>;
   editLesson(req: Request, res: Response): Promise<void>;
   deleteS3File(req: Request, res: Response): Promise<void>;
-  uploadToS3(req: Request, res: Response): Promise<void>;
+  // uploadToS3(req: Request, res: Response): Promise<void>;
 }

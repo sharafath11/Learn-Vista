@@ -1,8 +1,7 @@
-// src/app/mentor/courses/[courseId]/lessons/AddLessonModal.tsx
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,17 +9,25 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { FileImage, PlayCircle } from "lucide-react"
-import { ILessons } from "@/src/types/lessons" // CORRECTED: Removed `=>`
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import { MentorAPIMethods } from "@/src/services/APImethods"
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { FileImage, PlayCircle } from "lucide-react";
+import { ILessons } from "@/src/types/lessons";
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
+import { MentorAPIMethods } from "@/src/services/APImethods";
 
 const lessonFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -29,16 +36,16 @@ const lessonFormSchema = z.object({
   thumbnail: z.string().optional(),
   videoUrl: z.string().optional(),
   duration: z.string().optional(),
-})
+});
 
-type LessonFormValues = z.infer<typeof lessonFormSchema>
+type LessonFormValues = z.infer<typeof lessonFormSchema>;
 
 interface AddLessonModalProps {
-  open: boolean
-  setOpen: (open: boolean) => void
-  nextOrder: number
-  courseId: string
-  onLessonAdded: () => void
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  nextOrder: number;
+  courseId: string;
+  onLessonAdded: () => void;
 }
 
 export function AddLessonModal({
@@ -58,10 +65,10 @@ export function AddLessonModal({
       videoUrl: "",
       duration: "",
     },
-  })
+  });
 
-  const [isUploading, setIsUploading] = useState(false)
-  const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -72,73 +79,82 @@ export function AddLessonModal({
         thumbnail: "",
         videoUrl: "",
         duration: "",
-      })
-      setUploadedS3VideoUrl(null)
-      setIsUploading(false)
+      });
+      setUploadedS3VideoUrl(null);
+      setIsUploading(false);
     }
-  }, [open, nextOrder, form])
+  }, [open, nextOrder, form]);
 
   const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    setIsUploading(true)
-    setUploadedS3VideoUrl(null)
+    setIsUploading(true);
+    setUploadedS3VideoUrl(null);
 
-    try { // Added try-catch for better error handling during S3 upload
-      const res = await MentorAPIMethods.getS3DirectUploadUrl(file.name, file.type); // Pass courseId here
-      console.log("andimukk shaga",res)
-      if (!res.ok || !res.data) { 
-        throw new Error(res.error?.message || 'Failed to get S3 upload URL from backend.');
+    try {
+      const res = await MentorAPIMethods.getS3DirectUploadUrl(file.name, file.type);
+      if (!res.ok || !res.data || !res.data.signedUploadUrl || !res.data.publicVideoUrl) {
+        throw new Error(res.error?.message || "Failed to get S3 URLs from backend.");
       }
 
-      const  uploadURL  = res.data;
-      const finalS3Url = await MentorAPIMethods.uploadFileToS3(uploadURL, file); // Simplified call
+      const { signedUploadUrl, publicVideoUrl } = res.data;
+      const uploadResponse = await fetch(signedUploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        },
+      });
 
-      form.setValue("videoUrl", finalS3Url, { shouldValidate: true });
-      console.log("uploadedS3VideoUrl",uploadedS3VideoUrl)
-      setUploadedS3VideoUrl(finalS3Url);
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        throw new Error(`Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`);
+      }
+
+      // 3. Update form and state with the public S3 URL
+      form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
+      setUploadedS3VideoUrl(publicVideoUrl);
       showSuccessToast("Video uploaded!");
-
     } catch (error: any) {
-      console.error("Video upload error:", error); // Log the error for debugging
-      showErrorToast(`Video Upload Failed: ${error.message || "An unexpected error occurred during video upload."}`);
-      form.setValue("videoUrl", ""); // Clear URL on error
+      console.error("Video upload error:", error);
+      showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
+      form.setValue("videoUrl", "");
       setUploadedS3VideoUrl(null);
     } finally {
       setIsUploading(false);
     }
-  }
+  };
 
   const handleRemoveVideo = async () => {
-    const currentVideoUrl = form.getValues("videoUrl")
-    if (!currentVideoUrl) return
+    const currentVideoUrl = form.getValues("videoUrl");
+    if (!currentVideoUrl) return;
 
-    try { // Added try-catch for remove video
-      const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl)
+    try {
+      const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl);
       if (deleteResult.ok) {
-        showSuccessToast("Video successfully removed from S3.")
+        showSuccessToast("Video removed from S3.");
       } else {
-        showErrorToast(`Failed to delete video from S3: ${deleteResult.error?.message || 'Unknown error'}`)
+        showErrorToast(`Delete failed: ${deleteResult.error?.message || "Unknown error"}`);
       }
     } catch (error: any) {
-      console.error("Video removal error:", error); // Log for debugging
-      showErrorToast(`Error deleting video: ${error.message || 'An unexpected error occurred.'}`);
+      console.error("Video removal error:", error);
+      showErrorToast(`Delete Error: ${error.message || "Unexpected error."}`);
     } finally {
-      form.setValue("videoUrl", "")
-      setUploadedS3VideoUrl(null)
+      form.setValue("videoUrl", "");
+      setUploadedS3VideoUrl(null);
     }
-  }
+  };
 
   const handleSubmit = async (data: LessonFormValues) => {
     if (isUploading) {
-      showErrorToast("Upload in Progress: Please wait for the video upload to complete before saving.")
-      return
+      showErrorToast("Please wait for the video upload to complete.");
+      return;
     }
 
     if (!data.videoUrl && (data.duration || data.thumbnail)) {
-      showErrorToast("Please upload a video file or ensure video URL is present.")
-      return
+      showErrorToast("Upload a video or clear the duration/thumbnail.");
+      return;
     }
 
     const newLessonData: Partial<ILessons> = {
@@ -148,17 +164,17 @@ export function AddLessonModal({
       thumbnail: data.thumbnail || "/placeholder.svg?height=80&width=120",
       videoUrl: data.videoUrl || "",
       duration: data.duration || "",
-    }
+    };
 
-    const res = await MentorAPIMethods.addLesson(courseId, newLessonData)
+    const res = await MentorAPIMethods.addLesson(courseId, newLessonData);
     if (res.ok) {
-      showSuccessToast("Lesson Added!")
-      onLessonAdded()
-      setOpen(false)
+      showSuccessToast("Lesson added successfully!");
+      onLessonAdded();
+      setOpen(false);
     } else {
-      showErrorToast("Failed to add lesson.")
+      showErrorToast("Failed to add lesson.");
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -204,7 +220,7 @@ export function AddLessonModal({
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
-                  <FormDescription>The order in which this lesson appears in the course</FormDescription>
+                  <FormDescription>Lesson order within the course.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -214,7 +230,6 @@ export function AddLessonModal({
               <FormControl>
                 <div className="flex flex-col gap-2">
                   <Input
-                    id="video-upload-input"
                     type="file"
                     accept="video/*"
                     onChange={handleVideoUpload}
@@ -222,19 +237,17 @@ export function AddLessonModal({
                     disabled={isUploading}
                   />
                   {isUploading && (
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <span>Uploading video... Please wait.</span>
-                    </div>
+                    <div className="text-sm text-muted-foreground">Uploading video...</div>
                   )}
                 </div>
               </FormControl>
-              <FormDescription>Upload your video file directly to S3 using a pre-signed URL.</FormDescription>
+              <FormDescription>Upload a video directly to S3.</FormDescription>
               {uploadedS3VideoUrl && !isUploading && (
                 <div className="flex items-center justify-between mt-2 p-2 border rounded-md bg-green-50/50">
                   <div className="flex items-center gap-2">
                     <PlayCircle className="h-5 w-5 text-green-600" />
-                    <span className="text-sm font-medium text-green-700">
-                      Video Uploaded (URL: {uploadedS3VideoUrl.substring(0, 40)}...)
+                    <span className="text-sm text-green-700 truncate w-[200px]">
+                      Uploaded: {uploadedS3VideoUrl}
                     </span>
                   </div>
                   <Button
@@ -242,7 +255,7 @@ export function AddLessonModal({
                     variant="ghost"
                     size="sm"
                     onClick={handleRemoveVideo}
-                    className="text-red-500 hover:bg-red-50 hover:text-red-600"
+                    className="text-red-500 hover:bg-red-50"
                   >
                     Remove
                   </Button>
@@ -259,9 +272,9 @@ export function AddLessonModal({
                 <FormItem>
                   <FormLabel>Duration</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., 10 min, 01:25" {...field} />
+                    <Input placeholder="e.g., 10 min or 01:25" {...field} />
                   </FormControl>
-                  <FormDescription>Estimated duration of the lesson</FormDescription>
+                  <FormDescription>Estimated video duration.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -274,13 +287,13 @@ export function AddLessonModal({
                   <FormLabel>Thumbnail URL</FormLabel>
                   <FormControl>
                     <div className="flex">
-                      <Input placeholder="Enter thumbnail URL (optional)" {...field} />
+                      <Input placeholder="Optional thumbnail URL" {...field} />
                       <Button type="button" variant="outline" className="ml-2">
                         <FileImage className="h-4 w-4" />
                       </Button>
                     </div>
                   </FormControl>
-                  <FormDescription>Leave blank to use a default thumbnail</FormDescription>
+                  <FormDescription>Leave blank to use the default thumbnail.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -294,5 +307,5 @@ export function AddLessonModal({
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import { IMentorLessonService } from "../../core/interfaces/services/mentor/IMentorLesson.Service";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
-import AWS from 'aws-sdk'; 
+import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -37,8 +37,8 @@ export class MentorLessonsController implements IMentorLessonsController {
         }
     }
 
-    async S3Upload(req: Request, res: Response): Promise<void> {
-        const { fileName, fileType } = req.body; 
+      async S3Upload(req: Request, res: Response): Promise<void> {
+        const { fileName, fileType } = req.body;
         console.log(`[S3Upload] Received request for file: ${fileName} (Type: ${fileType})`);
 
         if (!fileName || !fileType) {
@@ -61,9 +61,9 @@ export class MentorLessonsController implements IMentorLessonsController {
         const params = {
             Bucket: S3_BUCKET_NAME,
             Key: s3Key,
-            Expires: 60 * 5,
-            ContentType: fileType, 
-            ACL: 'public-read' 
+            Expires: 60 * 5, // URL valid for 5 minutes
+            ContentType: fileType,
+            // REMOVE THIS LINE: ACL: 'public-read'
         };
 
         s3.getSignedUrl('putObject', params, (err, uploadURL) => {
@@ -75,7 +75,9 @@ export class MentorLessonsController implements IMentorLessonsController {
             const publicVideoUrl = `https://${S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${s3Key}`;
             console.log(`[S3Upload] Generated pre-signed URL: ${uploadURL}`);
             console.log(`[S3Upload] Public video URL: ${publicVideoUrl}`);
-            sendResponse(res,StatusCode.OK,"",true,publicVideoUrl)
+
+            // Sending both the signed URL for upload and the public URL for storage/display
+            sendResponse(res, StatusCode.OK, "", true, { signedUploadUrl: uploadURL, publicVideoUrl: publicVideoUrl });
         });
     }
     async addLesson(req: Request, res: Response): Promise<void> {
@@ -108,6 +110,7 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
 
         const s3 = new AWS.S3();
         const bucket = S3_BUCKET_NAME!;
+        // Decode the URL to get the correct S3 key (pathname without leading slash)
         const key = decodeURIComponent(new URL(fileUrl).pathname.substring(1));
 
         await s3.deleteObject({ Bucket: bucket, Key: key }).promise();
@@ -117,14 +120,4 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
         handleControllerError(res, error);
     }
 }
-
-async uploadToS3(req: Request, res: Response): Promise<void> {
-    try {
-        const { uploadURL } = req.body;
-        sendResponse(res, StatusCode.OK, "This endpoint is a client mock and not required for S3 direct upload.", true, { uploadURL });
-    } catch (error) {
-        handleControllerError(res, error);
-    }
-}
-
 }
