@@ -24,7 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { FileImage, PlayCircle } from "lucide-react";
+import { FileImage, PlayCircle, XCircle, Loader2 } from "lucide-react";
 import { ILessons } from "@/src/types/lessons";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import { MentorAPIMethods } from "@/src/services/APImethods";
@@ -38,7 +38,7 @@ const lessonFormSchema = z.object({
   duration: z.string().optional(),
 });
 
-type LessonFormValues = z.infer<typeof lessonFormSchema>;
+export type LessonFormValues = z.infer<typeof lessonFormSchema>;
 
 interface AddLessonModalProps {
   open: boolean;
@@ -69,6 +69,9 @@ export function AddLessonModal({
 
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(null);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -82,6 +85,8 @@ export function AddLessonModal({
       });
       setUploadedS3VideoUrl(null);
       setIsUploading(false);
+      setThumbnailFile(null);
+      setThumbnailPreviewUrl(null);
     }
   }, [open, nextOrder, form]);
 
@@ -112,7 +117,6 @@ export function AddLessonModal({
         throw new Error(`Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`);
       }
 
-      // 3. Update form and state with the public S3 URL
       form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
       setUploadedS3VideoUrl(publicVideoUrl);
       showSuccessToast("Video uploaded!");
@@ -146,6 +150,35 @@ export function AddLessonModal({
     }
   };
 
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/gif'];
+
+      if (!allowedImageTypes.includes(file.type)) {
+        showErrorToast('Please select a valid image file (JPEG, PNG, WEBP, JPG, GIF)');
+        e.target.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const previewUrl = reader.result as string;
+        setThumbnailFile(file);
+        setThumbnailPreviewUrl(previewUrl);
+        form.setValue("thumbnail", previewUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearThumbnail = () => {
+    setThumbnailFile(null);
+    setThumbnailPreviewUrl(null);
+    form.setValue("thumbnail", "");
+  };
+
   const handleSubmit = async (data: LessonFormValues) => {
     if (isUploading) {
       showErrorToast("Please wait for the video upload to complete.");
@@ -157,28 +190,42 @@ export function AddLessonModal({
       return;
     }
 
-    const newLessonData: Partial<ILessons> = {
-      title: data.title,
-      description: data.description,
-      order: data.order,
-      thumbnail: data.thumbnail || "/placeholder.svg?height=80&width=120",
-      videoUrl: data.videoUrl || "",
-      duration: data.duration || "",
-    };
+    setIsSaving(true);
 
-    const res = await MentorAPIMethods.addLesson(courseId, newLessonData);
-    if (res.ok) {
+    const formData = new FormData();
+
+    formData.append("courseId", courseId);
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("order", String(data.order));
+    formData.append("videoUrl", data.videoUrl || "");
+    formData.append("duration", data.duration || "");
+
+    if (thumbnailFile instanceof File) {
+      formData.append("thumbnail", thumbnailFile);
+    } else if (typeof data.thumbnail === "string" && data.thumbnail.startsWith("http")) {
+      formData.append("thumbnailUrl", data.thumbnail);
+    }
+
+    try {
+      const res = await MentorAPIMethods.addLesson(formData);
+
+      if (!res.ok) throw new Error("Failed to add lesson");
+
       showSuccessToast("Lesson added successfully!");
       onLessonAdded();
       setOpen(false);
-    } else {
+    } catch (error) {
+      console.error(error);
       showErrorToast("Failed to add lesson.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="sm:max-w-[525px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Lesson</DialogTitle>
           <DialogDescription>Create a new lesson for this course.</DialogDescription>
@@ -237,7 +284,9 @@ export function AddLessonModal({
                     disabled={isUploading}
                   />
                   {isUploading && (
-                    <div className="text-sm text-muted-foreground">Uploading video...</div>
+                    <div className="text-sm text-muted-foreground flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" /> Uploading video...
+                    </div>
                   )}
                 </div>
               </FormControl>
@@ -284,23 +333,69 @@ export function AddLessonModal({
               name="thumbnail"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thumbnail URL</FormLabel>
+                  <FormLabel>Thumbnail</FormLabel>
                   <FormControl>
-                    <div className="flex">
-                      <Input placeholder="Optional thumbnail URL" {...field} />
-                      <Button type="button" variant="outline" className="ml-2">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        placeholder="Optional thumbnail URL"
+                        {...field}
+                        className="flex-1"
+                        disabled={!!thumbnailFile}
+                        value={thumbnailFile ? "" : field.value}
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        id="thumbnail-upload"
+                        onChange={handleThumbnailChange}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => document.getElementById("thumbnail-upload")?.click()}
+                      >
                         <FileImage className="h-4 w-4" />
                       </Button>
+                      {(thumbnailPreviewUrl || field.value) && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={clearThumbnail}
+                          className="text-red-500 hover:bg-red-50"
+                        >
+                          <XCircle className="h-5 w-5" />
+                        </Button>
+                      )}
                     </div>
                   </FormControl>
-                  <FormDescription>Leave blank to use the default thumbnail.</FormDescription>
+                  <FormDescription>
+                    Leave blank to use default or click icon to upload image.
+                  </FormDescription>
+                  {(thumbnailPreviewUrl || field.value) && (
+                    <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
+                      <img
+                        src={thumbnailPreviewUrl || field.value || "/placeholder.svg?height=80&width=120"}
+                        alt="Thumbnail Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <DialogFooter>
-              <Button type="submit" disabled={isUploading}>
-                Save Lesson
+              <Button type="submit" disabled={isUploading || isSaving}>
+                {isSaving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                  </>
+                ) : (
+                  "Save Lesson"
+                )}
               </Button>
             </DialogFooter>
           </form>

@@ -32,8 +32,19 @@ router.get("/end/stream/:liveId",verifyMentor,mentorStreamController.endStreamCo
 router.post("/change/password",verifyMentor,mentorProfileController.changePassword.bind(mentorProfileController))
 router.get("/courses/lessons/:courseId", verifyMentor, mentorLessonController.getLessons.bind(mentorLessonController));
 router.post("/generate-s3-upload-url", verifyMentor, mentorLessonController.S3Upload.bind(mentorLessonController)),
-router.post("/add-lessons", verifyMentor, mentorLessonController.addLesson.bind(mentorLessonController));
-router.patch("/edit/lessons", verifyMentor, mentorLessonController.editLesson.bind(mentorLessonController));
+router.post(
+    "/add-lessons",
+    verifyMentor,
+    uploadImage.single("thumbnail"), 
+    
+    mentorLessonController.addLesson.bind(mentorLessonController)
+    );
+router.patch(
+  "/edit/lessons/:lessonId",
+  verifyMentor,
+  uploadImage.single("thumbnail"),
+  mentorLessonController.editLesson.bind(mentorLessonController)
+);
 router.post("/delete-s3-file", verifyMentor, mentorLessonController.deleteS3File.bind(mentorLessonController));
 // router.post("/uploadfiles-to-s3", verifyMentor, mentorLessonController.uploadToS3.bind(mentorLessonController));
 

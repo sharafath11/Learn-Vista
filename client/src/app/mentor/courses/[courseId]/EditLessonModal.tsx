@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,18 +9,34 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { FileImage, Loader2, PlayCircle } from "lucide-react"
-import { ILessons } from "@/src/types/lessons"
-import { MentorAPIMethods } from "@/src/services/APImethods"
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import axios from "axios"
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { FileImage, PlayCircle, XCircle, Loader2 } from "lucide-react";
+import { MentorAPIMethods } from "@/src/services/APImethods";
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
+
+interface ILessons {
+  id: string;
+  title: string;
+  description?: string;
+  order: number;
+  thumbnail?: string;
+  videoUrl?: string;
+  duration?: string;
+}
 
 const lessonFormSchema = z.object({
   id: z.string().optional(),
@@ -30,16 +46,16 @@ const lessonFormSchema = z.object({
   thumbnail: z.string().optional(),
   videoUrl: z.string().optional(),
   duration: z.string().optional(),
-})
+});
 
-type LessonFormValues = z.infer<typeof lessonFormSchema>
+type LessonFormValues = z.infer<typeof lessonFormSchema>;
 
 interface EditLessonModalProps {
-  open: boolean
-  setOpen: (open: boolean) => void
-  selectedLesson: ILessons | null
-  onLessonUpdated: () => void
-  courseId: string
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  selectedLesson: ILessons | null;
+  onLessonUpdated: () => void;
+  courseId: string;
 }
 
 export function EditLessonModal({
@@ -59,11 +75,13 @@ export function EditLessonModal({
       videoUrl: "",
       duration: "",
     },
-  })
+  });
 
-  const [isUploading, setIsUploading] = useState(false)
-  const [uploadProgress, setUploadProgress] = useState(0)
-  const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(null)
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+  const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(null);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (selectedLesson && open) {
@@ -75,96 +93,161 @@ export function EditLessonModal({
         thumbnail: selectedLesson.thumbnail || "",
         videoUrl: selectedLesson.videoUrl || "",
         duration: selectedLesson.duration || "",
-      })
-      setUploadedS3VideoUrl(selectedLesson.videoUrl || null)
+      });
+      setUploadedS3VideoUrl(selectedLesson.videoUrl || null);
+      setThumbnailPreviewUrl(selectedLesson.thumbnail || null);
+      setThumbnailFile(null);
     } else if (!open) {
-      form.reset()
-      setUploadedS3VideoUrl(null)
+      form.reset();
+      setUploadedS3VideoUrl(null);
+      setThumbnailFile(null);
+      setThumbnailPreviewUrl(null);
     }
-  }, [selectedLesson, open, form])
+  }, [selectedLesson, open, form]);
 
   const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    setIsUploading(true)
-    setUploadProgress(0)
-    setUploadedS3VideoUrl(null)
+    setIsUploadingVideo(true);
+    setUploadedS3VideoUrl(null);
 
     try {
-      const { data } = await axios.post("/api/mentor/lessons/s3-upload", {
-        fileName: file.name,
-        fileType: file.type,
-      })
+      const res = await MentorAPIMethods.getS3DirectUploadUrl(file.name, file.type);
+      if (!res.ok || !res.data || !res.data.signedUploadUrl || !res.data.publicVideoUrl) {
+        throw new Error(res.error?.message || "Failed to get S3 URLs from backend.");
+      }
 
-      const { uploadURL, videoUrl } = data
-
-      await axios.put(uploadURL, file, {
-        headers: { "Content-Type": file.type },
-        onUploadProgress: (progressEvent) => {
-          const progress = (progressEvent.loaded / progressEvent.total!) * 100
-          setUploadProgress(progress)
+      const { signedUploadUrl, publicVideoUrl } = res.data;
+      const uploadResponse = await fetch(signedUploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
         },
-      })
+      });
 
-      form.setValue("videoUrl", videoUrl)
-      setUploadedS3VideoUrl(videoUrl)
-      showSuccessToast("Video uploaded to S3!")
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        throw new Error(`Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`);
+      }
+
+      form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
+      setUploadedS3VideoUrl(publicVideoUrl);
+      showSuccessToast("Video uploaded!");
     } catch (error: any) {
-      console.error("S3 Upload Failed:", error)
-      showErrorToast("Video upload failed. Please try again.")
-      form.setValue("videoUrl", "")
+      console.error("Video upload error:", error);
+      showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
+      form.setValue("videoUrl", "");
+      setUploadedS3VideoUrl(null);
     } finally {
-      setIsUploading(false)
-      setUploadProgress(0)
+      setIsUploadingVideo(false);
     }
-  }
+  };
 
   const handleRemoveVideo = async () => {
-    form.setValue("videoUrl", "")
-    setUploadedS3VideoUrl(null)
-    showSuccessToast("Video removed from form.")
-  }
+    const currentVideoUrl = form.getValues("videoUrl");
+    if (!currentVideoUrl) return;
+
+    try {
+      const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl);
+      if (deleteResult.ok) {
+        showSuccessToast("Video removed from S3.");
+      } else {
+        showErrorToast(`Delete failed: ${deleteResult.error?.message || "Unknown error"}`);
+      }
+    } catch (error: any) {
+      console.error("Video removal error:", error);
+      showErrorToast(`Delete Error: ${error.message || "Unexpected error."}`);
+    } finally {
+      form.setValue("videoUrl", "");
+      setUploadedS3VideoUrl(null);
+    }
+  };
+
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/gif'];
+
+      if (!allowedImageTypes.includes(file.type)) {
+        showErrorToast('Please select a valid image file (JPEG, PNG, WEBP, JPG, GIF)');
+        e.target.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const previewUrl = reader.result as string;
+        setThumbnailFile(file);
+        setThumbnailPreviewUrl(previewUrl);
+        form.setValue("thumbnail", previewUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearThumbnail = () => {
+    setThumbnailFile(null);
+    setThumbnailPreviewUrl(null);
+    form.setValue("thumbnail", "");
+  };
 
   const handleSubmit = async (data: LessonFormValues) => {
-    if (isUploading) {
-      showErrorToast("Upload in Progress: Please wait before saving.")
-      return
+    if (isUploadingVideo) {
+      showErrorToast("Upload in Progress: Please wait before saving.");
+      return;
     }
 
     if (!selectedLesson?.id) {
-      showErrorToast("Lesson ID missing.")
-      return
+      showErrorToast("Lesson ID missing.");
+      return;
     }
 
-    const updatedLessonData: Partial<ILessons> = {
-      title: data.title,
-      description: data.description,
-      order: data.order,
-      thumbnail: data.thumbnail || "/placeholder.svg?height=80&width=120",
-      videoUrl: data.videoUrl || "",
-      duration: data.duration || "",
+    setIsSaving(true);
+
+    const formData = new FormData();
+
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("order", data.order.toString());
+    formData.append("videoUrl", data.videoUrl || "");
+    formData.append("duration", data.duration || "");
+
+    if (thumbnailFile instanceof File) {
+      formData.append("thumbnail", thumbnailFile);
+    } else if (!thumbnailPreviewUrl && selectedLesson.thumbnail) {
+        formData.append("clearThumbnail", "true");
+    } else if (data.thumbnail && data.thumbnail.startsWith("http")) {
+        formData.append("thumbnailUrl", data.thumbnail);
     }
 
-    const res = await MentorAPIMethods.updateLesson(selectedLesson.id, updatedLessonData)
-    if (res.ok) {
-      showSuccessToast("Lesson Updated!")
-      onLessonUpdated()
-      setOpen(false)
-    } else {
-      showErrorToast("Failed to update lesson.")
+    try {
+      const res = await MentorAPIMethods.updateLesson(selectedLesson.id, formData);
+
+      if (!res.ok) throw new Error("Failed to update lesson");
+
+      showSuccessToast("Lesson Updated!");
+      onLessonUpdated();
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+      showErrorToast("Failed to update lesson.");
+    } finally {
+      setIsSaving(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="sm:max-w-[525px]">
+      <DialogContent className="sm:max-w-[525px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Lesson</DialogTitle>
           <DialogDescription>Edit the details of this lesson.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pr-4">
             <FormField
               control={form.control}
               name="title"
@@ -200,7 +283,7 @@ export function EditLessonModal({
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
-                  <FormDescription>The order in which this lesson appears in the course</FormDescription>
+                  <FormDescription>Lesson order within the course.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -210,29 +293,26 @@ export function EditLessonModal({
               <FormControl>
                 <div className="flex flex-col gap-2">
                   <Input
-                    id="video-upload-input"
                     type="file"
                     accept="video/*"
                     onChange={handleVideoUpload}
                     className="w-full"
-                    disabled={isUploading}
+                    disabled={isUploadingVideo}
                   />
-                  {isUploading && (
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Uploading: {uploadProgress.toFixed(0)}%</span>
-                      {uploadProgress < 100 && <span className="ml-2">Please wait...</span>}
+                  {isUploadingVideo && (
+                    <div className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" /> Uploading video...
                     </div>
                   )}
                 </div>
               </FormControl>
-              <FormDescription>Upload your video file to AWS S3</FormDescription>
-              {uploadedS3VideoUrl && !isUploading && (
+              <FormDescription>Upload a video directly to S3.</FormDescription>
+              {uploadedS3VideoUrl && !isUploadingVideo && (
                 <div className="flex items-center justify-between mt-2 p-2 border rounded-md bg-green-50/50">
                   <div className="flex items-center gap-2">
                     <PlayCircle className="h-5 w-5 text-green-600" />
-                    <span className="text-sm font-medium text-green-700">
-                      Video Uploaded (URL: {uploadedS3VideoUrl.substring(0, 40)}...)
+                    <span className="text-sm text-green-700 truncate w-[200px]">
+                      Uploaded: {uploadedS3VideoUrl}
                     </span>
                   </div>
                   <Button
@@ -240,7 +320,7 @@ export function EditLessonModal({
                     variant="ghost"
                     size="sm"
                     onClick={handleRemoveVideo}
-                    className="text-red-500 hover:bg-red-50 hover:text-red-600"
+                    className="text-red-500 hover:bg-red-50"
                   >
                     Remove
                   </Button>
@@ -257,9 +337,9 @@ export function EditLessonModal({
                 <FormItem>
                   <FormLabel>Duration</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., 10 min, 01:25" {...field} />
+                    <Input placeholder="e.g., 10 min or 01:25" {...field} />
                   </FormControl>
-                  <FormDescription>Estimated duration of the lesson</FormDescription>
+                  <FormDescription>Estimated video duration.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -269,28 +349,74 @@ export function EditLessonModal({
               name="thumbnail"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thumbnail URL</FormLabel>
+                  <FormLabel>Thumbnail</FormLabel>
                   <FormControl>
-                    <div className="flex">
-                      <Input placeholder="Enter thumbnail URL (optional)" {...field} />
-                      <Button type="button" variant="outline" className="ml-2">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        placeholder="Optional thumbnail URL"
+                        {...field}
+                        className="flex-1"
+                        disabled={!!thumbnailFile}
+                        value={thumbnailFile ? "" : (field.value || "")}
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        id="thumbnail-upload"
+                        onChange={handleThumbnailChange}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => document.getElementById("thumbnail-upload")?.click()}
+                      >
                         <FileImage className="h-4 w-4" />
                       </Button>
+                      {(thumbnailPreviewUrl || field.value) && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={clearThumbnail}
+                          className="text-red-500 hover.bg-red-50"
+                        >
+                          <XCircle className="h-5 w-5" />
+                        </Button>
+                      )}
                     </div>
                   </FormControl>
-                  <FormDescription>Leave blank to use a default thumbnail</FormDescription>
+                  <FormDescription>
+                    Upload a new image or clear the existing one.
+                  </FormDescription>
+                  {(thumbnailPreviewUrl || field.value) && (
+                    <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
+                      <img
+                        src={thumbnailPreviewUrl || field.value || "/placeholder.svg?height=80&width=120"}
+                        alt="Thumbnail Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <DialogFooter>
-              <Button type="submit" disabled={isUploading}>
-                Save Changes
+              <Button type="submit" disabled={isUploadingVideo || isSaving}>
+                {isSaving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
               </Button>
             </DialogFooter>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -1,5 +1,6 @@
 import { IMentorSignupData } from "@/src/types/mentorTypes";
 import { showInfoToast } from "../utils/Toast";
+import { LessonFormValues } from "../app/mentor/courses/[courseId]/addLessonModal";
 
 
 export const validateMentorSignup = (data?: IMentorSignupData) => {
@@ -87,3 +88,33 @@ export const validateMentorProfile = (profileData: {
 
   return true;
 };
+
+
+export function validateLessonForm(data: LessonFormValues): boolean {
+  if (!data.title.trim()) {
+    showInfoToast("Title is required");
+    return false;
+  }
+
+  const desc = data.description.trim();
+  if (!desc) {
+    showInfoToast("Description is required");
+    return false;
+  }
+  if (desc.length < 20) {
+    showInfoToast("Description must be at least 20 characters long");
+    return false;
+  }
+
+  if (!data.order || isNaN(data.order) || Number(data.order) <= 0) {
+    showInfoToast("Order must be a positive number");
+    return false;
+  }
+
+  if (!data.videoUrl && (data.thumbnail || data.duration)) {
+    showInfoToast("If you provide a duration or thumbnail, video URL is required.");
+    return false;
+  }
+
+  return true;
+}

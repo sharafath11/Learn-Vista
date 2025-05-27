@@ -2,10 +2,12 @@ import { inject, injectable } from "inversify";
 import { IMentorLessonService } from "../../core/interfaces/services/mentor/IMentorLesson.Service";
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
-import { ObjectId } from "mongoose";
-import { ILesson } from "../../types/lessons";
+import mongoose, { ObjectId } from "mongoose";
+import { ILesson, ILessonUpdateData } from "../../types/lessons";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
+
 
 @injectable()
 export class MentorLessonService implements IMentorLessonService {
@@ -19,30 +21,104 @@ export class MentorLessonService implements IMentorLessonService {
         return result;
     }
 
-    async addLesson(courseId: string | ObjectId, data: Partial<ILesson>): Promise<ILesson> {
-        if (!data.title || !data.videoUrl) {
-            throwError("Title and videoUrl are required", StatusCode.BAD_REQUEST);
+    async addLesson(data: ILesson): Promise<ILesson> {
+        if (!data.title || !data.videoUrl || !data.courseId) {
+            throwError("Title, videoUrl, and courseId are required", StatusCode.BAD_REQUEST);
         }
-       const lessonData = {
-    ...data,
-    courseId: courseId as string | ObjectId,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-} as ILesson;
 
+        let imageUrl: string | undefined;
+        if (data.thumbnail) {
+            try {
+                imageUrl = await uploadToCloudinary(data.thumbnail as Buffer, 'lesson_thumbnails'); 
+                console.log("Uploaded thumbnail to Cloudinary:", imageUrl);
+            } catch (error) {
+                console.error("Cloudinary upload failed:", error);
+                throwError("Failed to upload thumbnail to Cloudinary", StatusCode.INTERNAL_SERVER_ERROR);
+            }
+        } else if (data.thumbnail) {
+            imageUrl = data.thumbnail;
+        } else {
+            imageUrl = "/placeholder.svg?height=80&width=120"; 
+        }
 
-        const createdLesson = await this._lessonRepo.create(lessonData as ILesson);
+        const lessonData: ILesson = {
+            ...data,
+            courseId: data.courseId as string | ObjectId,
+            title: data.title!, 
+            description: data.description!,
+            order: data.order!,
+            videoUrl: data.videoUrl!,
+            duration: data.duration || "",
+            thumbnail: imageUrl, 
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        } as ILesson; 
+
+        const createdLesson = await this._lessonRepo.create(lessonData);
         if (!createdLesson) {
             throwError("Failed to create lesson", StatusCode.INTERNAL_SERVER_ERROR);
         }
         return createdLesson;
     }
 
-    async editLesson(lessonId: string | ObjectId, updateLesson: Partial<ILesson>): Promise<ILesson> {
-        const updated = await this._lessonRepo.update(lessonId.toString(), {
-    ...updateLesson,
-    updatedAt: new Date(),
-});
+       async editLesson(lessonId: string | ObjectId, updateData: ILessonUpdateData): Promise<ILesson> {
+       
+        const existingLesson = await this._lessonRepo.findById(lessonId.toString());
+        if (!existingLesson) {
+            throwError("Lesson not found", StatusCode.NOT_FOUND);
+        }
+        let newThumbnailUrlForDb: string | undefined;
+        if (typeof existingLesson.thumbnail === 'string') {
+            newThumbnailUrlForDb = existingLesson.thumbnail;
+        }
+           console.log(updateData)
+        if (updateData.thumbnailFileBuffer) {
+            try {
+                newThumbnailUrlForDb = await uploadToCloudinary(updateData.thumbnailFileBuffer, 'lesson_thumbnails');
+                console.log("Uploaded new thumbnail to Cloudinary:", newThumbnailUrlForDb);
+
+                if (typeof existingLesson.thumbnail === 'string' && existingLesson.thumbnail.includes('res.cloudinary.com')) {
+                    await deleteFromCloudinary(existingLesson.thumbnail);
+                    console.log("Deleted old thumbnail from Cloudinary:", existingLesson.thumbnail);
+                }
+            } catch (error) {
+                console.error("Thumbnail update failed:", error);
+                throwError("Failed to update thumbnail", StatusCode.INTERNAL_SERVER_ERROR);
+            }
+        } else if (updateData.clearThumbnail === true) {
+            if (typeof existingLesson.thumbnail === 'string' && existingLesson.thumbnail.includes('res.cloudinary.com')) {
+                await deleteFromCloudinary(existingLesson.thumbnail);
+                console.log("Cleared and deleted old thumbnail from Cloudinary:", existingLesson.thumbnail);
+            }
+            newThumbnailUrlForDb = undefined;
+        } else if (updateData.thumbnail !== undefined) {
+            if (typeof updateData.thumbnail === 'string' && updateData.thumbnail !== newThumbnailUrlForDb &&
+                typeof existingLesson.thumbnail === 'string' && existingLesson.thumbnail.includes('res.cloudinary.com')) {
+                 await deleteFromCloudinary(existingLesson.thumbnail);
+                 console.log("Deleted old thumbnail (replaced by URL) from Cloudinary:", existingLesson.thumbnail);
+            }
+            newThumbnailUrlForDb = typeof updateData.thumbnail === 'string' ? updateData.thumbnail : undefined;
+        }
+        const lessonUpdatePayload: Partial<ILesson> = {
+            title: updateData.title,
+            description: updateData.description,
+            order: updateData.order,
+            videoUrl: updateData.videoUrl,
+            duration: updateData.duration,
+            isFree: updateData.isFree,
+            courseId: updateData.courseId,
+            thumbnail: newThumbnailUrlForDb, 
+            updatedAt: new Date(),
+        };
+        if (typeof lessonUpdatePayload.order === 'string') {
+            lessonUpdatePayload.order = parseInt(lessonUpdatePayload.order);
+        }
+        if (typeof lessonUpdatePayload.courseId === 'string' && mongoose.Types.ObjectId.isValid(lessonUpdatePayload.courseId)) {
+             lessonUpdatePayload.courseId = new mongoose.Types.ObjectId(lessonUpdatePayload.courseId);
+        }
+
+
+        const updated = await this._lessonRepo.update(lessonId.toString(), lessonUpdatePayload);
 
         if (!updated) {
             throwError("Lesson not found or update failed", StatusCode.NOT_FOUND);

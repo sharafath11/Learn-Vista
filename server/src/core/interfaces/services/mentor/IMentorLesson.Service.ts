@@ -4,7 +4,7 @@ import { ILesson } from "../../../../types/lessons";
 export interface IMentorLessonService {
   getLessons(courseId: string | ObjectId): Promise<ILesson[]>;
 
-  addLesson(courseId: string | ObjectId, data: Partial<ILesson>): Promise<ILesson>;
+  addLesson(data: Partial<ILesson>): Promise<ILesson>;
 
   editLesson(lessonId: string | ObjectId, updateLesson: Partial<ILesson>): Promise<ILesson>;
 

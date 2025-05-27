@@ -7,6 +7,7 @@ import { handleControllerError, sendResponse, throwError } from "../../utils/Res
 import { StatusCode } from "../../enums/statusCode.enum";
 import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
+import { ILesson, ILessonUpdateData } from "../../types/lessons";
 dotenv.config();
 
 
@@ -61,9 +62,9 @@ export class MentorLessonsController implements IMentorLessonsController {
         const params = {
             Bucket: S3_BUCKET_NAME,
             Key: s3Key,
-            Expires: 60 * 5, // URL valid for 5 minutes
+            Expires: 60 * 5, 
             ContentType: fileType,
-            // REMOVE THIS LINE: ACL: 'public-read'
+           
         };
 
         s3.getSignedUrl('putObject', params, (err, uploadURL) => {
@@ -76,29 +77,90 @@ export class MentorLessonsController implements IMentorLessonsController {
             console.log(`[S3Upload] Generated pre-signed URL: ${uploadURL}`);
             console.log(`[S3Upload] Public video URL: ${publicVideoUrl}`);
 
-            // Sending both the signed URL for upload and the public URL for storage/display
+          
             sendResponse(res, StatusCode.OK, "", true, { signedUploadUrl: uploadURL, publicVideoUrl: publicVideoUrl });
         });
     }
-    async addLesson(req: Request, res: Response): Promise<void> {
-    try {
-        const { courseId, lesson } = req.body;
-        const result = await this._mentorLessonsSerive.addLesson(courseId, lesson);
-        sendResponse(res, StatusCode.CREATED, "Lesson added successfully", true, result);
-    } catch (error) {
-        handleControllerError(res, error);
+   async addLesson(req: Request, res: Response): Promise<void> {
+        try {
+           
+            const {
+                courseId,
+                title,
+                description,
+                order,
+                videoUrl,
+                duration,
+             
+            } = req.body;
+
+            
+            const thumbnailFile = req.file; 
+
+            if (!title || !videoUrl || !courseId) {
+                return handleControllerError(res, throwError("Title, video URL, and course ID are required", StatusCode.BAD_REQUEST));
+            }
+            const lessonData: Partial<ILesson> = {
+                courseId: courseId,
+                title: title,
+                description: description,
+                order: parseInt(order as string),
+                videoUrl: videoUrl,
+                duration: duration,
+                
+                thumbnail: thumbnailFile ? thumbnailFile.buffer : undefined, 
+               
+            };
+
+            const createdLesson = await this._mentorLessonsSerive.addLesson(lessonData);
+
+            sendResponse(res, StatusCode.CREATED, "Lesson added successfully", true, createdLesson);
+
+        } catch (error: any) {
+            console.error("Error adding lesson:", error);
+            handleControllerError(res, error);
+        }
     }
+
+     async editLesson(req: Request, res: Response): Promise<void> {
+  try {
+    const lessonId = req.params.lessonId;
+    const {
+      title,
+      description,
+      order,
+      videoUrl,
+      duration,
+      clearThumbnail,
+    } = req.body;
+
+    const newThumbnailFile = req.file;
+
+    if (!lessonId) {
+      return handleControllerError(
+        res,
+        throwError("Lesson ID is required for update", StatusCode.BAD_REQUEST)
+      );
+    }
+
+    const updateData: ILessonUpdateData = {
+      title,
+      description,
+      order: order ? parseInt(order as string) : undefined,
+      videoUrl,
+      duration,
+      thumbnailFileBuffer: newThumbnailFile ? newThumbnailFile.buffer : undefined,
+      clearThumbnail: clearThumbnail === "true",
+    };
+
+    const updatedLesson = await this._mentorLessonsSerive.editLesson(lessonId, updateData);
+    sendResponse(res, StatusCode.OK, "Lesson updated successfully", true, updatedLesson);
+  } catch (error) {
+    console.error("Error editing lesson:", error);
+    handleControllerError(res, error);
+  }
 }
 
-async editLesson(req: Request, res: Response): Promise<void> {
-    try {
-        const { lessonId, updateLesson } = req.body;
-        const result = await this._mentorLessonsSerive.editLesson(lessonId, updateLesson);
-        sendResponse(res, StatusCode.OK, "Lesson updated successfully", true, result);
-    } catch (error) {
-        handleControllerError(res, error);
-    }
-}
 
 async deleteS3File(req: Request, res: Response): Promise<void> {
     try {
@@ -110,7 +172,6 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
 
         const s3 = new AWS.S3();
         const bucket = S3_BUCKET_NAME!;
-        // Decode the URL to get the correct S3 key (pathname without leading slash)
         const key = decodeURIComponent(new URL(fileUrl).pathname.substring(1));
 
         await s3.deleteObject({ Bucket: bucket, Key: key }).promise();

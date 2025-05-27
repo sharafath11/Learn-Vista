@@ -92,11 +92,8 @@ export const MentorAPIMethods = {
   startLiveSession: (courseId: string) => get(`/mentor/live-session/start/${courseId}`),
   endStream: (liveId: string) => get(`/mentor/end/stream/${liveId}`),
   getLessons: (courseId: string) => get(`/mentor/courses/lessons/${courseId}`),
-  addLesson: (courseId: string, lesson: Partial<ILessons>) => post("mentor/add-lessons", { courseId, lesson }),
-  updateLesson: (lessonId: string, updateLesson: Partial<ILessons>) => patch("/mentor/edit/lessons", {
-    lessonId,
-    updateLesson
-  }),
+  addLesson: (lesson:FormData) => post("/mentor/add-lessons", lesson),
+  updateLesson: (lessonId: string, updateLesson: FormData) => patch(`/mentor/edit/lessons/${lessonId}`,updateLesson),
   getS3DirectUploadUrl: (fileName: string, fileType: string) => post("/mentor/generate-s3-upload-url", { fileName, fileType }),
   deleteS3file: (fileUrl: string) => post("/mentor/delete-s3-file", { fileUrl }),
   // uploadFileToS3:(uploadURL: string, file: File)=>post("mentor/uploadfiles-to-s3",{uploadURL}),
