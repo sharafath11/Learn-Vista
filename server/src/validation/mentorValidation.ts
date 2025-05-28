@@ -1,3 +1,4 @@
+import { IQuestions } from "../types/lessons";
 import { IMentor } from "../types/mentorTypes";
 import { throwError } from "../utils/ResANDError";
 
@@ -107,3 +108,20 @@ export const validateMentorProfile = (profileData: {
 
   return true;
 };
+export function validateQuestion(
+  question: Omit<IQuestions, "id" | "isCompleted">
+): string | null {
+  if (!question.question || question.question.trim().length < 10) {
+    return "Question must be at least 10 characters.";
+  }
+
+  if (question.type !== "theory" && question.type !== "practical") {
+    return "Invalid question type.";
+  }
+
+  if (!question.lessonId || question.lessonId.trim().length === 0) {
+    return "Lesson ID is required.";
+  }
+
+  return null;
+}

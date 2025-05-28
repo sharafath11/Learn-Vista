@@ -129,16 +129,23 @@ export class MentorLessonService implements IMentorLessonService {
         return updated;
        }
     async getQuestionService(lessonId: string | ObjectId): Promise<IQuestions[]> {
-        const result = await this._questionRepository.findAll();
+        const result = await this._questionRepository.findAll({lessonId});
         return result
     }
-    async editQuestionService(questionId:number, data: Partial<IQuestions>): Promise<void> {
-        // const updated=await this._questionRepository.update(id,{})
+    async editQuestionService(questionId: string, data: Partial<IQuestions>): Promise<void> {
+     if (!data.question || !data.type || !data.lessonId) {
+      throwError("Missing required fields for validation.",StatusCode.BAD_REQUEST);
+     }
+    if(data.question.trim().length<10) throwError("Make qustion at least 10 charcter")
+        const updated = await this._questionRepository.update(data.id,  data )
         return 
     }
     async addQuestionService(lessonId: string | ObjectId, data: IQuestions): Promise<IQuestions> {
-        console.log("data",data)
-        const result = await this._questionRepository.create(data);
+        if (!data.question || !data.type || !data.lessonId) {
+         throwError("Missing required fields for validation.",StatusCode.BAD_REQUEST);
+        }
+        if(data.question.trim().length<10) throwError("Make qustion at least 10 charcter")
+        const result=await this._questionRepository.create(data)
         return data
     }
 }

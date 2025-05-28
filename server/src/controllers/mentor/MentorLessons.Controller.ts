@@ -257,8 +257,9 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
     }
     async editQuestions(req: Request, res: Response): Promise<void> {
         try {
-            const questionId = Number(req.params.questionId);
-            const result = await this._mentorLessonsSerive.editQuestionService(questionId, req.body);
+            const questionId = req.params.questionId;
+            console.log(questionId,req.body)
+            await this._mentorLessonsSerive.editQuestionService(questionId, req.body);
             sendResponse(res,StatusCode.OK,"Question Edited Succesfully",true)
         } catch (error) {
             handleControllerError(res,error)

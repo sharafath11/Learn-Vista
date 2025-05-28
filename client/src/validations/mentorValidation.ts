@@ -1,6 +1,7 @@
 import { IMentorSignupData } from "@/src/types/mentorTypes";
 import { showInfoToast } from "../utils/Toast";
 import { LessonFormValues } from "../app/mentor/courses/[courseId]/addLessonModal";
+import { IQuestions } from "../types/lessons";
 
 
 export const validateMentorSignup = (data?: IMentorSignupData) => {
@@ -116,5 +117,24 @@ export function validateLessonForm(data: LessonFormValues): boolean {
     return false;
   }
 
+  return true;
+}
+
+
+export function isValidQuestion(
+  question: Omit<IQuestions, "id" | "isCompleted" | "lessonId">
+): boolean {
+  if (!question.question || question.question.trim().length === 0) {
+    showInfoToast("Question is required");
+    return false;
+  }
+  if (question.question.trim().length < 10) {
+    showInfoToast("Question must be at least 10 characters long");
+    return false;
+  }
+  if (!question.type || (question.type !== "theory" && question.type !== "practical")) {
+    showInfoToast("Invalid question type");
+    return false;
+  }
   return true;
 }
