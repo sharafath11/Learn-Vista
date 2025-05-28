@@ -1,62 +1,79 @@
-// src/app/mentor/courses/[courseId]/lessons/page.tsx
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import { ArrowLeft, Pencil, PlusCircle } from "lucide-react"
-import Link from "next/link"
-import { useMentorContext } from "@/src/context/mentorContext"
-import { useParams } from "next/navigation"
-import { MentorAPIMethods } from "@/src/services/APImethods"
-import { ILessons } from "@/src/types/lessons"
-import { ICourse } from "@/src/types/courseTypes"
-import { EditLessonModal } from "./EditLessonModal" // New import
-import { AddLessonModal } from "./addLessonModal"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ArrowLeft, Pencil, PlusCircle, PlayCircle } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import Image from "next/image";
+
+import { showErrorToast } from "@/src/utils/Toast";
+import { useMentorContext } from "@/src/context/mentorContext";
+import { MentorAPIMethods } from "@/src/services/APImethods";
+import { ILessons } from "@/src/types/lessons";
+import { ICourse } from "@/src/types/courseTypes";
+import { AddLessonModal } from "./addLessonModal";
+import { EditLessonModal } from "./EditLessonModal";
 
 export default function CourseLessonsPage() {
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [lessons, setLessons] = useState<ILessons[]>([])
-  const [selectedLesson, setSelectedLesson] = useState<ILessons | null>(null) // Used for editing
-  const { courses } = useMentorContext()
-  const params = useParams()
-  const courseId = params.courseId as string
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [lessons, setLessons] = useState<ILessons[]>([]);
+  const [selectedLesson, setSelectedLesson] = useState<ILessons | null>(null);
+  const [showVideoPlayerModal, setShowVideoPlayerModal] = useState(false);
+  const [videoToPlay, setVideoToPlay] = useState<string | null>(null);
 
-  const course: ICourse | undefined = courses.find((c) => c._id === courseId)
+  const { courses } = useMentorContext();
+  const params = useParams();
+  const courseId = params.courseId as string;
+
+  const course: ICourse | undefined = courses.find((c) => c._id === courseId);
+  const nextLessonOrder = lessons.length > 0 ? Math.max(...lessons.map((l) => l.order || 0)) + 1 : 1;
 
   useEffect(() => {
     if (courseId) {
-      getLessons(courseId)
+      getLessons(courseId);
     }
-  }, [courseId])
+  }, [courseId]);
 
   const getLessons = async (id: string) => {
-    const res = await MentorAPIMethods.getLessons(id)
+    const res = await MentorAPIMethods.getLessons(id);
     if (res.ok) {
-      setLessons(res.data)
+      setLessons(res.data);
     } else {
-      showErrorToast("Something went wrong while fetching lessons.")
+      showErrorToast("Something went wrong while fetching lessons.");
     }
-  }
+  };
 
-  const handleAddLessonClick = () => {
-    setShowAddModal(true)
-  }
+  const handleAddLessonClick = () => setShowAddModal(true);
 
   const handleEditLessonClick = (lesson: ILessons) => {
-    setSelectedLesson(lesson) // Set the lesson to be edited
-    setShowEditModal(true)
-  }
+    setSelectedLesson(lesson);
+    setShowEditModal(true);
+  };
+
+  const handlePlayVideo = async (lessonId: string,videoUrl:string) => {
+   
+    const res = await MentorAPIMethods.getSignedVideoUrl(lessonId as string,videoUrl);
+    console.log("checking purpeose",res.data.signedUrl)
+    if (res.ok) {
+       setVideoToPlay(res.data.signedUrl);
+      setShowVideoPlayerModal(true);
+    } else {
+      showErrorToast("No video available for this lesson.");
+    }
+    
+      
+  };
 
   const handleLessonActionCompleted = () => {
-    // This callback is triggered by both modals after a successful save/update
-    setShowAddModal(false) // Close add modal if open
-    setShowEditModal(false) // Close edit modal if open
-    setSelectedLesson(null) // Clear selected lesson
-    getLessons(courseId) // Refresh the list of lessons
-  }
+    setShowAddModal(false);
+    setShowEditModal(false);
+    setSelectedLesson(null);
+    getLessons(courseId);
+  };
 
   if (!course) {
     return (
@@ -66,15 +83,16 @@ export default function CourseLessonsPage() {
           Please ensure the course ID is valid and context data is available.
         </p>
       </div>
-    )
+    );
   }
-
-  const nextLessonOrder = lessons.length > 0 ? Math.max(...lessons.map((l) => l.order || 0)) + 1 : 1
 
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
-        <Link href="/dashboard" className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-4">
+        <Link
+          href="/dashboard"
+          className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Courses
         </Link>
@@ -92,15 +110,29 @@ export default function CourseLessonsPage() {
         {lessons.length > 0 ? (
           <div className="space-y-4">
             {lessons.map((lesson) => (
-              <Card key={lesson.id} className="overflow-hidden">
+              <Card key={lesson.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="flex flex-col sm:flex-row">
-                  <div className="sm:w-32 h-20 overflow-hidden">
-                    <img
-                      src={lesson.thumbnail || "/placeholder.svg"}
-                      alt={lesson.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <div 
+  className="sm:w-32 h-20 overflow-hidden relative"
+  onClick={() => handlePlayVideo(lesson.id,lesson.videoUrl)}
+>
+  <Image
+    src={lesson.thumbnail || "/placeholder.svg"}
+    alt={lesson.title}
+    className="w-full h-full object-cover"
+    width={128}
+    height={80}
+    priority={false}
+  />
+  
+  <div className="absolute inset-0 flex items-center justify-center bg-opacity-20 cursor-pointer">
+  <div className="w-12 h-12 rounded-fullbg-opacity-50 flex items-center justify-center">
+    <PlayCircle className="h-6 w-6 text-white opacity-90" />
+  </div>
+</div>
+
+</div>
+
                   <div className="flex-1 p-4">
                     <div className="flex justify-between items-start">
                       <div>
@@ -108,10 +140,20 @@ export default function CourseLessonsPage() {
                         <p className="text-sm text-muted-foreground mt-1">{lesson.description}</p>
                       </div>
                       <div className="flex space-x-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleEditLessonClick(lesson)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditLessonClick(lesson);
+                          }}
+                        >
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Link href={`/mentor/courses/${course._id}/lessons/${lesson.id}/questions`}>
+                        <Link
+                          href={`/mentor/courses/${course._id}/lessons/${lesson.id}/questions`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <Button variant="outline" size="sm">
                             Manage Questions
                           </Button>
@@ -136,7 +178,7 @@ export default function CourseLessonsPage() {
               courseId={courseId}
             />
 
-            {selectedLesson && ( // Only render Edit modal if a lesson is selected
+            {selectedLesson && (
               <EditLessonModal
                 open={showEditModal}
                 setOpen={setShowEditModal}
@@ -155,6 +197,7 @@ export default function CourseLessonsPage() {
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Lesson
             </Button>
+
             <AddLessonModal
               open={showAddModal}
               setOpen={setShowAddModal}
@@ -165,6 +208,24 @@ export default function CourseLessonsPage() {
           </div>
         )}
       </div>
+
+      <Dialog open={showVideoPlayerModal} onOpenChange={setShowVideoPlayerModal}>
+        <DialogContent className="sm:max-w-[800px] aspect-video p-0 overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="sr-only">Lesson Video</DialogTitle>
+          </DialogHeader>
+          {videoToPlay && (
+            <video
+              src={videoToPlay}
+              controls
+              autoPlay
+              className="w-full h-full object-contain bg-black"
+            >
+              Your browser does not support the video tag.
+            </video>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
-  )
+  );
 }

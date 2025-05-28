@@ -32,7 +32,7 @@ interface ILessons {
   id: string;
   title: string;
   description?: string;
-  order: number;
+  order?: number;
   thumbnail?: string;
   videoUrl?: string;
   duration?: string;

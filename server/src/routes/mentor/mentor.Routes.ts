@@ -46,6 +46,6 @@ router.patch(
   mentorLessonController.editLesson.bind(mentorLessonController)
 );
 router.post("/delete-s3-file", verifyMentor, mentorLessonController.deleteS3File.bind(mentorLessonController));
+router.post("/play-video",verifyMentor,mentorLessonController.getSignedVideoUrl.bind(mentorLessonController))
 // router.post("/uploadfiles-to-s3", verifyMentor, mentorLessonController.uploadToS3.bind(mentorLessonController));
-
 export default router;

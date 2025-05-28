@@ -8,6 +8,10 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 import { ILesson, ILessonUpdateData } from "../../types/lessons";
+import { decodeToken } from "../../utils/JWTtoken";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { s3 } from "../../config/AWS";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
 dotenv.config();
 
 
@@ -15,7 +19,9 @@ const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const AWS_REGION = process.env.AWS_REGION || 'ap-south-1';
 const S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME;
-
+const CLOUDFRONT_PRIVATE_KEY = process.env.CLOUDFRONT_PRIVATE_KEY
+const CLOUDFRONT_KEY_PAIR_ID = process.env.CLOUDFRONT_KEY_PAIR_ID
+const CLOUDFRONT_DOMAIN=process.env.CLOUDFRONT_DOMAIN
 console.log('[INIT] Using AWS S3 Configuration:');
 console.log('[INIT] AWS Region:', AWS_REGION);
 console.log('[INIT] S3 Bucket Name:', S3_BUCKET_NAME);
@@ -42,9 +48,9 @@ export class MentorLessonsController implements IMentorLessonsController {
         const { fileName, fileType } = req.body;
         console.log(`[S3Upload] Received request for file: ${fileName} (Type: ${fileType})`);
 
-        if (!fileName || !fileType) {
-            return handleControllerError(res, throwError("File name and fileType are required in the request body.", StatusCode.BAD_REQUEST));
-        }
+        // if (!fileName || !fileType) {
+        //     return handleControllerError(res, throwError("File name and fileType are required in the request body.", StatusCode.BAD_REQUEST));
+        // }
 
         if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !S3_BUCKET_NAME) {
             console.error('[S3Upload] Missing AWS S3 configuration.');
@@ -181,4 +187,57 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
         handleControllerError(res, error);
     }
 }
+     async getSignedVideoUrl(req: Request, res: Response): Promise<void> {
+        if (req.method !== 'POST') {
+            return sendResponse(res, StatusCode.METHOD_NOT_ALLOWED, 'Method Not Allowed. Use POST.', false);
+        }
+        const { lessonId, videoUrl } = req.body;
+        if (!lessonId) {
+            return sendResponse(res, StatusCode.BAD_REQUEST, 'Lesson ID is required in the request body.', false);
+        }
+        try {
+            const token = req.cookies.token;
+            if (!token) {
+                throwError("Authentication required: No token found.", StatusCode.UNAUTHORIZED);
+            }
+
+            const mentor = decodeToken(token);
+            if (!mentor || !mentor.id) {
+                throwError("Authentication failed: Invalid or missing user ID in token.", StatusCode.UNAUTHORIZED);
+            }
+
+            if (mentor.role !== "mentor") {
+                throwError("Access denied: Only mentors can view this content.", StatusCode.FORBIDDEN);
+            }
+            let s3Key = videoUrl; 
+            const bucketDomain = `${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`;
+            const pathStyleDomain = `s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_S3_BUCKET_NAME}`;
+
+            if (videoUrl.startsWith(`https://${bucketDomain}/`)) {
+                s3Key = videoUrl.substring(`https://${bucketDomain}/`.length);
+            } else if (videoUrl.startsWith(`https://${pathStyleDomain}/`)) {
+                s3Key = videoUrl.substring(`https://${pathStyleDomain}/`.length);
+            } else {
+                console.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
+            }
+            if (!s3Key) {
+                throwError("Invalid video URL format provided. Could not extract S3 key.", StatusCode.BAD_REQUEST);
+            }
+            const command = new GetObjectCommand({
+                Bucket: process.env.AWS_S3_BUCKET_NAME!, 
+                Key: s3Key,
+            });
+
+            const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
+            return sendResponse(res, StatusCode.OK, 'Signed video URL generated successfully.', true, { signedUrl });
+
+        } catch (error: any) {
+            if (error.statusCode && error.message) {
+                return sendResponse(res, error.statusCode, error.message, false);
+            }
+            console.error("An unexpected error occurred in getSignedVideoUrl:", error);
+            return sendResponse(res, StatusCode.INTERNAL_SERVER_ERROR, 'An unexpected server error occurred.', false);
+        }
+    }
+    
 }

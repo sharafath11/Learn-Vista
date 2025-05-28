@@ -12,5 +12,6 @@ export enum StatusCode {
     INTERNAL_SERVER_ERROR = 500,
     NOT_IMPLEMENTED = 501,
     SERVICE_UNAVAILABLE = 503,
+    METHOD_NOT_ALLOWED=504,
   }
   
