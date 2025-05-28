@@ -1,6 +1,6 @@
 import {   UserBlock,  } from "../types/adminTypes";
 import { ILogin, IUserRegistration } from "../types/authTypes";
-import { ILessons } from "../types/lessons";
+import { ILessons, IQuestions } from "../types/lessons";
 import { IMentorSignupData } from "../types/mentorTypes";
 
 import { getRequest, patchRequest, postRequest } from "./api";
@@ -97,5 +97,8 @@ export const MentorAPIMethods = {
   getS3DirectUploadUrl: (fileName: string, fileType: string) => post("/mentor/generate-s3-upload-url", { fileName, fileType }),
   deleteS3file: (fileUrl: string) => post("/mentor/delete-s3-file", { fileUrl }),
   // uploadFileToS3:(uploadURL: string, file: File)=>post("mentor/uploadfiles-to-s3",{uploadURL}),
-  getSignedVideoUrl: (lessonId: string,videoUrl:string) => post(`/mentor/play-video`, { lessonId,videoUrl })
+  getSignedVideoUrl: (lessonId: string, videoUrl: string) => post(`/mentor/play-video`, { lessonId, videoUrl }),
+  addQustion: (data:Omit<IQuestions, "id" | "isCompleted">) => post("/mentor/lessons/add/questions", data),
+  getQustion: (lessonId: string) => get(`/mentor/lesson/questions/${lessonId}`),
+  editQustion: (qustionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/lesson/edit/question/${qustionId}`,data),
 } as const;

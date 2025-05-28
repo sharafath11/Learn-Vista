@@ -85,6 +85,8 @@ import { IMentorLessonService } from '../interfaces/services/mentor/IMentorLesso
 import { MentorLessonService } from '../../services/mentor/MentorLesson.Service';
 import { IMentorLessonsController } from '../interfaces/controllers/mentor/IMentorLesson.Controller';
 import { MentorLessonsController } from '../../controllers/mentor/MentorLessons.Controller';
+import { IQuestionsRepository } from '../interfaces/repositories/lessons/IQuestionsRepository';
+import { QuestionsRepository } from '../../repositories/lesson/qustionRepository';
 
 const container = new Container();
 
@@ -132,6 +134,7 @@ container.bind<IAdminCategoriesRepostory>(TYPES.AdminCategoriesRepository).to(Ad
 container.bind<ILiveRepository>(TYPES.LiveRepository).to(LiveRepository);
 container.bind<ISessionRepository>(TYPES.SessionRepository).to(SessionRepository);
 container.bind<ILessonsRepository>(TYPES.LessonsRepository).to(LessonsRepository)
+container.bind<IQuestionsRepository>(TYPES.QuestionsRepository).to(QuestionsRepository)
 
 
 export default container;

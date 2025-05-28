@@ -11,3 +11,12 @@ export interface ILessons {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export type qustionType="theory"|"practical"
+export interface IQuestions  {
+  id:string
+  lessonId: string;
+  question: string;
+  type:"theory"|"practical"
+  isCompleted: boolean;
+}

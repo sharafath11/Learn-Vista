@@ -45,6 +45,7 @@ export const TYPES = {
   CourseRepository: Symbol.for("CourseRepository"),
   LiveRepository: Symbol.for("LiveRespository"),
   SessionRepository: Symbol.for("SessionRepository"),
-  LessonsRepository:Symbol.for("LessonRepository")
+  LessonsRepository: Symbol.for("LessonRepository"),
+  QuestionsRepository:Symbol.for("QuestionsRepository")
   
 };

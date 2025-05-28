@@ -12,12 +12,15 @@ import { IMentor, IMentorContext, } from "../types/mentorTypes";
 import { useRouter } from "next/navigation";
 import { MentorAPIMethods } from "../services/APImethods";
 import { IPopulatedCourse } from "../types/courseTypes";
+import { ILessons } from "../types/lessons";
+import { showErrorToast } from "../utils/Toast";
 
 export const MentorContext = createContext<IMentorContext | null>(null);
 
 export const MentorsContextProvider = ({ children }: { children: ReactNode }) => {
   const [mentor, setMentor] = useState<IMentor | null>(null);
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
+  const [lessons,setLessons]=useState<ILessons[]>([])
   const router = useRouter();
 
   const getMentorDetils = useCallback(async () => {
@@ -41,11 +44,13 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   useEffect(() => {
     
     getMentorDetils();
+    
   }, [getMentorDetils]);
 
   useEffect(() => {
     getCourses();
   }, []);
+ 
 
   const contextValue: IMentorContext = {
     mentor,

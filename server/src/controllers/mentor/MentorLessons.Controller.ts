@@ -46,14 +46,14 @@ export class MentorLessonsController implements IMentorLessonsController {
 
       async S3Upload(req: Request, res: Response): Promise<void> {
         const { fileName, fileType } = req.body;
-        console.log(`[S3Upload] Received request for file: ${fileName} (Type: ${fileType})`);
+      
 
         // if (!fileName || !fileType) {
         //     return handleControllerError(res, throwError("File name and fileType are required in the request body.", StatusCode.BAD_REQUEST));
         // }
 
         if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !S3_BUCKET_NAME) {
-            console.error('[S3Upload] Missing AWS S3 configuration.');
+            
             return handleControllerError(res, throwError("Server configuration error: AWS S3 credentials or bucket name missing.", StatusCode.INTERNAL_SERVER_ERROR));
         }
         AWS.config.update({
@@ -78,12 +78,7 @@ export class MentorLessonsController implements IMentorLessonsController {
                 console.error('[S3Upload] Error generating S3 pre-signed URL:', err);
                 return handleControllerError(res, throwError("Failed to generate S3 pre-signed URL.", StatusCode.INTERNAL_SERVER_ERROR));
             }
-
             const publicVideoUrl = `https://${S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${s3Key}`;
-            console.log(`[S3Upload] Generated pre-signed URL: ${uploadURL}`);
-            console.log(`[S3Upload] Public video URL: ${publicVideoUrl}`);
-
-          
             sendResponse(res, StatusCode.OK, "", true, { signedUploadUrl: uploadURL, publicVideoUrl: publicVideoUrl });
         });
     }
@@ -237,6 +232,36 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
             }
             console.error("An unexpected error occurred in getSignedVideoUrl:", error);
             return sendResponse(res, StatusCode.INTERNAL_SERVER_ERROR, 'An unexpected server error occurred.', false);
+        }
+     }
+    async getQuestions(req: Request, res: Response): Promise<void> {
+        try {
+            const lessonId=req.params.lessonId
+            if(!lessonId) throwError("Somthing wrent wrong")
+            const result = await this._mentorLessonsSerive.getQuestionService(lessonId);
+            sendResponse(res,StatusCode.OK,"",true,result)
+        } catch (error) {
+            handleControllerError(res,error)
+        }
+    }
+    async addQuestions(req: Request, res: Response): Promise<void> {
+        try {
+            console.log("body show",req.body)
+            
+            const result = await this._mentorLessonsSerive.addQuestionService(req.body.lessonId,req.body);
+            if (!result) throwError("Somthing wront wrong");
+            sendResponse(res,StatusCode.OK,"Question added succesfully",true,result)
+        } catch (error) {
+              handleControllerError(res,error)
+        }
+    }
+    async editQuestions(req: Request, res: Response): Promise<void> {
+        try {
+            const questionId = Number(req.params.questionId);
+            const result = await this._mentorLessonsSerive.editQuestionService(questionId, req.body);
+            sendResponse(res,StatusCode.OK,"Question Edited Succesfully",true)
+        } catch (error) {
+            handleControllerError(res,error)
         }
     }
     

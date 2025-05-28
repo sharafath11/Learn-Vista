@@ -151,7 +151,7 @@ export default function CourseLessonsPage() {
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Link
-                          href={`/mentor/courses/${course._id}/lessons/${lesson.id}/questions`}
+                          href={`/mentor/courses/questions/${lesson.id}`}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Button variant="outline" size="sm">

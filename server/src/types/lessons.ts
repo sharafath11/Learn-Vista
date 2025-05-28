@@ -20,7 +20,15 @@ export interface ILessonUpdateData extends Partial<ILesson> {
 }
 
 
-// You'll also need a creation data interface for consistency with the service's addLesson
 export interface ILessonCreationData extends Partial<ILesson> {
     thumbnailFileBuffer?: Buffer;
+}
+
+
+export interface IQuestions extends Document {
+  
+  lessonId: string;
+  question: string;
+  type:"theory"|"practical"
+  isCompleted: boolean;
 }

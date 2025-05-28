@@ -48,4 +48,8 @@ router.patch(
 router.post("/delete-s3-file", verifyMentor, mentorLessonController.deleteS3File.bind(mentorLessonController));
 router.post("/play-video",verifyMentor,mentorLessonController.getSignedVideoUrl.bind(mentorLessonController))
 // router.post("/uploadfiles-to-s3", verifyMentor, mentorLessonController.uploadToS3.bind(mentorLessonController));
+router.post("/lessons/add/questions",verifyMentor, mentorLessonController.addQuestions.bind(mentorLessonController));
+router.get("/lesson/questions/:lessonId",verifyMentor, mentorLessonController.getQuestions.bind(mentorLessonController));
+router.patch("/lesson/questions/:lessonId/:questionId",verifyMentor, mentorLessonController.editQuestions.bind(mentorLessonController));
+
 export default router;

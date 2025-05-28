@@ -3,16 +3,18 @@ import { IMentorLessonService } from "../../core/interfaces/services/mentor/IMen
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
 import mongoose, { ObjectId } from "mongoose";
-import { ILesson, ILessonUpdateData } from "../../types/lessons";
+import { ILesson, ILessonUpdateData, IQuestions } from "../../types/lessons";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
+import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
 
 
 @injectable()
 export class MentorLessonService implements IMentorLessonService {
     constructor(
-        @inject(TYPES.LessonsRepository) private _lessonRepo: ILessonsRepository
+        @inject(TYPES.LessonsRepository) private _lessonRepo: ILessonsRepository,
+        @inject(TYPES.QuestionsRepository) private _questionRepository:IQuestionsRepository
     ) {}
 
     async getLessons(courseId: string | ObjectId): Promise<ILesson[]> {
@@ -125,5 +127,18 @@ export class MentorLessonService implements IMentorLessonService {
         }
 
         return updated;
+       }
+    async getQuestionService(lessonId: string | ObjectId): Promise<IQuestions[]> {
+        const result = await this._questionRepository.findAll();
+        return result
+    }
+    async editQuestionService(questionId:number, data: Partial<IQuestions>): Promise<void> {
+        // const updated=await this._questionRepository.update(id,{})
+        return 
+    }
+    async addQuestionService(lessonId: string | ObjectId, data: IQuestions): Promise<IQuestions> {
+        console.log("data",data)
+        const result = await this._questionRepository.create(data);
+        return data
     }
 }
