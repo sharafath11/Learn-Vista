@@ -90,7 +90,7 @@ export default function CourseLessonsPage() {
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
         <Link
-          href="/dashboard"
+          href="/mentor/courses"
           className="flex items-center text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />

@@ -260,7 +260,7 @@ const Page = () => {
                           <Button
                             size="lg"
                             className="bg-green-600 hover:bg-green-700 text-white font-semibold shadow-md"
-                            onClick={() => route.push("/user/sessions")}
+                            onClick={() => route.push(`/user/sessions/${course._id}`)}
                           >
                             Continue Learning
                           </Button>

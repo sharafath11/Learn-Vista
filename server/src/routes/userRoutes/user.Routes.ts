@@ -8,6 +8,7 @@ import upload, { uploadImage } from "../../middlewares/upload";
 import { IUserController } from "../../core/interfaces/controllers/user/IUserController";
 import { IUserCourseController } from "../../core/interfaces/controllers/user/IUserCourseController";
 import { IUserLiveController } from "../../core/interfaces/controllers/user/IUserLiveVideoController";
+import { IUserLessonsController } from "../../core/interfaces/controllers/user/IUserLessonsContoller";
 
 
 const router = express.Router();
@@ -16,7 +17,8 @@ const authController = container.get<AuthController>(TYPES.AuthController);
 const profileController = container.get<ProfileController>(TYPES.ProfileController);
 const userController = container.get<IUserController>(TYPES.UserController);
 const userCourseController = container.get<IUserCourseController>(TYPES.UserCourseController)
-const userLiveController=container.get<IUserLiveController>(TYPES.UserLiveCOntroller)
+const userLiveController = container.get<IUserLiveController>(TYPES.UserLiveCOntroller)
+const userLessonsController=container.get<IUserLessonsController>(TYPES.UserLessonsController)
 
 router.post("/signup", authController.signup.bind(authController));
 router.post("/google/signup", authController.googleAuth.bind(authController));
@@ -37,6 +39,8 @@ router.get("/courses",authenticateToken, userCourseController.getAllCourse.bind(
 router.patch("/update-course", authenticateToken, userCourseController.updateUserCourse.bind(userCourseController));
 router.get("/start-live/vc/:courseId", authenticateToken, userLiveController.getRoomId.bind(userLiveController));
 router.post("/change/password", authenticateToken, profileController.changePassword.bind(profileController));
-
+router.get("/courses/lessons/:courseId",authenticateToken,userLessonsController.getLessons.bind(userLessonsController))
+router.get("/lesson/questions/:lessonId", authenticateToken, userLessonsController.getQuestions.bind(userLessonsController))
+router.post("/lessonDetils",authenticateToken,userLessonsController.getAllDetilsInLesson.bind(userLessonsController))
 
 export default router;

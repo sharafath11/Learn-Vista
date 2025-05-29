@@ -29,7 +29,10 @@ export const UserAPIMethods = {
     sort?: Record<string, 1 | -1>
   }) => get(`/courses`,{params}),
   updateCourse: (courseId: string) => patch("/update-course", { courseId }),
-  getUserRoomId:(courseId:string)=>get(`/start-live/vc/${courseId}`)
+  getUserRoomId: (courseId: string) => get(`/start-live/vc/${courseId}`),
+  getLessons: (courseId: string) => get(`/courses/lessons/${courseId}`),
+  getQustion: (lessonId: string) => get(`/lesson/questions/${lessonId}`),
+  getLessonDetils:(lessonId:string)=>post("/lessonDetils",{lessonId})
 } as const;
 
 export const AdminAPIMethods = {

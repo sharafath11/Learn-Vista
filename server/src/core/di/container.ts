@@ -87,6 +87,10 @@ import { IMentorLessonsController } from '../interfaces/controllers/mentor/IMent
 import { MentorLessonsController } from '../../controllers/mentor/MentorLessons.Controller';
 import { IQuestionsRepository } from '../interfaces/repositories/lessons/IQuestionsRepository';
 import { QuestionsRepository } from '../../repositories/lesson/qustionRepository';
+import { IUserLessonsController } from '../interfaces/controllers/user/IUserLessonsContoller';
+import { UserLessonsController } from '../../controllers/user/userLessons.controller';
+import { IUserLessonsService } from '../interfaces/services/user/IUserLessonsService';
+import { UserLessonsService } from '../../services/user/Lessons.Service';
 
 const container = new Container();
 
@@ -105,6 +109,7 @@ container.bind<IMentorStreamController>(TYPES.MentorStreamController).to(MentorS
 container.bind<IUserCourseController>(TYPES.UserCourseController).to(UserCourseController);
 container.bind<IUserLiveController>(TYPES.UserLiveCOntroller).to(UserLiveCallController);
 container.bind<IMentorLessonsController>(TYPES.MentorLessonsController).to(MentorLessonsController)
+container.bind<IUserLessonsController>(TYPES.UserLessonsController).to(UserLessonsController)
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -120,6 +125,7 @@ container.bind<IMentorStreamService>(TYPES.MentorStreamService).to(MentorStreamS
 container.bind<IUserCourseService>(TYPES.UserCourseService).to(UserCourseService),
 container.bind<IUserLiveService>(TYPES.UserLiveService).to(LiveUserService)
 container.bind<IMentorLessonService>(TYPES.MentorLessonsService).to(MentorLessonService),
+container.bind<IUserLessonsService>(TYPES.UserLessonsService).to(UserLessonsService)
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);

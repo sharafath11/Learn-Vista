@@ -3,46 +3,37 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Clock, Code, FileText, Play } from "lucide-react"
-import { getLessons } from "@/src/lib/lessons"
+import { UserAPIMethods } from "@/src/services/APImethods"
+import { showErrorToast } from "@/src/utils/Toast"
+import { ILessons } from "@/src/types/lessons"
 
-export default function LessonList() {
+export default function LessonList({courseId}:{courseId:string}) {
   const router = useRouter()
-  const [lessons, setLessons] = useState(getLessons())
-  const [progress, setProgress] = useState<Record<number, number>>({})
+  const [lessons, setLessons] = useState<ILessons[]>([])
 
   useEffect(() => {
-    // Load progress for each lesson
-    const loadedProgress: Record<number, number> = {}
+    fetchLessons()
+  
+  }, []);
+  
+  const fetchLessons = async () => {
+    const res = await UserAPIMethods.getLessons(courseId);
+    console.log("res",res)
+    if (res.ok) {
+      setLessons(res.data)
+    }
+    else showErrorToast(res.msg)
+  }
 
-    lessons.forEach((lesson) => {
-      const savedProgress = localStorage.getItem(`lesson_${lesson.id}_progress`)
-      if (savedProgress) {
-        const { videoCompleted, theoryCompleted, practicalCompleted } = JSON.parse(savedProgress)
-        let progressValue = 0
-        if (videoCompleted) progressValue += 33.33
-        if (theoryCompleted) progressValue += 33.33
-        if (practicalCompleted) progressValue += 33.34
-        loadedProgress[lesson.id] = progressValue
-      } else {
-        loadedProgress[lesson.id] = 0
-      }
-    })
-
-    setProgress(loadedProgress)
-  }, [lessons])
-
-  const handleLessonClick = (lessonId: number) => {
+  const handleLessonClick = (lessonId: string) => {
     router.push(`/user/sessions/lessons/${lessonId}`)
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {lessons.map((lesson) => {
-        const progressValue = progress[lesson.id] || 0
-        const isCompleted = progressValue >= 99
-        const isStarted = progressValue > 0 && !isCompleted
+      
 
         return (
           <Card
@@ -53,7 +44,7 @@ export default function LessonList() {
             <div className="relative">
               <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-t-lg overflow-hidden">
                 <img
-                  src={lesson.thumbnailUrl || `/placeholder.svg?height=200&width=400&text=Lesson ${lesson.id}`}
+                  src={lesson.thumbnail || `/placeholder.svg?height=200&width=400&text=Lesson ${lesson.id}`}
                   alt={lesson.title}
                   className="w-full h-full object-cover"
                 />
@@ -64,14 +55,11 @@ export default function LessonList() {
                 </div>
               </div>
 
-              {isCompleted && <Badge className="absolute top-2 right-2 bg-green-500">Completed</Badge>}
-
-              {isStarted && <Badge className="absolute top-2 right-2 bg-amber-500">In Progress</Badge>}
             </div>
 
             <CardHeader>
               <CardTitle>
-                Lesson {lesson.id}: {lesson.title}
+                Lesson  {lesson.title}
               </CardTitle>
               <CardDescription>{lesson.description}</CardDescription>
             </CardHeader>
@@ -84,7 +72,7 @@ export default function LessonList() {
                 </div>
                 <div className="flex items-center gap-1">
                   <FileText className="h-4 w-4" />
-                  <span>{lesson.theoryQuestions.length} questions</span>
+                  <span>{lesson.duration}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Code className="h-4 w-4" />
@@ -92,15 +80,6 @@ export default function LessonList() {
                 </div>
               </div>
             </CardContent>
-
-            <CardFooter>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div
-                  className={`h-2 rounded-full ${isCompleted ? "bg-green-500" : "bg-blue-500"}`}
-                  style={{ width: `${progressValue}%` }}
-                ></div>
-              </div>
-            </CardFooter>
           </Card>
         )
       })}
