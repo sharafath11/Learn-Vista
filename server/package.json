@@ -9,7 +9,7 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/mongoose": "^5.11.96",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.15.24",
     "@types/nodemailer": "^6.4.17",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
@@ -21,6 +21,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.817.0",
     "@aws-sdk/s3-request-presigner": "^3.817.0",
+    "@google/genai": "^1.2.0",
+    "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-tabs": "^1.1.11",
     "acorn": "^8.14.1",
     "acorn-walk": "^8.3.4",

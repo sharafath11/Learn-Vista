@@ -11,6 +11,7 @@ import mentorRoutes from "./routes/mentor/mentor.Routes";
 import adminRoutes from "./routes/adminRoutes/admin.Routes";
 import { refreshAccessToken, setTokensInCookies } from "./utils/JWTtoken";
 import { socketHandler } from "./config/ socket";
+import { getGemaniResponse } from "./config/gemaniAi";
 
 dotenv.config();
 
@@ -29,6 +30,12 @@ app.use(cors({
   origin: "http://localhost:3000",
   credentials: true
 }));
+async function main() {
+  await getGemaniResponse();
+}
+
+main();
+
 app.use(cookieParser());
 app.use("/", userRoutes);
 app.use("/mentor", mentorRoutes);
