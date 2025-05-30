@@ -35,3 +35,12 @@ export interface IComment  {
   createdAt?: Date;
   updatedAt?: Date;
 }
+export type EvaluatedAnswer = {
+  question: string;
+  type: 'theory' | 'practical';
+  studentAnswer: string;
+  isCorrect: boolean;
+  feedback: string;
+  marks: number; 
+  report?:string
+};

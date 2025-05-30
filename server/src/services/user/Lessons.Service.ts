@@ -42,7 +42,7 @@ export class UserLessonsService implements IUserLessonsService{
         return qustions
     }
     // ee week passail progress video nte koode validation in user after see the previus lesson 
-    async getLessonDetils(lessonId: string | ObjectId): Promise<{ questions: IQuestions[]; videoUrl: string; lesson: ILesson,comments:IComment[]; }> {
+    async getLessonDetils(lessonId: string | ObjectId,userId:string): Promise<{ questions: IQuestions[]; videoUrl: string; lesson: ILesson,comments:IComment[];report?:ILessonReport }> {
         console.log('Type of lessonId:', typeof lessonId);
 console.log('Value of lessonId:', lessonId);
 console.log('Value of lessonId.toString():', lessonId.toString()); 
@@ -67,7 +67,9 @@ console.log('Value of lessonId.toString():', lessonId.toString());
         Key: s3Key,
         });
         const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
-        const comments=await this._commentsRepo.findAll({lessonId})
+        const comments = await this._commentsRepo.findAll({ lessonId });
+        const report = await this._lessonReportRepo.findOne({ lessonId, userId });
+        if(report)return {questions,videoUrl:signedUrl,lesson,comments,report}
         return {questions,videoUrl:signedUrl,lesson,comments}
     }
     async lessonReport(userId: string, lessonId: string, data: LessonQuestionInput): Promise<ILessonReport> {

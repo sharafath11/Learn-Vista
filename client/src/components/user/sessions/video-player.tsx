@@ -1,19 +1,20 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
-import { Play, Pause, Volume2, VolumeX } from "lucide-react"
+import { Play, Pause, Volume2, VolumeX, Maximize, Minimize } from "lucide-react"
 
 interface VideoPlayerProps {
   videoUrl: string
   title: string
   onComplete: () => void
   isCompleted: boolean
+  thumbnail: string
 }
 
-export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted }: VideoPlayerProps) {
+export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted, thumbnail }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -21,21 +22,39 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted }
   const [volume, setVolume] = useState(1)
   const [isMuted, setIsMuted] = useState(false)
   const [hasWatched, setHasWatched] = useState(isCompleted)
+  const [isFullScreen, setIsFullScreen] = useState(false)
+  const [hasStarted, setHasStarted] = useState(false)
 
-  // Update progress when currentTime or duration changes
   useEffect(() => {
     if (duration > 0) {
       setProgress((currentTime / duration) * 100)
     }
   }, [currentTime, duration])
 
-  // Check if video is completed (watched at least 95% of the video)
   useEffect(() => {
     if (progress >= 95 && !hasWatched) {
       setHasWatched(true)
       onComplete()
     }
   }, [progress, hasWatched, onComplete])
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement)
+    }
+
+    document.addEventListener("fullscreenchange", handleFullScreenChange)
+    document.addEventListener("webkitfullscreenchange", handleFullScreenChange)
+    document.addEventListener("mozfullscreenchange", handleFullScreenChange)
+    document.addEventListener("MSFullscreenChange", handleFullScreenChange)
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullScreenChange)
+      document.removeEventListener("webkitfullscreenchange", handleFullScreenChange)
+      document.removeEventListener("mozfullscreenchange", handleFullScreenChange)
+      document.removeEventListener("MSFullscreenChange", handleFullScreenChange)
+    }
+  }, [])
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
@@ -55,9 +74,15 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted }
         videoRef.current.pause()
       } else {
         videoRef.current.play()
+        setHasStarted(true)
       }
       setIsPlaying(!isPlaying)
     }
+  }
+
+  const onPlayHandler = () => {
+    setIsPlaying(true)
+    setHasStarted(true)
   }
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,6 +118,32 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted }
     }
   }
 
+  const handleFullScreenToggle = () => {
+    if (containerRef.current) {
+      if (!document.fullscreenElement) {
+        if (containerRef.current.requestFullscreen) {
+          containerRef.current.requestFullscreen()
+        } else if ((containerRef.current as any).webkitRequestFullscreen) {
+          ;(containerRef.current as any).webkitRequestFullscreen()
+        } else if ((containerRef.current as any).mozRequestFullScreen) {
+          ;(containerRef.current as any).mozRequestFullScreen()
+        } else if ((containerRef.current as any).msRequestFullscreen) {
+          ;(containerRef.current as any).msRequestFullscreen()
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen()
+        } else if ((document as any).webkitExitFullscreen) {
+          ;(document as any).webkitExitFullscreen()
+        } else if ((document as any).mozCancelFullScreen) {
+          ;(document as any).mozCancelFullScreen()
+        } else if ((document as any).msExitFullscreen) {
+          ;(document as any).msExitFullscreen()
+        }
+      }
+    }
+  }
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
@@ -100,16 +151,16 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted }
   }
 
   return (
-    <div className="relative">
-      <div className="aspect-video bg-black">
+    <div className="relative" ref={containerRef}>
+      <div className="aspect-video bg-black relative">
         <video
           ref={videoRef}
           className="w-full h-full"
           src={videoUrl}
-          poster={`/placeholder.svg?height=720&width=1280&text=${encodeURIComponent(title)}`}
+          poster={thumbnail}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
-          onPlay={() => setIsPlaying(true)}
+          onPlay={onPlayHandler}
           onPause={() => setIsPlaying(false)}
           onEnded={() => {
             setIsPlaying(false)
@@ -121,11 +172,17 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted }
         >
           Your browser does not support the video tag.
         </video>
+        {!hasStarted && (
+          <img
+            src={thumbnail}
+            alt={title}
+            className="absolute top-0 left-0 w-full h-full object-cover cursor-pointer"
+            onClick={handlePlayPause}
+          />
+        )}
       </div>
 
-      {/* Custom Video Controls */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-        {/* Progress Bar */}
         <div className="w-full h-2 bg-gray-600 rounded-full mb-4 cursor-pointer" onClick={handleProgressClick}>
           <div className="h-2 bg-blue-500 rounded-full" style={{ width: `${progress}%` }}></div>
         </div>
@@ -157,9 +214,14 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted }
             </div>
           </div>
 
-          {hasWatched && (
-            <div className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</div>
-          )}
+          <div className="flex items-center gap-4">
+            {hasWatched && (
+              <div className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</div>
+            )}
+            <button onClick={handleFullScreenToggle} className="text-white hover:text-blue-400 transition-colors">
+              {isFullScreen ? <Minimize className="h-6 w-6" /> : <Maximize className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,22 +1,9 @@
 "use client"
+
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { BookOpen, Award, Users, Clock, ChevronRight } from "lucide-react";
-import { motion, useAnimation, AnimatePresence } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import Header from "@/src/components/user/Header";
-import { useUserContext } from "@/src/context/userAuthContext";
-import Courses from "@/src/components/user/Courses";
+import { BookOpen, Award, Users, Clock, ChevronRight, Star, Play, CheckCircle } from "lucide-react";
 
 export default function Home() {
-  const controls = useAnimation();
-  const { allCourses } = useUserContext();
-  const [ref, inView] = useInView();
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   useEffect(() => {
@@ -26,321 +13,326 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (inView) {
-      controls.start("visible");
-    }
-  }, [controls, inView]);
-
-  const container = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2
-      }
-    }
-  };
-
-  const fadeIn = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.8 } }
-  };
-
-  const slideInLeft = {
-    hidden: { x: -100, opacity: 0 },
-    visible: { x: 0, opacity: 1, transition: { duration: 0.6 } }
-  };
-
-  const slideInRight = {
-    hidden: { x: 100, opacity: 0 },
-    visible: { x: 0, opacity: 1, transition: { duration: 0.6 } }
-  };
-
-  const scaleUp = {
-    hidden: { scale: 0.9, opacity: 0 },
-    visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } }
-  };
-
   const categories = [
-    { icon: <BookOpen className="h-10 w-10 text-blue-600" />, title: "Web Development", courses: 420 },
-    { icon: <Award className="h-10 w-10 text-blue-600" />, title: "Data Science", courses: 310 },
-    { icon: <Users className="h-10 w-10 text-blue-600" />, title: "Business", courses: 280 },
-    { icon: <Clock className="h-10 w-10 text-blue-600" />, title: "Design", courses: 340 }
+    { 
+      icon: <BookOpen className="h-12 w-12 text-[#8525FF]" />, 
+      title: "Web Development", 
+      courses: 420,
+      color: "from-blue-50 to-blue-100"
+    },
+    { 
+      icon: <Award className="h-12 w-12 text-[#FF6B35]" />, 
+      title: "Data Science", 
+      courses: 310,
+      color: "from-orange-50 to-orange-100"
+    },
+    { 
+      icon: <Users className="h-12 w-12 text-[#00D4AA]" />, 
+      title: "Business", 
+      courses: 280,
+      color: "from-teal-50 to-teal-100"
+    },
+    { 
+      icon: <Clock className="h-12 w-12 text-[#FFB800]" />, 
+      title: "Design", 
+      courses: 340,
+      color: "from-yellow-50 to-yellow-100"
+    }
   ];
 
   const features = [
     {
-      icon: <Users className="h-10 w-10 text-blue-600" />,
+      icon: <Users className="h-14 w-14 text-[#8525FF]" />,
       title: "Expert Instructors",
-      description: "Learn from industry professionals with years of experience",
-      features: ["Industry veterans", "Practical knowledge", "Active professionals"]
+      description: "Learn from industry professionals with years of real-world experience and proven track records.",
+      features: ["Industry veterans with 10+ years experience", "Active professionals from top companies", "Personalized feedback and mentorship"],
+      gradient: "from-purple-50 to-purple-100"
     },
     {
-      icon: <Clock className="h-10 w-10 text-blue-600" />,
+      icon: <Clock className="h-14 w-14 text-[#00D4AA]" />,
       title: "Flexible Learning",
-      description: "Study at your own pace, anywhere and anytime",
-      features: ["Lifetime access", "Mobile friendly", "Self-paced courses"]
+      description: "Study at your own pace with our adaptive learning platform designed for busy professionals.",
+      features: ["Lifetime access to all content", "Mobile-optimized learning experience", "Offline download capabilities"],
+      gradient: "from-teal-50 to-teal-100"
     },
     {
-      icon: <Award className="h-10 w-10 text-blue-600" />,
-      title: "Certification",
-      description: "Earn certificates recognized by top companies",
-      features: ["Industry-recognized", "Portfolio ready", "Verifiable online"]
+      icon: <Award className="h-14 w-14 text-[#FF6B35]" />,
+      title: "Industry Certification",
+      description: "Earn certificates that are recognized and valued by leading companies worldwide.",
+      features: ["Blockchain-verified certificates", "LinkedIn profile integration", "Portfolio-ready projects"],
+      gradient: "from-orange-50 to-orange-100"
     }
   ];
 
   const testimonials = [
     {
       name: "Alex Thompson",
-      role: "Web Developer",
-      content: "The courses on this platform completely transformed my career. I went from knowing nothing about web development to landing a job at a top tech company in just 6 months.",
-      avatar: "A"
+      role: "Senior Full-Stack Developer",
+      company: "Microsoft",
+      content: "This platform completely transformed my career trajectory. The quality of instruction and hands-on projects gave me the confidence to land my dream job at a Fortune 500 company.",
+      avatar: "AT",
+      rating: 5
     },
     {
-      name: "Jessica Lee",
-      role: "Data Analyst",
-      content: "The instructors are incredibly knowledgeable and the course material is comprehensive. I've tried other platforms, but none compare to the quality of education I received here.",
-      avatar: "J"
+      name: "Jessica Chen",
+      role: "Data Science Manager",
+      company: "Google",
+      content: "The comprehensive curriculum and expert mentorship helped me transition from marketing to data science. The practical skills I gained were immediately applicable in my new role.",
+      avatar: "JC",
+      rating: 5
     },
     {
-      name: "David Wilson",
-      role: "UX Designer",
-      content: "The community support and networking opportunities are invaluable. I not only gained technical skills but also made connections that helped me advance in my career.",
-      avatar: "D"
+      name: "Marcus Johnson",
+      role: "UX Design Lead",
+      company: "Airbnb",
+      content: "Outstanding platform with world-class instructors. The collaborative learning environment and networking opportunities opened doors I never thought possible.",
+      avatar: "MJ",
+      rating: 5
     }
   ];
 
+  const stats = [
+    { value: "50,000+", label: "Premium Courses", icon: <BookOpen className="h-8 w-8 text-[#8525FF]" /> },
+    { value: "1,200+", label: "Expert Instructors", icon: <Users className="h-8 w-8 text-[#00D4AA]" /> },
+    { value: "2.5M+", label: "Global Students", icon: <Award className="h-8 w-8 text-[#FF6B35]" /> },
+    { value: "98%", label: "Success Rate", icon: <Star className="h-8 w-8 text-[#FFB800]" /> }
+  ];
+
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
-      <Header />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-50 to-indigo-50 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-          <div className="absolute top-20 left-10 w-64 h-64 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-          <div className="absolute top-40 right-20 w-80 h-80 bg-indigo-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+      <section className="relative pt-20 pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-20 w-96 h-96 bg-[#8525FF] rounded-full filter blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-[#00D4AA] rounded-full filter blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#FF6B35] rounded-full filter blur-3xl"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-          <motion.div initial="hidden" animate="visible" variants={slideInLeft}>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-              Expand Your <span className="text-blue-600">Knowledge</span> with Expert-Led Courses
-            </h1>
-            <p className="mt-6 text-xl text-gray-600">
-              Access thousands of high-quality courses taught by industry experts and transform your skills.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <Button asChild>
-                <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Explore Courses
-                </motion.div>
-              </Button>
-              <Button variant="outline" asChild>
-                <motion.div 
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center"
-                >
-                  How It Works <ChevronRight className="ml-2 h-5 w-5" />
-                </motion.div>
-              </Button>
+        <div className="relative max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* Left Content */}
+            <div className="space-y-8">
+              <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#8525FF]/10 to-[#8525FF]/5 rounded-full border border-[#8525FF]/20">
+                <Star className="h-4 w-4 text-[#8525FF] mr-2" />
+                <span className="text-sm font-medium text-[#8525FF]">Rated #1 Learning Platform 2024</span>
+              </div>
+              
+              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                Master New Skills with 
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#8525FF] to-[#FF6B35] mt-2">
+                  World-Class Education
+                </span>
+              </h1>
+              
+              <p className="text-xl text-gray-600 leading-relaxed max-w-lg">
+                Join millions of learners worldwide and accelerate your career with our premium courses taught by industry experts from top companies.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="group relative px-8 py-4 bg-[#8525FF] text-white font-semibold rounded-2xl hover:bg-[#7420E6] transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl">
+                  <span className="relative z-10">Start Learning Today</span>
+                  {/* <div className="absolute inset-0 bg-gradient-to-r from-[#8525FF] to-[#A855F7] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div> */}
+                </button>
+                
+                <button className="group flex items-center px-8 py-4 bg-white text-gray-700 font-semibold rounded-2xl border-2 border-gray-200 hover:border-[#8525FF] hover:text-[#8525FF] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                  <Play className="h-5 w-5 mr-2" />
+                  Watch Demo
+                </button>
+              </div>
+              
+              <div className="flex items-center space-x-8 pt-4">
+                <div className="flex -space-x-2">
+                  {[1,2,3,4].map((i) => (
+                    <div key={i} className="w-12 h-12 rounded-full bg-gradient-to-r from-[#8525FF] to-[#A855F7] flex items-center justify-center text-white font-bold border-2 border-white">
+                      {i}
+                    </div>
+                  ))}
+                </div>
+                <div className="text-sm text-gray-600">
+                  <span className="font-semibold text-gray-900">12,000+</span> students joined this week
+                </div>
+              </div>
             </div>
-          </motion.div>
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={slideInRight}
-            className="relative h-[400px] rounded-xl overflow-hidden shadow-2xl"
-          >
-            <Image
-              src="/images/logo.png"
-              alt="Students learning online"
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-blue-600/30"></div>
-          </motion.div>
+
+            {/* Right Visual */}
+            <div className="relative">
+              <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 shadow-2xl border border-gray-100">
+                <div className="space-y-6">
+                  {/* Mock Course Card */}
+                  <div className="bg-gradient-to-r from-[#8525FF]/10 to-[#A855F7]/10 rounded-2xl p-6 border border-[#8525FF]/20">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-[#8525FF] flex items-center justify-center">
+                        <BookOpen className="h-6 w-6 text-white" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm text-gray-500">Progress</div>
+                        <div className="text-xl font-bold text-[#8525FF]">78%</div>
+                      </div>
+                    </div>
+                    <h3 className="font-bold text-gray-900 mb-2">Advanced React Development</h3>
+                    <p className="text-sm text-gray-600 mb-4">Master React with hooks, context, and performance optimization</p>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div className="bg-gradient-to-r from-[#8525FF] to-[#A855F7] h-2 rounded-full w-3/4"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Achievement Badges */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gradient-to-r from-[#00D4AA]/10 to-[#00D4AA]/5 rounded-xl p-4 border border-[#00D4AA]/20">
+                      <Award className="h-8 w-8 text-[#00D4AA] mb-2" />
+                      <div className="text-sm font-semibold text-gray-900">Certificate Earned</div>
+                    </div>
+                    <div className="bg-gradient-to-r from-[#FFB800]/10 to-[#FFB800]/5 rounded-xl p-4 border border-[#FFB800]/20">
+                      <Star className="h-8 w-8 text-[#FFB800] mb-2" />
+                      <div className="text-sm font-semibold text-gray-900">5-Star Rating</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Floating Elements */}
+              <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-r from-[#FF6B35] to-[#FFB800] rounded-2xl flex items-center justify-center shadow-xl">
+                <Star className="h-8 w-8 text-white" />
+              </div>
+              <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-gradient-to-r from-[#00D4AA] to-[#8525FF] rounded-2xl flex items-center justify-center shadow-xl">
+                <Award className="h-8 w-8 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Stats Section */}
-      <motion.section 
-        ref={ref}
-        initial="hidden"
-        animate={controls}
-        variants={container}
-        className="py-16 bg-white"
-      >
+      <section className="py-20 bg-white border-y border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { value: "10K+", label: "Online Courses" },
-              { value: "250+", label: "Expert Instructors" },
-              { value: "15M+", label: "Students Worldwide" },
-              { value: "4.8/5", label: "Student Satisfaction" }
-            ].map((stat, index) => (
-              <motion.div 
-                key={index}
-                variants={container}
-              >
-                <Card>
-                  <CardContent className="p-6 text-center">
-                    <p className="text-4xl font-bold text-blue-600 mb-2">{stat.value}</p>
-                    <p className="text-lg text-gray-600">{stat.label}</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center group">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 mb-4 group-hover:scale-110 transition-transform duration-300">
+                  {stat.icon}
+                </div>
+                <div className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">{stat.value}</div>
+                <div className="text-gray-600 font-medium">{stat.label}</div>
+              </div>
             ))}
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Categories Section */}
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeIn}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Explore Top Categories</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Discover the perfect course in our diverse categories
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Explore Popular Categories</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover courses across diverse fields and find the perfect path to advance your career
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={container}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {categories.map((category, index) => (
-              <motion.div key={index} variants={fadeIn}>
-                <Card className="h-full hover:shadow-md transition-all">
-                  <CardHeader className="items-center">
-                    {category.icon}
-                    <CardTitle className="text-xl">{category.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <p className="text-gray-600">{category.courses} courses</p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              <div key={index} className="group relative">
+                <div className={`bg-gradient-to-br ${category.color} rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2`}>
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300">
+                      {category.icon}
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{category.title}</h3>
+                    <p className="text-gray-600 font-medium">{category.courses} courses available</p>
+                  </div>
+                </div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Courses Section */}
-      <Courses/>
-
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeIn}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Our Platform</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              We provide the best learning experience
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Choose Our Platform</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Experience the difference with our premium learning environment designed for success
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={container}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {features.map((feature, index) => (
-              <motion.div key={index} variants={fadeIn}>
-                <Card className="h-full hover:shadow-md transition-all">
-                  <CardHeader className="items-center">
-                    {feature.icon}
-                    <CardTitle>{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <p className="text-gray-600 mb-4">{feature.description}</p>
-                    <ul className="space-y-2 text-left">
-                      {feature.features.map((item, i) => (
-                        <li key={i} className="flex items-center">
-                          <span className="mr-2">✓</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </motion.div>
+              <div key={index} className="group">
+                <div className={`bg-gradient-to-br ${feature.gradient} rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 h-full`}>
+                  <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-white shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+                    <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {feature.features.map((item, i) => (
+                      <div key={i} className="flex items-center">
+                        <CheckCircle className="h-5 w-5 text-[#8525FF] mr-3 flex-shrink-0" />
+                        <span className="text-gray-700">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-white">
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeIn}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">What Our Students Say</h2>
-            <p className="text-xl text-gray-600">Thousands of satisfied learners</p>
-          </motion.div>
-
-          <div className="relative h-96">
-            <AnimatePresence mode="wait">
-              {testimonials.map((testimonial, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: activeTestimonial === index ? 1 : 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className={`absolute inset-0 ${activeTestimonial === index ? 'block' : 'hidden'}`}
-                >
-                  <Card className="h-full">
-                    <CardContent className="flex flex-col items-center justify-center h-full p-8 text-center">
-                      <Avatar className="h-20 w-20 mb-4">
-                        <AvatarFallback>{testimonial.avatar}</AvatarFallback>
-                      </Avatar>
-                      <blockquote className="text-lg italic mb-4">
-                        "{testimonial.content}"
-                      </blockquote>
-                      <div>
-                        <p className="font-semibold">{testimonial.name}</p>
-                        <p className="text-gray-600">{testimonial.role}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Student Success Stories</h2>
+            <p className="text-xl text-gray-600">Real transformations from our learning community</p>
           </div>
-          <div className="flex justify-center mt-8 space-x-2">
-            {[0, 1, 2].map((i) => (
+
+          <div className="relative max-w-4xl mx-auto">
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={index}
+                className={`transition-all duration-500 ${activeTestimonial === index ? 'opacity-100 transform translate-x-0' : 'opacity-0 absolute inset-0 transform translate-x-8'}`}
+              >
+                <div className="bg-white rounded-3xl p-12 shadow-xl border border-gray-100">
+                  <div className="text-center mb-8">
+                    <div className="flex justify-center mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="h-6 w-6 text-[#FFB800] fill-current" />
+                      ))}
+                    </div>
+                    <blockquote className="text-xl text-gray-700 leading-relaxed mb-8 italic">
+                      "{testimonial.content}"
+                    </blockquote>
+                  </div>
+                  
+                  <div className="flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#8525FF] to-[#A855F7] flex items-center justify-center text-white font-bold text-lg mr-4">
+                      {testimonial.avatar}
+                    </div>
+                    <div className="text-left">
+                      <div className="font-bold text-gray-900 text-lg">{testimonial.name}</div>
+                      <div className="text-gray-600">{testimonial.role}</div>
+                      <div className="text-[#8525FF] font-medium">{testimonial.company}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="flex justify-center mt-12 space-x-3">
+            {testimonials.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setActiveTestimonial(i)}
-                className={`w-3 h-3 rounded-full ${i === activeTestimonial ? 'bg-blue-600' : 'bg-gray-300'}`}
+                className={`w-4 h-4 rounded-full transition-all duration-300 ${i === activeTestimonial ? 'bg-[#8525FF] scale-125' : 'bg-gray-300 hover:bg-gray-400'}`}
               />
             ))}
           </div>
@@ -348,32 +340,35 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={scaleUp}
-        className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Start Your Learning Journey?</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-            Join thousands of students already learning on our platform. Get unlimited access to all courses.
+      <section className="py-24 bg-gradient-to-r from-[#8525FF] via-[#A855F7] to-[#8525FF] relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-20 right-20 w-64 h-64 bg-white/10 rounded-full filter blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-white/10 rounded-full filter blur-3xl"></div>
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+            Ready to Transform Your Career?
+          </h2>
+          <p className="text-xl text-purple-100 mb-12 max-w-3xl mx-auto leading-relaxed">
+            Join over 2.5 million students who have already accelerated their careers with our world-class education platform. Start your journey today.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="secondary" size="lg" asChild>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                Get Started For Free
-              </motion.div>
-            </Button>
-            <Button variant="outline" size="lg" className="text-white border-white hover:bg-blue-700" asChild>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                View All Courses
-              </motion.div>
-            </Button>
+          
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <button className="px-10 py-5 bg-white text-[#8525FF] font-bold text-lg rounded-2xl hover:bg-gray-100 transform hover:scale-105 transition-all duration-300 shadow-xl">
+              Start Free Trial
+            </button>
+            <button className="px-10 py-5 border-2 border-white text-white font-bold text-lg rounded-2xl hover:bg-white hover:text-[#8525FF] transform hover:scale-105 transition-all duration-300">
+              Browse All Courses
+            </button>
+          </div>
+          
+          <div className="mt-12 text-purple-200 text-sm">
+            ✓ No credit card required  ✓ 7-day free trial  ✓ Cancel anytime
           </div>
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 }

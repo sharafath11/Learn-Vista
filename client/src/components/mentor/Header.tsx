@@ -1,19 +1,15 @@
-"use client"
+"use client";
 
-import React, { useCallback, useState, useEffect } from "react"
-import Link from "next/link"
-import { useRouter, usePathname } from "next/navigation"
-import { useMentorContext } from "@/src/context/mentorContext"
-import { MentorAPIMethods } from "@/src/services/APImethods"
-import { showInfoToast } from "@/src/utils/Toast"
-import { motion } from "framer-motion"
-import Image from "next/image"
+import React, { useCallback, useState, useEffect, JSX } from "react";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+import { useMentorContext } from "@/src/context/mentorContext";
+import { MentorAPIMethods } from "@/src/services/APImethods";
+import { showInfoToast } from "@/src/utils/Toast";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -21,58 +17,57 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-} from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/dropdown-menu";
+import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
-import {
-  LayoutDashboard,
-  Calendar,
-  MessageSquare,
-  Star,
-  User,
-  LogOut,
-  BookOpen,
-  Menu,
-} from "lucide-react"
+import { LayoutDashboard, Calendar, MessageSquare, Star, User, LogOut, BookOpen, Menu } from "lucide-react";
 
-const navItems = [
+interface Mentor {
+  _id: string;
+  username: string;
+  email: string;
+  profilePicture?: string;
+}
+
+interface NavItem {
+  name: string;
+  path: string;
+  icon: JSX.Element;
+}
+
+const navItems: NavItem[] = [
   { name: "Dashboard", path: "/mentor/home", icon: <LayoutDashboard className="w-4 h-4" /> },
   { name: "Upcoming", path: "/mentor/upcoming", icon: <Calendar className="w-4 h-4" /> },
   { name: "Courses", path: "/mentor/courses", icon: <BookOpen className="w-4 h-4" /> },
   { name: "Sessions", path: "/sessions", icon: <MessageSquare className="w-4 h-4" /> },
   { name: "Reviews", path: "/reviews", icon: <Star className="w-4 h-4" /> },
-]
+];
 
 export default function Header() {
-  const { mentor, setMentor } = useMentorContext()
-  const router = useRouter()
-  const pathname = usePathname()
+  const { mentor, setMentor } = useMentorContext();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleLogout = useCallback(async () => {
     try {
-      const res = await MentorAPIMethods.logout()
+      const res = await MentorAPIMethods.logout();
       if (res.ok) {
-        showInfoToast(res.msg)
-        setMentor(null)
-        router.push("/mentor/login")
+        showInfoToast(res.msg);
+        setMentor(null);
+        router.push("/mentor/login");
       }
     } catch {
-      showInfoToast("Logout failed. Please try again.")
+      showInfoToast("Logout failed. Please try again.");
     }
-  }, [setMentor, router])
+  }, [setMentor, router]);
 
   return (
-    <header className="bg-gray-900 sticky top-0 z-50 shadow-sm border-b border-gray-800">
+    <header className="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-200">
       <div className="container mx-auto px-4 flex justify-between items-center h-16">
-        
-        {/* Logo */}
         <motion.div
-          className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent"
+          className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -81,7 +76,6 @@ export default function Header() {
           <Image src="/images/logo.png" alt="Logo" width={30} height={30} priority />
         </motion.div>
 
-        {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-2">
           {navItems.map(({ name, path, icon }) => (
             <Link
@@ -89,8 +83,8 @@ export default function Header() {
               href={path}
               className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition ${
                 pathname === path
-                  ? "bg-emerald-500/10 text-emerald-500"
-                  : "text-gray-300 hover:bg-gray-700/50 hover:text-white"
+                  ? "bg-emerald-500/10 text-emerald-600"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
               }`}
             >
               {icon}
@@ -98,30 +92,29 @@ export default function Header() {
             </Link>
           ))}
 
-          {/* Avatar Dropdown */}
           {mentor && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="ml-3 cursor-pointer border border-gray-700 hover:border-emerald-500">
+                <Avatar className="ml-3 cursor-pointer border border-gray-300 hover:border-emerald-500">
                   <AvatarImage src={mentor.profilePicture || "/placeholder.svg?height=40&width=40"} />
                   <AvatarFallback>{mentor.username?.[0] ?? "M"}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-gray-800 text-white border-none">
-                <DropdownMenuLabel className="text-white">
+              <DropdownMenuContent align="end" className="w-48 bg-white text-gray-900 border border-gray-200 shadow-lg">
+                <DropdownMenuLabel className="text-gray-900">
                   <p className="text-sm font-semibold truncate">{mentor.username}</p>
-                  <p className="text-xs text-gray-400 truncate">{mentor.email}</p>
+                  <p className="text-xs text-gray-500 truncate">{mentor.email}</p>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-gray-700" />
+                <DropdownMenuSeparator className="bg-gray-200" />
                 <DropdownMenuItem asChild>
-                  <Link href="/mentor/profile" className="flex items-center gap-2">
+                  <Link href="/mentor/profile" className="flex items-center gap-2 text-gray-700 hover:bg-gray-100">
                     <User className="w-4 h-4" />
                     Profile
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleLogout}
-                  className="text-rose-400 hover:text-white hover:bg-rose-600/80"
+                  className="text-rose-600 hover:text-white hover:bg-rose-500"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
@@ -131,15 +124,14 @@ export default function Header() {
           )}
         </div>
 
-        {/* Mobile Menu */}
         <div className="md:hidden">
-          <Sheet>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white">
+              <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900">
                 <Menu className="w-6 h-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="bg-gray-900 text-white w-64 border-l border-gray-800">
+            <SheetContent side="right" className="bg-white text-gray-900 w-64 border-l border-gray-200">
               <div className="space-y-4 mt-6">
                 {mentor && (
                   <div className="flex items-center gap-3 px-3">
@@ -149,7 +141,7 @@ export default function Header() {
                     </Avatar>
                     <div>
                       <p className="text-sm font-semibold">{mentor.username}</p>
-                      <p className="text-xs text-gray-400">{mentor.email}</p>
+                      <p className="text-xs text-gray-500">{mentor.email}</p>
                     </div>
                   </div>
                 )}
@@ -158,10 +150,11 @@ export default function Header() {
                     <Link
                       key={path}
                       href={path}
+                      onClick={() => setIsSheetOpen(false)}
                       className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm transition ${
                         pathname === path
-                          ? "bg-emerald-500/10 text-emerald-500"
-                          : "text-gray-300 hover:bg-gray-700/50 hover:text-white"
+                          ? "bg-emerald-500/10 text-emerald-600"
+                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                       }`}
                     >
                       {icon}
@@ -171,8 +164,11 @@ export default function Header() {
                   {mentor && (
                     <Button
                       variant="ghost"
-                      onClick={handleLogout}
-                      className="flex justify-start gap-2 text-rose-400 hover:text-white hover:bg-rose-600/80 w-full px-4 py-2"
+                      onClick={() => {
+                        handleLogout();
+                        setIsSheetOpen(false);
+                      }}
+                      className="flex justify-start gap-2 text-rose-600 hover:text-white hover:bg-rose-500 w-full px-4 py-2"
                     >
                       <LogOut className="w-4 h-4" />
                       Logout
@@ -185,5 +181,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

@@ -217,11 +217,7 @@ const Page = () => {
 
                   <CardContent className="py-2">
                     <div className="flex items-center justify-between mb-3 text-sm">
-                      <div className="flex items-center text-yellow-500">
-                        <Star className="h-4 w-4 mr-1 fill-yellow-500 stroke-yellow-500" />
-                        <span className="font-semibold">4.8</span>
-                        <span className="text-gray-500 ml-1">(24 reviews)</span>
-                      </div>
+                      
                       <div className="flex items-center text-gray-600">
                         <Users className="h-4 w-4 mr-1 text-gray-500" />
                         <span className="font-medium">{course.enrolledUsers?.length || 0} Enrolled</span>

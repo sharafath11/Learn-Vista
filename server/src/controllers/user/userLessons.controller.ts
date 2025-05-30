@@ -36,7 +36,8 @@ export class UserLessonsController implements IUserLessonsController{
     async  getAllDetilsInLesson(req: Request, res: Response): Promise<void> {
         try {
             const lessonId = req.body.lessonId
-            const result = await this._userLessonsService.getLessonDetils(lessonId as string);
+            const decode=decodeToken(req.cookies.token) 
+            const result = await this._userLessonsService.getLessonDetils(lessonId as string,decode?.id as string);
             if (!result.videoUrl || !result.lesson || !result.questions) throwError("Somthing wront wrong", StatusCode.BAD_REQUEST);
             sendResponse(res,StatusCode.OK,"",true,result)
         } catch (error) {
