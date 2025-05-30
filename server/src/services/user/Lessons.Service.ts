@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
 import { IUserLessonsService } from "../../core/interfaces/services/user/IUserLessonsService";
-import { ILesson, IQuestions } from "../../types/lessons";
+import { IComment, ILesson, ILessonReport, IQuestions, LessonQuestionInput } from "../../types/lessons";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
@@ -11,12 +11,20 @@ import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "../../config/AWS";
+import { ILessonReportRepository } from "../../core/interfaces/repositories/lessons/ILessonReportRepository";
+import { buildPrompt } from "../../utils/Rportprompt";
+import { getGemaniResponse } from "../../config/gemaniAi";
+import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
+import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 @injectable()
 export class UserLessonsService implements IUserLessonsService{
     constructor(
         @inject(TYPES.LessonsRepository) private _lessonRepository: ILessonsRepository,
         @inject(TYPES.CourseRepository) private _courseRepository: ICourseRepository,
-        @inject(TYPES.QuestionsRepository) private _qustionRepository:IQuestionsRepository 
+        @inject(TYPES.QuestionsRepository) private _qustionRepository: IQuestionsRepository,
+        @inject(TYPES.LessonReportRepository) private _lessonReportRepo: ILessonReportRepository,
+        @inject(TYPES.CommentsRepository) private _commentsRepo: ICommentstRepository,
+        @inject(TYPES.UserRepository) private _userRepo:IUserRepository
     ) { }
     async getLessons(courseId: string|ObjectId, userId: string): Promise<ILesson[]> {
         let course = await this._courseRepository.findById(courseId as string);
@@ -34,7 +42,7 @@ export class UserLessonsService implements IUserLessonsService{
         return qustions
     }
     // ee week passail progress video nte koode validation in user after see the previus lesson 
-    async getLessonDetils(lessonId: string | ObjectId): Promise<{ questions: IQuestions[]; videoUrl: string; lesson: ILesson; }> {
+    async getLessonDetils(lessonId: string | ObjectId): Promise<{ questions: IQuestions[]; videoUrl: string; lesson: ILesson,comments:IComment[]; }> {
         console.log('Type of lessonId:', typeof lessonId);
 console.log('Value of lessonId:', lessonId);
 console.log('Value of lessonId.toString():', lessonId.toString()); 
@@ -59,6 +67,32 @@ console.log('Value of lessonId.toString():', lessonId.toString());
         Key: s3Key,
         });
         const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
-        return {questions,videoUrl:signedUrl,lesson}
+        const comments=await this._commentsRepo.findAll({lessonId})
+        return {questions,videoUrl:signedUrl,lesson,comments}
+    }
+    async lessonReport(userId: string, lessonId: string, data: LessonQuestionInput): Promise<ILessonReport> {
+       const existingReport = await this._lessonReportRepo.findAll({ lessonId, userId });
+       if(!existingReport)throwError("You already get the report please check in report session")
+       const lesson = await this._lessonRepository.findById(lessonId);
+       if (!lesson) throwError("invalid lessons");
+       const course = await this._courseRepository.findById(lesson.courseId as string);
+       if (!course) throwError("Invalid course");
+       const prompt = buildPrompt(data);
+       const geminiRpoert = await getGemaniResponse(prompt);
+       if (!geminiRpoert) throwError("Server bcy");
+       const report=await this._lessonReportRepo.create({
+           userId:userId,
+           lessonId: lessonId,
+           courseId: course.id,
+           mentorId: course.mentorId,
+           report: geminiRpoert
+       })
+       return report
+    }
+    async saveComments(userId: string, lessonId: string | ObjectId, comment: string): Promise<IComment> {
+        const userData=await this._userRepo.findById(userId)
+        if (!lessonId || !comment) throwError("Invalid datas");
+        const data=await this._commentsRepo.create({ lessonId, comment, userId: userId, userName: userData?.username });
+        return data
     }
 }

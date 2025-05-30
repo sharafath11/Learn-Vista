@@ -43,4 +43,26 @@ export class UserLessonsController implements IUserLessonsController{
             handleControllerError(res,error)
         }
     }
+    async getLessonReport(req: Request, res: Response): Promise<void> {
+        try {
+            const { lessonId, data } = req.body; 
+            const decode=decodeToken(req.cookies.token)
+            if (!lessonId || !data) throwError("Somthing wrnot wrong");
+            const result = await this._userLessonsService.lessonReport(decode?.id as string, lessonId, data);
+            sendResponse(res,StatusCode.OK,"You are subMIted succesfully",true,result)
+        } catch (error) {
+            handleControllerError(res,error)
+        }
+    }
+    async saveComments(req: Request, res: Response): Promise<void> {
+        try {
+            const { lessonId, comment } = req.body
+            const decode = decodeToken(req.cookies.token)
+            if(!decode) throwError("Unautherizes")
+            const result=await this._userLessonsService.saveComments(decode?.id as string,lessonId, comment);
+            sendResponse(res, StatusCode.OK, "Commented", true,result);
+        } catch (error) {
+            handleControllerError(res,error)
+        }
+    }
 }

@@ -1,6 +1,6 @@
 import {   UserBlock,  } from "../types/adminTypes";
 import { ILogin, IUserRegistration } from "../types/authTypes";
-import { ILessons, IQuestions } from "../types/lessons";
+import { AnswerWithType, ILessons, IQuestions } from "../types/lessons";
 import { IMentorSignupData } from "../types/mentorTypes";
 
 import { getRequest, patchRequest, postRequest } from "./api";
@@ -32,7 +32,9 @@ export const UserAPIMethods = {
   getUserRoomId: (courseId: string) => get(`/start-live/vc/${courseId}`),
   getLessons: (courseId: string) => get(`/courses/lessons/${courseId}`),
   getQustion: (lessonId: string) => get(`/lesson/questions/${lessonId}`),
-  getLessonDetils:(lessonId:string)=>post("/lessonDetils",{lessonId})
+  getLessonDetils: (lessonId: string) => post("/lessonDetils", { lessonId }),
+  getReport: (lessonId: string, data: AnswerWithType[]) => post("/lesson/report", { lessonId, data }),
+  saveComment:(lessonId:string,comment:string)=>post("/lesson/comment",{lessonId,comment})
 } as const;
 
 export const AdminAPIMethods = {

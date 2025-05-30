@@ -1,6 +1,4 @@
 
-
-// src/core/di/types.ts
 export const TYPES = {
  
   MentorAuthController: Symbol.for('MentorAuthController'),
@@ -48,6 +46,7 @@ export const TYPES = {
   LiveRepository: Symbol.for("LiveRespository"),
   SessionRepository: Symbol.for("SessionRepository"),
   LessonsRepository: Symbol.for("LessonRepository"),
-  QuestionsRepository:Symbol.for("QuestionsRepository")
-  
+  QuestionsRepository: Symbol.for("QuestionsRepository"),
+  LessonReportRepository: Symbol.for("LessonReportRepository"),
+  CommentsRepository:Symbol.for("CommentsRepository")  
 };

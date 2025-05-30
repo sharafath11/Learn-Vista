@@ -41,6 +41,8 @@ router.get("/start-live/vc/:courseId", authenticateToken, userLiveController.get
 router.post("/change/password", authenticateToken, profileController.changePassword.bind(profileController));
 router.get("/courses/lessons/:courseId",authenticateToken,userLessonsController.getLessons.bind(userLessonsController))
 router.get("/lesson/questions/:lessonId", authenticateToken, userLessonsController.getQuestions.bind(userLessonsController))
-router.post("/lessonDetils",authenticateToken,userLessonsController.getAllDetilsInLesson.bind(userLessonsController))
+router.post("/lessonDetils", authenticateToken, userLessonsController.getAllDetilsInLesson.bind(userLessonsController));
+router.post("/lesson/report", authenticateToken, userLessonsController.getLessonReport.bind(userLessonsController));
+router.post("/lesson/comment",authenticateToken,userLessonsController.saveComments.bind(userLessonsController))
 
 export default router;

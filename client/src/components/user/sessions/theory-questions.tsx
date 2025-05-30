@@ -1,3 +1,4 @@
+// theory-questions.tsx
 "use client"
 
 import { useState, useEffect } from "react"
@@ -8,17 +9,18 @@ import { IQuestions } from "@/src/types/lessons"
 
 interface TheoryQuestionsProps {
   questions: IQuestions[]
-  onComplete: (answers: { questionId: string; answer: string }[]) => void
+  onComplete: (answers: { question: string; answer: string }[]) => void
   isCompleted: boolean
 }
 
 export default function TheoryQuestions({
   questions,
   onComplete,
-  isCompleted
+  isCompleted,
 }: TheoryQuestionsProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selectedAnswers, setSelectedAnswers] = useState<{ questionId: string; answer: string }[]>([])
+  const [selectedAnswers, setSelectedAnswers] = useState<{ question: string; answer: string }[]>([])
+  const [currentAnswer, setCurrentAnswer] = useState("")
   const [isQuestionSubmitted, setIsQuestionSubmitted] = useState(false)
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(isCompleted)
 
@@ -28,29 +30,31 @@ export default function TheoryQuestions({
     setAllQuestionsAnswered(isCompleted)
   }, [isCompleted])
 
-  // Reset submission status when question changes
   useEffect(() => {
-    setIsQuestionSubmitted(false)
-  }, [currentQuestionIndex])
-
-  const handleAnswerChange = (value: string) => {
-    if (value.length > 1000) return // limit input length
-
-    const newAnswers = [
-      ...selectedAnswers.filter(a => a.questionId !== currentQuestion.id),
-      { questionId: currentQuestion.id, answer: value }
-    ]
-    setSelectedAnswers(newAnswers)
-  }
+    if (currentQuestion) {
+      const savedAnswer = selectedAnswers.find((a) => a.question === currentQuestion.question)
+      if (savedAnswer) {
+        setCurrentAnswer(savedAnswer.answer)
+        setIsQuestionSubmitted(true)
+      } else {
+        setCurrentAnswer("")
+        setIsQuestionSubmitted(false)
+      }
+    }
+  }, [currentQuestionIndex, currentQuestion, selectedAnswers])
 
   const handleSubmit = () => {
+    const updatedAnswers = [
+      ...selectedAnswers.filter((a) => a.question !== currentQuestion.question),
+      { question: currentQuestion.question, answer: currentAnswer.trim() },
+    ]
+    setSelectedAnswers(updatedAnswers)
     setIsQuestionSubmitted(true)
   }
 
   const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
-      setIsQuestionSubmitted(false)
     } else {
       setAllQuestionsAnswered(true)
       onComplete(selectedAnswers)
@@ -60,9 +64,11 @@ export default function TheoryQuestions({
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1)
-      setIsQuestionSubmitted(false)
     }
   }
+
+  const isAnswerValid =
+    currentAnswer.trim().length >= 10 && currentAnswer.trim().length <= 1000
 
   if (!currentQuestion) {
     return (
@@ -87,10 +93,6 @@ export default function TheoryQuestions({
     )
   }
 
-  const currentAnswer = selectedAnswers.find(a => a.questionId === currentQuestion.id)?.answer || ""
-  const trimmedLength = currentAnswer.trim().length
-  const isValid = trimmedLength >= 1 && trimmedLength <= 1000
-
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -101,22 +103,33 @@ export default function TheoryQuestions({
       </div>
 
       <div className="mb-4 p-4 border rounded bg-muted">
-        <p className="text-lg font-medium mb-2">{currentQuestion.question}</p>
-        <textarea
-          className="w-full p-2 border rounded min-h-[150px]"
-          placeholder="Type your answer here..."
-          value={currentAnswer}
-          onChange={(e) => handleAnswerChange(e.target.value)}
-          disabled={isQuestionSubmitted}
-          maxLength={1000}
-        />
-        <div className="text-right text-xs text-gray-500 mt-1">
-          {currentAnswer.length} / 1000 characters
-        </div>
+        <p className="text-lg font-medium">{currentQuestion.question}</p>
       </div>
 
+      <textarea
+        rows={6}
+        className="w-full p-3 border rounded bg-background text-foreground"
+        placeholder="Write your answer here..."
+        value={currentAnswer}
+        onChange={(e) => setCurrentAnswer(e.target.value)}
+        disabled={isQuestionSubmitted}
+        maxLength={1000}
+      />
+
+      <div className="text-sm text-gray-500 mt-2">
+        {currentAnswer.trim().length} / 1000 characters
+      </div>
+
+      {!isAnswerValid && currentAnswer.trim().length > 0 && (
+        <div className="text-sm text-red-500 mt-1">
+          {currentAnswer.trim().length < 10
+            ? "Answer must be at least 10 characters."
+            : "Answer must not exceed 1000 characters."}
+        </div>
+      )}
+
       {isQuestionSubmitted && (
-        <Alert className="mb-6 border-green-500">
+        <Alert className="mb-6 mt-4 border-green-500">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <AlertDescription>Your answer has been saved for this question.</AlertDescription>
@@ -124,13 +137,13 @@ export default function TheoryQuestions({
         </Alert>
       )}
 
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-6">
         <Button variant="outline" onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
           Previous
         </Button>
 
         {!isQuestionSubmitted ? (
-          <Button onClick={handleSubmit} disabled={!isValid}>
+          <Button onClick={handleSubmit} disabled={!isAnswerValid}>
             Mark as Complete
           </Button>
         ) : (

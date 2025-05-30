@@ -95,37 +95,37 @@ if (!isValid) return;
 
   if (questions === null) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center text-slate-500">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center text-slate-500">
         Loading questions...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-              <GraduationCap className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="p-2 bg-blue-900/30 rounded-lg">
+              <GraduationCap className="w-6 h-6 text-blue-400" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100">Mentor Dashboard</h1>
-              <p className="text-slate-600 dark:text-slate-400 text-lg">
-                Manage questions for Lesson **{lessonId}**
+              <h1 className="text-4xl font-bold text-slate-100">Mentor Dashboard</h1>
+              <p className="text-slate-400 text-lg">
+                Manage questions for Lesson ****
               </p>
             </div>
           </div>
         </div>
 
         {hasNoQuestions && (
-          <Card className="border-dashed border-2 border-slate-300 dark:border-slate-700 shadow-none bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm mb-8">
+          <Card className="border-dashed border-2 border-slate-700 shadow-none bg-slate-800/50 backdrop-blur-sm mb-8">
             <CardContent className="p-12 text-center flex flex-col items-center justify-center">
-              <Info className="w-12 h-12 text-blue-500 dark:text-blue-400 mx-auto mb-4" />
-              <h3 className="text-xl font-medium text-slate-900 dark:text-slate-100 mb-2">
+              <Info className="w-12 h-12 text-blue-400 mx-auto mb-4" />
+              <h3 className="text-xl font-medium text-slate-100 mb-2">
                 No Questions Added for This Lesson Yet!
               </h3>
-              <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-md">
+              <p className="text-slate-400 mb-6 max-w-md">
                 It looks like this lesson is empty. Start by adding your first theory or practical question.
               </p>
               <div className="flex gap-4">
@@ -144,41 +144,41 @@ if (!isValid) return;
 
         {!hasNoQuestions && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-slate-800/80 backdrop-blur-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-slate-400 flex items-center gap-2">
                   <BookOpen className="w-4 h-4" />
                   Theory Questions
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">{theoryQuestions.length}</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Total questions</div>
+                <div className="text-2xl font-bold text-slate-100">{theoryQuestions.length}</div>
+                <div className="text-sm text-slate-400">Total questions</div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-slate-800/80 backdrop-blur-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-slate-400 flex items-center gap-2">
                   <Code className="w-4 h-4" />
                   Practical Questions
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">{practicalQuestions.length}</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Total questions</div>
+                <div className="text-2xl font-bold text-slate-100">{practicalQuestions.length}</div>
+                <div className="text-sm text-slate-400">Total questions</div>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+            <Card className="border-0 shadow-lg bg-slate-800/80 backdrop-blur-sm">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400">Total Questions</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-400">Total Questions</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                <div className="text-2xl font-bold text-slate-100">
                   {totalQuestionsCount}
                 </div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">All questions</div>
+                <div className="text-sm text-slate-400">All questions</div>
               </CardContent>
             </Card>
           </div>
@@ -198,7 +198,7 @@ if (!isValid) return;
 
           <TabsContent value="theory" className="space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Theory Questions</h2>
+              <h2 className="text-2xl font-semibold text-slate-100">Theory Questions</h2>
               <Button onClick={() => handleAddQuestion("theory")} className="flex items-center gap-2">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Theory Question
@@ -209,18 +209,17 @@ if (!isValid) return;
               {theoryQuestions.length > 0 ? (
                 theoryQuestions.map((question, index) => (
                   <Card
-                    key={question.id} // Use question.id as the unique key
-                    className="border-0 shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-slate-800"
+                    key={question.id}
+                    className="border-0 shadow-md hover:shadow-lg transition-shadow bg-slate-800"
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-start gap-3 flex-1">
-                          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-sm font-medium text-blue-600 dark:text-blue-400 mt-1">
+                          <div className="w-8 h-8 bg-blue-900/30 rounded-full flex items-center justify-center text-sm font-medium text-blue-400 mt-1">
                             {index + 1}
                           </div>
                           <div className="flex-1">
-                            <p className="text-slate-900 dark:text-slate-100 leading-relaxed">{question.question}</p>
-                            
+                            <p className="text-slate-100 leading-relaxed">{question.question}</p>
                           </div>
                         </div>
                         <Button
@@ -237,13 +236,13 @@ if (!isValid) return;
                   </Card>
                 ))
               ) : (
-                <Card className="border-0 shadow-md bg-white dark:bg-slate-800">
+                <Card className="border-0 shadow-md bg-slate-800">
                   <CardContent className="p-12 text-center">
                     <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">
+                    <h3 className="text-lg font-medium text-slate-100 mb-2">
                       No theory questions yet
                     </h3>
-                    <p className="text-slate-600 dark:text-slate-400 mb-4">
+                    <p className="text-slate-400 mb-4">
                       Create your first theory question to get started.
                     </p>
                     <Button onClick={() => handleAddQuestion("theory")}>
@@ -258,7 +257,7 @@ if (!isValid) return;
 
           <TabsContent value="practical" className="space-y-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Practical Questions</h2>
+              <h2 className="text-2xl font-semibold text-slate-100">Practical Questions</h2>
               <Button onClick={() => handleAddQuestion("practical")} className="flex items-center gap-2">
                 <Plus className="w-4 h-4" />
                 Add Practical Question
@@ -269,18 +268,17 @@ if (!isValid) return;
               {practicalQuestions.length > 0 ? (
                 practicalQuestions.map((question, index) => (
                   <Card
-                    key={question.id} // Use question.id as the unique key
-                    className="border-0 shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-slate-800"
+                    key={question.id}
+                    className="border-0 shadow-md hover:shadow-lg transition-shadow bg-slate-800"
                   >
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex items-start gap-3 flex-1">
-                          <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-sm font-medium text-green-600 dark:text-green-400 mt-1">
+                          <div className="w-8 h-8 bg-green-900/30 rounded-full flex items-center justify-center text-sm font-medium text-green-400 mt-1">
                             {index + 1}
                           </div>
                           <div className="flex-1">
-                            <p className="text-slate-900 dark:text-slate-100 leading-relaxed">{question.question}</p>
-                            
+                            <p className="text-slate-100 leading-relaxed">{question.question}</p>
                           </div>
                         </div>
                         <Button
@@ -297,13 +295,13 @@ if (!isValid) return;
                   </Card>
                 ))
               ) : (
-                <Card className="border-0 shadow-md bg-white dark:bg-slate-800">
+                <Card className="border-0 shadow-md bg-slate-800">
                   <CardContent className="p-12 text-center">
                     <Code className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">
+                    <h3 className="text-lg font-medium text-slate-100 mb-2">
                       No practical questions yet
                     </h3>
-                    <p className="text-slate-600 dark:text-slate-400 mb-4">
+                    <p className="text-slate-400 mb-4">
                       Create your first practical question to get started.
                     </p>
                     <Button onClick={() => handleAddQuestion("practical")}>

@@ -1,16 +1,19 @@
+// lesson-page.tsx
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { ArrowLeft } from "lucide-react"
-import { IQuestions, ILessons } from "@/src/types/lessons"
+import { IQuestions, ILessons, AnswerWithType, IComment } from "@/src/types/lessons"
 import VideoPlayer from "@/src/components/user/sessions/video-player"
 import TheoryQuestions from "@/src/components/user/sessions/theory-questions"
 import CodeChallenge from "@/src/components/user/sessions/CodeChallenge"
 import { UserAPIMethods } from "@/src/services/APImethods"
-import { showErrorToast } from "@/src/utils/Toast"
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
+import { Textarea } from "@/components/ui/textarea"
+import { format } from 'date-fns'
 
 export default function LessonPage() {
   const params = useParams()
@@ -22,13 +25,27 @@ export default function LessonPage() {
   const [videoCompleted, setVideoCompleted] = useState(false)
   const [theoryCompleted, setTheoryCompleted] = useState(false)
   const [practicalCompleted, setPracticalCompleted] = useState(false)
-  const [theoryAnswers, setTheoryAnswers] = useState<{ questionId: string; answer: string }[]>([])
-  const [practicalAnswers, setPracticalAnswers] = useState<{ questionId: string; answer: string }[]>([])
+  const [theoryAnswers, setTheoryAnswers] = useState<AnswerWithType[]>([])
+  const [practicalAnswers, setPracticalAnswers] = useState<AnswerWithType[]>([])
+  const [comment, setComment] = useState("")
+  const [comments, setComments] = useState<IComment[]>([])
+  const commentsEndRef = useRef<HTMLDivElement>(null)
+
   const [activeTab, setActiveTab] = useState<"theory" | "practical">("theory")
 
   useEffect(() => {
     fetchDetils()
   }, [])
+
+  useEffect(() => {
+    if (videoCompleted && theoryCompleted && practicalCompleted) {
+      submitLessonReport()
+    }
+  }, [videoCompleted, theoryCompleted, practicalCompleted])
+
+  useEffect(() => {
+    commentsEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [comments])
 
   const fetchDetils = async () => {
     const res = await UserAPIMethods.getLessonDetils(lessonId as string)
@@ -36,6 +53,9 @@ export default function LessonPage() {
       setLesson(res.data.lesson)
       setVideoUrl(res.data.videoUrl)
       setQuestions(res.data.questions)
+      if (res.data.comments) {
+        setComments(res.data.comments)
+      }
     } else {
       showErrorToast(res.msg)
     }
@@ -45,14 +65,50 @@ export default function LessonPage() {
     setVideoCompleted(true)
   }
 
-  const handleTheoryComplete = (answers: { questionId: string; answer: string }[]) => {
-    setTheoryAnswers(answers)
+  const handleTheoryComplete = (answers: { question: string; answer: string }[]) => {
+    const typedAnswers = answers.map(a => ({ ...a, type: 'theory' as const }))
+    setTheoryAnswers(typedAnswers)
     setTheoryCompleted(true)
   }
 
-  const handlePracticalComplete = (answers: { questionId: string; answer: string }[]) => {
-    setPracticalAnswers(answers)
+  const handlePracticalComplete = (answers: { question: string; answer: string }[]) => {
+    const typedAnswers: AnswerWithType[] = answers.map(a => ({ ...a, type: 'practical' as const }))
+    setPracticalAnswers(typedAnswers)
     setPracticalCompleted(true)
+  }
+
+  const handleAddComment = async () => {
+    if (comment.trim()) {
+      const res = await UserAPIMethods.saveComment(lessonId as string, comment);
+      if (res.ok) {
+      console.log(res.data)
+        const newComment: IComment = {
+          id: res.data.id,
+          lessonId: lessonId as string,
+          userName: res.data.userName, 
+          comment: comment,
+          createdAt: new Date()
+        };
+        setComments([...comments, newComment]);
+        setComment("");
+        showSuccessToast(res.msg);
+      } else {
+        showErrorToast(res.msg);
+      }
+    }
+  }
+
+  const submitLessonReport = async () => {
+    const combinedAnswers: AnswerWithType[] = [...theoryAnswers, ...practicalAnswers]
+    const res = await UserAPIMethods.getReport(
+      lessonId as string,
+      combinedAnswers,
+    )
+    if (res.ok) {
+      showSuccessToast(res.msg)
+    } else {
+      showErrorToast("Failed to submit lesson report.")
+    }
   }
 
   const calculateProgress = () => {
@@ -80,7 +136,7 @@ export default function LessonPage() {
             Back to Lessons
           </Button>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-            Lesson {lesson.id}: {lesson.title}
+            Lesson {lesson.order}: {lesson.title}
           </h1>
           <div className="w-[120px]"></div>
         </div>
@@ -103,6 +159,46 @@ export default function LessonPage() {
               onComplete={handleVideoComplete}
               isCompleted={videoCompleted}
             />
+          </div>
+
+          {/* Comment Section - Shows comments always, input only after video completed */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden p-6">
+            <h3 className="text-xl font-bold mb-4">Discussion</h3>
+            
+            {/* Scrollable comments area - always visible */}
+            <div className="max-h-60 overflow-y-auto mb-4 space-y-4 pr-2">
+              {comments.length > 0 ? (
+                comments.map((comment) => (
+                  <div key={comment.id} className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <div className="flex justify-between items-start mb-1">
+                      <span className="font-medium text-sm">{comment.userName}</span>
+                      <span className="text-xs text-gray-500">
+                        {comment.createdAt ? format(new Date(comment.createdAt), 'MMM d, yyyy h:mm a') : ''}
+                      </span>
+                    </div>
+                    <p className="text-gray-800 dark:text-gray-200 text-sm">{comment.comment}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 dark:text-gray-400">No comments yet.</p>
+              )}
+              <div ref={commentsEndRef} />
+            </div>
+
+            {/* Comment input - only shown after video is completed */}
+            {videoCompleted && (
+              <div className="flex gap-2">
+                <Textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Share your thoughts about this video..."
+                  className="flex-1"
+                />
+                <Button onClick={handleAddComment} disabled={!comment.trim()}>
+                  Post
+                </Button>
+              </div>
+            )}
           </div>
 
           {(videoCompleted || theoryCompleted || practicalCompleted) && (

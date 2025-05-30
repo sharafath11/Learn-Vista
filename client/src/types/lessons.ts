@@ -20,3 +20,18 @@ export interface IQuestions  {
   type:"theory"|"practical"
   isCompleted: boolean;
 }
+export type AnswerWithType = {
+  question: string;
+  answer: string;
+  type: 'theory' | 'practical';
+};
+
+export interface IComment  {
+  id?:string
+  lessonId:  string;
+  userId?: string;
+  userName: string;
+  comment: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}

@@ -1,3 +1,4 @@
+// code-challenge.tsx
 "use client"
 
 import { useState, useEffect } from "react"
@@ -6,19 +7,19 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckCircle2 } from "lucide-react"
 import { IQuestions } from "@/src/types/lessons"
 
-interface TheoryQuestionsProps {
+interface CodeChallengeProps {
   questions: IQuestions[]
-  onComplete: (answers: { questionId: string; answer: string }[]) => void
+  onComplete: (answers: { question: string; answer: string }[]) => void
   isCompleted: boolean
 }
 
-export default function TheoryQuestions({
+export default function CodeChallenge({
   questions,
   onComplete,
   isCompleted,
-}: TheoryQuestionsProps) {
+}: CodeChallengeProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selectedAnswers, setSelectedAnswers] = useState<{ questionId: string; answer: string }[]>([])
+  const [selectedAnswers, setSelectedAnswers] = useState<{ question: string; answer: string }[]>([])
   const [currentAnswer, setCurrentAnswer] = useState("")
   const [isQuestionSubmitted, setIsQuestionSubmitted] = useState(false)
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(isCompleted)
@@ -31,7 +32,7 @@ export default function TheoryQuestions({
 
   useEffect(() => {
     if (currentQuestion) {
-      const savedAnswer = selectedAnswers.find((a) => a.questionId === currentQuestion.id)
+      const savedAnswer = selectedAnswers.find((a) => a.question === currentQuestion.question)
       if (savedAnswer) {
         setCurrentAnswer(savedAnswer.answer)
         setIsQuestionSubmitted(true)
@@ -44,8 +45,8 @@ export default function TheoryQuestions({
 
   const handleSubmit = () => {
     const updatedAnswers = [
-      ...selectedAnswers.filter((a) => a.questionId !== currentQuestion.id),
-      { questionId: currentQuestion.id, answer: currentAnswer.trim() },
+      ...selectedAnswers.filter((a) => a.question !== currentQuestion.question),
+      { question: currentQuestion.question, answer: currentAnswer.trim() },
     ]
     setSelectedAnswers(updatedAnswers)
     setIsQuestionSubmitted(true)
@@ -72,7 +73,7 @@ export default function TheoryQuestions({
   if (!currentQuestion) {
     return (
       <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-        No theory questions available for this lesson yet.
+        No coding challenges available for this lesson yet.
       </div>
     )
   }
@@ -83,11 +84,11 @@ export default function TheoryQuestions({
         <div className="flex justify-center mb-4">
           <CheckCircle2 className="h-16 w-16 text-green-500" />
         </div>
-        <h3 className="text-xl font-bold mb-2">All Questions Completed!</h3>
+        <h3 className="text-xl font-bold mb-2">All Challenges Completed!</h3>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-          You've successfully completed all the theory questions for this lesson.
+          You've successfully completed all the coding challenges for this lesson.
         </p>
-        <Button onClick={() => setAllQuestionsAnswered(false)}>Review Questions</Button>
+        <Button onClick={() => setAllQuestionsAnswered(false)}>Review Challenges</Button>
       </div>
     )
   }
@@ -95,9 +96,9 @@ export default function TheoryQuestions({
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-bold">Theory Questions</h3>
+        <h3 className="text-xl font-bold">Coding Challenge</h3>
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          Question {currentQuestionIndex + 1} of {questions.length}
+          Challenge {currentQuestionIndex + 1} of {questions.length}
         </div>
       </div>
 
@@ -106,24 +107,24 @@ export default function TheoryQuestions({
       </div>
 
       <textarea
-        rows={6}
-        className="w-full p-3 border rounded bg-background text-foreground"
-        placeholder="Write your answer here..."
+        rows={12}
+        className="w-full p-3 border rounded bg-background text-foreground font-mono text-sm"
+        placeholder="Write your code solution here..."
         value={currentAnswer}
         onChange={(e) => setCurrentAnswer(e.target.value)}
         disabled={isQuestionSubmitted}
-        maxLength={1000}
+        maxLength={5000}
       />
 
       <div className="text-sm text-gray-500 mt-2">
-        {currentAnswer.trim().length} / 1000 characters
+        {currentAnswer.trim().length} / 5000 characters
       </div>
 
       {!isAnswerValid && currentAnswer.trim().length > 0 && (
         <div className="text-sm text-red-500 mt-1">
           {currentAnswer.trim().length < 10
-            ? "Answer must be at least 10 characters."
-            : "Answer must not exceed 1000 characters."}
+            ? "Solution must be at least 10 characters."
+            : "Solution must not exceed 5000 characters."}
         </div>
       )}
 
@@ -131,7 +132,7 @@ export default function TheoryQuestions({
         <Alert className="mb-6 mt-4 border-green-500">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <AlertDescription>Your answer has been saved for this question.</AlertDescription>
+            <AlertDescription>Your solution has been saved for this challenge.</AlertDescription>
           </div>
         </Alert>
       )}
@@ -147,7 +148,7 @@ export default function TheoryQuestions({
           </Button>
         ) : (
           <Button onClick={handleNext}>
-            {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish"}
+            {currentQuestionIndex < questions.length - 1 ? "Next Challenge" : "Finish"}
           </Button>
         )}
       </div>

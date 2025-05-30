@@ -30,11 +30,7 @@ app.use(cors({
   origin: "http://localhost:3000",
   credentials: true
 }));
-async function main() {
-  await getGemaniResponse();
-}
 
-main();
 
 app.use(cookieParser());
 app.use("/", userRoutes);

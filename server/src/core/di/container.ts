@@ -91,6 +91,10 @@ import { IUserLessonsController } from '../interfaces/controllers/user/IUserLess
 import { UserLessonsController } from '../../controllers/user/userLessons.controller';
 import { IUserLessonsService } from '../interfaces/services/user/IUserLessonsService';
 import { UserLessonsService } from '../../services/user/Lessons.Service';
+import { ILessonReportRepository } from '../interfaces/repositories/lessons/ILessonReportRepository';
+import { LessonReportRepository } from '../../repositories/lesson/lessonReportRepository';
+import { ICommentstRepository } from '../interfaces/repositories/lessons/ICommentsRepository';
+import { CommentsRepository } from '../../repositories/lesson/commentRepository';
 
 const container = new Container();
 
@@ -140,7 +144,9 @@ container.bind<IAdminCategoriesRepostory>(TYPES.AdminCategoriesRepository).to(Ad
 container.bind<ILiveRepository>(TYPES.LiveRepository).to(LiveRepository);
 container.bind<ISessionRepository>(TYPES.SessionRepository).to(SessionRepository);
 container.bind<ILessonsRepository>(TYPES.LessonsRepository).to(LessonsRepository)
-container.bind<IQuestionsRepository>(TYPES.QuestionsRepository).to(QuestionsRepository)
+container.bind<IQuestionsRepository>(TYPES.QuestionsRepository).to(QuestionsRepository);
+container.bind<ILessonReportRepository>(TYPES.LessonReportRepository).to(LessonReportRepository);
+container.bind<ICommentstRepository>(TYPES.CommentsRepository).to(CommentsRepository)
 
 
 export default container;
