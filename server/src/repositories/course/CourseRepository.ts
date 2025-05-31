@@ -37,8 +37,8 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       ...course,
       mentorId: course.mentorId as unknown as IMentor,
       categoryId: course.categoryId as unknown as ICategory,
-    })).filter((i)=>!i.isBlock && !i.categoryId.isBlock);
-    
+    }));
+    //validation removed filter .is blocked and verifyed like tr
     return populatedCourses ;
   }
   async populateWithAllFildes(): Promise<IPopulatedCourse[]> {

@@ -59,7 +59,7 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
   ): Promise<{ data: U[]; total: number; totalPages: number }> {
     try {
       
-      const finalLimit =  1;
+      const finalLimit =  2;
       const skip = (page - 1) * finalLimit;
   
      

@@ -13,7 +13,11 @@ export class AdminMentorService implements IAdminMentorServices {
   constructor(
     @inject(TYPES.AdminMentorRepository)
     private adminMentorRepo: IAdminMentorRepository
-  ) {}
+  ) { }
+  async getAllMentorWithoutFiltring(): Promise<IMentor[]> {
+    const result = await this.adminMentorRepo.findAll();
+    return result
+  }
 
   async getAllMentors(
     page: number = 1,

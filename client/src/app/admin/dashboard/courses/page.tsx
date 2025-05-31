@@ -23,7 +23,7 @@ export default function CoursesAdminPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCourses, setTotalCourses] = useState(0);
-  const coursesPerPage = 1;
+  const coursesPerPage = 2;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -71,8 +71,9 @@ export default function CoursesAdminPage() {
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-
+  
   const totalPages = Math.ceil(totalCourses / coursesPerPage);
+console.log(totalPages)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">

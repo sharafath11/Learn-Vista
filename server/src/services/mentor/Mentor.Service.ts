@@ -43,6 +43,7 @@ export class MentorService implements IMentorService {
   }
 
   async getCourses(id: string): Promise<IPopulatedCourse[]> {
+    console.log("fgg",id)
     const courses = await this.courseRepo.findWithMenorIdgetAllWithPopulatedFields(id);
     if (!courses) throwError("You don't have any courses", StatusCode.NOT_FOUND); 
     return courses;

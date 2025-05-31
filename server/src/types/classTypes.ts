@@ -38,6 +38,7 @@ export interface ICourse extends Document {
   tags?: string[];
   enrolledUsers:string[]
   // mentorApproved: boolean
+  isStreaming?:boolean
   lessons:ObjectId[]|string[],
   category:ICategory
   mentorStatus: "approved" | "rejected"|"pending";

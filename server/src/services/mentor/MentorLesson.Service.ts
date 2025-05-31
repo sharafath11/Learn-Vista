@@ -17,16 +17,21 @@ export class MentorLessonService implements IMentorLessonService {
         @inject(TYPES.QuestionsRepository) private _questionRepository:IQuestionsRepository
     ) {}
 
-    async getLessons(courseId: string | ObjectId): Promise<ILesson[]> {
+    async getLessons(courseId: string | ObjectId,mentorId:string|ObjectId): Promise<ILesson[]> {
         const result = await this._lessonRepo.findAll({ courseId });
         if (!result) throwError("Invalid request", StatusCode.BAD_REQUEST);
         return result;
     }
 
     async addLesson(data: ILesson): Promise<ILesson> {
-        if (!data.title || !data.videoUrl || !data.courseId) {
-            throwError("Title, videoUrl, and courseId are required", StatusCode.BAD_REQUEST);
+        if (!data.title || !data.videoUrl || !data.courseId||!data.thumbnail) {
+            throwError("All filed are required", StatusCode.BAD_REQUEST);
         }
+        const existingLessson = await this._lessonRepo.findOne({ title: data.title });
+        if (existingLessson) throwError("Please enter uniq title");
+        const existingOrder = await this._lessonRepo.findOne({ order: data.order });
+        if (existingOrder) throwError("Please enter uniq Order");
+        
 
         let imageUrl: string | undefined;
         if (data.thumbnail) {

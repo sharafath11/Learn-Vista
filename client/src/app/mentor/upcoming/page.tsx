@@ -5,6 +5,7 @@ import { format, parseISO, differenceInMinutes, addMinutes, startOfDay } from "d
 import { Calendar, Clock, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useMentorContext } from "@/src/context/mentorContext"
+import { Button } from "@/components/ui/button"
 
 export default function UpcomingSessions() {
   const router = useRouter()
@@ -96,7 +97,7 @@ export default function UpcomingSessions() {
                     </span>
                   </div>
                   <div className="col-span-2">
-                    <button
+                    {/* <button
                       onClick={() => handleStartSession(session._id)}
                       disabled={buttonText !== "Start Now"}
                       className={`px-4 py-2 rounded-md text-sm font-medium w-full ${
@@ -106,7 +107,8 @@ export default function UpcomingSessions() {
                       }`}
                     >
                       {buttonText}
-                    </button>
+                    </button> */}
+                    {session.isStreaming?<Button>Streaming</Button>:<Button onClick={() => handleStartSession(session._id)}>Start Streaming</Button>}
                   </div>
                 </div>
               );

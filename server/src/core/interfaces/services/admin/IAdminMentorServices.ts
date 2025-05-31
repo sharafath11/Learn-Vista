@@ -11,4 +11,5 @@ getAllMentors(
   changeMentorStatus(id: string, status: boolean, email: string): Promise<IMentor | null>;
   toggleMentorBlock(id: string, isBlock: boolean): Promise<IMentor | null>;
   mentorDetails(id: string): Promise<IMentor>;
+  getAllMentorWithoutFiltring():Promise<IMentor[]>
 }

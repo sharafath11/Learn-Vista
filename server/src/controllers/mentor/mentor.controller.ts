@@ -37,7 +37,7 @@ export class MentorController implements IMentorController {
       if (!decoded?.id) {
         return throwError("Unauthorized", StatusCode.UNAUTHORIZED);
       }
-
+      
       const result = await this.mentorService.getCourses(decoded.id);
       sendResponse(res, StatusCode.OK, "Courses fetched successfully", true, result);
     } catch (error) {

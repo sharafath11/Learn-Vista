@@ -35,14 +35,14 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   }, []);
   
 
-  const getCourses = useCallback(async () => {
+  const getCourses =async  () => {
     const res = await MentorAPIMethods.getCourses();
     if (res.ok) setCourses(res.data);
     console.log("mentor side", res);
-  }, []);
+  }
 
   useEffect(() => {
-    
+    getCourses()
     getMentorDetils();
     
   }, [getMentorDetils]);

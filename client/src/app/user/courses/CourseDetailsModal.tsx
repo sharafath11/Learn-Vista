@@ -66,19 +66,7 @@ const CourseDetailsModal = ({
                   <p className="text-gray-600 mb-6">{course.description}</p>
                   
                   <div className="flex flex-wrap items-center gap-4 mb-6">
-                    <div className="flex items-center">
-                      <div className="flex items-center text-yellow-500 mr-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star 
-                            key={i} 
-                            size={16} 
-                            fill={i < 4 ? "currentColor" : "none"} 
-                            className={i < 4 ? "text-yellow-500" : "text-gray-300"} 
-                          />
-                        ))}
-                      </div>
-                      <span className="text-sm">4.8 (1,245 reviews)</span>
-                    </div>
+                    
                     
                     <div className="flex items-center text-sm">
                       <Users size={16} className="mr-1" />

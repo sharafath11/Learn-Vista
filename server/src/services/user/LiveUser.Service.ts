@@ -40,7 +40,7 @@ export class LiveUserService implements IUserLiveService {
 
   private async validateLiveSession(courseId: string) {
    
-    const liveSession = await this.liveRepo.findOne({ courseId });
+    const liveSession = await this.liveRepo.findOne({ courseId,isActive:true });
     
     if (!liveSession) {
       throwError("Live session not available");

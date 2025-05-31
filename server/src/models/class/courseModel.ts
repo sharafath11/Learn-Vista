@@ -19,6 +19,7 @@ const CourseSchema: Schema = new Schema(
       default: 'pending',
       required: true,
     },
+    isStreaming:{type:Boolean,default:false},
     lessons:[{ type: Schema.Types.ObjectId, ref: 'Lessons' }],
     isCompleted:{type:Boolean,default:false},
     courseLanguage: { type: String },
@@ -30,7 +31,6 @@ const CourseSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Text search index
 CourseSchema.index({ title: 'text', tags: 'text' });
 
 const CourseModel = mongoose.model<ICourse>('Course', CourseSchema);

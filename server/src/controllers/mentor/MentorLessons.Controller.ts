@@ -37,7 +37,8 @@ export class MentorLessonsController implements IMentorLessonsController {
     async getLessons(req: Request, res: Response): Promise<void> {
         try {
             const { courseId } = req.params;
-            const result = await this._mentorLessonsSerive.getLessons(courseId);
+            const decoded=decodeToken(req.cookies.token)
+            const result = await this._mentorLessonsSerive.getLessons(courseId,decoded?.id as string);
             sendResponse(res, StatusCode.OK, "", true, result);
         } catch (error) {
             handleControllerError(res, error);

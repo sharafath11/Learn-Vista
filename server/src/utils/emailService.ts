@@ -14,6 +14,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendEmailOtp(email: string, otp: string) {
+  console.log("opt",otp)
   const mailOptions = {
     from: `"Learn Vista" <${process.env.EMAIL_USER}>`,
     to: email,

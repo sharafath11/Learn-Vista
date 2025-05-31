@@ -11,6 +11,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select"
+import { useAdminContext } from "@/src/context/adminContext"
 
 interface CourseBasicInfoProps {
   formData: {
@@ -26,6 +27,7 @@ interface CourseBasicInfoProps {
   categories: Array<{ id: string; title: string }>
 }
 
+
 export default function CourseBasicInfo({
   formData,
   handleChange,
@@ -33,6 +35,7 @@ export default function CourseBasicInfo({
   mentors,
   categories,
 }: CourseBasicInfoProps) {
+
   return (
     <Card>
       <CardHeader>

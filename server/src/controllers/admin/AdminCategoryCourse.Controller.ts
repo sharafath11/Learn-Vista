@@ -156,6 +156,7 @@ async editCourse(req: Request, res: Response): Promise<void> {
       const queryParams = (req.query as any).params || req.query;
      
       const page = Math.max(Number(queryParams.page) || 1, 1);
+      
       const limit = Math.min(Math.max(Number(queryParams.limit) || 10, 1), 100);
       const search = queryParams.search?.toString() || '';
       const sort: Record<string, 1 | -1> = {};
@@ -175,7 +176,7 @@ async editCourse(req: Request, res: Response): Promise<void> {
         }
         console.log("Sort:", sort);
       } else {
-        sort.createdAt = -1;
+        sort.createdAt = 1;
         console.log(" Default Sort: createdAt DESC");
       }
       console.log(" Default Sort: createdAt DESC",queryParams.filters);

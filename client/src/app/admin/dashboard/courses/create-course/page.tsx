@@ -2,15 +2,29 @@
 "use client"
 
 import { AdminAPIMethods } from "@/src/services/APImethods"
-import { showInfoToast, showSuccessToast } from "@/src/utils/Toast"
+import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast"
 import { useAdminContext } from "@/src/context/adminContext"
 import { validateCourseForm } from "@/src/validations/adminvalidation"
 import CourseForm from "./CourseForm"
 import { useRouter } from "next/navigation"
+import { IMentor } from "@/src/types/mentorTypes"
+import { useEffect, useState } from "react"
 
 export default function CreateCoursePage() {
   const route=useRouter()
-  const { avilbleMentors, cat ,setCourses} = useAdminContext()
+  const { cat, setCourses } = useAdminContext()
+  const [mentors, setMentors] = useState<IMentor[]>();
+  useEffect(() => {
+    fetchAllMentors()
+  },[])
+  const fetchAllMentors = async () => {
+    const res = await AdminAPIMethods.getAllMentor();
+    if (res.ok) {
+      
+      setMentors(res.data)
+    }
+    else showErrorToast(res.msg)
+  }
   const languages = ["English", "Malayalam"]
 console.log(cat)
   const handleSubmit = async (formData: any) => {
@@ -65,7 +79,7 @@ console.log(cat)
         </div>
 
         <CourseForm
-          mentors={avilbleMentors}
+          mentors={mentors?.filter((i)=>!i.isBlock&&i.isVerified&&i.status=="approved")||[]}
           categories={cat}
           languages={languages}
           onSubmit={handleSubmit}

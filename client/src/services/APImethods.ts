@@ -51,7 +51,8 @@ export const AdminAPIMethods = {
     search?: string;
     filters?: Record<string, any>;
     sort?: Record<string, 1 | -1>;
-  }) => get("/admin/mentors",{params}),
+  }) => get("/admin/mentors", { params }),
+  getAllMentor:()=>get("/admin/all/mentors"),
   getSingleMentor: (id: string) => get(`/admin/mentor/${id}`),
   blockUser: (data: UserBlock) => patch("/admin/users/block", data),
   mentorChangeStatus: (mentorId: string, status: string, email: string) => 

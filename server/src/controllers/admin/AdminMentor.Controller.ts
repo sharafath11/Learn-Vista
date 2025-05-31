@@ -5,15 +5,23 @@ import { IAdminMentorController } from "../../core/interfaces/controllers/admin/
 import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";
 import { sendResponse, handleControllerError, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
-import { IMentorFilterParams } from "../../types/adminTypes";
+
 
 @injectable()
 class AdminMentorController implements IAdminMentorController {
   constructor(
     @inject(TYPES.AdminMentorService)
     private adminMentorService: IAdminMentorServices
-  ) {}
-
+  ) { }
+  async getAllMentorsNotFiltering(req: Request, res: Response): Promise<void> {
+    try {
+      const mentor = await this.adminMentorService.getAllMentorWithoutFiltring();
+      if (!mentor) throwError("Somthing wronet weronfg");
+      sendResponse(res, StatusCode.OK, "", true, mentor);
+    } catch (error) {
+      handleControllerError(res,error)
+    }
+  }
   async getAllMentors(req: Request, res: Response): Promise<void> {
     try {
 
@@ -52,9 +60,9 @@ class AdminMentorController implements IAdminMentorController {
            queryParams.filters,
            sort
          );
+         console.log(result.data)
      
-     
-         sendResponse(res, StatusCode.OK, "Users fetched successfully", true, {
+         sendResponse(res, StatusCode.OK, "Mentor fetched successfully", true, {
            data: result.data,
            total: result.total,
            page,
@@ -66,8 +74,8 @@ class AdminMentorController implements IAdminMentorController {
        }
      }
   
-  
-
+     
+ 
   async changeStatus(req: Request, res: Response): Promise<void> {
     try {
       const { mentorId, status, email } = req.body;

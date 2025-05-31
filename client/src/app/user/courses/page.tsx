@@ -319,6 +319,7 @@ const Page = () => {
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onEnroll={() => handleStartNewCourse(selectedCourse._id)}
+            isEnrolled={user?.enrolledCourses?.includes(selectedCourse._id)}
           />
         )}
       </div>

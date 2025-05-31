@@ -14,8 +14,7 @@ export class MentorStreamService implements IMentorStreamService{
         @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository
     ){}
     async startStreamSession(courseId: string, mentorId: string): Promise<string> {
-        const course = (await this._courseRepo.findWithMenorIdgetAllWithPopulatedFields(mentorId)).filter((i)=>i.mentorStatus==="approved")
-        
+        await this._courseRepo.update(courseId,{isStreaming:true})          
         const liveId = `live-${Date.now()}`;
         const currentDate = new Date();
         await this._baseLiveRepo.create({
@@ -31,7 +30,7 @@ export class MentorStreamService implements IMentorStreamService{
     async endStream(liveId: string, mentorId: string): Promise<void> {
         const stream = await this._baseLiveRepo.findOne({ liveId });
         if (!stream) throw new Error("Live stream not found");
-      
+      await this._courseRepo.update(stream.courseId as unknown as string,{isStreaming:false})
         await Promise.all([
           this._baseLiveRepo.update(stream.id, { isActive: false, isEnd: true }),
           this._baseMentorRepo.update(mentorId, { $addToSet: { liveClasses: stream?.id } })

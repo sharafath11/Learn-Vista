@@ -35,22 +35,23 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     fetchUsers,
     setUsers,
   } = useUserPagination();
-
+ 
   useEffect(() => {
     getAllMentors();
     getCategories();
     getCourse();
     fetchUsers({});
+    availvleMentorGet()
   }, []);
 
   async function getCategories(params?: {
-    page?: number;
+    page?: number ;
     limit?: number;
     search?: string;
     sort?: Record<string, 1 | -1>;
     filters?: Record<string, any>;
   }) {
-    const res = await AdminAPIMethods.getGetegories(params || {});;
+    const res = await AdminAPIMethods.getGetegories( params|| {});;
     console.log("categ",res)
     if (res.ok) setCat(res.data.data);
     else showInfoToast(res.msg);
@@ -64,6 +65,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     filters?: Record<string, any>;
   }) {
     const res = await AdminAPIMethods.fetchMentor(params || {});
+    console.log("angi inki ponki",res)
     if (res.ok) {
       setMentors(res.data.data);
       setMentorPagination({
@@ -71,11 +73,21 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         limit: res.data.limit,
         total: res.data.total,
       });
-      const mentor = res.data.data.filter((i: IMentor) => i.isVerified && !i.isBlock && i.status == "approved");
-      console.log("adfff",mentor)
-     setAvilbleMentors(mentor)
+     
     } else {
       showInfoToast(res.msg);
+    }
+  }
+  const availvleMentorGet = async () => {
+    const res = await AdminAPIMethods.fetchMentor({});
+    console.log("acdgreghregre",res)
+    if (res.ok) {
+       const mentor = res.data.data.filter((i: IMentor) => {
+        console.log("abcd",i)
+        return i.isVerified && !i.isBlock && i.status == "approved"
+      });
+      console.log("adfff",mentor)
+     setAvilbleMentors(mentor)
     }
   }
 

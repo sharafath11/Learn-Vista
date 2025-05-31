@@ -34,7 +34,7 @@ class AdminAuthController implements IAdminAuthController {
   logout(req: Request, res: Response): void {
     try {
       clearTokens(res);
-      sendResponse(res, StatusCode.OK, "Logout successful", true);
+        
     } catch (error) {
       handleControllerError(res, error);
     }
