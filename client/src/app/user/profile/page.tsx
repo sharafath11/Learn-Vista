@@ -5,7 +5,6 @@ import StatsCard from "@/src/components/user/profile/StatsCard"
 
 import ActiveCourses from "@/src/components/user/profile/ActiveCourses"
 import ProgressOverview from "@/src/components/user/profile/ProgressOverview"
-import Recommendations from "@/src/components/user/profile/Recommendations"
 import MentorCard from "@/src/components/user/profile/MentorCard"
 
 export default function ProfilePage() {
@@ -28,7 +27,7 @@ export default function ProfilePage() {
             <div className="md:col-span-3 space-y-6">
               <ActiveCourses />
               <ProgressOverview />
-              <Recommendations />
+           
             </div>
           </div>
         </div>

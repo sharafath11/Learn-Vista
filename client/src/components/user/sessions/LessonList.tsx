@@ -7,24 +7,20 @@ import { Clock, Code, FileText, Play } from "lucide-react"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast } from "@/src/utils/Toast"
 import { ILessons } from "@/src/types/lessons"
+import { useUserContext } from "@/src/context/userAuthContext"
 
-export default function LessonList({courseId}:{courseId:string}) {
+export default function LessonList({ courseId }: { courseId: string }) {
+  const {fetchLessons}=useUserContext()
   const router = useRouter()
   const [lessons, setLessons] = useState<ILessons[]>([])
-
   useEffect(() => {
-    fetchLessons()
-  
-  }, []);
-  
-  const fetchLessons = async () => {
-    const res = await UserAPIMethods.getLessons(courseId);
-    console.log("res",res)
-    if (res.ok) {
-      setLessons(res.data)
-    }
-    else showErrorToast(res.msg)
+   getData()
+  },[])
+  const getData = async () => {
+     const data = await fetchLessons(courseId)
+    setLessons( data)
   }
+ 
 
   const handleLessonClick = (lessonId: string) => {
     router.push(`/user/sessions/lessons/${lessonId}`)

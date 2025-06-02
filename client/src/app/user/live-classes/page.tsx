@@ -32,7 +32,6 @@ export default function UpcomingSessions() {
       route.push(`/user/live-classes/${liveId}`)
     }
   };
-   console.log("abcddddd",allCourses)
   return (
     <Card className="p-6 bg-white shadow-lg rounded-xl">
       <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b pb-4">Upcoming Sessions</h2>

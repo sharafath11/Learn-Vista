@@ -8,13 +8,15 @@ import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
+import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 
 
 @injectable()
 export class MentorLessonService implements IMentorLessonService {
     constructor(
         @inject(TYPES.LessonsRepository) private _lessonRepo: ILessonsRepository,
-        @inject(TYPES.QuestionsRepository) private _questionRepository:IQuestionsRepository
+        @inject(TYPES.QuestionsRepository) private _questionRepository: IQuestionsRepository,
+        @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository
     ) {}
 
     async getLessons(courseId: string | ObjectId,mentorId:string|ObjectId): Promise<ILesson[]> {
@@ -65,6 +67,7 @@ export class MentorLessonService implements IMentorLessonService {
         if (!createdLesson) {
             throwError("Failed to create lesson", StatusCode.INTERNAL_SERVER_ERROR);
         }
+        await this._courseRepo.update(data.courseId as string ,{$addToSet:{sessions:createdLesson.id}})
         return createdLesson;
     }
 

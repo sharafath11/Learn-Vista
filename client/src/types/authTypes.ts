@@ -1,4 +1,5 @@
 import { IPopulatedCourse } from "./courseTypes";
+import { ILessons } from "./lessons";
 
 export type UserRole = "user" | "mentor";
 
@@ -40,7 +41,8 @@ export interface IUser {
 export interface UserContextType {
   user: IUser | null;
   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
-  allCourses:IPopulatedCourse[]
+  allCourses: IPopulatedCourse[]
+  fetchLessons: (courseId: string) => Promise<ILessons[]>;
   
 }
 

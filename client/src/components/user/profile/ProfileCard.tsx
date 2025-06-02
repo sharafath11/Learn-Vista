@@ -46,9 +46,9 @@ export default function ProfileCard() {
 
           <div className="mt-4 flex justify-center space-x-4">
             <div className="text-center">
-              <p className="text-lg font-bold text-gray-900">12</p>
+              <p className="text-lg font-bold text-gray-900">Email</p>
               <p className="text-xs text-gray-500">
-                {user?.enrolledCourses?.[0] ?? "No course"}
+                {user?.email ?? "No course"}
               </p>
             </div>
             <div className="text-center">

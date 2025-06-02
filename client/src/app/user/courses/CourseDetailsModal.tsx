@@ -8,6 +8,10 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { IPopulatedCourse } from "@/src/types/courseTypes"
 import { format } from "date-fns"
+import { useEffect, useState } from "react"
+import { ILessons } from "@/src/types/lessons"
+import { useUserContext } from "@/src/context/userAuthContext"
+import { useRouter } from "next/navigation"
 
 interface CourseDetailsModalProps {
   course: IPopulatedCourse
@@ -24,6 +28,8 @@ const CourseDetailsModal = ({
   onEnroll,
   isEnrolled = false
 }: CourseDetailsModalProps) => {
+  const route=useRouter()
+   
   return (
     <AnimatePresence>
       {isOpen && (
@@ -135,7 +141,7 @@ const CourseDetailsModal = ({
                     </div>
                   </div>
                   
-                  <div className="mb-8">
+                  {/* <div className="mb-8">
                     <h3 className="text-xl font-semibold mb-4">What You'll Learn</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {[
@@ -150,7 +156,7 @@ const CourseDetailsModal = ({
                         </div>
                       ))}
                     </div>
-                  </div>
+                  </div> */}
                   
                   <div className="mb-8">
                     <h3 className="text-xl font-semibold mb-4">Mentor Information</h3>
@@ -162,7 +168,7 @@ const CourseDetailsModal = ({
                         <h4 className="font-medium">{course.mentorId?.username || "Mentor"}</h4>
                         <p className="text-sm text-gray-600">{course.mentorId?.email || "No contact information"}</p>
                         <p className="text-sm text-gray-600 mt-1">
-                          Status: <span className="capitalize">{course.mentorStatus}</span>
+                          Experties: <span className="capitalize">{course.mentorId.expertise}</span>
                         </p>
                       </div>
                     </div>
@@ -180,14 +186,14 @@ const CourseDetailsModal = ({
                         priority
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                      <Button 
+                      {/* <Button 
                         variant="ghost" 
                         size="sm" 
                         className="absolute bottom-4 left-4 bg-white text-gray-900 hover:bg-white/90"
                       >
                         <Play className="mr-2 h-4 w-4" />
                         Preview
-                      </Button>
+                      </Button> */}
                     </div>
                     
                     <div className="space-y-4">
@@ -200,7 +206,10 @@ const CourseDetailsModal = ({
                             </div>
                             <Progress value={25} className="h-2" />
                           </div>
-                          <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                          <Button
+                            className="w-full bg-blue-600 hover:bg-blue-700"
+                             onClick={() => route.push(`/user/sessions/${course._id}`)}
+                          >
                             Continue Learning
                           </Button>
                         </>

@@ -18,8 +18,8 @@ interface CourseFilterProps {
 
 const CourseFilter: React.FC<CourseFilterProps> = ({ categories, onFilter }) => {
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('All') // default to All
-  const [sort, setSort] = useState('ASC') // default to Latest
+  const [category, setCategory] = useState('All') 
+  const [sort, setSort] = useState('ASC') 
 
   const debouncedSearch = useDebounce(search, 400)
 
@@ -28,7 +28,7 @@ const CourseFilter: React.FC<CourseFilterProps> = ({ categories, onFilter }) => 
   }, [debouncedSearch, category, sort])
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-md mb-6">
+    <div className="bg-white p-4 rounded-xl shadow-md mb-6 w-200 ">
       <div className="flex flex-col md:flex-row md:items-center gap-3 text-sm">
         <Input
           placeholder="Search..."

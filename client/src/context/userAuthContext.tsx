@@ -10,12 +10,15 @@ import {
 } from "../types/authTypes";
 import { IPopulatedCourse } from "../types/courseTypes";
 import { showErrorToast } from "../utils/Toast";
+import { ILessons } from "../types/lessons";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
-  const [allCourses,setAllCourses]=useState<IPopulatedCourse[]>([])
+  const [allCourses, setAllCourses] = useState<IPopulatedCourse[]>([]);
+  const [lessons, setLessons] = useState<ILessons[]>([])
+  
   const router = useRouter();
 
   const fetchUserData = useCallback(async () => {
@@ -33,6 +36,16 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     }
   }, [router]);
 
+   
+   const fetchLessons = async (courseId:string) => {
+     const res = await UserAPIMethods.getLessons(courseId);
+     console.log("res",res)
+     if (res.ok) {
+       return res.data
+     }
+     else return []
+     
+   }
   useEffect(() => {
     fetchUserData();
     fetchCourses();
@@ -48,6 +61,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     user,
     setUser,
     allCourses,
+    fetchLessons
   };
 
   return (

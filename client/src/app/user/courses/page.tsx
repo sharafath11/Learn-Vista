@@ -18,6 +18,7 @@ import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
+import { ILessons } from "@/src/types/lessons"
 
 const Page = () => {
   const route = useRouter()
@@ -32,7 +33,7 @@ const Page = () => {
   })
   const [selectedCourse, setSelectedCourse] = useState<IPopulatedCourse | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { user, setUser } = useUserContext();
+  const { user, setUser,fetchLessons } = useUserContext();
 
   const handleStartNewCourse = async (id: string) => {
     const res = await UserAPIMethods.updateCourse(id);
@@ -53,7 +54,7 @@ const Page = () => {
       showErrorToast(res.msg || "Failed to enroll in course.");
     }
   };
-
+ 
   const fetchCourses = async () => {
     setLoading(true);
    

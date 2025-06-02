@@ -6,7 +6,7 @@ const CourseSchema: Schema = new Schema(
     title: { type: String, required: true, trim: true },
     description: { type: String },
     mentorId: { type: Schema.Types.ObjectId, ref: 'Mentor', required: true },
-    sessions: [{ type: Schema.Types.ObjectId, ref: 'Session' }],
+    sessions: [{ type: Schema.Types.ObjectId, ref: 'Lesson' }],
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     categoryName:{type:String,required:true},
     thumbnail: { type: String },
