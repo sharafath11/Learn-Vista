@@ -20,4 +20,5 @@
     // // Utility Methods - all public in interface
     // toDTO(document: T): U;
     handleError(error: unknown, message: string): Error;
+    updateOne(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<U | null>;
   }

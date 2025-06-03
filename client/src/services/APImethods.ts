@@ -107,5 +107,6 @@ export const MentorAPIMethods = {
   addQustion: (data:Omit<IQuestions, "id" | "isCompleted">) => post("/mentor/lessons/add/questions", data),
   getQustion: (lessonId: string) => get(`/mentor/lesson/questions/${lessonId}`),
   editQustion: (qustionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/lesson/edit/question/${qustionId}`, data),
-  getCourseStudents:(courseId:string)=>get(`/mentor/course/students/${courseId}`)
+  getCourseStudents: (courseId: string) => get(`/mentor/course/students/${courseId}`),
+  blockInCourse:(courseId:string,userId:string,status:boolean)=>patch("/mentor/student/block",{courseId,userId,status})
 } as const;

@@ -19,7 +19,10 @@ export interface ILogin {
   googleId: string,
   
 }
-
+interface IEnrolledCourse {
+  courseId: string;
+  allowed: boolean;
+}
 export interface IUser {
   id:string
   
@@ -31,7 +34,7 @@ export interface IUser {
   profilePicture?: string | null;
   isBlocked: boolean;
   isVerified: boolean;
-  enrolledCourses?: string[]; 
+  enrolledCourses?: IEnrolledCourse[]; 
   createdAt?: string;
   updatedAt?: string;
 }

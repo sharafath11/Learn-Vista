@@ -8,12 +8,15 @@ import { IMentorProfileController } from '../../core/interfaces/controllers/ment
 import upload, { uploadImage } from '../../middlewares/upload';
 import {  IMentorStreamController } from '../../core/interfaces/controllers/mentor/IMentorStream.controller';
 import { IMentorLessonsController } from '../../core/interfaces/controllers/mentor/IMentorLesson.Controller';
+import { IMentorStudentService } from '../../core/interfaces/services/mentor/IMentorStudent.Service';
+import { IMentorStudentsController } from '../../core/interfaces/controllers/mentor/ImentorStudent.controller';
 const router = express.Router();
 const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
 const mentorController = container.get<IMentorController>(TYPES.MentorController);
 const mentorProfileController = container.get<IMentorProfileController>(TYPES.MentorProfileController)
 const mentorLessonController=container.get<IMentorLessonsController>(TYPES.MentorLessonsController)
-const mentorStreamController=container.get<IMentorStreamController>(TYPES.MentorStreamController)
+const mentorStreamController = container.get<IMentorStreamController>(TYPES.MentorStreamController)
+const mentorStudentsController=container.get<IMentorStudentsController>(TYPES.MentorStudentsController)
 router.post('/signup', (req, res) => mentorAuthController.signupController(req, res));
 router.post('/send-otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
 router.post('/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
@@ -50,6 +53,7 @@ router.post("/play-video",verifyMentor,mentorLessonController.getSignedVideoUrl.
 // router.post("/uploadfiles-to-s3", verifyMentor, mentorLessonController.uploadToS3.bind(mentorLessonController));
 router.post("/lessons/add/questions",verifyMentor, mentorLessonController.addQuestions.bind(mentorLessonController));
 router.get("/lesson/questions/:lessonId",verifyMentor, mentorLessonController.getQuestions.bind(mentorLessonController));
-router.patch("/lesson/edit/question/:questionId",verifyMentor, mentorLessonController.editQuestions.bind(mentorLessonController));
+router.patch("/lesson/edit/question/:questionId", verifyMentor, mentorLessonController.editQuestions.bind(mentorLessonController));
+router.get("/course/students/:courseId",verifyMentor,mentorStudentsController.getStudentDetilesController.bind(mentorStudentsController))
 
 export default router;

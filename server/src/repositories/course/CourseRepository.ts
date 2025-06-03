@@ -6,6 +6,7 @@ import CourseModel from '../../models/class/courseModel';
 import { IMentor } from '../../types/mentorTypes';
 import { IAdminCategoriesRepostory } from '../../core/interfaces/repositories/admin/IAdminCategoryRepository';
 import { TYPES } from '../../core/types';
+import { ObjectId } from 'mongoose';
 
 interface CourseQueryParams {
   page?: number;
@@ -27,7 +28,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
     super(CourseModel);
   }
   
-  async findWithMenorIdgetAllWithPopulatedFields(id:string): Promise<IPopulatedCourse[]> {
+  async findWithMenorIdgetAllWithPopulatedFields(id:string|ObjectId): Promise<IPopulatedCourse[]> {
     const courses = await CourseModel.find({mentorId:id})
       .populate('mentorId')
       .populate('categoryId')

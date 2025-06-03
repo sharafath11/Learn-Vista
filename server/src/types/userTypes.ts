@@ -1,7 +1,11 @@
 import mongoose, { Document, ObjectId, Types } from "mongoose";
 import { Request } from "express";
 
-type UserRole="user"|"mentor"
+type UserRole = "user" | "mentor"
+interface IEnrolledCourse {
+  courseId: Types.ObjectId;
+  allowed: boolean;
+}
 export interface IUser extends Document {
   _id: Types.ObjectId;
   username: string;
@@ -11,7 +15,7 @@ export interface IUser extends Document {
   profilePicture?: string | null;
   isBlocked: boolean;
   isVerified: boolean;
-  enrolledCourses: Types.ObjectId[];
+  enrolledCourses: IEnrolledCourse[];
   createdAt?: Date;
   updatedAt?: Date;
   googleUser: boolean

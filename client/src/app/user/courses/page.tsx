@@ -18,7 +18,7 @@ import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
-import { ILessons } from "@/src/types/lessons"
+
 
 const Page = () => {
   const route = useRouter()
@@ -33,9 +33,10 @@ const Page = () => {
   })
   const [selectedCourse, setSelectedCourse] = useState<IPopulatedCourse | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const { user, setUser,fetchLessons } = useUserContext();
-
+  const { user, setUser, fetchLessons } = useUserContext();
+ 
   const handleStartNewCourse = async (id: string) => {
+   
     const res = await UserAPIMethods.updateCourse(id);
 
     if (res.ok) {
@@ -45,46 +46,46 @@ const Page = () => {
         if (!prev) return prev;
         return {
           ...prev,
-          enrolledCourses: [...(prev.enrolledCourses || []), id],
+          enrolledCourses: [...(prev.enrolledCourses || []), { courseId: id, allowed: true }], 
         };
       });
 
-      route.push("/user/sessions");
+      // route.push(`/user/sessions/${id}`);
     } else {
       showErrorToast(res.msg || "Failed to enroll in course.");
     }
   };
- 
+
   const fetchCourses = async () => {
     setLoading(true);
-   
-      let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
-      if (filters.sort === "newest") {
-        mongoSort = { createdAt: -1 };
-      } else if (filters.sort === "oldest") {
-        mongoSort = { createdAt: 1 };
-      }
 
-      const res = await UserAPIMethods.fetchAllCourse({
-        page,
-        limit: 1,
-        search: filters.search || '',
-        filters: {
-          category: filters.category === 'All' ? '' : filters.category,
-        },
-        sort: mongoSort,
-      });
+    let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
+    if (filters.sort === "newest") {
+      mongoSort = { createdAt: -1 };
+    } else if (filters.sort === "oldest") {
+      mongoSort = { createdAt: 1 };
+    }
 
-      if (res.ok) {
-        const { data: newCourses, total, totalPages } = res.data;
-        setCourses(newCourses);
-        setTotalPages(totalPages);
-      } else {
-        console.error(res.msg);
-        setCourses([]);
-        setTotalPages(0);
-      }
-      setLoading(false);
+    const res = await UserAPIMethods.fetchAllCourse({
+      page,
+      limit: 1,
+      search: filters.search || '',
+      filters: {
+        category: filters.category === 'All' ? '' : filters.category,
+      },
+      sort: mongoSort,
+    });
+
+    if (res.ok) {
+      const { data: newCourses, total, totalPages } = res.data;
+      setCourses(newCourses);
+      setTotalPages(totalPages);
+    } else {
+      console.error(res.msg);
+      setCourses([]);
+      setTotalPages(0);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -110,7 +111,7 @@ const Page = () => {
     });
     return Array.from(categories);
   }, [courses]);
-
+console.log("courseId",user?.enrolledCourses)
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -218,7 +219,6 @@ const Page = () => {
 
                   <CardContent className="py-2">
                     <div className="flex items-center justify-between mb-3 text-sm">
-                      
                       <div className="flex items-center text-gray-600">
                         <Users className="h-4 w-4 mr-1 text-gray-500" />
                         <span className="font-medium">{course.enrolledUsers?.length || 0} Enrolled</span>
@@ -251,8 +251,8 @@ const Page = () => {
                     </div>
                     <div className="flex gap-2">
                       {(() => {
-                        const isEnrolled = user?.enrolledCourses?.includes(course._id);
-
+                        const isEnrolled = user?.enrolledCourses?.some((enrolledCourse) => enrolledCourse.courseId ==course._id);
+                        console.log(course._id,"assvv")
                         return isEnrolled ? (
                           <Button
                             size="lg"
@@ -320,7 +320,7 @@ const Page = () => {
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onEnroll={() => handleStartNewCourse(selectedCourse._id)}
-            isEnrolled={user?.enrolledCourses?.includes(selectedCourse._id)}
+            isEnrolled={user?.enrolledCourses?.some((enrolledCourse) => enrolledCourse.courseId === selectedCourse._id)}
           />
         )}
       </div>

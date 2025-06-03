@@ -89,7 +89,15 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
       throw this.handleError(error, 'Error fetching paginated documents');
     }
   }
-  
+  async updateOne(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<U | null> {
+  try {
+    const document = await this.model.findOneAndUpdate(filter, update, { new: true });
+    return document ? this.toDTO(document) : null;
+  } catch (error) {
+    throw this.handleError(error, 'Error updating document with filter');
+  }
+}
+
   async findById(id: string): Promise<U | null> {
     try {
       const document = await this.model.findById(id);

@@ -50,6 +50,7 @@ import { IAdminMentorController } from '../interfaces/controllers/admin/IAdminMe
 import { IProfileService } from '../interfaces/services/user/IUserProfileService';
 import { IMentorProfileController } from '../interfaces/controllers/mentor/IMentorProfile.controller';
 
+
 import { IMentorProfileService } from '../interfaces/services/mentor/IMentorProfile.Service';
 import { MentorProfileController } from '../../controllers/mentor/mentorProfile.controller';
 import { MentorProfileService } from '../../services/mentor/MentorProfile.Service';
@@ -95,6 +96,10 @@ import { ILessonReportRepository } from '../interfaces/repositories/lessons/ILes
 import { LessonReportRepository } from '../../repositories/lesson/lessonReportRepository';
 import { ICommentstRepository } from '../interfaces/repositories/lessons/ICommentsRepository';
 import { CommentsRepository } from '../../repositories/lesson/commentRepository';
+import { IMentorStudentsController } from '../interfaces/controllers/mentor/ImentorStudent.controller';
+import { MentorStudentsController } from '../../controllers/mentor/mentorStudents.controller';
+import { IMentorStudentService } from '../interfaces/services/mentor/IMentorStudent.Service';
+import { MentorStudentService } from '../../services/mentor/MentorStudent.Service';
 
 const container = new Container();
 
@@ -114,6 +119,7 @@ container.bind<IUserCourseController>(TYPES.UserCourseController).to(UserCourseC
 container.bind<IUserLiveController>(TYPES.UserLiveCOntroller).to(UserLiveCallController);
 container.bind<IMentorLessonsController>(TYPES.MentorLessonsController).to(MentorLessonsController)
 container.bind<IUserLessonsController>(TYPES.UserLessonsController).to(UserLessonsController)
+container.bind<IMentorStudentsController>(TYPES.MentorStudentsController).to(MentorStudentsController)
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -130,6 +136,7 @@ container.bind<IUserCourseService>(TYPES.UserCourseService).to(UserCourseService
 container.bind<IUserLiveService>(TYPES.UserLiveService).to(LiveUserService)
 container.bind<IMentorLessonService>(TYPES.MentorLessonsService).to(MentorLessonService),
 container.bind<IUserLessonsService>(TYPES.UserLessonsService).to(UserLessonsService)
+container.bind<IMentorStudentService>(TYPES.MentorStudentsService).to(MentorStudentService);
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);

@@ -46,12 +46,18 @@ export class UserCourseService implements IUserCourseService {
     if (!course) {
       throwError("Course not found.", StatusCode.BAD_REQUEST);
     }
-    await this._baseCourseRepo.update(courseId, {
+   const res= await this._baseCourseRepo.update(courseId, {
       $addToSet: { enrolledUsers: userObjectId }
     });
+  console.log("cc",courseObjectId)
+  await this._baseUserRepo.update(userId, {
+  $addToSet: {
+    enrolledCourses: {
+      courseId: courseObjectId,
+      allowed: true
+    }
+  }
+});
 
-    await this._baseUserRepo.update(userId, {
-      $addToSet: { enrolledCourses: courseObjectId }
-    });
   }
 }

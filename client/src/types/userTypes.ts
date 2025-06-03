@@ -1,5 +1,8 @@
 export type UserRole = 'admin' | 'mentor' | 'user';
-
+interface IEnrolledCourse {
+  courseId: string;
+  allowed: boolean;
+}
 export interface IUser {
   id: string;
   // _id: string;
@@ -10,7 +13,7 @@ export interface IUser {
   profilePicture?: string | null;
   isBlocked: boolean;
   isVerified: boolean;
-  enrolledCourses?: string[];
+  enrolledCourses?: IEnrolledCourse[];
   createdAt?: string;
   updatedAt?: string;
 }

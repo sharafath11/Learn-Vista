@@ -1,14 +1,35 @@
+"use client"
+import { useEffect, useState } from "react"
 import StudentCard from "./studentsCard"
+import { MentorAPIMethods } from "@/src/services/APImethods"
+import { useParams } from "next/navigation"
+import { IUser } from "@/src/types/userTypes"
+import { showErrorToast } from "@/src/utils/Toast"
 
 export default function Page() {
+  const params=useParams()
   const handleViewStudent = (id: string) => {
     console.log("Viewing student profile:", id)
     
   }
+  const[students,setStudents]=useState<IUser[]>([])
    
   const handleToggleBlock = (id: string, shouldBlock: boolean) => {
     console.log(`${shouldBlock ? "Blocking" : "Unblocking"} student:`, id)
     
+  }
+  useEffect(() => {
+   fetchStudents()
+  }, [])
+  const fetchStudents = async () => {
+    console.log(params)
+    const res = await MentorAPIMethods.getCourseStudents(params.courseId as string);
+    console.log("students",res)
+    if (res.ok) {
+      setStudents(res.data);
+      return
+    }
+    showErrorToast(res.msg)
   }
 
   return (
@@ -20,7 +41,7 @@ export default function Page() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {sampleStudents.map((student) => (
+          {students.map((student) => (
             <StudentCard
               key={student.id}
               student={student}
@@ -31,7 +52,7 @@ export default function Page() {
         </div>
 
         <div className="mt-8 text-center text-gray-500">
-          <p>Showing {sampleStudents.length} students</p>
+          <p>Showing {students.length} students</p>
         </div>
       </div>
     </main>
