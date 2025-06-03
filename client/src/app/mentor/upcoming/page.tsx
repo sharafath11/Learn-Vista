@@ -55,7 +55,7 @@ export default function UpcomingSessions() {
       <div className="rounded-md border border-gray-700">
         <div className="bg-gray-800 px-4 py-3 grid grid-cols-12 gap-4 font-semibold text-gray-300">
           <div className="col-span-4">Session</div>
-          <div className="col-span-2">Date</div>
+          <div className="col-span-2">Starting Date</div>
           <div className="col-span-2">Time</div>
           <div className="col-span-2">Category</div>
           <div className="col-span-2">Actions</div>
@@ -97,17 +97,7 @@ export default function UpcomingSessions() {
                     </span>
                   </div>
                   <div className="col-span-2">
-                    {/* <button
-                      onClick={() => handleStartSession(session._id)}
-                      disabled={buttonText !== "Start Now"}
-                      className={`px-4 py-2 rounded-md text-sm font-medium w-full ${
-                        buttonText === "Start Now"
-                          ? "bg-blue-600 hover:bg-blue-700 text-white"
-                          : "bg-gray-600 text-gray-400 cursor-not-allowed"
-                      }`}
-                    >
-                      {buttonText}
-                    </button> */}
+                    
                     {session.isStreaming?<Button>Streaming</Button>:<Button onClick={() => handleStartSession(session._id)}>Start Streaming</Button>}
                   </div>
                 </div>

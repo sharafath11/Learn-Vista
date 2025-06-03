@@ -40,7 +40,7 @@ const navItems: NavItem[] = [
   { name: "Dashboard", path: "/mentor/home", icon: <LayoutDashboard className="w-4 h-4" /> },
   { name: "Upcoming", path: "/mentor/upcoming", icon: <Calendar className="w-4 h-4" /> },
   { name: "Courses", path: "/mentor/courses", icon: <BookOpen className="w-4 h-4" /> },
-  { name: "Sessions", path: "/sessions", icon: <MessageSquare className="w-4 h-4" /> },
+  // { name: "Student", path: "/mentor/students", icon: <MessageSquare className="w-4 h-4" /> },
   { name: "Reviews", path: "/reviews", icon: <Star className="w-4 h-4" /> },
 ];
 

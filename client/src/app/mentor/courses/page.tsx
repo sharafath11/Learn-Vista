@@ -141,7 +141,7 @@ export default function CoursesPage() {
                           <Layers className="w-4 h-4 text-purple-400" />
                         </AvatarFallback>
                       </Avatar>
-                      <span>{course.sessions?.join(", ") || "No sessions"}</span>
+                      <span>{course.sessions.length|| "No sessions"}</span>
                     </div>
 
                     <div className="flex items-center gap-2 text-gray-300">
@@ -205,14 +205,23 @@ export default function CoursesPage() {
                       </Button>
                     </div>
                   )}
-                  {course.mentorStatus === "approved" && (
-                    <Link href={`/mentor/courses/${course._id}`} className="w-full">
-                      <Button className="w-full gap-2 bg-purple-600 hover:bg-purple-500">
-                        <BookText size={18} />
-                        <span>Go to Lessons</span>
-                      </Button>
-                    </Link>
-                  )}
+                 {course.mentorStatus === "approved" && (
+  <>
+    <Link href={`/mentor/courses/${course._id}`} className="w-full">
+      <Button className="w-full gap-2 bg-purple-600 hover:bg-purple-500">
+        <BookText size={18} />
+        <span>Go to Lessons</span>
+      </Button>
+    </Link>
+    <Link href={`/mentor/courses/students/${course._id}`} className="w-full">
+      <Button className="w-full gap-2 bg-purple-600 hover:bg-purple-500">
+        <BookText size={18} />
+        <span>Go to Students</span>
+      </Button>
+    </Link>
+  </>
+)}
+
                 </CardFooter>
               </Card>
             ))}

@@ -1,6 +1,6 @@
 import {   UserBlock,  } from "../types/adminTypes";
 import { ILogin, IUserRegistration } from "../types/authTypes";
-import { AnswerWithType, ILessons, IQuestions } from "../types/lessons";
+import { AnswerWithType,  IQuestions } from "../types/lessons";
 import { IMentorSignupData } from "../types/mentorTypes";
 
 import { getRequest, patchRequest, postRequest } from "./api";
@@ -106,5 +106,6 @@ export const MentorAPIMethods = {
   getSignedVideoUrl: (lessonId: string, videoUrl: string) => post(`/mentor/play-video`, { lessonId, videoUrl }),
   addQustion: (data:Omit<IQuestions, "id" | "isCompleted">) => post("/mentor/lessons/add/questions", data),
   getQustion: (lessonId: string) => get(`/mentor/lesson/questions/${lessonId}`),
-  editQustion: (qustionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/lesson/edit/question/${qustionId}`,data),
+  editQustion: (qustionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/lesson/edit/question/${qustionId}`, data),
+  getCourseStudents:(courseId:string)=>get(`/mentor/course/students/${courseId}`)
 } as const;
