@@ -41,20 +41,39 @@ export class MentorStudentService implements IMentorStudentService {
 }
 
 
- async studentStatusService(
+async studentStatusService(
   userId: string | Types.ObjectId,
   courseId: string | Types.ObjectId,
   status: boolean
 ): Promise<void> {
-  await this._userRepo.updateOne(
-    { courseId: new Types.ObjectId(userId), "enrolledCourses.course": new Types.ObjectId(courseId) },
-    {
-      $set: {
-        "enrolledCourses.$.allowed": status,
-      },
+  
+  const user = await this._userRepo.findById(userId as string);
+ 
+  if (!user) {
+    
+    throwError("User not found");
+  }
+
+  const updatedCourses = user.enrolledCourses.map((course, index) => {
+    const courseIdStr = course.courseId?.toString();
+    const match = courseIdStr === courseId.toString();
+    if (match) {
+      return {
+        ...course,
+        allowed: !status,
+      };
     }
-  );
+
+    return course;
+  });
+
+
+  const result = await this._userRepo.update(userId as string, {
+    enrolledCourses: updatedCourses,
+  });
+
 }
+
 
 
 }

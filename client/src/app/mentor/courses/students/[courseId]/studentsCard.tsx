@@ -7,13 +7,13 @@ import { Badge } from "@/components/ui/badge"
 import { IUser } from "@/src/types/userTypes"
 
 interface StudentCardProps {
-  student:IUser
+  student: IUser
   onView: (id: string) => void
   onToggleBlock: (id: string, shouldBlock: boolean) => void
-  courseId:string
+  courseId: string
 }
 
-export default function StudentCard({ student, onView, onToggleBlock ,courseId}: StudentCardProps) {
+export default function StudentCard({ student, onView, onToggleBlock, courseId }: StudentCardProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -21,15 +21,14 @@ export default function StudentCard({ student, onView, onToggleBlock ,courseId}:
       day: "numeric",
     })
   }
-  let isAllowed = true
-  student.enrolledCourses?.map((i) => {
-    if (i.courseId == courseId && !i.allowed) {
-      isAllowed=false
-    }
-  })
-  alert(isAllowed)
+
+  // Check if the student is blocked for this specific course
+  const isBlocked = student.enrolledCourses?.some(
+    (i) => i.courseId === courseId && !i.allowed
+  ) ?? false
+
   const handleToggleBlock = () => {
-    onToggleBlock(student.id, !isAllowed)
+    onToggleBlock(student.id, !isBlocked)
   }
 
   const handleViewProfile = () => {
@@ -45,14 +44,14 @@ export default function StudentCard({ student, onView, onToggleBlock ,courseId}:
             <h3 className="font-semibold text-lg leading-none text-white">{student.username}</h3>
           </div>
           <Badge
-            variant={isAllowed ? "destructive" : "secondary"}
+            variant={isBlocked ? "destructive" : "secondary"}
             className={`text-xs ${
-              isAllowed
+              isBlocked
                 ? "bg-red-900 text-red-200 hover:bg-red-800"
                 : "bg-green-900 text-green-200 hover:bg-green-800"
             }`}
           >
-            {/* {student.enrolledCourses?.filter((i)=>i.courseId==courseId)} */}
+            {isBlocked ? "Blocked" : "Allowed"}
           </Badge>
         </div>
       </CardHeader>
@@ -65,7 +64,7 @@ export default function StudentCard({ student, onView, onToggleBlock ,courseId}:
 
         <div className="flex items-center space-x-2 text-sm text-gray-300">
           <Calendar className="h-4 w-4 text-gray-400" />
-          <span>Enrolled {formatDate(student&&student?.createdAt?.toString())}</span>
+         <span>Enrolled {formatDate(student.createdAt as string)}</span>
         </div>
       </CardContent>
 
@@ -81,14 +80,14 @@ export default function StudentCard({ student, onView, onToggleBlock ,courseId}:
         </Button>
 
         <Button
-          variant={student.isBlocked ? "default" : "destructive"}
+          variant={isBlocked ? "default" : "destructive"}
           size="sm"
           onClick={handleToggleBlock}
           className={`flex-1 ${
-            student.isBlocked ? "bg-green-700 hover:bg-green-600 text-white" : "bg-red-700 hover:bg-red-600 text-white"
+            isBlocked ? "bg-green-700 hover:bg-green-600 text-white" : "bg-red-700 hover:bg-red-600 text-white"
           }`}
         >
-          {student.isBlocked ? (
+          {isBlocked ? (
             <>
               <Shield className="h-4 w-4 mr-1" />
               Unblock

@@ -26,16 +26,36 @@ export class UserLessonsService implements IUserLessonsService{
         @inject(TYPES.CommentsRepository) private _commentsRepo: ICommentstRepository,
         @inject(TYPES.UserRepository) private _userRepo:IUserRepository
     ) { }
-    async getLessons(courseId: string|ObjectId, userId: string): Promise<ILesson[]> {
-        let course = await this._courseRepository.findById(courseId as string);
-        const userEnrolled = course?.enrolledUsers.filter((i) => i == userId);
-        console.log(userEnrolled,course?.enrolledUsers)
-        if(userEnrolled?.length==0) throwError("This course user Desnot enroller please enroll",StatusCode.BAD_REQUEST)
-        const lessons = await this._lessonRepository.findAll({ courseId });
-        console.log(lessons,courseId)
-        if(!lessons) throwError("Somthing wrnet wrong",StatusCode.BAD_REQUEST)
-        return lessons
-    }
+    async getLessons(courseId: string | ObjectId, userId: string): Promise<ILesson[]> {
+  const user = await this._userRepo.findById(userId);
+  if (!user) throwError("User not found", StatusCode.NOT_FOUND);
+
+  const enrolledCourse = user.enrolledCourses.find(
+    (i) => i.courseId.toString() === courseId.toString()
+  );
+
+  if (!enrolledCourse) {
+    throwError("User is not enrolled in this course", StatusCode.BAD_REQUEST);
+  }
+  if (!enrolledCourse.allowed) {
+    throwError("You are blocked from accessing this course", StatusCode.FORBIDDEN);
+  }
+  const course = await this._courseRepository.findById(courseId.toString());
+  if (!course) throwError("Course not found", StatusCode.NOT_FOUND);
+
+  const userEnrolled = course.enrolledUsers.includes(userId);
+  if (!userEnrolled) {
+    throwError("User not listed in course enrollment", StatusCode.BAD_REQUEST);
+  }
+
+  const lessons = await this._lessonRepository.findAll({ courseId });
+  if (!lessons || lessons.length === 0) {
+    throwError("No lessons found for this course", StatusCode.NOT_FOUND);
+  }
+
+  return lessons;
+}
+
     async getQuestions(lessonId: string | ObjectId): Promise<IQuestions[]> {
         const qustions = await this._qustionRepository.findAll({ lessonId });
         if(!qustions) throwError("Somthing wrnet wrong",StatusCode.BAD_REQUEST)

@@ -5,33 +5,61 @@ import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useParams } from "next/navigation"
 import { IUser } from "@/src/types/userTypes"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
+import StudentDetailsModal from "./StudentDetailsModal" 
 
 export default function Page() {
-  const params=useParams()
-  const handleViewStudent = (id: string) => {
-    console.log("Viewing student profile:", id)
-    
+  const params = useParams()
+  const [students, setStudents] = useState<IUser[]>([])
+  const [selectedStudent, setSelectedStudent] = useState<IUser | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleViewStudent = (student: IUser) => {
+    setSelectedStudent(student)
+    setIsModalOpen(true)
   }
-  const[students,setStudents]=useState<IUser[]>([])
-   
-  const handleToggleBlock = async(id: string, shouldBlock: boolean) => {
-    const res = await MentorAPIMethods.blockStudentInCourse(params.courseId as string, id, shouldBlock);
-    console.log("block user",res)
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedStudent(null)
+  }
+
+  const handleToggleBlock = async (id: string, shouldBlock: boolean) => {
+    const res = await MentorAPIMethods.blockStudentInCourse(
+      params.courseId as string,
+      id,
+      shouldBlock
+    )
+
     if (res.ok) {
       showSuccessToast(res.msg)
+      setStudents((prev) =>
+        prev.map((student) => {
+          if (student.id === id) {
+            return {
+              ...student,
+              enrolledCourses: student?.enrolledCourses?.map((course) =>
+                course.courseId === params.courseId
+                  ? { ...course, allowed: !shouldBlock }
+                  : course
+              ),
+            }
+          }
+          return student
+        })
+      )
+      return
     }
     showErrorToast(res.msg)
-     
   }
+
   useEffect(() => {
-   fetchStudents()
+    fetchStudents()
   }, [])
+
   const fetchStudents = async () => {
-    console.log(params)
-    const res = await MentorAPIMethods.getCourseStudents(params.courseId as string);
-    console.log("students",res)
+    const res = await MentorAPIMethods.getCourseStudents(params.courseId as string)
     if (res.ok) {
-      setStudents(res.data);
+      setStudents(res.data)
       return
     }
     showErrorToast(res.msg)
@@ -51,7 +79,7 @@ export default function Page() {
               key={student.id}
               student={student}
               courseId={params.courseId as string}
-              onView={handleViewStudent}
+              onView={() => handleViewStudent(student)}
               onToggleBlock={handleToggleBlock}
             />
           ))}
@@ -60,6 +88,15 @@ export default function Page() {
         <div className="mt-8 text-center text-gray-500">
           <p>Showing {students.length} students</p>
         </div>
+
+        
+        {selectedStudent && (
+          <StudentDetailsModal
+            student={selectedStudent}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+          />
+        )}
       </div>
     </main>
   )
