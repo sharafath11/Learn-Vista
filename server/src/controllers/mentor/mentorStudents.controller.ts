@@ -6,6 +6,7 @@ import { IMentorStudentService } from "../../core/interfaces/services/mentor/IMe
 import { decodeToken } from "../../utils/JWTtoken";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { stat } from "fs";
 @injectable()
 export class MentorStudentsController implements IMentorStudentsController{
     constructor(
@@ -24,9 +25,9 @@ export class MentorStudentsController implements IMentorStudentsController{
     }
     async blockStudentController(req: Request, res: Response): Promise<void> {
        try {
-         const {userId,status}=req.body
-        const courseId=req.params.courseId
-        await this._mentorStudentService.studentStatusService(userId,courseId,status)
+        const {courseId,userId,status}=req.body
+           await this._mentorStudentService.studentStatusService(userId, courseId, status);
+           sendResponse(res,StatusCode.OK,`Student ${status?"Blocked":"Unblock"}`,true)
        } catch (error) {
         handleControllerError(res,error)
        }

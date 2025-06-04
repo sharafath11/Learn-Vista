@@ -54,6 +54,7 @@ router.post("/play-video",verifyMentor,mentorLessonController.getSignedVideoUrl.
 router.post("/lessons/add/questions",verifyMentor, mentorLessonController.addQuestions.bind(mentorLessonController));
 router.get("/lesson/questions/:lessonId",verifyMentor, mentorLessonController.getQuestions.bind(mentorLessonController));
 router.patch("/lesson/edit/question/:questionId", verifyMentor, mentorLessonController.editQuestions.bind(mentorLessonController));
-router.get("/course/students/:courseId",verifyMentor,mentorStudentsController.getStudentDetilesController.bind(mentorStudentsController))
+router.get("/course/students/:courseId", verifyMentor, mentorStudentsController.getStudentDetilesController.bind(mentorStudentsController))
+router.patch("/student/block",verifyMentor,mentorStudentsController.blockStudentController.bind(mentorStudentsController))
 
 export default router;

@@ -4,7 +4,7 @@ import StudentCard from "./studentsCard"
 import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useParams } from "next/navigation"
 import { IUser } from "@/src/types/userTypes"
-import { showErrorToast } from "@/src/utils/Toast"
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 
 export default function Page() {
   const params=useParams()
@@ -14,9 +14,14 @@ export default function Page() {
   }
   const[students,setStudents]=useState<IUser[]>([])
    
-  const handleToggleBlock = (id: string, shouldBlock: boolean) => {
-    console.log(`${shouldBlock ? "Blocking" : "Unblocking"} student:`, id)
-    
+  const handleToggleBlock = async(id: string, shouldBlock: boolean) => {
+    const res = await MentorAPIMethods.blockStudentInCourse(params.courseId as string, id, shouldBlock);
+    console.log("block user",res)
+    if (res.ok) {
+      showSuccessToast(res.msg)
+    }
+    showErrorToast(res.msg)
+     
   }
   useEffect(() => {
    fetchStudents()
@@ -45,6 +50,7 @@ export default function Page() {
             <StudentCard
               key={student.id}
               student={student}
+              courseId={params.courseId as string}
               onView={handleViewStudent}
               onToggleBlock={handleToggleBlock}
             />

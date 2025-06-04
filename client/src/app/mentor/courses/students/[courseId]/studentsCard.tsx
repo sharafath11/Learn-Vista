@@ -4,20 +4,16 @@ import { Calendar, Mail, User, Eye, Shield, ShieldOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { IUser } from "@/src/types/userTypes"
 
 interface StudentCardProps {
-  student: {
-    id: string
-    name: string
-    email: string
-    enrollmentDate: string
-    isBlocked: boolean
-  }
+  student:IUser
   onView: (id: string) => void
   onToggleBlock: (id: string, shouldBlock: boolean) => void
+  courseId:string
 }
 
-export default function StudentCard({ student, onView, onToggleBlock }: StudentCardProps) {
+export default function StudentCard({ student, onView, onToggleBlock ,courseId}: StudentCardProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -25,9 +21,15 @@ export default function StudentCard({ student, onView, onToggleBlock }: StudentC
       day: "numeric",
     })
   }
-
+  let isAllowed = true
+  student.enrolledCourses?.map((i) => {
+    if (i.courseId == courseId && !i.allowed) {
+      isAllowed=false
+    }
+  })
+  alert(isAllowed)
   const handleToggleBlock = () => {
-    onToggleBlock(student.id, !student.isBlocked)
+    onToggleBlock(student.id, !isAllowed)
   }
 
   const handleViewProfile = () => {
@@ -40,17 +42,17 @@ export default function StudentCard({ student, onView, onToggleBlock }: StudentC
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-2">
             <User className="h-4 w-4 text-gray-400" />
-            <h3 className="font-semibold text-lg leading-none text-white">{student.name}</h3>
+            <h3 className="font-semibold text-lg leading-none text-white">{student.username}</h3>
           </div>
           <Badge
-            variant={student.isBlocked ? "destructive" : "secondary"}
+            variant={isAllowed ? "destructive" : "secondary"}
             className={`text-xs ${
-              student.isBlocked
+              isAllowed
                 ? "bg-red-900 text-red-200 hover:bg-red-800"
                 : "bg-green-900 text-green-200 hover:bg-green-800"
             }`}
           >
-            {student.isBlocked ? "Blocked" : "Active"}
+            {/* {student.enrolledCourses?.filter((i)=>i.courseId==courseId)} */}
           </Badge>
         </div>
       </CardHeader>
@@ -63,7 +65,7 @@ export default function StudentCard({ student, onView, onToggleBlock }: StudentC
 
         <div className="flex items-center space-x-2 text-sm text-gray-300">
           <Calendar className="h-4 w-4 text-gray-400" />
-          <span>Enrolled {formatDate(student.enrollmentDate)}</span>
+          <span>Enrolled {formatDate(student&&student?.createdAt?.toString())}</span>
         </div>
       </CardContent>
 
