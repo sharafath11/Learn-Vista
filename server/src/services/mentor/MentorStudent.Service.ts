@@ -1,4 +1,4 @@
-import { ObjectId, Types } from "mongoose";
+import { FilterQuery, ObjectId, Types } from "mongoose";
 import { IMentorStudentService } from "../../core/interfaces/services/mentor/IMentorStudent.Service";
 import { inject, injectable } from "inversify";
 import { IUser } from "../../types/userTypes";
@@ -12,33 +12,70 @@ export class MentorStudentService implements IMentorStudentService {
     @inject(TYPES.UserRepository) private _userRepo: IUserRepository
   ) {}
    
- async getStudentDetilesService(courseId: string | ObjectId): Promise<IUser[]> {
-  const allUsers = await this._userRepo.findAll();
-  console.log("form kalyanam", courseId);
+async getStudentDetilesService(
+  courseId: string | ObjectId,
+  options: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: 'allowed' | 'blocked';
+  } = {}
+): Promise<{ students: IUser[]; total: number; totalPages: number }> {
+  const { page = 1, limit = 8, search = '', status } = options;
 
-  const result = allUsers.filter((user) => {
-    console.log("Checking user:", user.id);
-    console.log("Enrolled courses:", user.enrolledCourses);
+  const courseObjectId = typeof courseId === 'string' ? new Types.ObjectId(courseId) : courseId;
 
-    return Array.isArray(user.enrolledCourses) &&
-      user.enrolledCourses.some((course) => {
-        const courseIdValue = course?.courseId?.toString?.();
-        const targetId = courseId.toString();
+  // Base filter on enrolledCourses and status
+  const baseFilter = {
+    enrolledCourses: {
+      $elemMatch: {
+        courseId: courseObjectId,
+        ...(status === 'allowed' && { allowed: true }),
+        ...(status === 'blocked' && { allowed: false }),
+      },
+    },
+  };
 
-        const isMatch = courseIdValue === targetId;
-        if (isMatch) {
-          console.log(`User ${user.id} matched courseId: ${courseIdValue}`);
-        }
+  let finalFilter: any = baseFilter;
 
-        return isMatch;
-      });
-  });
+  if (search && search.trim().length > 0) {
+    const searchRegex = new RegExp(search, 'i');
 
-  console.log("Filtered students:", result);
-  if (!result) throwError("Server error");
+    finalFilter = {
+      $and: [
+        baseFilter,
+        {
+          $or: [
+            { username: { $regex: searchRegex } },
+            { email: { $regex: searchRegex } },
+            { tag: { $regex: searchRegex } },
+            { title: { $regex: searchRegex } },
+          ],
+        },
+      ],
+    };
+  }
 
-  return result;
+  console.log('🧩 Final MongoDB Filter:', JSON.stringify(finalFilter, null, 2));
+
+  // Call base repo, pass undefined for search so it won't override your filter
+  const { data, total, totalPages } = await this._userRepo.findPaginated(
+    finalFilter,
+    page,
+    limit,
+    undefined,  // search handled inside filter already
+    { createdAt: -1 }
+  );
+
+  return {
+    students: data,
+    total,
+    totalPages,
+  };
 }
+
+
+
 
 
 async studentStatusService(

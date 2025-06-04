@@ -13,7 +13,7 @@ const User = () => {
   const [statusFilter, setStatusFilter] = useState<'All'|'Active' | 'Blocked' |'Approved' | 'Pending' | 'Rejected'>('All');
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const usersPerPage = 10;
+  const usersPerPage = 2;
 
   const { users, setUsers, getAllUsers, totalUsersCount } = useAdminContext();
 

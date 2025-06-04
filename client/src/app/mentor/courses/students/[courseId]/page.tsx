@@ -1,17 +1,51 @@
 "use client"
+
 import { useEffect, useState } from "react"
 import StudentCard from "./studentsCard"
 import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useParams } from "next/navigation"
 import { IUser } from "@/src/types/userTypes"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import StudentDetailsModal from "./StudentDetailsModal" 
+import StudentDetailsModal from "./StudentDetailsModal"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+} from "@/components/ui/pagination"
+
+interface FetchParams {
+  page?: number
+  limit?: number
+  search?: string
+  filters?: Record<string, any>
+  sort?: Record<string, 1 | -1>
+}
 
 export default function Page() {
   const params = useParams()
   const [students, setStudents] = useState<IUser[]>([])
+  const [totalStudents, setTotalStudents] = useState(0)
   const [selectedStudent, setSelectedStudent] = useState<IUser | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [totalPages, setTotelPages] = useState<number>(0)
+  const [fetchParams, setFetchParams] = useState<FetchParams>({
+    page: 1,
+    search: "",
+    filters: {},
+    sort: { createdAt: -1 },
+  })
 
   const handleViewStudent = (student: IUser) => {
     setSelectedStudent(student)
@@ -32,64 +66,189 @@ export default function Page() {
 
     if (res.ok) {
       showSuccessToast(res.msg)
-      setStudents((prev) =>
-        prev.map((student) => {
-          if (student.id === id) {
-            return {
-              ...student,
-              enrolledCourses: student?.enrolledCourses?.map((course) =>
-                course.courseId === params.courseId
-                  ? { ...course, allowed: !shouldBlock }
-                  : course
-              ),
-            }
-          }
-          return student
-        })
-      )
-      return
+      fetchStudents()
+    } else {
+      showErrorToast(res.msg)
     }
-    showErrorToast(res.msg)
   }
 
   useEffect(() => {
     fetchStudents()
-  }, [])
+  }, [fetchParams])
 
   const fetchStudents = async () => {
-    const res = await MentorAPIMethods.getCourseStudents(params.courseId as string)
+    const res = await MentorAPIMethods.getCourseStudents({
+      courseId: params.courseId as string,
+      ...fetchParams,
+    })
+
     if (res.ok) {
-      setStudents(res.data)
-      return
+      setStudents(res.data.students || [])
+      setTotalStudents(res.data.total || 0)
+      setTotelPages(res.data.totalPages)
+    } else {
+      showErrorToast(res.msg)
     }
-    showErrorToast(res.msg)
+  }
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFetchParams((prev) => ({
+      ...prev,
+      search: e.target.value,
+      page: 1,
+    }))
+  }
+
+  const handleStatusFilterChange = (value: string) => {
+    setFetchParams((prev) => ({
+      ...prev,
+      filters: {
+        ...prev.filters,
+        status: value === "all" ? undefined : value,
+      },
+      page: 1,
+    }))
+  }
+
+  const handlePageChange = (page: number) => {
+    setFetchParams((prev) => ({
+      ...prev,
+      page,
+    }))
   }
 
   return (
     <main className="min-h-screen bg-gray-950 p-6">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Student Management</h1>
-          <p className="text-gray-400">Manage your students and their enrollment status</p>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            Student Management
+          </h1>
+          <p className="text-gray-400">
+            Manage your students and their enrollment status
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {students.map((student) => (
-            <StudentCard
-              key={student.id}
-              student={student}
-              courseId={params.courseId as string}
-              onView={() => handleViewStudent(student)}
-              onToggleBlock={handleToggleBlock}
-            />
-          ))}
+        {/* Search and Filter Bar */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <Input
+            placeholder="Search students by name or email..."
+            value={fetchParams.search || ""}
+            onChange={handleSearchChange}
+            className="bg-gray-900 text-white border-gray-700"
+          />
+          <div className="flex gap-2">
+            <Select
+              value={fetchParams.filters?.status || "all"}
+              onValueChange={handleStatusFilterChange}
+            >
+              <SelectTrigger className="w-[180px] bg-gray-900 border-gray-700">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-900 border-gray-700">
+                <SelectItem value="all">All Students</SelectItem>
+                <SelectItem value="allowed">Allowed Only</SelectItem>
+                <SelectItem value="blocked">Blocked Only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        <div className="mt-8 text-center text-gray-500">
-          <p>Showing {students.length} students</p>
+        {/* Students Grid (Responsive inline cards) */}
+        {students.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {students.map((student) => (
+                <StudentCard
+                  key={student.id}
+                  student={student}
+                  courseId={params.courseId as string}
+                  onView={() => handleViewStudent(student)}
+                  onToggleBlock={handleToggleBlock}
+                />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <Pagination className="mt-8">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (fetchParams.page && fetchParams.page > 1) {
+                          handlePageChange(fetchParams.page - 1)
+                        }
+                      }}
+                      className={
+                        fetchParams.page === 1
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (number) => (
+                      <PaginationItem key={number}>
+                        <PaginationLink
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            handlePageChange(number)
+                          }}
+                          isActive={number === fetchParams.page}
+                          className={`${
+                            number === fetchParams.page
+                              ? "bg-white text-black font-semibold"
+                              : "bg-gray-800 text-white hover:bg-gray-700"
+                          } px-4 py-2 rounded-md transition`}
+                        >
+                          {number}
+                        </PaginationLink>
+                      </PaginationItem>
+                    )
+                  )}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (
+                          fetchParams.page &&
+                          fetchParams.page < totalPages
+                        ) {
+                          handlePageChange(fetchParams.page + 1)
+                        }
+                      }}
+                      className={
+                        fetchParams.page === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-400">
+              No students found matching your criteria
+            </p>
+          </div>
+        )}
+
+        <div className="mt-4 text-center text-gray-500">
+          <p>
+            Showing {students.length} of {totalStudents} students
+          </p>
         </div>
 
-        
+        {/* Student Details Modal */}
         {selectedStudent && (
           <StudentDetailsModal
             student={selectedStudent}
