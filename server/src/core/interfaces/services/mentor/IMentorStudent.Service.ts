@@ -8,7 +8,8 @@ export interface IMentorStudentService {
       page?: number;
       limit?: number;
       search?: string;
-      status?: 'allowed' | 'blocked'|string;
+      status?: 'allowed' | 'blocked' | string;
+      sort?: Record<string, 1 | -1>;
     }
   ): Promise<{
     students: IUser[];

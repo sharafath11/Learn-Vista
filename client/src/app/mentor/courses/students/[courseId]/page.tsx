@@ -8,7 +8,6 @@ import { IUser } from "@/src/types/userTypes"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import StudentDetailsModal from "./StudentDetailsModal"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
@@ -110,6 +109,14 @@ export default function Page() {
     }))
   }
 
+  const handleSortChange = (value: string) => {
+    setFetchParams((prev) => ({
+      ...prev,
+      sort: { createdAt: value === "desc" ? -1 : 1 },
+      page: 1,
+    }))
+  }
+
   const handlePageChange = (page: number) => {
     setFetchParams((prev) => ({
       ...prev,
@@ -129,32 +136,43 @@ export default function Page() {
           </p>
         </div>
 
-        {/* Search and Filter Bar */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+        {/* Search, Filter, Sort Bar */}
+        <div className="flex flex-col md:flex-row flex-wrap gap-4 mb-6">
           <Input
             placeholder="Search students by name or email..."
             value={fetchParams.search || ""}
             onChange={handleSearchChange}
             className="bg-gray-900 text-white border-gray-700"
           />
-          <div className="flex gap-2">
-            <Select
-              value={fetchParams.filters?.status || "all"}
-              onValueChange={handleStatusFilterChange}
-            >
-              <SelectTrigger className="w-[180px] bg-gray-900 border-gray-700">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent className="bg-gray-900 border-gray-700">
-                <SelectItem value="all">All Students</SelectItem>
-                <SelectItem value="allowed">Allowed Only</SelectItem>
-                <SelectItem value="blocked">Blocked Only</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Select
+            value={fetchParams.filters?.status || "all"}
+            onValueChange={handleStatusFilterChange}
+          >
+            <SelectTrigger className="w-[180px] bg-gray-900 border-gray-700">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent className="bg-gray-900 border-gray-700">
+              <SelectItem value="all">All Students</SelectItem>
+              <SelectItem value="allowed">Allowed Only</SelectItem>
+              <SelectItem value="blocked">Blocked Only</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            onValueChange={handleSortChange}
+            defaultValue="desc"
+          >
+            <SelectTrigger className="w-[180px] bg-gray-900 border-gray-700">
+              <SelectValue placeholder="Sort by date" />
+            </SelectTrigger>
+            <SelectContent className="bg-gray-900 border-gray-700">
+              <SelectItem value="desc">Newest First</SelectItem>
+              <SelectItem value="asc">Oldest First</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Students Grid (Responsive inline cards) */}
+        {/* Students Grid */}
         {students.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -248,7 +266,6 @@ export default function Page() {
           </p>
         </div>
 
-        {/* Student Details Modal */}
         {selectedStudent && (
           <StudentDetailsModal
             student={selectedStudent}

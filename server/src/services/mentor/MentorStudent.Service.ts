@@ -19,13 +19,13 @@ async getStudentDetilesService(
     limit?: number;
     search?: string;
     status?: 'allowed' | 'blocked';
+    sort?: Record<string, 1 | -1>;
   } = {}
 ): Promise<{ students: IUser[]; total: number; totalPages: number }> {
-  const { page = 1, limit = 8, search = '', status } = options;
+  const { page = 1, limit = 8, search = '', status, sort = { createdAt: -1 } } = options;
 
   const courseObjectId = typeof courseId === 'string' ? new Types.ObjectId(courseId) : courseId;
 
-  // Base filter on enrolledCourses and status
   const baseFilter = {
     enrolledCourses: {
       $elemMatch: {
@@ -38,33 +38,28 @@ async getStudentDetilesService(
 
   let finalFilter: any = baseFilter;
 
-  if (search && search.trim().length > 0) {
-    const searchRegex = new RegExp(search, 'i');
-
+  if (search?.trim()) {
+    const regex = new RegExp(search, 'i');
     finalFilter = {
       $and: [
         baseFilter,
         {
           $or: [
-            { username: { $regex: searchRegex } },
-            { email: { $regex: searchRegex } },
-            { tag: { $regex: searchRegex } },
-            { title: { $regex: searchRegex } },
+            { username: { $regex: regex } },
+            { email: { $regex: regex } },
+            { tag: { $regex: regex } },
+            { title: { $regex: regex } },
           ],
         },
       ],
     };
   }
-
-  console.log('🧩 Final MongoDB Filter:', JSON.stringify(finalFilter, null, 2));
-
-  // Call base repo, pass undefined for search so it won't override your filter
   const { data, total, totalPages } = await this._userRepo.findPaginated(
     finalFilter,
     page,
     limit,
-    undefined,  // search handled inside filter already
-    { createdAt: -1 }
+    undefined,
+    sort 
   );
 
   return {
@@ -73,6 +68,7 @@ async getStudentDetilesService(
     totalPages,
   };
 }
+
 
 
 
