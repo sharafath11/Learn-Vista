@@ -81,10 +81,9 @@ const CourseCard = ({ course }: { course: ICourse }) => {
 
 export default function ActiveCourses() {
   const { allCourses, user } = useUserContext();
-  const userEnrolledCourse = allCourses.filter((course) =>
-    course.enrolledUsers?.includes(user?.id as string)
-  );
-  console.log("enrolledcourse",userEnrolledCourse)
+  const userEnrolledCourse = allCourses?.filter((course) =>
+  user?.enrolledCourses?.some((i) => i.courseId === course._id)
+);
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 transition-all hover:shadow-md">
@@ -99,8 +98,8 @@ export default function ActiveCourses() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        {userEnrolledCourse.map((course) => (
-          <CourseCard key={course._id} course={course} />
+        {userEnrolledCourse?.map((course) => (
+          <CourseCard key={course.id} course={course} />
         ))}
       </div>
     </div>
