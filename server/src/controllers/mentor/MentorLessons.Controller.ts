@@ -45,44 +45,60 @@ export class MentorLessonsController implements IMentorLessonsController {
         }
     }
 
-      async S3Upload(req: Request, res: Response): Promise<void> {
-        const { fileName, fileType } = req.body;
-      
+   
+ async S3Upload(req: Request, res: Response): Promise<void> {
+    const { fileName, fileType } = req.body;
 
-        // if (!fileName || !fileType) {
-        //     return handleControllerError(res, throwError("File name and fileType are required in the request body.", StatusCode.BAD_REQUEST));
-        // }
-
-        if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !S3_BUCKET_NAME) {
-            
-            return handleControllerError(res, throwError("Server configuration error: AWS S3 credentials or bucket name missing.", StatusCode.INTERNAL_SERVER_ERROR));
-        }
-        AWS.config.update({
-            accessKeyId: AWS_ACCESS_KEY_ID,
-            secretAccessKey: AWS_SECRET_ACCESS_KEY,
-            region: AWS_REGION
-        });
-
-        const s3 = new AWS.S3();
-        const s3Key = `videos/${Date.now()}-${fileName}`;
-
-        const params = {
-            Bucket: S3_BUCKET_NAME,
-            Key: s3Key,
-            Expires: 60 * 5, 
-            ContentType: fileType,
-           
-        };
-
-        s3.getSignedUrl('putObject', params, (err, uploadURL) => {
-            if (err) {
-                console.error('[S3Upload] Error generating S3 pre-signed URL:', err);
-                return handleControllerError(res, throwError("Failed to generate S3 pre-signed URL.", StatusCode.INTERNAL_SERVER_ERROR));
-            }
-            const publicVideoUrl = `https://${S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${s3Key}`;
-            sendResponse(res, StatusCode.OK, "", true, { signedUploadUrl: uploadURL, publicVideoUrl: publicVideoUrl });
-        });
+    if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY || !S3_BUCKET_NAME || !AWS_REGION) {
+      return handleControllerError(
+        res,
+        throwError("Server configuration error: AWS credentials or bucket name missing.", StatusCode.INTERNAL_SERVER_ERROR)
+      );
     }
+
+    // Initialize AWS SDK v2 config and S3 instance
+    AWS.config.update({
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      region: AWS_REGION,
+    });
+
+    const s3 = new AWS.S3();
+    const s3Key = `videos/${Date.now()}-${fileName}`;
+
+    const uploadParams = {
+      Bucket: S3_BUCKET_NAME,
+      Key: s3Key,
+      Expires: 60 * 5, // 5 minutes
+      ContentType: fileType,
+    };
+
+    // Generate PUT URL for upload
+    s3.getSignedUrl("putObject", uploadParams, (err, signedUploadUrl) => {
+      if (err) {
+        console.error("[S3Upload] Error generating upload URL:", err);
+        return handleControllerError(res, throwError("Upload URL generation failed.", StatusCode.INTERNAL_SERVER_ERROR));
+      }
+
+      const publicVideoUrl = `https://${S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${s3Key}`;
+
+      // Generate GET URL for viewing
+      const viewParams = {
+        Bucket: S3_BUCKET_NAME,
+        Key: s3Key,
+        Expires: 3600, // 1 hour
+      };
+
+      const signedViewUrl = s3.getSignedUrl("getObject", viewParams);
+
+      return sendResponse(res, StatusCode.OK, "Signed URLs generated", true, {
+        signedUploadUrl,
+        publicVideoUrl,
+        signedViewUrl,
+      });
+    });
+  }
+
    async addLesson(req: Request, res: Response): Promise<void> {
         try {
            
@@ -185,7 +201,7 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
 }
      async getSignedVideoUrl(req: Request, res: Response): Promise<void> {
         if (req.method !== 'POST') {
-            return sendResponse(res, StatusCode.METHOD_NOT_ALLOWED, 'Method Not Allowed. Use POST.', false);
+            return sendResponse(res, StatusCode.METHOD_NOT_ALLOWED, 'Method Not Allowed.', false);
         }
         const { lessonId, videoUrl } = req.body;
         if (!lessonId) {

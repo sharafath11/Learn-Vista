@@ -13,14 +13,28 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AdminAPIMethods } from "@/src/services/APImethods"
-import { showSuccessToast } from "@/src/utils/Toast"
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
+import { ICategory } from "@/src/types/categoryTypes"
+import { IMentor } from "@/src/types/mentorTypes"
 
 export function CourseFormDesign({ courseId }: { courseId: string }) {
   const { courses, avilbleMentors, cat, setCourses } = useAdminContext();
-
+  const [category, setCategories] = useState<ICategory[]>([]);
+ const [mentors, setMentors] = useState<IMentor[]>();
+   useEffect(() => {
+     fetchAllMentors()
+   },[])
+   const fetchAllMentors = async () => {
+     const res = await AdminAPIMethods.getAllMentor();
+     if (res.ok) {
+       
+       setMentors(res.data)
+     }
+     else showErrorToast(res.msg)
+   }
   const course = courses.find((i) => i._id === courseId);
   if (!course) {
     return <div>Loading...</div>
@@ -148,7 +162,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {avilbleMentors.map((mentor) => (
+                      {mentors?.map((mentor) => (
                         <SelectItem key={mentor.id} value={mentor.id}>
                           {mentor.username}
                         </SelectItem>
@@ -166,7 +180,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select category">
-                        {cat.find(c => c.id === formData.categoryId)?.title || "Select category"}
+                        {category.find(c => c.id === formData.categoryId)?.title || "Select category"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>

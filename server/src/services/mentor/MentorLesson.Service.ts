@@ -29,10 +29,16 @@ export class MentorLessonService implements IMentorLessonService {
         if (!data.title || !data.videoUrl || !data.courseId||!data.thumbnail) {
             throwError("All filed are required", StatusCode.BAD_REQUEST);
         }
-        const existingLessson = await this._lessonRepo.findOne({ title: data.title });
-        if (existingLessson) throwError("Please enter uniq title");
-        const existingOrder = await this._lessonRepo.findOne({ order: data.order });
-        if (existingOrder) throwError("Please enter uniq Order");
+       
+    const existingLesson = await this._lessonRepo.findOne({ title: data.title });
+    if (existingLesson) {
+        throwError("Lesson title must be unique", StatusCode.CONFLICT);
+    }
+
+    const existingOrder = await this._lessonRepo.findOne({ order: data.order, courseId: data.courseId });
+    if (existingOrder) {
+        throwError("Lesson order must be unique within the course", StatusCode.CONFLICT);
+    }
         
 
         let imageUrl: string | undefined;

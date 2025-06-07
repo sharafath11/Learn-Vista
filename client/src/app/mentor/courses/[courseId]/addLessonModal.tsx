@@ -48,6 +48,19 @@ interface AddLessonModalProps {
   onLessonAdded: () => void;
 }
 
+const formatDuration = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+
+  const pad = (num: number) => num.toString().padStart(2, '0');
+
+  if (hours > 0) {
+    return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
+  }
+  return `${pad(minutes)}:${pad(remainingSeconds)}`;
+};
+
 export function AddLessonModal({
   open,
   setOpen,
@@ -73,6 +86,8 @@ export function AddLessonModal({
   const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  const videoUrlValue = form.watch("videoUrl");
+
   useEffect(() => {
     if (open) {
       form.reset({
@@ -91,44 +106,82 @@ export function AddLessonModal({
   }, [open, nextOrder, form]);
 
   const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const file = event.target.files?.[0];
+  if (!file) return;
 
-    setIsUploading(true);
-    setUploadedS3VideoUrl(null);
+  setIsUploading(true);
+  setUploadedS3VideoUrl(null);
+  form.setValue("duration", "");
 
-    try {
-      const res = await MentorAPIMethods.getS3DirectUploadUrl(file.name, file.type);
-      if (!res.ok || !res.data || !res.data.signedUploadUrl || !res.data.publicVideoUrl) {
-        throw new Error(res.error?.message || "Failed to get S3 URLs from backend.");
-      }
+  try {
+    const res = await MentorAPIMethods.getS3DirectUploadUrl(file.name, file.type);
+    if (!res.ok || !res.data?.signedUploadUrl || !res.data?.publicVideoUrl) {
+      throw new Error(res.error?.message || "Failed to get S3 URLs from backend.");
+    }
 
-      const { signedUploadUrl, publicVideoUrl } = res.data;
-      const uploadResponse = await fetch(signedUploadUrl, {
-        method: 'PUT',
-        body: file,
-        headers: {
-          'Content-Type': file.type,
-        },
-      });
+    const { signedUploadUrl, publicVideoUrl,signedViewUrl } = res.data;
 
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        throw new Error(`Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`);
-      }
+    const uploadResponse = await fetch(signedUploadUrl, {
+      method: 'PUT',
+      body: file,
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
 
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      throw new Error(`Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`);
+    }
+   
+    const tempVideo = document.createElement("video");
+    tempVideo.src = signedViewUrl
+    tempVideo.preload = "metadata";
+
+    const handleMetadataLoaded = () => {
+      console.log("Video metadata loaded successfully. Duration:", tempVideo.duration);
+      const durationInSeconds = tempVideo.duration;
+      const formattedDuration = formatDuration(durationInSeconds);
+      form.setValue("duration", formattedDuration, { shouldValidate: true });
       form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
       setUploadedS3VideoUrl(publicVideoUrl);
-      showSuccessToast("Video uploaded!");
-    } catch (error: any) {
-      console.error("Video upload error:", error);
-      showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
-      form.setValue("videoUrl", "");
-      setUploadedS3VideoUrl(null);
-    } finally {
-      setIsUploading(false);
-    }
-  };
+      showSuccessToast("Video uploaded and duration fetched!");
+      tempVideo.removeEventListener('loadedmetadata', handleMetadataLoaded);
+      tempVideo.removeEventListener('error', handleVideoError);
+      if (document.body.contains(tempVideo)) {
+        document.body.removeChild(tempVideo);
+      }
+    };
+
+    const handleVideoError = (e: Event) => {
+      console.error("tempVideo error event:", e);
+      console.error("tempVideo networkState:", tempVideo.networkState);
+      console.error("tempVideo error object:", (tempVideo as HTMLVideoElement).error);
+      showErrorToast("Could not retrieve video duration. Video might be corrupted or unsupported.");
+      form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
+      setUploadedS3VideoUrl(publicVideoUrl);
+      tempVideo.removeEventListener('loadedmetadata', handleMetadataLoaded);
+      tempVideo.removeEventListener('error', handleVideoError);
+      if (document.body.contains(tempVideo)) {
+        document.body.removeChild(tempVideo);
+      }
+    };
+
+    tempVideo.addEventListener('loadedmetadata', handleMetadataLoaded);
+    tempVideo.addEventListener('error', handleVideoError);
+
+    document.body.appendChild(tempVideo);
+
+
+  } catch (error: any) {
+    showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
+    form.setValue("videoUrl", "");
+    setUploadedS3VideoUrl(null);
+    form.setValue("duration", "");
+  } finally {
+    setIsUploading(false);
+  }
+};
 
   const handleRemoveVideo = async () => {
     const currentVideoUrl = form.getValues("videoUrl");
@@ -142,10 +195,10 @@ export function AddLessonModal({
         showErrorToast(`Delete failed: ${deleteResult.error?.message || "Unknown error"}`);
       }
     } catch (error: any) {
-      console.error("Video removal error:", error);
       showErrorToast(`Delete Error: ${error.message || "Unexpected error."}`);
     } finally {
       form.setValue("videoUrl", "");
+      form.setValue("duration", "");
       setUploadedS3VideoUrl(null);
     }
   };
@@ -186,7 +239,7 @@ export function AddLessonModal({
     }
 
     if (!data.videoUrl && (data.duration || data.thumbnail)) {
-      showErrorToast("Upload a video or clear the duration/thumbnail.");
+      showErrorToast("Upload a video or clear the duration/thumbnail if no video is intended.");
       return;
     }
 
@@ -206,18 +259,17 @@ export function AddLessonModal({
     } else if (typeof data.thumbnail === "string" && data.thumbnail.startsWith("http")) {
       formData.append("thumbnailUrl", data.thumbnail);
     }
-
+    
     try {
       const res = await MentorAPIMethods.addLesson(formData);
 
-      if (!res.ok) throw new Error("Failed to add lesson");
+      if (!res.ok) throw new Error(res.error?.message || "Failed to add lesson");
 
       showSuccessToast("Lesson added successfully!");
       onLessonAdded();
       setOpen(false);
-    } catch (error) {
-      console.error(error);
-      showErrorToast("Failed to add lesson.");
+    } catch (error: any) {
+      showErrorToast(`Failed to add lesson: ${error.message || "Unknown error."}`);
     } finally {
       setIsSaving(false);
     }
@@ -281,7 +333,7 @@ export function AddLessonModal({
                     accept="video/*"
                     onChange={handleVideoUpload}
                     className="w-full"
-                    disabled={isUploading}
+                    disabled={isUploading || isSaving}
                   />
                   {isUploading && (
                     <div className="text-sm text-muted-foreground flex items-center gap-2">
@@ -305,6 +357,7 @@ export function AddLessonModal({
                     size="sm"
                     onClick={handleRemoveVideo}
                     className="text-red-500 hover:bg-red-50"
+                    disabled={isSaving}
                   >
                     Remove
                   </Button>
@@ -321,9 +374,16 @@ export function AddLessonModal({
                 <FormItem>
                   <FormLabel>Duration</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., 10 min or 01:25" {...field} />
+                    <Input
+                      placeholder="e.g., 01:25 or 00:10:30"
+                      {...field}
+                      readOnly={!!videoUrlValue}
+                      disabled={isUploading || isSaving}
+                    />
                   </FormControl>
-                  <FormDescription>Estimated video duration.</FormDescription>
+                  <FormDescription>
+                    {videoUrlValue ? "Automatically fetched from video." : "Estimated video duration (MM:SS or HH:MM:SS)."}
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -340,7 +400,7 @@ export function AddLessonModal({
                         placeholder="Optional thumbnail URL"
                         {...field}
                         className="flex-1"
-                        disabled={!!thumbnailFile}
+                        disabled={!!thumbnailFile || isUploading || isSaving}
                         value={thumbnailFile ? "" : field.value}
                       />
                       <input
@@ -349,11 +409,13 @@ export function AddLessonModal({
                         className="hidden"
                         id="thumbnail-upload"
                         onChange={handleThumbnailChange}
+                        disabled={isUploading || isSaving}
                       />
                       <Button
                         type="button"
                         variant="outline"
                         onClick={() => document.getElementById("thumbnail-upload")?.click()}
+                        disabled={isUploading || isSaving}
                       >
                         <FileImage className="h-4 w-4" />
                       </Button>
@@ -364,6 +426,7 @@ export function AddLessonModal({
                           size="icon"
                           onClick={clearThumbnail}
                           className="text-red-500 hover:bg-red-50"
+                          disabled={isUploading || isSaving}
                         >
                           <XCircle className="h-5 w-5" />
                         </Button>

@@ -51,7 +51,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     sort?: Record<string, 1 | -1>;
     filters?: Record<string, any>;
   }) {
-    const res = await AdminAPIMethods.getGetegories( params|| {});;
+    const res = await AdminAPIMethods.getGetegories( params|| {});
     console.log("categ",res)
     if (res.ok) setCat(res.data.data);
     else showInfoToast(res.msg);
