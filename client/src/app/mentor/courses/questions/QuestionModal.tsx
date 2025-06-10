@@ -1,9 +1,17 @@
 "use client";
 
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { BookOpen, Code } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { BookOpen, Code, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { IQuestions, QuestionType } from "@/src/types/lessons";
@@ -13,76 +21,151 @@ interface QuestionModalProps {
   onOpenChange: (open: boolean) => void;
   question: IQuestions | null;
   type: QuestionType;
-  onSave: (QuestionType: Omit<IQuestions, "id" | "isCompleted" | "lessonId">) => void;
+  onSave: (data: Omit<IQuestions, "id" | "isCompleted" | "lessonId">) => void;
 }
 
-export function QuestionModal({ open, onOpenChange, question, type, onSave }: QuestionModalProps) {
+export function QuestionModal({
+  open,
+  onOpenChange,
+  question,
+  type,
+  onSave,
+}: QuestionModalProps) {
   const [formData, setFormData] = useState({
     question: "",
+    options: [] as string[],
   });
 
   useEffect(() => {
     if (question) {
       setFormData({
         question: question.question,
+        options: question.options || [],
       });
     } else {
       setFormData({
         question: "",
+        options: [],
       });
     }
   }, [question, open]);
 
+  const handleOptionChange = (index: number, value: string) => {
+    const updatedOptions = [...formData.options];
+    updatedOptions[index] = value;
+    setFormData((prev) => ({ ...prev, options: updatedOptions }));
+  };
+
+  const addOption = () => {
+    setFormData((prev) => ({ ...prev, options: [...prev.options, ""] }));
+  };
+
+  const removeOption = (index: number) => {
+    const updatedOptions = formData.options.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, options: updatedOptions }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.question.trim()) {
-      onSave({
-        question: formData.question,
-        type: type,
-      });
-      setFormData({ question: "" });
+
+    if (!formData.question.trim()) return;
+
+    const data: any = {
+      question: formData.question.trim(),
+      type,
+    };
+
+    if (type === "mcq") {
+      data.options = formData.options.filter((opt) => opt.trim() !== "");
     }
+
+    onSave(data);
+    setFormData({ question: "", options: [] });
   };
 
   const isEditing = !!question;
+
+  const Icon =
+    type === "theory"
+      ? BookOpen
+      : type === "practical"
+      ? Code
+      : ListChecks;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {type === "theory" ? <BookOpen className="w-5 h-5" /> : <Code className="w-5 h-5" />}
-            {isEditing ? "Edit" : "Create"} {type === "theory" ? "Theory" : "Practical"} Question
+            <Icon className="w-5 h-5" />
+            {isEditing ? "Edit" : "Create"}{" "}
+            {type === "theory"
+              ? "Theory"
+              : type === "practical"
+              ? "Practical"
+              : "MCQ"}{" "}
+            Question
           </DialogTitle>
           <DialogDescription>
             {isEditing
               ? `Update the ${type} question details below.`
-              : `Create a new ${type} question for students to work on.`}
+              : `Create a new ${type} question for students.`}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Question */}
           <div className="space-y-2">
-            <Label htmlFor="question" className="text-sm font-medium">
-              Question
-            </Label>
+            <Label htmlFor="question">Question</Label>
             <Textarea
               id="question"
               placeholder={`Enter your ${type} question here...`}
               value={formData.question}
-              onChange={(e) => setFormData((prev) => ({ ...prev, question: e.target.value }))}
-              className="min-h-[120px] resize-none"
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, question: e.target.value }))
+              }
+              className="min-h-[100px]"
               required
             />
-            <p className="text-xs text-slate-500">
-              {type === "theory"
-                ? "Write a theoretical question that tests understanding of concepts."
-                : "Write a practical question that requires hands-on implementation or coding."}
-            </p>
           </div>
 
+          {/* Options - only for MCQ */}
+          {type === "mcq" && (
+            <div className="space-y-2">
+              <Label>Options</Label>
+              {formData.options.map((opt, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <Input
+                    type="text"
+                    placeholder={`Option ${index + 1}`}
+                    value={opt}
+                    onChange={(e) =>
+                      handleOptionChange(index, e.target.value)
+                    }
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => removeOption(index)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+              <Button type="button" variant="outline" onClick={addOption}>
+                + Add Option
+              </Button>
+            </div>
+          )}
+
+          {/* Footer */}
           <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={!formData.question.trim()}>

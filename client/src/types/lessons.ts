@@ -39,8 +39,9 @@ export interface IComment  {
 }
 export type EvaluatedAnswer = {
   question: string;
-  type: 'theory' | 'practical';
+  type: 'theory' | 'practical'|"mcq";
   studentAnswer: string;
+  answer?:string
   isCorrect: boolean;
   feedback: string;
   marks: number; 

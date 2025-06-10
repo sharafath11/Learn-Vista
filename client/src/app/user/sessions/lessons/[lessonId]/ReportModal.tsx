@@ -12,10 +12,12 @@ interface ReportModalProps {
 
 export default function ReportModal({ report, isOpen, onClose }: ReportModalProps) {
   if (!report) return null;
+
   const cleaned = report
-    .replace(/^```json\s*/, '')  
-    .replace(/\s*```$/, '')        
+    .replace(/^```json\s*/, '')
+    .replace(/\s*```$/, '')
     .trim();
+
   const truncateAfterJsonArray = (str: string) => {
     const lastIndex = str.lastIndexOf("]");
     if (lastIndex !== -1) {
@@ -26,6 +28,7 @@ export default function ReportModal({ report, isOpen, onClose }: ReportModalProp
 
   const cleanedTruncated = truncateAfterJsonArray(cleaned);
   let parsedReport: EvaluatedAnswer[] = [];
+
   try {
     parsedReport = JSON.parse(cleanedTruncated);
   } catch (err) {
@@ -34,10 +37,23 @@ export default function ReportModal({ report, isOpen, onClose }: ReportModalProp
     return <p>Failed to load report.</p>;
   }
 
-  const totalMarksPossible = parsedReport.length * 10;
-  const totalMarksObtained = parsedReport.reduce((sum, qa) => sum + qa.marks, 0);
+  const processedReport = parsedReport.map(qa => {
+    if (qa.type === 'mcq' && qa.isCorrect) {
+      return {
+        ...qa,
+        marks: 10,
+        feedback: undefined,
+      };
+    }
+    return qa;
+  });
+
+  const totalMarksPossible = processedReport.length * 10;
+  const totalMarksObtained = processedReport.reduce((sum, qa) => sum + qa.marks, 0);
   const overallPercentage = totalMarksPossible > 0 ? (totalMarksObtained / totalMarksPossible) * 100 : 0;
-  const correctAnswersCount = parsedReport.filter(qa => qa.isCorrect).length;
+  const correctAnswersCount = processedReport.filter(qa => qa.isCorrect).length;
+
+  console.log("report data:", processedReport);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -63,12 +79,15 @@ export default function ReportModal({ report, isOpen, onClose }: ReportModalProp
 
           <div className="space-y-6">
             <h3 className="text-xl font-bold text-gray-900 border-b pb-2">Your Answers</h3>
-            {parsedReport.length > 0 ? (
-              parsedReport.map((qa, index) => (
+            {processedReport.length > 0 ? (
+              processedReport.map((qa, index) => (
                 <div key={index} className="p-5 bg-gray-50 rounded-lg border border-gray-100 shadow-sm">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold text-gray-800">
-                      {qa.type === 'theory' ? 'Theory Question' : 'Coding Challenge'}:
+                      {qa.type === 'theory' ? 'Theory Question' :
+                       qa.type === 'practical' ? 'Coding Challenge' :
+                       qa.type === 'mcq' ? 'Multiple Choice Question' :
+                       'Question'}:
                     </span>
                     <span className={`flex items-center font-medium ${qa.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
                       {qa.isCorrect ? <CheckCircle2 className="h-4 w-4 mr-1" /> : <XCircle className="h-4 w-4 mr-1" />}
@@ -78,7 +97,11 @@ export default function ReportModal({ report, isOpen, onClose }: ReportModalProp
                   <p className="text-gray-800 mb-2 font-medium">{qa.question}</p>
                   <div className="bg-white p-3 rounded-md border border-gray-200 text-gray-700">
                     <p className="font-semibold text-sm mb-1">Your Answer:</p>
-                    <p className="whitespace-pre-wrap text-sm">{qa.studentAnswer || "No answer provided"}</p>
+                    <p className="whitespace-pre-wrap text-sm">
+                      {Array.isArray(qa.studentAnswer)
+                        ? qa.studentAnswer.join(', ')
+                        : qa.studentAnswer || qa.answer || "No answer provided"}
+                    </p>
                   </div>
                   {qa.feedback && (
                     <div className="mt-3 bg-yellow-50 p-3 rounded-md border border-yellow-100 text-yellow-800 text-sm">

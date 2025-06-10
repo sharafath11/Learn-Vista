@@ -124,17 +124,38 @@ export function validateLessonForm(data: LessonFormValues): boolean {
 export function isValidQuestion(
   question: Omit<IQuestions, "id" | "isCompleted" | "lessonId">
 ): boolean {
-  if (!question.question || question.question.trim().length === 0) {
+  const { question: qText, type, options } = question as any;
+
+  if (!qText || qText.trim().length === 0) {
     showInfoToast("Question is required");
     return false;
   }
-  if (question.question.trim().length < 10) {
+
+  if (qText.trim().length < 10) {
     showInfoToast("Question must be at least 10 characters long");
     return false;
   }
-  if (!question.type || (question.type !== "theory" && question.type !== "practical")) {
+
+  if (!type || !["theory", "practical", "mcq"].includes(type)) {
     showInfoToast("Invalid question type");
     return false;
   }
+
+  if (type === "mcq") {
+    if (!Array.isArray(options) || options.length < 2) {
+      showInfoToast("At least two options are required for MCQ");
+      return false;
+    }
+
+    const validOptions = options.filter(
+      (opt: string) => typeof opt === "string" && opt.trim().length > 0
+    );
+
+    if (validOptions.length < 2) {
+      showInfoToast("Each MCQ must have at least two non-empty options");
+      return false;
+    }
+  }
+
   return true;
 }

@@ -1,91 +1,106 @@
+// src/components/user/sessions/LessonPage.tsx
 
-"use client"
+"use client";
 
-import { useEffect, useState, useRef } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { ArrowLeft } from "lucide-react"
-import { IQuestions, ILessons, AnswerWithType, IComment, EvaluatedAnswer } from "@/src/types/lessons"
-import VideoPlayer from "@/src/components/user/sessions/video-player"
-import TheoryQuestions from "@/src/components/user/sessions/theory-questions"
-import CodeChallenge from "@/src/components/user/sessions/CodeChallenge"
-import { UserAPIMethods } from "@/src/services/APImethods"
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import { Textarea } from "@/components/ui/textarea"
-import { format } from 'date-fns'
-import ReportModal from "./ReportModal"
+import { useEffect, useState, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft } from "lucide-react";
+import { IQuestions, ILessons, AnswerWithType, IComment, EvaluatedAnswer } from "@/src/types/lessons";
+import VideoPlayer from "@/src/components/user/sessions/video-player";
+import TheoryQuestions from "@/src/components/user/sessions/theory-questions";
+import CodeChallenge from "@/src/components/user/sessions/CodeChallenge";
+import MCQQuestions from "@/src/components/user/sessions/MCQQuestions"; // Import the MCQQuestions component
+import { UserAPIMethods } from "@/src/services/APImethods";
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
+import { Textarea } from "@/components/ui/textarea";
+import { format } from 'date-fns';
+import ReportModal from "./ReportModal";
 
 export default function LessonPage() {
-  const params = useParams()
-  const lessonId = params.lessonId
-  const router = useRouter()
-  const [lesson, setLesson] = useState<ILessons | null>(null)
-  const [video, setVideoUrl] = useState<string>("")
-  const [questions, setQuestions] = useState<IQuestions[]>([])
-  const [videoCompleted, setVideoCompleted] = useState(false)
-  const [theoryCompleted, setTheoryCompleted] = useState(false)
-  const [practicalCompleted, setPracticalCompleted] = useState(false)
-  const [theoryAnswers, setTheoryAnswers] = useState<AnswerWithType[]>([])
+  const params = useParams();
+  const lessonId = params.lessonId;
+  const router = useRouter();
+  const [lesson, setLesson] = useState<ILessons | null>(null);
+  const [video, setVideoUrl] = useState<string>("");
+  const [questions, setQuestions] = useState<IQuestions[]>([]);
+  const [videoCompleted, setVideoCompleted] = useState(false);
+  const [theoryCompleted, setTheoryCompleted] = useState(false);
+  const [practicalCompleted, setPracticalCompleted] = useState(false);
+  const [mcqCompleted, setMcqCompleted] = useState(false); 
+
+  const [theoryAnswers, setTheoryAnswers] = useState<AnswerWithType[]>([]);
   const [practicalAnswers, setPracticalAnswers] = useState<AnswerWithType[]>([]);
-  const [report, setReport] = useState<EvaluatedAnswer | null>(null) 
-  const [comment, setComment] = useState("")
-  const [comments, setComments] = useState<IComment[]>([])
-  const commentsEndRef = useRef<HTMLDivElement>(null)
+  const [mcqAnswers, setMcqAnswers] = useState<AnswerWithType[]>([]); 
 
-  const [activeTab, setActiveTab] = useState<"theory" | "practical">("theory")
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false)
+  const [report, setReport] = useState<EvaluatedAnswer | null>(null);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState<IComment[]>([]);
+  const commentsEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchDetils()
-  }, [])
+  const [activeTab, setActiveTab] = useState<"theory" | "practical" | "mcq">("theory"); 
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   useEffect(() => {
-    if (videoCompleted && theoryCompleted && practicalCompleted && !report) {
-      submitLessonReport()
+    fetchDetils();
+  }, []);
+
+  useEffect(() => {
+    if (videoCompleted && theoryCompleted && practicalCompleted && mcqCompleted && !report) {
+      submitLessonReport();
     }
-  }, [videoCompleted, theoryCompleted, practicalCompleted, report])
+  }, [videoCompleted, theoryCompleted, practicalCompleted, mcqCompleted, report]);
 
   useEffect(() => {
-    commentsEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [comments])
+    commentsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [comments]);
 
   const fetchDetils = async () => {
     const res = await UserAPIMethods.getLessonDetils(lessonId as string);
-    
+
     if (res.ok) {
-      setLesson(res.data.lesson)
-      setVideoUrl(res.data.videoUrl)
-      setQuestions(res.data.questions)
+      setLesson(res.data.lesson);
+      setVideoUrl(res.data.videoUrl);
+      setQuestions(res.data.questions);
       if (res.data.comments) {
-        setComments(res.data.comments)
+        setComments(res.data.comments);
       }
+      console.log("frombaceknd",res.data)
       if (res.data.report && typeof res.data.report === 'object' && !Array.isArray(res.data.report)) {
         setReport(res.data.report as EvaluatedAnswer);
         setVideoCompleted(true);
         setTheoryCompleted(true);
         setPracticalCompleted(true);
+        setMcqCompleted(true); 
       }
     } else {
-      showErrorToast(res.msg)
+      showErrorToast(res.msg);
     }
-  }
+  };
 
   const handleVideoComplete = () => {
-    setVideoCompleted(true)
-  }
+    setVideoCompleted(true);
+  };
 
   const handleTheoryComplete = (answers: { question: string; answer: string }[]) => {
-    const typedAnswers = answers.map(a => ({ ...a, type: 'theory' as const }))
-    setTheoryAnswers(typedAnswers)
-    setTheoryCompleted(true)
-  }
+    const typedAnswers = answers.map(a => ({ ...a, type: 'theory' as const }));
+    setTheoryAnswers(typedAnswers);
+    setTheoryCompleted(true);
+  };
 
   const handlePracticalComplete = (answers: { question: string; answer: string }[]) => {
-    const typedAnswers: AnswerWithType[] = answers.map(a => ({ ...a, type: 'practical' as const }))
-    setPracticalAnswers(typedAnswers)
-    setPracticalCompleted(true)
-  }
+    const typedAnswers: AnswerWithType[] = answers.map(a => ({ ...a, type: 'practical' as const }));
+    setPracticalAnswers(typedAnswers);
+    setPracticalCompleted(true);
+  };
+
+
+  const handleMCQComplete = (answers: { question: string; answer: string }[]) => {
+    const typedAnswers: AnswerWithType[] = answers.map(a => ({ ...a, type: 'mcq' as const }));
+    setMcqAnswers(typedAnswers);
+    setMcqCompleted(true);
+  };
 
   const handleAddComment = async () => {
     if (comment.trim()) {
@@ -94,7 +109,7 @@ export default function LessonPage() {
         const newComment: IComment = {
           id: res.data.id,
           lessonId: lessonId as string,
-          userName: res.data.userName, 
+          userName: res.data.userName,
           comment: comment,
           createdAt: new Date()
         };
@@ -105,42 +120,50 @@ export default function LessonPage() {
         showErrorToast(res.msg);
       }
     }
-  }
+  };
 
   const submitLessonReport = async () => {
-    const combinedAnswers: AnswerWithType[] = [...theoryAnswers, ...practicalAnswers]
+    const combinedAnswers: AnswerWithType[] = [...theoryAnswers, ...practicalAnswers, ...mcqAnswers];
     const res = await UserAPIMethods.getReport(
       lessonId as string,
       combinedAnswers,
-    )
+    );
     if (res.ok) {
-      if (res.data.report && typeof res.data.report === 'object' && !Array.isArray(res.data.report)) {
+      if (res.data.report ) {
         setReport(res.data.report as EvaluatedAnswer);
         showSuccessToast(res.msg || "Lesson report submitted successfully!");
-        fetchDetils(); 
+        fetchDetils();
       } else {
         showErrorToast("Report data format from submission is incorrect.");
       }
     } else {
       showErrorToast(res.msg || "Failed to submit lesson report.");
     }
-  }
+  };
 
   const calculateProgress = () => {
-    let progress = 0
-    if (videoCompleted) progress += 33.33
-    if (theoryCompleted) progress += 33.33
-    if (practicalCompleted) progress += 33.34
-    return progress
-  }
+    let progress = 0;
+    const totalSections = 4;
+    const sectionWeight = 100 / totalSections;
+
+    if (videoCompleted) progress += sectionWeight;
+    if (theoryCompleted) progress += sectionWeight;
+    if (practicalCompleted) progress += sectionWeight;
+    if (mcqCompleted) progress += sectionWeight; 
+
+    return progress;
+  };
 
   if (!lesson) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
-    )
+    );
   }
+
+  // Determine if all sections are completed to show the "View Report" button
+  const allSectionsCompleted = videoCompleted && theoryCompleted && practicalCompleted && mcqCompleted;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6">
@@ -153,12 +176,12 @@ export default function LessonPage() {
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
             Lesson {lesson.order}: {lesson.title}
           </h1>
-          {(videoCompleted && theoryCompleted && practicalCompleted && report) && (
+          {(allSectionsCompleted && report) && ( 
             <Button onClick={() => setIsReportModalOpen(true)} className="ml-4 bg-blue-600 hover:bg-blue-700 text-white">
               View Report
             </Button>
           )}
-           {(!(videoCompleted && theoryCompleted && practicalCompleted && report)) && <div className="w-[120px]"></div>}
+           {(!allSectionsCompleted || !report) && <div className="w-[120px]"></div>} 
         </div>
 
         <div className="mb-6">
@@ -176,7 +199,7 @@ export default function LessonPage() {
             <VideoPlayer
               videoUrl={video}
               title={lesson.title}
-              thumbnail={lesson.thumbnail||""}
+              thumbnail={lesson.thumbnail || ""}
               onComplete={handleVideoComplete}
               isCompleted={videoCompleted}
             />
@@ -184,7 +207,7 @@ export default function LessonPage() {
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden p-6">
             <h3 className="text-xl font-bold mb-4">Discussion</h3>
-            
+
             <div className="max-h-60 overflow-y-auto mb-4 space-y-4 pr-2">
               {comments.length > 0 ? (
                 comments.map((comment) => (
@@ -219,7 +242,8 @@ export default function LessonPage() {
             )}
           </div>
 
-          {(videoCompleted || theoryCompleted || practicalCompleted) && (
+          {/* Conditional rendering of tabs based on video completion */}
+          {videoCompleted && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
               <div className="border-b border-gray-200 dark:border-gray-700">
                 <nav className="flex" aria-label="Tabs">
@@ -243,21 +267,41 @@ export default function LessonPage() {
                   >
                     Coding Challenge {practicalCompleted && "✓"}
                   </button>
+                  {/* New tab for MCQ Questions */}
+                  <button
+                    onClick={() => setActiveTab("mcq")}
+                    className={`px-4 py-3 text-sm font-medium ${
+                      activeTab === "mcq"
+                        ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
+                        : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                    }`}
+                  >
+                    MCQ Questions {mcqCompleted && "✓"}
+                  </button>
                 </nav>
               </div>
 
               <div className="p-6">
-                {activeTab === "theory" ? (
+                {activeTab === "theory" && (
                   <TheoryQuestions
                     questions={questions.filter((i) => i.type === "theory")}
                     onComplete={handleTheoryComplete}
                     isCompleted={theoryCompleted}
                   />
-                ) : (
+                )}
+                {activeTab === "practical" && (
                   <CodeChallenge
                     questions={questions.filter((i) => i.type === "practical")}
                     onComplete={handlePracticalComplete}
                     isCompleted={practicalCompleted}
+                  />
+                )}
+                {/* Render MCQQuestions component when 'mcq' tab is active */}
+                {activeTab === "mcq" && (
+                  <MCQQuestions
+                    questions={questions.filter((i) => i.type === "mcq")}
+                    onComplete={handleMCQComplete}
+                    isCompleted={mcqCompleted}
                   />
                 )}
               </div>
@@ -267,10 +311,10 @@ export default function LessonPage() {
       </div>
 
       <ReportModal
-        report={report?.report||""}
+        report={report?.report || ""}
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
       />
     </div>
-  )
+  );
 }

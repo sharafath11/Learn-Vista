@@ -14,7 +14,7 @@ Instructions:
 Respond in this format for each:
 {
   "question": "<text>",
-  "type": "theory" | "practical",
+  "type": "theory" | "practical" | "mcq",
   "studentAnswer": "<text>",
   "isCorrect": true | false,
   "feedback": "<text>",
@@ -24,3 +24,5 @@ Respond in this format for each:
 Here is the data:
 ${JSON.stringify(qa, null, 2)}
 `;
+
+

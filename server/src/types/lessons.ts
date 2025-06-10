@@ -26,21 +26,28 @@ export interface ILessonCreationData extends Partial<ILesson> {
 }
 
 
+
+
+export type QuestionType = 'theory' | 'practical' | 'mcq';
+
 export interface IQuestions extends Document {
-  
   lessonId: string;
   question: string;
-  type:"theory"|"practical"
+  type: QuestionType;
   isCompleted: boolean;
+  options?: string[]; 
+  correctAnswer?: string | string[]; 
 }
+
 export interface LessonQuestionEvaluation {
   question: string;
-  type: 'theory' | 'practical';
-  studentAnswer: string;
+  type: QuestionType;
+  studentAnswer: string | string[];
   isCorrect: boolean;
   feedback: string;
   marks: number;
 }
+
 export interface ILessonReport extends Document{
   userId: ObjectId|string;
   mentorId:ObjectId|string;
