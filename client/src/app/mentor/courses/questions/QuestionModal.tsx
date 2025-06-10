@@ -6,14 +6,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { BookOpen, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { IQuestions, qustionType } from "@/src/types/lessons";
+import { IQuestions, QuestionType } from "@/src/types/lessons";
 
 interface QuestionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   question: IQuestions | null;
-  type: qustionType;
-  onSave: (question: Omit<IQuestions, "id" | "isCompleted" | "lessonId">) => void;
+  type: QuestionType;
+  onSave: (QuestionType: Omit<IQuestions, "id" | "isCompleted" | "lessonId">) => void;
 }
 
 export function QuestionModal({ open, onOpenChange, question, type, onSave }: QuestionModalProps) {

@@ -146,7 +146,7 @@ export default function LessonPage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex justify-between items-center mb-6">
-          <Button variant="outline" onClick={() => router.push("/")} className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => router.push(`/user/sessions/${lesson.courseId}`)} className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Lessons
           </Button>

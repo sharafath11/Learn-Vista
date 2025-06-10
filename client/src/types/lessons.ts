@@ -12,18 +12,20 @@ export interface ILessons {
   updatedAt?: Date;
 }
 
-export type qustionType="theory"|"practical"
-export interface IQuestions  {
-  id:string
+export type QuestionType = "theory" | "practical" | "mcq";
+export interface IQuestions {
+  id: string;
   lessonId: string;
   question: string;
-  type:"theory"|"practical"
+  type: QuestionType;
   isCompleted: boolean;
+  options?: string[]; 
+  correctAnswer?: string | string[]; 
 }
 export type AnswerWithType = {
   question: string;
-  answer: string;
-  type: 'theory' | 'practical';
+  answer: string | string[]; 
+  type: QuestionType;
 };
 
 export interface IComment  {

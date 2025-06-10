@@ -60,15 +60,15 @@ const Page = () => {
     setLoading(true);
 
     let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
-    if (filters.sort === "newest") {
+    if (filters.sort === "ASC") {
       mongoSort = { createdAt: -1 };
-    } else if (filters.sort === "oldest") {
+    } else if (filters.sort === "DESC") {
       mongoSort = { createdAt: 1 };
     }
 
     const res = await UserAPIMethods.fetchAllCourse({
       page,
-      limit: 1,
+      limit: 3,
       search: filters.search || '',
       filters: {
         category: filters.category === 'All' ? '' : filters.category,
@@ -183,7 +183,7 @@ console.log("courseId",user?.enrolledCourses)
                 transition={{ duration: 0.4 }}
               >
                 <Card className="h-full flex flex-col overflow-hidden rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-transform duration-300 transform hover:-translate-y-1">
-                  <div className="relative h-52 w-full cursor-pointer group" onClick={() => handleDetailsClick(course)}>
+                  <div className="relative h-46 w-full cursor-pointer group" onClick={() => handleDetailsClick(course)}>
                     <Image
                       src={course.thumbnail || "/images/course-placeholder.jpg"}
                       alt={course.title}
