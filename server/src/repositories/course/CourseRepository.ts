@@ -7,13 +7,14 @@ import { IMentor } from '../../types/mentorTypes';
 import { IAdminCategoriesRepostory } from '../../core/interfaces/repositories/admin/IAdminCategoryRepository';
 import { TYPES } from '../../core/types';
 import { ObjectId } from 'mongoose';
+import { ICategoriesRepository } from '../../core/interfaces/repositories/course/ICategoriesRepository';
 
 interface CourseQueryParams {
   page?: number;
   limit?: number;
   search?: string;
   filters?: {
-    category?: string;
+    categoryId?: string;
   };
   sort?: {
     [key: string]: 1 | -1;
@@ -23,7 +24,7 @@ interface CourseQueryParams {
 @injectable()
 export class CourseRepository extends BaseRepository<ICourse, ICourse> implements ICourseRepository {
   constructor(
-    @inject(TYPES.AdminCategoriesRepository) private _catRepo: IAdminCategoriesRepostory
+    @inject(TYPES.CategoriesRepository) private _catRepo: ICategoriesRepository
   ) {
     super(CourseModel);
   }
@@ -66,10 +67,15 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
     if (search) {
       query.title = { $regex: search, $options: 'i' };
     }
-    if (filters?.category && filters.category !== 'All') {
-      const categoryDoc = await this._catRepo.findOne({ title: filters.category });
+    console.log(filters?.categoryId)
+    if (filters?.categoryId && filters.categoryId !== 'All') {
+      console.log("abcd");
+      
+      const categoryDoc = await this._catRepo.findById(filters.categoryId);
+     
+      
       if (categoryDoc) {
-        query.categoryId = categoryDoc._id;
+        query.categoryId = categoryDoc.id;
       } else {
         return { data: [], total: 0, totalPages: 0 };
       }

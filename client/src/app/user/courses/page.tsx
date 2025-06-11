@@ -18,6 +18,7 @@ import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
+import { ICategory } from "@/src/types/categoryTypes"
 
 
 const Page = () => {
@@ -33,6 +34,14 @@ const Page = () => {
   })
   const [selectedCourse, setSelectedCourse] = useState<IPopulatedCourse | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  useEffect(() => {
+    fetchCategories()
+  },[])
+  const fetchCategories = async () => {
+    const res = await UserAPIMethods.getCategories();
+    res.ok?setCategories(res.data):showErrorToast(res.msg)
+  }
   const { user, setUser, fetchLessons } = useUserContext();
  
   const handleStartNewCourse = async (id: string) => {
@@ -71,7 +80,7 @@ const Page = () => {
       limit: 3,
       search: filters.search || '',
       filters: {
-        category: filters.category === 'All' ? '' : filters.category,
+        categoryId: filters.category === 'All' ? '' : filters.category,
       },
       sort: mongoSort,
     });
@@ -102,15 +111,7 @@ const Page = () => {
     setFilters(newFilters);
   };
 
-  const availableCategories = useMemo(() => {
-    const categories = new Set<string>();
-    courses.forEach(c => {
-      if (c.categoryId?.title) {
-        categories.add(c.categoryId.title);
-      }
-    });
-    return Array.from(categories);
-  }, [courses]);
+  
 console.log("courseId",user?.enrolledCourses)
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-16 sm:py-20">
@@ -159,7 +160,7 @@ console.log("courseId",user?.enrolledCourses)
 
         <div className="mb-12 w-100">
           <CourseFilter
-            categories={availableCategories}
+            categories={categories}
             onFilter={handleFilterChange}
           />
         </div>

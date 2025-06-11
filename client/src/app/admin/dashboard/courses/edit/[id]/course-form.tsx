@@ -21,12 +21,13 @@ import { ICategory } from "@/src/types/categoryTypes"
 import { IMentor } from "@/src/types/mentorTypes"
 
 export function CourseFormDesign({ courseId }: { courseId: string }) {
-  const { courses, avilbleMentors, cat, setCourses } = useAdminContext();
-  const [category, setCategories] = useState<ICategory[]>([]);
- const [mentors, setMentors] = useState<IMentor[]>();
+  const { courses, avilbleMentors,setCourses ,categories} = useAdminContext();
+  const [mentors, setMentors] = useState<IMentor[]>();
    useEffect(() => {
      fetchAllMentors()
-   },[])
+     
+   }, [])
+
    const fetchAllMentors = async () => {
      const res = await AdminAPIMethods.getAllMentor();
      if (res.ok) {
@@ -39,7 +40,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
   if (!course) {
     return <div>Loading...</div>
   }
- const router=useRouter()
+  const router=useRouter()
   const [formData, setFormData] = useState({
     title: course?.title || "",
     description: course?.description || "",
@@ -54,8 +55,6 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
   })
 
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
-
- 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target
@@ -108,7 +107,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
     
     }
   }
-
+ 
   return (
     <form className="space-y-6 p-4" onSubmit={handleSubmit}>
       <Tabs defaultValue="basic" className="w-full">
@@ -154,7 +153,6 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                   <Select 
                     value={formData.mentorId}
                     onValueChange={(value) => handleSelectChange("mentorId", value)}
-                    // defaultValue={course.mentorId.username}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select mentor">
@@ -176,15 +174,14 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                   <Select 
                     value={formData.categoryId}
                     onValueChange={(value) => handleSelectChange("categoryId", value)}
-                    defaultValue={course.categoryId.title}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select category">
-                        {category.find(c => c.id === formData.categoryId)?.title || "Select category"}
+                        {categories?.find(c => c.id === formData.categoryId)?.title || "Select category"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {cat.map((ca) => (
+                      {categories?.map((ca) => (
                        ca.isBlock?"":( <SelectItem key={ca.id} value={ca.id as string}>
                         {ca.title}
                       </SelectItem>)

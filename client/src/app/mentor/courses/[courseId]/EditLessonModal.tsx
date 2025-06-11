@@ -55,8 +55,23 @@ interface EditLessonModalProps {
   setOpen: (open: boolean) => void;
   selectedLesson: ILessons | null;
   onLessonUpdated: () => void;
-  courseId: string;
+  courseId: string; // Keep if still needed for API calls
 }
+
+// Helper function to format duration (from AddLessonModal)
+const formatDuration = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+
+  const pad = (num: number) => num.toString().padStart(2, '0');
+
+  if (hours > 0) {
+    return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
+  }
+  return `${pad(minutes)}:${pad(remainingSeconds)}`;
+};
+
 
 export function EditLessonModal({
   open,
@@ -83,6 +98,8 @@ export function EditLessonModal({
   const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  const videoUrlValue = form.watch("videoUrl"); // Watch videoUrl for conditional rendering/disabling
+
   useEffect(() => {
     if (selectedLesson && open) {
       form.reset({
@@ -98,10 +115,12 @@ export function EditLessonModal({
       setThumbnailPreviewUrl(selectedLesson.thumbnail || null);
       setThumbnailFile(null);
     } else if (!open) {
+      // Reset state when modal closes
       form.reset();
       setUploadedS3VideoUrl(null);
       setThumbnailFile(null);
       setThumbnailPreviewUrl(null);
+      setIsUploadingVideo(false); // Ensure upload state is reset
     }
   }, [selectedLesson, open, form]);
 
@@ -111,14 +130,16 @@ export function EditLessonModal({
 
     setIsUploadingVideo(true);
     setUploadedS3VideoUrl(null);
+    form.setValue("duration", ""); // Clear duration when new video is selected
 
     try {
       const res = await MentorAPIMethods.getS3DirectUploadUrl(file.name, file.type);
-      if (!res.ok || !res.data || !res.data.signedUploadUrl || !res.data.publicVideoUrl) {
+      if (!res.ok || !res.data?.signedUploadUrl || !res.data?.publicVideoUrl) {
         throw new Error(res.error?.message || "Failed to get S3 URLs from backend.");
       }
 
-      const { signedUploadUrl, publicVideoUrl } = res.data;
+      const { signedUploadUrl, publicVideoUrl, signedViewUrl } = res.data; // Get signedViewUrl for duration check
+
       const uploadResponse = await fetch(signedUploadUrl, {
         method: 'PUT',
         body: file,
@@ -132,13 +153,52 @@ export function EditLessonModal({
         throw new Error(`Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`);
       }
 
-      form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
-      setUploadedS3VideoUrl(publicVideoUrl);
-      showSuccessToast("Video uploaded!");
+      // --- Video Duration Calculation Logic (copied from AddLessonModal) ---
+      const tempVideo = document.createElement("video");
+      tempVideo.src = signedViewUrl;
+      tempVideo.preload = "metadata";
+      tempVideo.style.display = "none"; // Hide the video element
+
+      const handleMetadataLoaded = () => {
+        console.log("Video metadata loaded successfully. Duration:", tempVideo.duration);
+        const durationInSeconds = tempVideo.duration;
+        const formattedDuration = formatDuration(durationInSeconds);
+        form.setValue("duration", formattedDuration, { shouldValidate: true });
+        form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
+        setUploadedS3VideoUrl(publicVideoUrl);
+        showSuccessToast("Video uploaded and duration fetched!");
+        tempVideo.removeEventListener('loadedmetadata', handleMetadataLoaded);
+        tempVideo.removeEventListener('error', handleVideoError);
+        if (document.body.contains(tempVideo)) {
+          document.body.removeChild(tempVideo);
+        }
+      };
+
+      const handleVideoError = (e: Event) => {
+        console.error("tempVideo error event:", e);
+        console.error("tempVideo networkState:", tempVideo.networkState);
+        console.error("tempVideo error object:", (tempVideo as HTMLVideoElement).error);
+        showErrorToast("Could not retrieve video duration. Video might be corrupted or unsupported.");
+        form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
+        setUploadedS3VideoUrl(publicVideoUrl);
+        tempVideo.removeEventListener('loadedmetadata', handleMetadataLoaded);
+        tempVideo.removeEventListener('error', handleVideoError);
+        if (document.body.contains(tempVideo)) {
+          document.body.removeChild(tempVideo);
+        }
+      };
+
+      tempVideo.addEventListener('loadedmetadata', handleMetadataLoaded);
+      tempVideo.addEventListener('error', handleVideoError);
+
+      document.body.appendChild(tempVideo);
+      // --- End Video Duration Calculation Logic ---
+
     } catch (error: any) {
       console.error("Video upload error:", error);
       showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
       form.setValue("videoUrl", "");
+      form.setValue("duration", ""); // Clear duration on upload failure
       setUploadedS3VideoUrl(null);
     } finally {
       setIsUploadingVideo(false);
@@ -150,6 +210,9 @@ export function EditLessonModal({
     if (!currentVideoUrl) return;
 
     try {
+      // Optional: If you want to delete from S3 only if it was a newly uploaded video
+      // and not the original one associated with selectedLesson.
+      // For simplicity, this example deletes any currently set videoUrl.
       const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl);
       if (deleteResult.ok) {
         showSuccessToast("Video removed from S3.");
@@ -161,6 +224,7 @@ export function EditLessonModal({
       showErrorToast(`Delete Error: ${error.message || "Unexpected error."}`);
     } finally {
       form.setValue("videoUrl", "");
+      form.setValue("duration", ""); // Also clear duration
       setUploadedS3VideoUrl(null);
     }
   };
@@ -205,6 +269,13 @@ export function EditLessonModal({
       return;
     }
 
+    // Add validation similar to AddLessonModal for video/duration consistency
+    if (!data.videoUrl && (data.duration || data.thumbnail)) {
+        showErrorToast("Upload a video or clear the duration/thumbnail if no video is intended.");
+        return;
+    }
+
+
     setIsSaving(true);
 
     const formData = new FormData();
@@ -217,7 +288,8 @@ export function EditLessonModal({
 
     if (thumbnailFile instanceof File) {
       formData.append("thumbnail", thumbnailFile);
-    } else if (!thumbnailPreviewUrl && selectedLesson.thumbnail) {
+    } else if (!thumbnailPreviewUrl && selectedLesson.thumbnail && !data.thumbnail) {
+        // This condition correctly handles clearing the thumbnail if it was present
         formData.append("clearThumbnail", "true");
     } else if (data.thumbnail && data.thumbnail.startsWith("http")) {
         formData.append("thumbnailUrl", data.thumbnail);
@@ -297,7 +369,7 @@ export function EditLessonModal({
                     accept="video/*"
                     onChange={handleVideoUpload}
                     className="w-full"
-                    disabled={isUploadingVideo}
+                    disabled={isUploadingVideo || isSaving}
                   />
                   {isUploadingVideo && (
                     <div className="text-sm text-muted-foreground flex items-center gap-2">
@@ -321,6 +393,7 @@ export function EditLessonModal({
                     size="sm"
                     onClick={handleRemoveVideo}
                     className="text-red-500 hover:bg-red-50"
+                    disabled={isSaving}
                   >
                     Remove
                   </Button>
@@ -337,9 +410,16 @@ export function EditLessonModal({
                 <FormItem>
                   <FormLabel>Duration</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., 10 min or 01:25" {...field} />
+                    <Input
+                      placeholder="e.g., 01:25 or 00:10:30"
+                      {...field}
+                      readOnly={!!videoUrlValue} // Make read-only if videoUrl is present
+                      disabled={isUploadingVideo || isSaving}
+                    />
                   </FormControl>
-                  <FormDescription>Estimated video duration.</FormDescription>
+                  <FormDescription>
+                    {videoUrlValue ? "Automatically fetched from video." : "Estimated video duration (MM:SS or HH:MM:SS)."}
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -356,20 +436,22 @@ export function EditLessonModal({
                         placeholder="Optional thumbnail URL"
                         {...field}
                         className="flex-1"
-                        disabled={!!thumbnailFile}
+                        disabled={!!thumbnailFile || isUploadingVideo || isSaving}
                         value={thumbnailFile ? "" : (field.value || "")}
                       />
                       <input
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        id="thumbnail-upload"
+                        id="thumbnail-edit-upload" // Changed ID to avoid conflict with AddModal
                         onChange={handleThumbnailChange}
+                        disabled={isUploadingVideo || isSaving}
                       />
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => document.getElementById("thumbnail-upload")?.click()}
+                        onClick={() => document.getElementById("thumbnail-edit-upload")?.click()}
+                        disabled={isUploadingVideo || isSaving}
                       >
                         <FileImage className="h-4 w-4" />
                       </Button>
@@ -379,7 +461,8 @@ export function EditLessonModal({
                           variant="ghost"
                           size="icon"
                           onClick={clearThumbnail}
-                          className="text-red-500 hover.bg-red-50"
+                          className="text-red-500 hover:bg-red-50"
+                          disabled={isUploadingVideo || isSaving}
                         >
                           <XCircle className="h-5 w-5" />
                         </Button>

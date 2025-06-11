@@ -12,11 +12,12 @@ import { useEffect, useState } from "react"
 
 export default function CreateCoursePage() {
   const route=useRouter()
-  const { cat, setCourses } = useAdminContext()
+  const { cat, setCourses,categories } = useAdminContext()
   const [mentors, setMentors] = useState<IMentor[]>();
   useEffect(() => {
     fetchAllMentors()
-  },[])
+  }, [])
+  
   const fetchAllMentors = async () => {
     const res = await AdminAPIMethods.getAllMentor();
     if (res.ok) {
@@ -80,7 +81,7 @@ console.log(cat)
 
         <CourseForm
           mentors={mentors?.filter((i)=>!i.isBlock&&i.isVerified&&i.status=="approved")||[]}
-          categories={cat}
+          categories={categories}
           languages={languages}
           onSubmit={handleSubmit}
         />

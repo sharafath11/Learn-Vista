@@ -100,6 +100,8 @@ import { IMentorStudentsController } from '../interfaces/controllers/mentor/Imen
 import { MentorStudentsController } from '../../controllers/mentor/mentorStudents.controller';
 import { IMentorStudentService } from '../interfaces/services/mentor/IMentorStudent.Service';
 import { MentorStudentService } from '../../services/mentor/MentorStudent.Service';
+import { ICategoriesRepository } from '../interfaces/repositories/course/ICategoriesRepository';
+import { CategoriesRepository } from '../../repositories/course/categorieRepository';
 
 const container = new Container();
 
@@ -153,7 +155,8 @@ container.bind<ISessionRepository>(TYPES.SessionRepository).to(SessionRepository
 container.bind<ILessonsRepository>(TYPES.LessonsRepository).to(LessonsRepository)
 container.bind<IQuestionsRepository>(TYPES.QuestionsRepository).to(QuestionsRepository);
 container.bind<ILessonReportRepository>(TYPES.LessonReportRepository).to(LessonReportRepository);
-container.bind<ICommentstRepository>(TYPES.CommentsRepository).to(CommentsRepository)
+container.bind<ICommentstRepository>(TYPES.CommentsRepository).to(CommentsRepository);
+container.bind<ICategoriesRepository>(TYPES.CategoriesRepository).to(CategoriesRepository)
 
 
 export default container;

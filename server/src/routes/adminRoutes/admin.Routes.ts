@@ -28,6 +28,7 @@ route.get("/courses",verifyAdmin, adminCourseController.getCourse.bind(adminCour
 route.patch("/block-courses",verifyAdmin,adminCourseController.blockCourses.bind(adminCourseController))
 route.post("/add-categories", verifyAdmin, adminCourseController.addCategories.bind(adminCourseController));
 route.get("/categories", verifyAdmin, adminCourseController.getAllCategories.bind(adminCourseController));
+route.get("/all/categegory",verifyAdmin,adminCourseController.getCategories.bind(adminCourseController))
 route.patch("/categorie/block", verifyAdmin, adminCourseController.blockCategorie.bind(adminCourseController));
 route.patch("/edit/category",verifyAdmin,adminCourseController.editCategories.bind(adminCourseController))
 

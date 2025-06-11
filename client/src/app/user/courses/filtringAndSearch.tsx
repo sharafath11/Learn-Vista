@@ -10,9 +10,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import useDebounce from '@/src/hooks/useDebouncing'
+import { ICategory } from '@/src/types/categoryTypes'
 
 interface CourseFilterProps {
-  categories: string[]
+  categories: ICategory[]
   onFilter: (filters: { search: string; category: string; sort: string }) => void
 }
 
@@ -43,9 +44,9 @@ const CourseFilter: React.FC<CourseFilterProps> = ({ categories, onFilter }) => 
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="All">All</SelectItem>
-            {categories.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
+            {categories?.map((cat) => (
+              <SelectItem key={cat.id} value={cat.id}>
+                {cat.title}
               </SelectItem>
             ))}
           </SelectContent>

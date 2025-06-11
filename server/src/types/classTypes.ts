@@ -58,7 +58,8 @@ export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId
 }
 
 
-  export interface ICategory extends Document {
+export interface ICategory extends Document {
+   
     title: string;
     description: string;
     isBlock:boolean,

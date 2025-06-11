@@ -201,7 +201,14 @@ if (queryParams.filters?.isBlocked !== undefined) {
       handleControllerError(res, error);
     }
   }
-
+  async getCategories(req: Request, res: Response): Promise<void> {
+    try {
+      const result = await this.adminCourseServices.getAllCategory();
+      sendResponse(res,StatusCode.OK,"fecthed succes flly",true,result)
+    } catch (error) {
+      handleControllerError(res,error)
+    }
+  }
   async blockCourses(req: Request, res: Response): Promise<void> {
     try {
       const { id, status } = req.body;

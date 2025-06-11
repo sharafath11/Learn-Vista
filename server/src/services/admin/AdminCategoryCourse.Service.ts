@@ -58,6 +58,8 @@ class AdminCourseServices implements IAdminCourseServices {
     return {data,total,totalPages};
   }
 
+
+
   async blockCategory(id: string, status: boolean): Promise<void> {
     const updated = await this.categoryRepo.update(id, { isBlock: status });
     if (!updated) throwError("Failed to update category status", StatusCode.INTERNAL_SERVER_ERROR);
@@ -166,16 +168,14 @@ class AdminCourseServices implements IAdminCourseServices {
     return updatedCourse;
   }
    
-  
+  async getAllCategory(): Promise<ICategory[]> {
+    const result = await this.categoryRepo.findAll()
+    return result
+  }
 
 async editCategories(categoryId: string, title: string, description: string): Promise<ICategory> {
     if (!categoryId || !title.trim() || !description.trim()) throwError("Invalid input parameters");
-    const existCategory = await this.categoryRepo.findOne({
-      title: { $regex: new RegExp(`^${title}$`, "i") }
-    });
-    if (existCategory) {
-      throwError("This category already exists", StatusCode.BAD_REQUEST);
-    }
+    
     const updateData = { title, description, updatedAt: new Date() };
     const existingCategory = await this.categoryRepo.findById(categoryId);
     if (!existingCategory) throwError("Category not found");

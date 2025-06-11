@@ -50,5 +50,6 @@ export const TYPES = {
   LessonsRepository: Symbol.for("LessonRepository"),
   QuestionsRepository: Symbol.for("QuestionsRepository"),
   LessonReportRepository: Symbol.for("LessonReportRepository"),
-  CommentsRepository:Symbol.for("CommentsRepository")  
+  CommentsRepository: Symbol.for("CommentsRepository") ,
+  CategoriesRepository:Symbol.for("CategoriesRepository")
 };

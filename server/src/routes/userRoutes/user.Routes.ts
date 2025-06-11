@@ -43,6 +43,7 @@ router.get("/courses/lessons/:courseId",authenticateToken,userLessonsController.
 router.get("/lesson/questions/:lessonId", authenticateToken, userLessonsController.getQuestions.bind(userLessonsController))
 router.post("/lessonDetils", authenticateToken, userLessonsController.getAllDetilsInLesson.bind(userLessonsController));
 router.post("/lesson/report", authenticateToken, userLessonsController.getLessonReport.bind(userLessonsController));
+router.get("/categories",userCourseController.getCategories.bind(userCourseController))
 router.post("/lesson/comment",authenticateToken,userLessonsController.saveComments.bind(userLessonsController))
 
 export default router;

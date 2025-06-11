@@ -41,13 +41,26 @@ export class UserCourseController implements IUserCourseController {
            console.log(" Default Sort: createdAt DESC");
          }
      
-            const result = await this._userCourseService.getAllCourses(page,limit,search,sort);
+          const result = await this._userCourseService.getAllCourses(
+  page,
+  limit,
+  search,
+  queryParams.filters,
+  sort,
+);
             sendResponse(res, StatusCode.OK, "Courses Fetched", true, result);
         } catch (error) {
             handleControllerError(res, error);
         }
     }
-
+    async getCategories(req: Request, res: Response): Promise<void> {
+      try {
+        const result=await this._userCourseService.getCategries()
+        sendResponse(res,StatusCode.OK,"Fetced categrios0",true,result)
+      } catch (error) {
+        handleControllerError(res,error)
+      }
+    }
     async updateUserCourse(req: Request, res: Response): Promise<void> {
         try {
             const { courseId } = req.body;

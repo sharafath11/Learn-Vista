@@ -9,6 +9,7 @@ export interface IAdminCourseServices{
         filters?: Record<string, any>,
         sort?: Record<string, 1 | -1>): Promise<{ data: ICourse[]; total: number; totalPages?: number }>;
     addCategories(title: string, discription: string): Promise<ICategory>
+    getAllCategory():Promise<ICategory[]>
     getCategory(page?: number,
         limit?: number,
         search?: string,

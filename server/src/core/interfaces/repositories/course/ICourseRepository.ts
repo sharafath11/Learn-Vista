@@ -10,7 +10,7 @@ export interface ICourseRepository extends IBaseRepository <ICourse, ICourse>{
         page?: number;
         limit?: number;
         search?: string;
-        filters?: { category?: string };
+        filters?: { categoryId?: string };
         sort?: { [key: string]: 1 | -1 };
     }):Promise<{ data: IPopulatedCourse[]; total: number; totalPages: number }>
 

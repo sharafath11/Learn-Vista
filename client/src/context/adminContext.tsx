@@ -21,6 +21,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [mentors, setMentors] = useState<IMentor[]>([]);
   const [avilbleMentors,setAvilbleMentors]=useState<IMentor[]>([])
   const [cat, setCat] = useState<ICategory[]>([]);
+  const [categories,setCategories]=useState<ICategory[]>([])
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
   const [mentorPagination, setMentorPagination] = useState({
     page: 1,
@@ -42,6 +43,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     getCourse();
     fetchUsers({});
     availvleMentorGet()
+    fetchALlCategories()
   }, []);
 
   async function getCategories(params?: {
@@ -78,6 +80,16 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
       showInfoToast(res.msg);
     }
   }
+   const fetchALlCategories = async () => {
+      const res = await AdminAPIMethods.getAllCategories();
+     
+      if (res.ok) {
+        
+        setCategories(res.data)
+        return
+      }
+      showInfoToast(res.msg)
+    }
   const availvleMentorGet = async () => {
     const res = await AdminAPIMethods.fetchMentor({});
     console.log("acdgreghregre",res)
@@ -134,7 +146,8 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         mentorPagination,
         getCourse,
         getCategories,
-        avilbleMentors
+        avilbleMentors,
+        categories:categories.filter((ca)=>!ca.isBlock)
       }}
     >
       {children}

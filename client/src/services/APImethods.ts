@@ -20,7 +20,8 @@ export const UserAPIMethods = {
   logout: () => post("/logout", {}),
   forgotPassword: (email: string) => post("/forgot-password", { email }),
   resetPassword: (token: string, password: string) => post("/reset-password", { token, password }),
-  changePassword:(password:string,newPassword:string)=>post("/change/password",{password,newPassword}),
+  changePassword: (password: string, newPassword: string) => post("/change/password", { password, newPassword }),
+  getCategories:()=>get("/categories"),
   fetchAllCourse: (params: {
     page?: number;
     limit?: number;
@@ -76,7 +77,8 @@ export const AdminAPIMethods = {
     search?: string;
     filters?: Record<string, any>;
     sort?: Record<string, 1 | -1>
-  }) => get("/admin/categories",{params}),
+  }) => get("/admin/categories", { params }),
+  getAllCategories:()=>get("/admin/all/categegory"),
   editCategory: (id: string, title: string, discription: string) =>
     patch(`/admin/edit/category`, { id, title, discription }),
     blockCategorie:(id:string,status:boolean)=>patch("/admin/categorie/block",{id,status}),

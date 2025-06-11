@@ -4,31 +4,37 @@ import { IUserCourseService } from "../../core/interfaces/services/user/IUserCou
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import { ICourse, IPopulatedCourse } from "../../types/classTypes";
+import { ICategory, ICourse, IPopulatedCourse } from "../../types/classTypes";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
 
 @injectable()
 export class UserCourseService implements IUserCourseService {
   constructor(
     @inject(TYPES.CourseRepository) private _baseCourseRepo: ICourseRepository,
-    @inject(TYPES.UserRepository) private _baseUserRepo: IUserRepository
+    @inject(TYPES.UserRepository) private _baseUserRepo: IUserRepository,
+    @inject(TYPES.CategoriesRepository) private _categoriesRepo :ICategoriesRepository
   ) {}
 
-  async getAllCourses( page: number = 1,
+  async getAllCourses(
+      page: number = 1,
       limit: number = 1,
       search?: string,
-      filters: FilterQuery<IPopulatedCourse> = {},
-      sort: Record<string, 1 | -1> = { createdAt: -1 }):Promise<{ data: IPopulatedCourse[]; total: number; totalPages?: number }> {
-     console.log("filter",filters,"sort",sort)   
+      filters: FilterQuery<IPopulatedCourse> = {}, 
+      sort: Record<string, 1 | -1> = { createdAt: -1 }
+  ):Promise<{ data: IPopulatedCourse[]; total: number; totalPages?: number }> {
+     console.log("filter (received param):", filters,"sort (received param):", sort)
+
     const queryParams = {
           page,
           limit,
           search,
-          filters,
-          sort:filters
+          filters,   
+          sort: sort 
         };
-       
+
+     console.log("queryParams for repo:", queryParams) 
    
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(
          queryParams 
@@ -59,5 +65,9 @@ export class UserCourseService implements IUserCourseService {
   }
 });
 
+  }
+  async getCategries(): Promise<ICategory[]> {
+    const result = await this._categoriesRepo.findAll();
+    return result
   }
 }
