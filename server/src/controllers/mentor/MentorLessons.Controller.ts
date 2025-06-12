@@ -12,6 +12,7 @@ import { decodeToken } from "../../utils/JWTtoken";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "../../config/AWS";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { STATUS_CODES } from "http";
 dotenv.config();
 
 
@@ -278,6 +279,24 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
             console.log(questionId,req.body)
             await this._mentorLessonsSerive.editQuestionService(questionId, req.body);
             sendResponse(res,StatusCode.OK,"Question Edited Succesfully",true)
+        } catch (error) {
+            handleControllerError(res,error)
+        }
+    }
+    async getComments(req: Request, res: Response): Promise<void> {
+        try {
+            const lessonId = req.params.lessonId;
+            const result=await this._mentorLessonsSerive.getComments(lessonId)
+            sendResponse(res,StatusCode.OK,"Comments",true,result)
+        } catch (error) {
+           handleControllerError(res,error) 
+        }
+    }
+    async genarateOptions(req: Request, res: Response): Promise<void> {
+        try {
+            const question = req.body.question
+            const result = await this._mentorLessonsSerive.genrateOptions(question);
+            sendResponse(res,StatusCode.OK,"genrate option succes fulyyyyyy",true,result)
         } catch (error) {
             handleControllerError(res,error)
         }

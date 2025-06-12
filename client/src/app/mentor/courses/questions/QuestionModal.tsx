@@ -15,6 +15,8 @@ import { BookOpen, Code, ListChecks } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { IQuestions, QuestionType } from "@/src/types/lessons";
+import { showInfoToast } from "@/src/utils/Toast";
+import { MentorAPIMethods } from "@/src/services/APImethods";
 
 interface QuestionModalProps {
   open: boolean;
@@ -35,6 +37,8 @@ export function QuestionModal({
     question: "",
     options: [] as string[],
   });
+
+  const [loadingOptions, setLoadingOptions] = useState(false);
 
   useEffect(() => {
     if (question) {
@@ -83,14 +87,44 @@ export function QuestionModal({
     setFormData({ question: "", options: [] });
   };
 
+  const handleGenerateOptions = async () => {
+  if (!formData.question.trim()) {
+    showInfoToast("Please enter a question first.");
+    return;
+  }
+
+  setLoadingOptions(true);
+
+  const res = await MentorAPIMethods.generateOptions(formData.question.trim());
+
+  if (!res.ok) {
+    showInfoToast(res.msg);
+    setLoadingOptions(false);
+    return;
+  }
+
+  const data = await res.data;
+
+  if (!Array.isArray(data)) {
+    showInfoToast("Invalid option format received from server.");
+    setLoadingOptions(false);
+    return;
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    options: data,
+  }));
+
+  setLoadingOptions(false);
+};
+
+
+
   const isEditing = !!question;
 
   const Icon =
-    type === "theory"
-      ? BookOpen
-      : type === "practical"
-      ? Code
-      : ListChecks;
+    type === "theory" ? BookOpen : type === "practical" ? Code : ListChecks;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -122,7 +156,10 @@ export function QuestionModal({
               placeholder={`Enter your ${type} question here...`}
               value={formData.question}
               onChange={(e) =>
-                setFormData((prev) => ({ ...prev, question: e.target.value }))
+                setFormData((prev) => ({
+                  ...prev,
+                  question: e.target.value,
+                }))
               }
               className="min-h-[100px]"
               required
@@ -153,9 +190,20 @@ export function QuestionModal({
                   </Button>
                 </div>
               ))}
-              <Button type="button" variant="outline" onClick={addOption}>
-                + Add Option
-              </Button>
+
+              <div className="flex flex-wrap gap-2 mt-2">
+                <Button type="button" variant="outline" onClick={addOption}>
+                  + Add Option
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleGenerateOptions}
+                  disabled={loadingOptions}
+                >
+                  {loadingOptions ? "Generating..." : "🎲 Generate Random Options"}
+                </Button>
+              </div>
             </div>
           )}
 

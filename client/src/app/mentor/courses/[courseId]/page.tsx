@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Pencil, PlusCircle, PlayCircle } from "lucide-react";
+import { ArrowLeft, Pencil, PlusCircle, PlayCircle, MessageSquare } from "lucide-react"; // Import MessageSquare
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import Image from "next/image";
@@ -16,7 +16,7 @@ import { ILessons } from "@/src/types/lessons";
 import { ICourse } from "@/src/types/courseTypes";
 import { AddLessonModal } from "./addLessonModal";
 import { EditLessonModal } from "./EditLessonModal";
-
+import { CommentsModal } from "./CommentsModal";
 export default function CourseLessonsPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -24,6 +24,10 @@ export default function CourseLessonsPage() {
   const [selectedLesson, setSelectedLesson] = useState<ILessons | null>(null);
   const [showVideoPlayerModal, setShowVideoPlayerModal] = useState(false);
   const [videoToPlay, setVideoToPlay] = useState<string | null>(null);
+
+  // New state for comments modal
+  const [showCommentsModal, setShowCommentsModal] = useState(false);
+  const [lessonIdForComments, setLessonIdForComments] = useState<string | null>(null);
 
   const { courses } = useMentorContext();
   const params = useParams();
@@ -54,18 +58,21 @@ export default function CourseLessonsPage() {
     setShowEditModal(true);
   };
 
-  const handlePlayVideo = async (lessonId: string,videoUrl:string) => {
-   
-    const res = await MentorAPIMethods.getSignedVideoUrl(lessonId as string,videoUrl);
-    console.log("checking purpeose",res.data.signedUrl)
+  const handlePlayVideo = async (lessonId: string, videoUrl: string) => {
+    const res = await MentorAPIMethods.getSignedVideoUrl(lessonId as string, videoUrl);
+    console.log("checking purpose", res.data.signedUrl);
     if (res.ok) {
-       setVideoToPlay(res.data.signedUrl);
+      setVideoToPlay(res.data.signedUrl);
       setShowVideoPlayerModal(true);
     } else {
       showErrorToast("No video available for this lesson.");
     }
-    
-      
+  };
+
+  // New handler for showing comments
+  const handleShowComments = (lessonId: string) => {
+    setLessonIdForComments(lessonId);
+    setShowCommentsModal(true);
   };
 
   const handleLessonActionCompleted = () => {
@@ -108,120 +115,72 @@ export default function CourseLessonsPage() {
         <h2 className="text-xl font-semibold mb-4">Lessons</h2>
 
         {lessons.length > 0 ? (
-
           <div className="space-y-4">
-
             {lessons.map((lesson) => (
-
               <Card key={lesson.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-
                 <div className="flex flex-col sm:flex-row">
-
-                <div 
-
-  className="sm:w-32 h-20 overflow-hidden relative"
-
-  onClick={() => handlePlayVideo(lesson.id,lesson.videoUrl)}
-
->
-
-  <Image
-
-    src={lesson.thumbnail || "/placeholder.svg"}
-
-    alt={lesson.title}
-
-    className="w-full h-full object-cover"
-
-    width={128}
-
-    height={80}
-
-    priority={false}
-
-  />
-
-  
-
-  <div className="absolute inset-0 flex items-center justify-center bg-opacity-20 cursor-pointer">
-
-  <div className="w-12 h-12 rounded-fullbg-opacity-50 flex items-center justify-center">
-
-    <PlayCircle className="h-6 w-6 text-white opacity-90" />
-
-  </div>
-
-</div>
-
-
-
-</div>
-
-
-
-                  <div className="flex-1 p-4">
-
-                    <div className="flex justify-between items-start">
-
-                      <div>
-
-                        <h3 className="font-medium">{lesson.title}</h3>
-
-                        <p className="text-sm text-muted-foreground mt-1">{lesson.description}</p>
-
+                  <div
+                    className="sm:w-32 h-20 overflow-hidden relative"
+                    onClick={() => handlePlayVideo(lesson.id, lesson.videoUrl)}
+                  >
+                    <Image
+                      src={lesson.thumbnail || "/placeholder.svg"}
+                      alt={lesson.title}
+                      className="w-full h-full object-cover"
+                      width={128}
+                      height={80}
+                      priority={false}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-opacity-20 cursor-pointer">
+                      <div className="w-12 h-12 rounded-fullbg-opacity-50 flex items-center justify-center">
+                        <PlayCircle className="h-6 w-6 text-white opacity-90" />
                       </div>
-
-                      <div className="flex space-x-2">
-
-                        <Button
-
-                          variant="ghost"
-
-                          size="icon"
-
-                          onClick={(e) => {
-
-                            e.stopPropagation();
-
-                            handleEditLessonClick(lesson);
-
-                          }}
-
-                        >
-
-                          <Pencil className="h-4 w-4" />
-
-                        </Button>
-
-                        <Link
-
-                          href={`/mentor/courses/questions/${lesson.id}`}
-
-                          onClick={(e) => e.stopPropagation()}
-
-                        >
-
-                          <Button variant="outline" size="sm">
-
-                            Manage Questions
-
-                          </Button>
-
-                        </Link>
-
-                      </div>
-
                     </div>
-
                   </div>
 
+                  <div className="flex-1 p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-medium">{lesson.title}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{lesson.description}</p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditLessonClick(lesson);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Link
+                          href={`/mentor/courses/questions/${lesson.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Button variant="outline" size="sm">
+                            Manage Questions
+                          </Button>
+                        </Link>
+                        {/* Show Comments Button */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent video play click
+                            handleShowComments(lesson.id);
+                          }}
+                        >
+                          <MessageSquare className="mr-2 h-4 w-4" />
+                          Show Comments
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
               </Card>
-
             ))}
-
-
 
             <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white" onClick={handleAddLessonClick}>
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -284,6 +243,15 @@ export default function CourseLessonsPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Comments Modal */}
+      {lessonIdForComments && ( // Only render if a lesson ID is set for comments
+        <CommentsModal
+          open={showCommentsModal}
+          setOpen={setShowCommentsModal}
+          lessonId={lessonIdForComments}
+        />
+      )}
     </div>
   );
 }

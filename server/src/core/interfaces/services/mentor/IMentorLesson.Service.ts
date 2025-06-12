@@ -1,5 +1,5 @@
 import { ObjectId } from "mongoose";
-import { ILesson, IQuestions } from "../../../../types/lessons";
+import { IComment, ILesson, IQuestions } from "../../../../types/lessons";
 
 export interface IMentorLessonService {
   getLessons(courseId: string | ObjectId,mentorId:string|ObjectId): Promise<ILesson[]>;
@@ -8,5 +8,7 @@ export interface IMentorLessonService {
   deleteLesson?(lessonId: string | ObjectId): Promise<void>; 
   addQuestionService(lessonId: string | ObjectId, data: IQuestions): Promise<IQuestions>;
   editQuestionService(qustionId: string, data: Partial<IQuestions>): Promise<void>,
-  getQuestionService(lessonId:string|ObjectId):Promise<IQuestions[]>
+  getQuestionService(lessonId: string | ObjectId): Promise<IQuestions[]>
+  getComments(lessonId: string | ObjectId): Promise<IComment[]>
+  genrateOptions(question:string):Promise<string []>
 }

@@ -105,6 +105,7 @@ export const MentorAPIMethods = {
   getS3DirectUploadUrl: (fileName: string, fileType: string) => post("/mentor/generate-s3-upload-url", { fileName, fileType }),
   deleteS3file: (fileUrl: string) => post("/mentor/delete-s3-file", { fileUrl }),
   // uploadFileToS3:(uploadURL: string, file: File)=>post("mentor/uploadfiles-to-s3",{uploadURL}),
+  getCommentsByLessonId:(lessonId:string)=>get(`/mentor/comments/${lessonId}`),
   getSignedVideoUrl: (lessonId: string, videoUrl: string) => post(`/mentor/play-video`, { lessonId, videoUrl }),
   addQustion: (data:Omit<IQuestions, "id" | "isCompleted">) => post("/mentor/lessons/add/questions", data),
   getQustion: (lessonId: string) => get(`/mentor/lesson/questions/${lessonId}`),
@@ -126,5 +127,6 @@ export const MentorAPIMethods = {
     },
   });
 },
-  blockStudentInCourse: (courseId: string, userId: string, status: boolean) => patch("/mentor/student/block", { courseId, userId, status })
+  blockStudentInCourse: (courseId: string, userId: string, status: boolean) => patch("/mentor/student/block", { courseId, userId, status }),
+  generateOptions:(question:string)=>post("/mentor/genarate/options",{question})
 } as const;

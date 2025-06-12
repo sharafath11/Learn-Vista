@@ -3,12 +3,15 @@ import { IMentorLessonService } from "../../core/interfaces/services/mentor/IMen
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
 import mongoose, { ObjectId } from "mongoose";
-import { ILesson, ILessonUpdateData, IQuestions } from "../../types/lessons";
+import { IComment, ILesson, ILessonUpdateData, IQuestions } from "../../types/lessons";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
+import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
+import { getGemaniResponse } from "../../config/gemaniAi";
+import { buildMcqOptionsPrompt } from "../../utils/Rportprompt";
 
 
 @injectable()
@@ -16,7 +19,8 @@ export class MentorLessonService implements IMentorLessonService {
     constructor(
         @inject(TYPES.LessonsRepository) private _lessonRepo: ILessonsRepository,
         @inject(TYPES.QuestionsRepository) private _questionRepository: IQuestionsRepository,
-        @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository
+        @inject(TYPES.CourseRepository) private _courseRepo: ICourseRepository,
+        @inject(TYPES.CommentsRepository) private _commentRepo:ICommentstRepository
     ) {}
 
     async getLessons(courseId: string | ObjectId,mentorId:string|ObjectId): Promise<ILesson[]> {
@@ -162,4 +166,41 @@ export class MentorLessonService implements IMentorLessonService {
         const result=await this._questionRepository.create(data)
         return data
     }
+    async getComments(lessonId: string | ObjectId): Promise<IComment[]> {
+        const result = await this._commentRepo.findAll({ lessonId: lessonId });
+        console.log(result)
+        if(!result) throwError("comments denot found ")
+        return result
+    }
+    async genrateOptions(question: string): Promise<string[]> {
+  if (!question.trim()) {
+    throwError("Question is required to generate options.");
+  }
+
+  const prompt = buildMcqOptionsPrompt(question);
+  const resultRaw = await getGemaniResponse(prompt);
+  console.log(resultRaw, "🔍 Raw Gemani Response");
+
+  let parsed: string[];
+
+  try {
+    // Try parsing if it's a JSON string
+    parsed = typeof resultRaw === "string" ? JSON.parse(resultRaw) : resultRaw;
+  } catch {
+    throwError("Invalid format received. Please enter options manually.");
+  }
+
+  if (!Array.isArray(parsed)) {
+    throwError("Currently unable to generate options. Please try again later or enter manually.");
+  }
+
+  const cleaned = parsed.map((opt) => opt.trim()).filter((opt) => opt.length > 0);
+
+  if (cleaned.length < 2) {
+    throwError("Insufficient options generated. Try a more descriptive question.");
+  }
+
+  return cleaned;
+}
+
 }

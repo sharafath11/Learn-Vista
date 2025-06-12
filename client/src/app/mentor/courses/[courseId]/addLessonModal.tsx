@@ -342,7 +342,7 @@ export function AddLessonModal({
                   )}
                 </div>
               </FormControl>
-              <FormDescription>Upload a video directly to S3.</FormDescription>
+              <FormDescription>Upload a video.</FormDescription>
               {uploadedS3VideoUrl && !isUploading && (
                 <div className="flex items-center justify-between mt-2 p-2 border rounded-md bg-green-50/50">
                   <div className="flex items-center gap-2">

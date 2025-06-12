@@ -7,8 +7,10 @@ export interface IMentorLessonsController {
   editLesson(req: Request, res: Response): Promise<void>;
   deleteS3File(req: Request, res: Response): Promise<void>;
   // uploadToS3(req: Request, res: Response): Promise<void>;V
+  getComments(req:Request,res:Response):Promise<void>
   getSignedVideoUrl(req: Request, res: Response): Promise<void>
   getQuestions(req: Request, res: Response): Promise<void>
   addQuestions(req: Request, res: Response): Promise<void>
-  editQuestions(req:Request,res:Response):Promise<void>
+  editQuestions(req: Request, res: Response): Promise<void>
+  genarateOptions(req:Request,res:Response):Promise<void>
 }

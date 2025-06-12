@@ -24,5 +24,20 @@ Respond in this format for each:
 Here is the data:
 ${JSON.stringify(qa, null, 2)}
 `;
+export const buildMcqOptionsPrompt = (question: string) => `
+You are an expert educator and MCQ question designer.
+
+Given a student's question, generate 4 meaningful and distinct MCQ options related to the topic.
+
+Requirements:
+- The options must be clear, concise, and plausible.
+- Only return an array of strings. No explanation or formatting.
+
+Example Output:
+["Option A", "Option B", "Option C", "Option D"]
+
+Now generate options for the following question:
+"${question}"
+`;
 
 

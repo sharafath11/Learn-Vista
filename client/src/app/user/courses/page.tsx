@@ -230,7 +230,7 @@ console.log("courseId",user?.enrolledCourses)
                       <Clock className="h-4 w-4 mr-1 text-gray-500" />
                       <span>{course.sessions?.length || 0} Lessons</span>
                       <span className="mx-2 text-gray-400">•</span>
-                      <span>Total Duration: 10h 30m</span>
+                      <span>{course.courseLanguage}</span>
                     </div>
 
                     <Progress
