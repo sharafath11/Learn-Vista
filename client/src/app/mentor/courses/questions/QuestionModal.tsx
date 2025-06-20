@@ -104,7 +104,7 @@ export function QuestionModal({
   }
 
   const data = await res.data;
-
+   setLoadingOptions(false)
   if (!Array.isArray(data)) {
     showInfoToast("Invalid option format received from server.");
     setLoadingOptions(false);
@@ -118,9 +118,6 @@ export function QuestionModal({
 
   setLoadingOptions(false);
 };
-
-
-
   const isEditing = !!question;
 
   const Icon =

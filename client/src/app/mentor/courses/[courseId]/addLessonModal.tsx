@@ -269,7 +269,7 @@ export function AddLessonModal({
       onLessonAdded();
       setOpen(false);
     } catch (error: any) {
-      showErrorToast(`Failed to add lesson: ${error.message || "Unknown error."}`);
+      
     } finally {
       setIsSaving(false);
     }

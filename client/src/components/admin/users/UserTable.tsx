@@ -24,7 +24,7 @@ export const UserTable = ({
           {currentUsers.length > 0 ? (
             currentUsers.map((user) => (
               
-              <tr key={user._id} className="border-t border-gray-200 hover:bg-gray-50">
+              <tr key={user.id} className="border-t border-gray-200 hover:bg-gray-50">
                 <td className="p-4">
                   <div className="flex items-center">
                     <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden mr-3">
@@ -58,12 +58,12 @@ export const UserTable = ({
                 </td>
                 <td className="p-4">
                   <div className="flex justify-end space-x-2">
-                    <button 
+                    {/* <button 
                       className="p-2 rounded-lg text-blue-600 hover:bg-blue-50 transition-all duration-200"
                       title="View"
                     >
                       <FiEye className="w-5 h-5" />
-                    </button>
+                    </button> */}
                     <button 
                       onClick={() => onBlockToggle?.(user?.id, !user.isBlocked)}
                       className={`p-2 rounded-lg transition-all duration-200 ${

@@ -11,9 +11,13 @@ import { showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 
 export default function UpcomingSessions() {
-  const { allCourses } = useUserContext()
+  const { allCourses,user } = useUserContext()
   const route = useRouter()
   const [currentTime, setCurrentTime] = useState(new Date())
+  console.log(allCourses,user)
+  const courses = allCourses.filter(course =>
+  course.enrolledUsers?.some(userId => userId === user?.id)
+);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,6 +36,7 @@ export default function UpcomingSessions() {
       route.push(`/user/live-classes/${liveId}`)
     }
   };
+  console.log("alll courses",allCourses)
   return (
     <Card className="p-6 bg-white shadow-lg rounded-xl">
       <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b pb-4">Upcoming Sessions</h2>
@@ -46,8 +51,8 @@ export default function UpcomingSessions() {
         </div>
 
         <div className="divide-y divide-gray-100">
-          {allCourses.length > 0 ? (
-            allCourses.map((session) => (
+          {courses.length > 0 ?  (
+            courses?.map((session) => (
               <div 
                 key={session._id} 
                 className="px-6 py-5 grid grid-cols-12 gap-4 items-center bg-white hover:bg-gray-50 transition-colors duration-200"

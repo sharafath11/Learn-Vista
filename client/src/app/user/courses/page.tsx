@@ -1,9 +1,9 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect,} from "react"
 import { motion } from "framer-motion"
-import { Sparkles, Users, Star, Clock } from "lucide-react"
+import { Sparkles, Users,Clock } from "lucide-react"
 import {
   Card, CardHeader, CardTitle, CardDescription,
   CardContent, CardFooter
@@ -330,3 +330,6 @@ console.log("courseId",user?.enrolledCourses)
 }
 
 export default Page
+
+
+

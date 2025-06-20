@@ -25,7 +25,8 @@ export interface ICourse {
   isStreaming?:boolean
   thumbnail?: string;
   thumbnailPreview?: string | null;
-  Lessons:string[]|ILessons[]
+  Lessons: string[] | ILessons[]
+   lessons?:string[]|ILessons[]
   createdAt: Date;
   updatedAt: Date;
 }

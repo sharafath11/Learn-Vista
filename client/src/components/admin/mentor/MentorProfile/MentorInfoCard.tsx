@@ -20,8 +20,8 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
       setCurrentStatus(mentor.status);
       setIsLoading(false);
     }
-  }, [mentor]);
-  
+  }, [mentor]); 
+   console.log(mentor)
   const handleStatusChange = async (status: string) => {
     setIsUpdating(true);
     try {

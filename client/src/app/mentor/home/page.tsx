@@ -1,345 +1,422 @@
-import { Bell, BookOpen, Calendar, ChevronRight, Code, FileText, Search, Settings, Star, Users } from "lucide-react"
+"use client"
+import { useMentorContext } from "@/src/context/mentorContext";
+import {
+  Bell,
+  BookOpen,
+  Calendar,
+  ChevronRight,
+  Code,
+  FileText,
+  Search,
+  Settings,
+  Star,
+  Users,
+  Film, // For live streaming
+  GraduationCap, // For total students
+  ClipboardList, // For course requests/registrations
+  PlusCircle, // For adding new content
+  MessageSquare, // For community/engagement
+} from "lucide-react";
 
-export default function Dashboard() {
-  return (
-    <div className="min-h-screen bg-[#0a0e17] text-white p-6">
+export default function MentorDashboard() {
+  const { courses } = useMentorContext();
+  let totelStudent = 0
+  let totelLessons=0
+  courses.forEach((course) => {
+    totelStudent += course.enrolledUsers?.length ?? 0;
+    
+    // totelLessons += course?.lessons.length ?? 0
+    console.log(totelLessons)
+    
+  });  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 to-blue-950 text-white p-6 md:p-10">
       {/* Header */}
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-sm text-gray-400">Manage your courses, progress, and activities.</p>
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+          <h1 className="text-4xl font-extrabold tracking-tight text-white">Mentor Hub</h1>
+          <p className="text-lg text-blue-200 mt-2">
+            Empowering positive change through mentorship and community.
+          </p>
+        </div>
+        <div className="flex items-center space-x-4 mt-4 md:mt-0">
+          <Button variant="ghost" size="icon" className="text-blue-300 hover:bg-blue-800/20">
+            <Bell className="h-6 w-6" />
+            <span className="sr-only">Notifications</span>
+          </Button>
+          
+        </div>
       </header>
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-[#131a2b] border border-[#1e2a45] rounded-lg overflow-hidden">
-          <div className="p-4 pb-2">
-            <div className="flex justify-between items-center">
-              <div className="text-sm font-medium text-gray-400">Total Users</div>
-              <Search className="h-4 w-4 text-gray-400" />
-            </div>
-          </div>
-          <div className="p-4 pt-0">
-            <div className="text-2xl font-bold">14.2</div>
-          </div>
-        </div>
+      {/* --- */}
 
-        <div className="bg-[#131a2b] border border-[#1e2a45] rounded-lg overflow-hidden">
-          <div className="p-4 pb-2">
-            <div className="flex justify-between items-center">
-              <div className="text-sm font-medium text-gray-400">Available Jobs</div>
-              <Search className="h-4 w-4 text-gray-400" />
+      {/* Key Metrics for Impact */}
+      <section className="mb-10">
+        <h2 className="text-2xl font-bold text-white mb-5">Your Impact At A Glance</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {/* Total Students */}
+          <div className="bg-gradient-to-br from-blue-800/30 to-purple-800/30 border border-blue-700/50 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-sm font-medium text-blue-200 uppercase">Total Students</div>
+                <GraduationCap className="h-6 w-6 text-blue-300" />
+              </div>
+              <div className="text-5xl font-bold text-white leading-tight">{ totelStudent}</div>
             </div>
+            <p className="text-sm text-blue-100 mt-3">Engaged across all your courses.</p>
           </div>
-          <div className="p-4 pt-0">
-            <div className="text-2xl font-bold">25</div>
-          </div>
-        </div>
 
-        <div className="bg-[#131a2b] border border-[#1e2a45] rounded-lg overflow-hidden">
-          <div className="p-4 pb-2">
-            <div className="flex justify-between items-center">
-              <div className="text-sm font-medium text-gray-400">Pending Requests</div>
-              <Search className="h-4 w-4 text-gray-400" />
+          {/* Active Courses */}
+          <div className="bg-gradient-to-br from-green-800/30 to-teal-800/30 border border-green-700/50 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-sm font-medium text-green-200 uppercase">Active Courses</div>
+                <BookOpen className="h-6 w-6 text-green-300" />
+              </div>
+              <div className="text-5xl font-bold text-white leading-tight">{courses.length}</div>
             </div>
+            <p className="text-sm text-green-100 mt-3">Currently delivering valuable content.</p>
           </div>
-          <div className="p-4 pt-0">
-            <div className="text-2xl font-bold">8</div>
-          </div>
-        </div>
 
-        <div className="bg-[#131a2b] border border-[#1e2a45] rounded-lg overflow-hidden">
-          <div className="p-4 pb-2">
-            <div className="flex justify-between items-center">
-              <div className="text-sm font-medium text-gray-400">Total Earnings</div>
-              <Search className="h-4 w-4 text-gray-400" />
+          {/* Course Registrations */}
+          <div className="bg-gradient-to-br from-yellow-800/30 to-orange-800/30 border border-yellow-700/50 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-sm font-medium text-yellow-200 uppercase">Totel Lessons</div>
+                <ClipboardList className="h-6 w-6 text-yellow-300" />
+              </div>
+              <div className="text-5xl font-bold text-white leading-tight">48</div>
             </div>
+            <p className="text-sm text-yellow-100 mt-3">Pending enrollment requests.</p>
           </div>
-          <div className="p-4 pt-0">
-            <div className="text-2xl font-bold">$1,254.89</div>
+
+          {/* Community Engagement */}
+          <div className="bg-gradient-to-br from-red-800/30 to-pink-800/30 border border-red-700/50 rounded-xl p-6 shadow-lg flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-sm font-medium text-red-200 uppercase">Community Reach</div>
+                <MessageSquare className="h-6 w-6 text-red-300" />
+              </div>
+              <div className="text-5xl font-bold text-white leading-tight">8.5k</div>
+            </div>
+            <p className="text-sm text-red-100 mt-3">Total interactions this month.</p>
           </div>
         </div>
+      </section>
+
+      {/* --- */}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Quick Actions for Mentors */}
+        <section className="bg-gray-800/40 border border-gray-700/50 rounded-xl overflow-hidden shadow-xl lg:col-span-1">
+          <div className="p-6 border-b border-gray-700/60">
+            <h2 className="font-bold text-2xl text-white">Mentor Toolkit</h2>
+            <p className="text-sm text-gray-300 mt-1">Direct access to your essential tasks.</p>
+          </div>
+          <div className="p-6 space-y-4">
+            <ActionCard
+              icon={Film}
+              title="Start Live Stream"
+              description="Connect with your audience instantly."
+              color="text-red-400"
+              bgColor="bg-red-900/30"
+            />
+            <ActionCard
+              icon={BookOpen}
+              title="Add New Lesson"
+              description="Expand your course content."
+              color="text-green-400"
+              bgColor="bg-green-900/30"
+            />
+            <ActionCard
+              icon={Calendar}
+              title="Schedule Session"
+              description="Plan your upcoming live events."
+              color="text-purple-400"
+              bgColor="bg-purple-900/30"
+            />
+            <ActionCard
+              icon={Settings}
+              title="Manage Profile"
+              description="Update your mentor details."
+              color="text-yellow-400"
+              bgColor="bg-yellow-900/30"
+            />
+          </div>
+          <div className="p-4 border-t border-gray-700/60">
+            <button className="text-blue-400 w-full flex items-center justify-center text-sm font-medium hover:underline">
+              View All Tools <ChevronRight className="h-4 w-4 ml-1" />
+            </button>
+          </div>
+        </section>
+
+        {/* --- */}
+
+        {/* My Courses & Lessons */}
+        <section className="bg-gray-800/40 border border-gray-700/50 rounded-xl overflow-hidden shadow-xl lg:col-span-2">
+          <div className="p-6 border-b border-gray-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h2 className="font-bold text-2xl text-white">Your Courses</h2>
+              <p className="text-sm text-gray-300 mt-1">Overview of your contributions.</p>
+            </div>
+            <div className="flex gap-2">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-700 text-blue-100">
+                Live
+              </span>
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-700 text-gray-200">
+                Drafts
+              </span>
+            </div>
+          </div>
+          <div className="p-6 space-y-6">
+            {/* Example Course Card 1 */}
+            <CourseCard
+              title="Empowering Community Leaders"
+              description="Strategies for grassroots social work."
+              progress={75}
+              status="Active"
+              students={180}
+            />
+
+            {/* Example Course Card 2 */}
+            <CourseCard
+              title="Digital Literacy for All"
+              description="Basic computer skills for underserved communities."
+              progress={30}
+              status="New"
+              students={65}
+            />
+
+            {/* Example Course Card 3 (could be an upcoming live session) */}
+            <CourseCard
+              title="Mental Health First Aid (Live)"
+              description="Immediate support techniques."
+              date="June 20, 2025 • 3:00 PM"
+              status="Upcoming Live"
+              students={210}
+            />
+          </div>
+          <div className="p-4 border-t border-gray-700/60">
+            <button className="text-blue-400 w-full flex items-center justify-center text-sm font-medium hover:underline">
+              View All Your Courses <ChevronRight className="h-4 w-4 ml-1" />
+            </button>
+          </div>
+        </section>
+
+        {/* --- */}
+
+        {/* Latest Community Interactions */}
+        <section className="bg-gray-800/40 border border-gray-700/50 rounded-xl overflow-hidden shadow-xl lg:col-span-1">
+          <div className="p-6 border-b border-gray-700/60">
+            <h2 className="font-bold text-2xl text-white">Latest Community Interactions</h2>
+            <p className="text-sm text-gray-300 mt-1">Recent questions and feedback.</p>
+          </div>
+          <div className="p-6 space-y-5">
+            <InteractionCard
+              type="Question"
+              title="Question on 'Digital Literacy'"
+              content="How can we help students without internet access at home?"
+              author="Aisha Sharma"
+              time="1 hour ago"
+            />
+            <InteractionCard
+              type="Feedback"
+              title="Feedback on 'Community Leaders' Course"
+              content="The role-playing exercises were incredibly insightful!"
+              author="Rajesh Kumar"
+              time="5 hours ago"
+            />
+            <InteractionCard
+              type="Discussion"
+              title="New Topic: 'Volunteer Recruitment'"
+              content="Best practices for engaging new volunteers."
+              author="Sita Devi"
+              time="Yesterday"
+            />
+          </div>
+          <div className="p-4 border-t border-gray-700/60">
+            <button className="text-blue-400 w-full flex items-center justify-center text-sm font-medium hover:underline">
+              View All Interactions <ChevronRight className="h-4 w-4 ml-1" />
+            </button>
+          </div>
+        </section>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-[#131a2b] border border-[#1e2a45] rounded-lg overflow-hidden lg:col-span-1 row-span-2">
-          <div className="p-4 border-b border-[#1e2a45]">
-            <div className="font-semibold text-lg">Quick Actions</div>
-            <div className="text-sm text-gray-400">Shortcuts to your most used features</div>
-          </div>
-          <div className="p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-[#1c2539] p-4 rounded-lg flex flex-col items-center justify-center text-center gap-2 hover:bg-[#232e4a] transition-colors cursor-pointer">
-                <div className="bg-[#2a3655] p-2 rounded-full">
-                  <FileText className="h-5 w-5 text-[#4d78cc]" />
-                </div>
-                <span className="text-sm font-medium">New Document</span>
-                <span className="text-xs text-gray-400">Create and edit documents</span>
-              </div>
 
-              <div className="bg-[#1c2539] p-4 rounded-lg flex flex-col items-center justify-center text-center gap-2 hover:bg-[#232e4a] transition-colors cursor-pointer">
-                <div className="bg-[#2a3655] p-2 rounded-full">
-                  <Code className="h-5 w-5 text-[#4d78cc]" />
-                </div>
-                <span className="text-sm font-medium">Start Code Review</span>
-                <span className="text-xs text-gray-400">Review and analyze code</span>
-              </div>
-
-              <div className="bg-[#1c2539] p-4 rounded-lg flex flex-col items-center justify-center text-center gap-2 hover:bg-[#232e4a] transition-colors cursor-pointer">
-                <div className="bg-[#2a3655] p-2 rounded-full">
-                  <Calendar className="h-5 w-5 text-[#4d78cc]" />
-                </div>
-                <span className="text-sm font-medium">Manage Schedule</span>
-                <span className="text-xs text-gray-400">View and edit your calendar</span>
-              </div>
-
-              <div className="bg-[#1c2539] p-4 rounded-lg flex flex-col items-center justify-center text-center gap-2 hover:bg-[#232e4a] transition-colors cursor-pointer">
-                <div className="bg-[#2a3655] p-2 rounded-full">
-                  <Settings className="h-5 w-5 text-[#4d78cc]" />
-                </div>
-                <span className="text-sm font-medium">Update Profile</span>
-                <span className="text-xs text-gray-400">Edit your personal information</span>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 border-t border-[#1e2a45]">
-            <button className="text-[#4d78cc] w-full flex items-center justify-center text-sm hover:underline">
-              View All Actions <ChevronRight className="h-4 w-4 ml-1" />
-            </button>
-          </div>
-        </div>
-
-        {/* Courses Section */}
-        <div className="bg-[#131a2b] border border-[#1e2a45] rounded-lg overflow-hidden lg:col-span-2 row-span-2">
-          <div className="p-4 border-b border-[#1e2a45]">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <div className="font-semibold text-lg">Upcoming Courses</div>
-                <div className="text-sm text-gray-400">Continue where you left off</div>
-              </div>
-              <div className="flex gap-2">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#1c2539] text-white">
-                  Ongoing Progress
-                </span>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#232e4a] text-white">
-                  Upcoming Sessions
-                </span>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 space-y-6">
-            {/* Course 1 */}
-            <div className="bg-[#1c2539] rounded-lg p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="font-semibold">Web Development Basics</h3>
-                  <p className="text-sm text-gray-400">HTML, CSS, and JavaScript fundamentals</p>
-                </div>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#4d78cc] text-white">
-                  In Progress
-                </span>
-              </div>
-              <div className="w-full bg-[#2a3655] rounded-full h-2 mb-2">
-                <div className="bg-[#4d78cc] h-2 rounded-full" style={{ width: "65%" }}></div>
-              </div>
-              <div className="flex justify-between items-center text-xs text-gray-400">
-                <span>65% Complete</span>
-                <span>4 hours remaining</span>
-              </div>
-              <div className="mt-4 flex justify-between">
-                <button className="px-3 py-1 text-xs h-8 bg-transparent border border-[#2a3655] text-white rounded hover:bg-[#2a3655]">
-                  View Course
-                </button>
-                <button className="px-3 py-1 text-xs h-8 bg-[#4d78cc] hover:bg-[#3a67bb] text-white rounded">
-                  Continue Learning
-                </button>
-              </div>
-            </div>
-
-            {/* Course 2 */}
-            <div className="bg-[#1c2539] rounded-lg p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="font-semibold">JavaScript: Advanced Concepts</h3>
-                  <p className="text-sm text-gray-400">Closures, Promises, and Async/Await</p>
-                </div>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#9333ea] text-white">
-                  New
-                </span>
-              </div>
-              <div className="w-full bg-[#2a3655] rounded-full h-2 mb-2">
-                <div className="bg-[#4d78cc] h-2 rounded-full" style={{ width: "25%" }}></div>
-              </div>
-              <div className="flex justify-between items-center text-xs text-gray-400">
-                <span>25% Complete</span>
-                <span>6 hours remaining</span>
-              </div>
-              <div className="mt-4 flex justify-between">
-                <button className="px-3 py-1 text-xs h-8 bg-transparent border border-[#2a3655] text-white rounded hover:bg-[#2a3655]">
-                  View Course
-                </button>
-                <button className="px-3 py-1 text-xs h-8 bg-[#4d78cc] hover:bg-[#3a67bb] text-white rounded">
-                  Continue Learning
-                </button>
-              </div>
-            </div>
-
-            {/* Course 3 */}
-            <div className="bg-[#1c2539] rounded-lg p-4">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h3 className="font-semibold">Career Guidance Session</h3>
-                  <p className="text-sm text-gray-400">Resume Review</p>
-                </div>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#4d78cc] text-white">
-                  Upcoming
-                </span>
-              </div>
-              <div className="flex justify-between items-center text-xs text-gray-400 mt-2">
-                <span>April 15, 2025 • 2:00 PM</span>
-              </div>
-              <div className="mt-4 flex justify-between">
-                <button className="px-3 py-1 text-xs h-8 bg-transparent border border-[#2a3655] text-white rounded hover:bg-[#2a3655]">
-                  View Details
-                </button>
-                <button className="px-3 py-1 text-xs h-8 bg-[#4d78cc] hover:bg-[#3a67bb] text-white rounded">
-                  Set Reminder
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 border-t border-[#1e2a45]">
-            <button className="text-[#4d78cc] w-full flex items-center justify-center text-sm hover:underline">
-              View All Courses <ChevronRight className="h-4 w-4 ml-1" />
-            </button>
-          </div>
-        </div>
-
-        {/* Recent Reviews */}
-        <div className="bg-[#131a2b] border border-[#1e2a45] rounded-lg overflow-hidden lg:col-span-2">
-          <div className="p-4 border-b border-[#1e2a45]">
-            <div className="font-semibold text-lg">Recent Reviews</div>
-            <div className="text-sm text-gray-400">What others are saying about your courses</div>
-          </div>
-          <div className="p-4 space-y-4">
-            <div className="border-b border-[#1e2a45] pb-4">
-              <div className="flex justify-between mb-1">
-                <h4 className="font-medium">React JS Masterclass</h4>
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-              </div>
-              <p className="text-sm text-gray-400 mb-2">
-                "This course was incredibly helpful. The instructor explained complex concepts in an easy-to-understand
-                way."
-              </p>
-              <div className="text-xs text-gray-500">John Doe • 2 days ago</div>
-            </div>
-
-            <div className="border-b border-[#1e2a45] pb-4">
-              <div className="flex justify-between mb-1">
-                <h4 className="font-medium">UI/UX Design Principles</h4>
-                <div className="flex">
-                  {[1, 2, 3, 4].map((star) => (
-                    <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                  <Star className="h-4 w-4 text-gray-500" />
-                </div>
-              </div>
-              <p className="text-sm text-gray-400 mb-2">
-                "Great content, but could use more practical examples. Overall very informative."
-              </p>
-              <div className="text-xs text-gray-500">Jane Smith • 5 days ago</div>
-            </div>
-
-            <div className="pb-2">
-              <div className="flex justify-between mb-1">
-                <h4 className="font-medium">Data Structures & Algorithms</h4>
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-              </div>
-              <p className="text-sm text-gray-400 mb-2">
-                "Excellent course! The practice problems really helped solidify my understanding. Highly recommended for
-                anyone looking to improve their coding skills."
-              </p>
-              <div className="text-xs text-gray-500">Alex Johnson • 1 week ago</div>
-            </div>
-          </div>
-          <div className="p-4 border-t border-[#1e2a45]">
-            <button className="text-[#4d78cc] w-full flex items-center justify-center text-sm hover:underline">
-              View All Reviews <ChevronRight className="h-4 w-4 ml-1" />
-            </button>
-          </div>
-        </div>
-
-        {/* Recent Messages */}
-        <div className="bg-[#131a2b] border border-[#1e2a45] rounded-lg overflow-hidden">
-          <div className="p-4 border-b border-[#1e2a45]">
-            <div className="font-semibold text-lg">Recent Messages</div>
-            <div className="text-sm text-gray-400">Your latest conversations</div>
-          </div>
-          <div className="p-4 space-y-4">
-            <div className="flex items-start gap-3 pb-3 border-b border-[#1e2a45]">
-              <div className="w-10 h-10 rounded-full bg-[#2a3655] flex items-center justify-center">
-                <Users className="h-5 w-5 text-[#4d78cc]" />
-              </div>
-              <div>
-                <div className="flex justify-between">
-                  <h4 className="font-medium">Support Team</h4>
-                  <span className="text-xs text-gray-400">2h ago</span>
-                </div>
-                <p className="text-sm text-gray-400">
-                  "We've processed your refund request. Please allow 3-5 business days..."
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 pb-3 border-b border-[#1e2a45]">
-              <div className="w-10 h-10 rounded-full bg-[#2a3655] flex items-center justify-center">
-                <BookOpen className="h-5 w-5 text-[#4d78cc]" />
-              </div>
-              <div>
-                <div className="flex justify-between">
-                  <h4 className="font-medium">Michael Owen</h4>
-                  <span className="text-xs text-gray-400">1d ago</span>
-                </div>
-                <p className="text-sm text-gray-400">
-                  "Thanks for your feedback on my project! I've made the suggested changes..."
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#2a3655] flex items-center justify-center">
-                <Bell className="h-5 w-5 text-[#4d78cc]" />
-              </div>
-              <div>
-                <div className="flex justify-between">
-                  <h4 className="font-medium">Emily Rodriguez</h4>
-                  <span className="text-xs text-gray-400">3d ago</span>
-                </div>
-                <p className="text-sm text-gray-400">
-                  "Are you available for a quick call to discuss the upcoming project deadline?"
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 border-t border-[#1e2a45]">
-            <button className="text-[#4d78cc] w-full flex items-center justify-center text-sm hover:underline">
-              View All Messages <ChevronRight className="h-4 w-4 ml-1" />
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* --- */}
 
       {/* Footer */}
-      <div className="mt-8 text-center text-xs text-gray-500">
-        <p>© 2025 Learning Dashboard. All rights reserved.</p>
+      <div className="mt-12 text-center text-xs text-gray-500">
+        <p>© {new Date().getFullYear()} Social Impact Platform. Empowering Mentors, Building Communities.</p>
       </div>
     </div>
-  )
+  );
 }
 
+// Helper Components (can be moved to their own files if preferred)
+
+// ActionCard Component
+interface ActionCardProps {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  color: string;
+  bgColor: string;
+}
+
+function ActionCard({ icon: Icon, title, description, color, bgColor }: ActionCardProps) {
+  return (
+    <div className={`flex items-start gap-4 p-4 rounded-lg cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:bg-white/5 ${bgColor}`}>
+      <div className={`p-3 rounded-full ${bgColor} bg-opacity-70 flex-shrink-0`}>
+        <Icon className={`h-6 w-6 ${color}`} />
+      </div>
+      <div>
+        <h3 className="font-semibold text-lg text-white">{title}</h3>
+        <p className="text-sm text-gray-300">{description}</p>
+      </div>
+    </div>
+  );
+}
+
+// CourseCard Component
+interface CourseCardProps {
+  title: string;
+  description: string;
+  progress?: number; // Optional for ongoing courses
+  status: string;
+  students: number; // Total students enrolled
+  date?: string; // For upcoming live sessions
+}
+
+function CourseCard({ title, description, progress, status, students, date }: CourseCardProps) {
+  const statusColors: { [key: string]: string } = {
+    "Active": "bg-blue-600 text-blue-100",
+    "New": "bg-green-600 text-green-100",
+    "Upcoming Live": "bg-purple-600 text-purple-100",
+    "Draft": "bg-gray-600 text-gray-100",
+  };
+
+  return (
+    <div className="bg-gray-800/60 border border-gray-700/70 rounded-lg p-5 shadow-sm">
+      <div className="flex justify-between items-start mb-3">
+        <div>
+          <h3 className="font-semibold text-xl text-white">{title}</h3>
+          <p className="text-sm text-gray-300 mt-1">{description}</p>
+        </div>
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${statusColors[status]}`}>
+          {status}
+        </span>
+      </div>
+
+      {progress !== undefined && (
+        <>
+          <div className="w-full bg-gray-700 rounded-full h-2.5 mb-2">
+            <div
+              className="bg-blue-500 h-2.5 rounded-full transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <div className="flex justify-between items-center text-xs text-gray-400">
+            <span>{progress}% Lessons Covered</span>
+            <span>{students} Students Enrolled</span>
+          </div>
+        </>
+      )}
+
+      {date && (
+        <div className="flex justify-between items-center text-sm text-gray-400 mt-2">
+          <span className="flex items-center">
+            <Calendar className="h-4 w-4 mr-1 text-purple-300" />
+            {date}
+          </span>
+          <span>{students} Registered</span>
+        </div>
+      )}
+
+      <div className="mt-5 flex justify-end gap-3">
+        <Button variant="outline" className="px-4 py-2 bg-transparent border border-blue-500 text-blue-300 rounded-md hover:bg-blue-900/30 transition-colors">
+          View Details
+        </Button>
+        {status === "Upcoming Live" ? (
+          <Button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors">
+            Manage Live Session
+          </Button>
+        ) : (
+          <Button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors">
+            Manage Lessons
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// InteractionCard Component
+interface InteractionCardProps {
+  type: "Question" | "Feedback" | "Discussion";
+  title: string;
+  content: string;
+  author: string;
+  time: string;
+}
+
+function InteractionCard({ type, title, content, author, time }: InteractionCardProps) {
+  const typeIcons: { [key: string]: React.ElementType } = {
+    Question: MessageSquare,
+    Feedback: Star, // Using star for feedback
+    Discussion: Users,
+  };
+  const Icon = typeIcons[type];
+
+  return (
+    <div className="flex items-start gap-4 p-4 bg-gray-800/50 rounded-lg border border-gray-700/60">
+      <div className="flex-shrink-0 p-2 rounded-full bg-blue-900/50">
+        {Icon && <Icon className="h-5 w-5 text-blue-400" />}
+      </div>
+      <div className="flex-grow">
+        <div className="flex justify-between items-center mb-1">
+          <h4 className="font-medium text-white">{title}</h4>
+          <span className="text-xs text-gray-400">{time}</span>
+        </div>
+        <p className="text-sm text-gray-300 mb-2 line-clamp-2">{content}</p>
+        <div className="text-xs text-gray-500">By {author}</div>
+      </div>
+    </div>
+  );
+}
+
+// Dummy Button component for styling (replace with your actual UI library's Button)
+function Button({ children, className = "", variant = "default", size = "default", onClick, ...props }: any) {
+  let baseClasses = "flex items-center justify-center font-medium rounded-md transition-colors duration-200 ease-in-out";
+  let variantClasses = "";
+  let sizeClasses = "";
+
+  switch (variant) {
+    case "default":
+      variantClasses = "bg-blue-600 text-white hover:bg-blue-700";
+      break;
+    case "ghost":
+      variantClasses = "bg-transparent text-gray-400 hover:bg-gray-800/50";
+      break;
+    case "outline":
+      variantClasses = "bg-transparent border border-gray-600 text-gray-200 hover:bg-gray-700/50";
+      break;
+    // Add other variants you might have
+  }
+
+  switch (size) {
+    case "default":
+      sizeClasses = "px-4 py-2";
+      break;
+    case "sm":
+      sizeClasses = "px-3 py-1.5 text-sm";
+      break;
+    case "icon":
+      sizeClasses = "p-2";
+      break;
+  }
+
+  return (
+    <button onClick={onClick} className={`${baseClasses} ${variantClasses} ${sizeClasses} ${className}`} {...props}>
+      {children}
+    </button>
+  );
+}

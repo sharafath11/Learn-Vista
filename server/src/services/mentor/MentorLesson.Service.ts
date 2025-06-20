@@ -34,10 +34,10 @@ export class MentorLessonService implements IMentorLessonService {
             throwError("All filed are required", StatusCode.BAD_REQUEST);
         }
        
-    const existingLesson = await this._lessonRepo.findOne({ title: data.title });
-    if (existingLesson) {
-        throwError("Lesson title must be unique", StatusCode.CONFLICT);
-    }
+    // const existingLesson = await this._lessonRepo.findOne({ title: data.title });
+    // if (existingLesson) {
+    //     throwError("Lesson title must be unique", StatusCode.CONFLICT);
+    // }
 
     const existingOrder = await this._lessonRepo.findOne({ order: data.order, courseId: data.courseId });
     if (existingOrder) {
