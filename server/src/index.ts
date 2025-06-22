@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, response, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -12,6 +12,9 @@ import adminRoutes from "./routes/adminRoutes/admin.Routes";
 import { refreshAccessToken, setTokensInCookies } from "./utils/JWTtoken";
 import { socketHandler } from "./config/ socket";
 import { getGemaniResponse } from "./config/gemaniAi";
+import { sendResponse } from "./utils/ResANDError";
+import { StatusCode } from "./enums/statusCode.enum";
+import { batmanPrompt } from "./utils/Rportprompt";
 
 dotenv.config();
 
@@ -53,6 +56,12 @@ app.use("/refresh-token", (req: Request, res: Response) => {
     res.status(500).json({ ok: false, msg: "Failed to refresh token", error: error.message });
     return
   }
+});
+app.use("/ai/doubt", async (req: Request, res: Response) => {
+  const prompt=batmanPrompt(req.body.text)
+  const answer = await getGemaniResponse(prompt);
+  console.log("batman:", answer);
+  sendResponse(res, StatusCode.OK, "", true, answer);
 });
 app.use((err: any, req: Request, res: Response, next: Function) => {
   console.error(err.stack);

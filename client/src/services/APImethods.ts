@@ -1,9 +1,11 @@
+import axios from "axios";
 import {   UserBlock,  } from "../types/adminTypes";
 import { ILogin, IUserRegistration } from "../types/authTypes";
 import { AnswerWithType,  IQuestions } from "../types/lessons";
 import { IMentorSignupData } from "../types/mentorTypes";
 
 import { getRequest, patchRequest, postRequest } from "./api";
+import { baseURL } from "./AxiosInstance";
 
 const get = getRequest;
 const post = postRequest;
@@ -35,7 +37,8 @@ export const UserAPIMethods = {
   getQustion: (lessonId: string) => get(`/lesson/questions/${lessonId}`),
   getLessonDetils: (lessonId: string) => post("/lessonDetils", { lessonId }),
   getReport: (lessonId: string, data: AnswerWithType[]) => post("/lesson/report", { lessonId, data }),
-  saveComment:(lessonId:string,comment:string)=>post("/lesson/comment",{lessonId,comment})
+  saveComment: (lessonId: string, comment: string) => post("/lesson/comment", { lessonId, comment }),
+  
 } as const;
 
 export const AdminAPIMethods = {
@@ -130,3 +133,10 @@ export const MentorAPIMethods = {
   blockStudentInCourse: (courseId: string, userId: string, status: boolean) => patch("/mentor/student/block", { courseId, userId, status }),
   generateOptions:(question:string)=>post("/mentor/genarate/options",{question})
 } as const;
+
+export const batmanAi = {
+  askDoubt: async (input: string) => {
+    const response = await axios.post(`${baseURL}/ai/doubt`, { text: input });
+    return response.data;
+  },
+};
