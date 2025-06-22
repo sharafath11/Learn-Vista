@@ -9,14 +9,24 @@ import CourseForm from "./CourseForm"
 import { useRouter } from "next/navigation"
 import { IMentor } from "@/src/types/mentorTypes"
 import { useEffect, useState } from "react"
+import { ICategory } from "@/src/types/categoryTypes"
 
 export default function CreateCoursePage() {
-  const route=useRouter()
-  const { cat, setCourses,categories } = useAdminContext()
+  const route = useRouter()
+  const [categories,setCategories]=useState<ICategory[]>([])
+  const { cat, setCourses, } = useAdminContext()
   const [mentors, setMentors] = useState<IMentor[]>();
   useEffect(() => {
     fetchAllMentors()
+    fetchAllCategories()
+
   }, [])
+  const fetchAllCategories = async () => {
+    const res = await AdminAPIMethods.getAllCategories();
+    if (res.ok) {
+      setCategories(res.data)
+    }else showErrorToast(res.msg)
+  }
   
   const fetchAllMentors = async () => {
     const res = await AdminAPIMethods.getAllMentor();
