@@ -17,8 +17,12 @@ import {
   PlusCircle, // For adding new content
   MessageSquare, // For community/engagement
 } from "lucide-react";
+import { useEffect } from "react";
 
 export default function MentorDashboard() {
+ 
+  
+ 
   const { courses } = useMentorContext();
   let totelStudent = 0
   let totelLessons=0

@@ -5,6 +5,7 @@ import CourseBasicInfo from "@/src/components/admin/course/CourseBasicInfo"
 import CourseSchedule from "@/src/components/admin/course/CourseSchedule"
 import CourseThumbnail from "@/src/components/admin/course/CourseThumbnail"
 import { showInfoToast } from "@/src/utils/Toast"
+import Link from "next/link"
 import { useState } from "react"
 
 interface ICourseFormData {
@@ -177,12 +178,15 @@ export default function CourseForm({
 
       <div className="pt-5">
         <div className="flex justify-end gap-3">
+          <Link href="/admin/dashboard/courses">
           <button
             type="button"
             className="px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
           >
+            
             Cancel
           </button>
+          </Link>
           <button
             type="submit"
             className="px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"

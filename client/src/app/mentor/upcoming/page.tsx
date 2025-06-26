@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { format, parseISO, differenceInMinutes, addMinutes, startOfDay } from "date-fns"
+import { format, parseISO, differenceInMinutes, addMinutes } from "date-fns"
 import { Calendar, Clock, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useMentorContext } from "@/src/context/mentorContext"
@@ -11,7 +11,7 @@ export default function UpcomingSessions() {
   const router = useRouter()
   const [currentTime, setCurrentTime] = useState(new Date())
   const { courses } = useMentorContext()
-  const approvedCourses=courses.filter((i)=>i.mentorStatus==="approved")
+  const approvedCourses = courses.filter((i) => i.mentorStatus === "approved")
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date())
@@ -19,29 +19,15 @@ export default function UpcomingSessions() {
     return () => clearInterval(timer)
   }, [])
 
-  
 
-  const getTimeUntilCanStart = (sessionDate: string, startTime: string): string => {
-    if (!sessionDate || !startTime) return "N/A"
+  const canStartSession = (sessionDate: string, startTime: string): boolean => {
+    if (!sessionDate || !startTime) return false
 
     const sessionDateTime = parseISO(`${sessionDate}T${startTime}`)
-    const fifteenMinutesBefore = addMinutes(sessionDateTime, -15)
+    const thirtyMinutesBefore = addMinutes(sessionDateTime, -30)
     const oneHourAfterStart = addMinutes(sessionDateTime, 60)
-    const dayAfterSessionStart = addMinutes(startOfDay(addMinutes(sessionDateTime, 24 * 60)), -currentTime.getTimezoneOffset());
 
-    if (currentTime < fifteenMinutesBefore) {
-      const minutesRemaining = differenceInMinutes(fifteenMinutesBefore, currentTime)
-      const hours = Math.floor(minutesRemaining / 60)
-      const minutes = minutesRemaining % 60
-      return hours > 0 ? `${hours}h ${minutes}m until start` : `${minutes}m until start`
-    } else if (currentTime >= fifteenMinutesBefore && currentTime <= oneHourAfterStart) {
-      return "Start Now"
-    } else if (currentTime > oneHourAfterStart && currentTime < dayAfterSessionStart) {
-      return "Session Ended"
-    } else if (currentTime >= dayAfterSessionStart && currentTime <= parseISO(`${sessionDate}T23:59:59`)) {
-      return "Start Now"
-    }
-    return "Session Ended";
+    return currentTime >= thirtyMinutesBefore && currentTime <= oneHourAfterStart
   }
 
   const handleStartSession = (courseId: string) => {
@@ -63,12 +49,10 @@ export default function UpcomingSessions() {
 
         {approvedCourses.length > 0 ? (
           <div className="divide-y divide-gray-700">
-            {courses.map((session) => {
-              const sessionStartDate = session.startDate || "";
-              const sessionStartTime = session.startTime || "";
-              const sessionEndDate = session.endDate || "";
-
-              const buttonText = getTimeUntilCanStart(sessionStartDate, sessionStartTime);
+            {approvedCourses.map((session) => {
+              const sessionStartDate = session.startDate || ""
+              const sessionStartTime = session.startTime || ""
+              const isButtonEnabled = canStartSession(sessionStartDate, sessionStartTime)
 
               return (
                 <div
@@ -97,11 +81,20 @@ export default function UpcomingSessions() {
                     </span>
                   </div>
                   <div className="col-span-2">
-                    
-                    {session.isStreaming?<Button>Streaming</Button>:<Button onClick={() => handleStartSession(session._id)}>Start Streaming</Button>}
+                    {session.isStreaming ? (
+                      <Button>Streaming</Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleStartSession(session._id)}
+                        disabled={!isButtonEnabled}
+                        className={!isButtonEnabled ? "opacity-50 cursor-not-allowed" : ""}
+                      >
+                        Start Streaming
+                      </Button>
+                    )}
                   </div>
                 </div>
-              );
+              )
             })}
           </div>
         ) : (

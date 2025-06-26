@@ -71,9 +71,9 @@ class AdminCourseServices implements IAdminCourseServices {
     if (!data.mentorId) throwError("Mentor ID is required", StatusCode.BAD_REQUEST);
   
     const courses = await this.baseCourseRepo.findAll({ mentorId: data.mentorId });
-    if (courses.length > 3) {
-      throwError("This mentor already assign 3 coursess")
-    }
+    // if (courses.length > 3) {
+    //   throwError("This mentor already assign 3 coursess")
+    // }
     const hasOverlap = courses.some(course =>
       course.startDate &&
       course.endDate &&
@@ -84,7 +84,7 @@ class AdminCourseServices implements IAdminCourseServices {
     );
 
     if (hasOverlap) {
-      throwError("This mentor already has a class at the same time.", StatusCode.BAD_REQUEST);
+      throwError("This mentor already has a class at the same date.", StatusCode.BAD_REQUEST);
     }
 
     const imageUrl = await uploadToCloudinary(thumbnail, "thumbnail");

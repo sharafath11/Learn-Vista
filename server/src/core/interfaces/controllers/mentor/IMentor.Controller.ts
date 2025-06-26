@@ -1,4 +1,3 @@
-import { promises } from 'dns';
 import { Request, Response } from 'express';
 
 export interface IMentorController {
