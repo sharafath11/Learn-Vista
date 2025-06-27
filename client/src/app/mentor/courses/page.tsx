@@ -8,7 +8,8 @@ import {
   Tag,
   Layers,
   Clock,
-  BookText
+  BookText,
+  Users
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -34,6 +35,8 @@ import {
 } from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { ConcernDialog } from "./ConcernDialog"
+
 
 export default function CoursesPage() {
   const { courses, setCourses } = useMentorContext()
@@ -70,67 +73,67 @@ export default function CoursesPage() {
     pending: "bg-amber-500 hover:bg-amber-600"
   }
 
-  const formatCourseDate = (dateString: string) => {
-    if (!dateString) return "Not specified"
-    try {
-      return format(new Date(dateString), "MMM dd, yyyy")
-    } catch {
-      return "Invalid date"
-    }
-  }
+
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-200 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-gray-200 p-6">
       <div className="max-w-7xl mx-auto py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Course Approvals</h1>
-          <Badge variant="secondary" className="bg-white/10 text-white backdrop-blur-md">
+        <div className="flex justify-between items-center mb-10">
+          <h1 className="text-4xl font-extrabold text-white">Course Approvals</h1>
+          <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white backdrop-blur-md px-4 py-2 text-lg font-semibold rounded-full shadow-lg">
             {courses.length} {courses.length === 1 ? "Course" : "Courses"} Pending
           </Badge>
         </div>
 
         {courses.length === 0 ? (
-          <Card className="text-center py-16 px-6 bg-gray-800/50 border-gray-700">
-            <CardContent className="flex flex-col items-center">
-              <Avatar className="w-16 h-16 bg-gray-800 mb-4">
+          <Card className="text-center py-16 px-6 bg-gray-800/50 border-gray-700 shadow-xl rounded-xl">
+            <CardContent className="flex flex-col items-center justify-center h-full">
+              <Avatar className="w-20 h-20 bg-gradient-to-br from-purple-700/30 to-pink-700/30 mb-6 flex items-center justify-center shadow-inner">
                 <AvatarFallback>
-                  <Layers className="w-8 h-8 text-gray-400" />
+                  <Layers className="w-10 h-10 text-pink-300" />
                 </AvatarFallback>
               </Avatar>
-              <p className="text-gray-400 text-lg">No courses pending approval</p>
+              <p className="text-gray-300 text-xl font-semibold mb-2">No Courses Awaiting Your Wisdom</p>
+              <p className="text-gray-400 text-lg">All courses are up to date! Enjoy the calm before the next wave of brilliance.</p>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-fr">
             {courses.map((course) => (
-              <Card key={course._id} className="group relative bg-gray-800/40 border border-gray-700 hover:shadow-xl">
-                <CardHeader className="relative p-0 aspect-video overflow-hidden rounded-t-lg">
+              <Card 
+                key={course._id} 
+                className="group relative bg-gradient-to-br from-gray-800/40 via-gray-800/30 to-gray-800/40 border border-gray-700 hover:shadow-2xl transition-all duration-300 flex flex-col transform hover:-translate-y-1"
+              >
+                <CardHeader className="relative p-0 aspect-video overflow-hidden rounded-t-xl"> {/* Rounded-xl for consistency */}
                   <Image
                     src={course.thumbnail || "/placeholder.png"}
                     alt={course.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300  group-hover:brightness-100"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-                  <div className="absolute bottom-3 left-4 right-4 flex justify-between items-center">
-                    <Badge className={statusVariants[course.mentorStatus]}>                      
+                  <div className="absolute inset-0 " />
+                  <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center"> {/* Increased padding */}
+                    <Badge className={`${statusVariants[course.mentorStatus]} text-white px-3 py-1.5 text-sm font-bold rounded-full shadow-md`}> {/* Enhanced badge */}
                       {course.mentorStatus.charAt(0).toUpperCase() + course.mentorStatus.slice(1)}
                     </Badge>
                     {course.categoryId?.title && (
-                      <Badge variant="secondary" className="bg-white backdrop-blur-md">
+                      <Badge variant="secondary" className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 text-sm font-semibold rounded-full">
                         {course.categoryId.title}
                       </Badge>
                     )}
                   </div>
                 </CardHeader>
 
-                <CardContent className="p-5 space-y-3">
-                  <h2 className="text-xl font-semibold text-white line-clamp-2">{course.title}</h2>
+                <CardContent className="flex-grow"> {/* Reduced padding and space */}
+                  <h2 className="text-xl font-bold text-white line-clamp-2 "> {/* Adjusted font size and added min-height */}
+                    {course.title}
+                  </h2>
+                  <p className="text-gray-400 text-sm line-clamp-2 ">{course.description}</p> {/* Added description */}
 
-                  <div className="grid grid-cols-2 gap-3 text-sm text-gray-300">
-                    <div className="flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-purple-400" />
-                      <span>{course.sessions.length || "No sessions"}</span>
+                  <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-300 pt-2"> {/* Reduced font size and gap */}
+                    <div className="flex items-center gap-2"> {/* Reduced gap */}
+                      <Layers className="w-4 h-4 text-purple-400" /> {/* Reduced icon size */}
+                      <span>{course.sessions.length || "0"} Lessons</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Tag className="w-4 h-4 text-teal-400" />
@@ -138,7 +141,7 @@ export default function CoursesPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-pink-400" />
-                      <span>{formatCourseDate(course.startDate)}</span>
+                      <span>{course.startDate}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-yellow-400" />
@@ -146,23 +149,23 @@ export default function CoursesPage() {
                     </div>
                     <div className="flex items-center gap-2 col-span-2">
                       <Clock className="w-4 h-4 text-amber-400" />
-                      <span>{formatCourseDate(course.endDate)}</span>
+                      <span>{course.endDate}</span>
                     </div>
                   </div>
                 </CardContent>
 
-                <CardFooter className="flex flex-col gap-3 p-5 pt-0">
+                <CardFooter className="flex flex-col gap-3 p-4 pt-0"> {/* Reduced padding and gap */}
                   {course.mentorStatus === "pending" && (
-                    <div className="flex gap-3 w-full">
+                    <div className="flex gap-2 w-full"> {/* Reduced gap */}
                       <Button
                         onClick={() => handleStatusChange(course._id, "approved")}
-                        className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-500"
+                        className="flex-1 gap-2 h-10 text-base bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-md rounded-lg" // Enhanced button styles
                       >
                         <CheckCircle2 size={18} /> Approve
                       </Button>
                       <Button
                         variant="destructive"
-                        className="flex-1 gap-2"
+                        className="flex-1 gap-2 h-10 text-base bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white shadow-md rounded-lg" // Enhanced button styles
                         onClick={() => {
                           setSelectedCourseId(course._id)
                           setShowReasonModal(true)
@@ -176,15 +179,18 @@ export default function CoursesPage() {
                   {course.mentorStatus === "approved" && (
                     <>
                       <Link href={`/mentor/courses/${course._id}`} className="w-full">
-                        <Button className="w-full gap-2 bg-purple-600 hover:bg-purple-500">
-                          <BookText size={18} /> Go to Lessons
+                        <Button className="w-full gap-2 h-10 text-base bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white shadow-md rounded-lg">
+                          <BookText size={18} /> Manage Course
                         </Button>
                       </Link>
                       <Link href={`/mentor/courses/students/${course._id}`} className="w-full">
-                        <Button className="w-full gap-2 bg-purple-600 hover:bg-purple-500">
-                          <BookText size={18} /> Go to Students
+                        <Button className="w-full gap-2 h-10 text-base bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md rounded-lg">
+                          <Users size={18} /> View Students
                         </Button>
                       </Link>
+                      <div className="w-full">
+                        <ConcernDialog />
+                      </div>
                     </>
                   )}
                 </CardFooter>
@@ -193,37 +199,7 @@ export default function CoursesPage() {
           </div>
         )}
 
-        <Dialog open={showReasonModal} onOpenChange={setShowReasonModal}>
-          <DialogContent className="bg-gray-800 border border-gray-700">
-            <DialogHeader>
-              <DialogTitle className="text-white">Enter Rejection Reason</DialogTitle>
-            </DialogHeader>
-            <Separator className="bg-gray-700" />
-            <Textarea
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
-              className="bg-gray-700/50 border-gray-600 text-gray-200 placeholder:text-gray-500"
-              rows={4}
-              placeholder="Type reason..."
-            />
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowReasonModal(false)
-                  setRejectionReason("")
-                  setSelectedCourseId(null)
-                }}
-                className="text-gray-300 border-gray-600 hover:bg-gray-700"
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleReasonSubmit} className="bg-purple-600 hover:bg-purple-500">
-                Submit
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        
       </div>
     </div>
   )

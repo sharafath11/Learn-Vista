@@ -1,0 +1,189 @@
+"use client"
+
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { useState, useRef, ChangeEvent } from "react"
+import { MessageCircleWarning, Upload, X, ImageIcon, Mic } from "lucide-react"
+import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
+import { ConcernAttachment, ConcernDialogProps } from "@/src/types/concernTypes"
+import { MentorAPIMethods } from "@/src/services/APImethods"
+
+
+
+export function ConcernDialog({ courseId, mentorId, onSuccess }: ConcernDialogProps) {
+  const [open, setOpen] = useState(false)
+  const [message, setMessage] = useState("")
+  const [attachments, setAttachments] = useState<ConcernAttachment[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return
+    
+    const newFiles = Array.from(e.target.files).map(file => {
+      const type = file.type.startsWith('image/') ? 'image' as const : 'audio' as const
+      return {
+        id: crypto.randomUUID(),
+        file,
+        type,
+        name: file.name,
+        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+      }
+    })
+    
+    setAttachments(prev => [...prev, ...newFiles])
+  }
+
+  const removeAttachment = (id: string) => {
+    setAttachments(prev => prev.filter(att => att.id !== id))
+  }
+
+  const handleSubmit = async () => {
+    if (!message.trim()) {
+      showErrorToast("Please describe your concern")
+      return
+    }
+
+    setIsSubmitting(true)
+
+    
+      const formData = new FormData()
+      formData.set('message', message)
+      formData.set('courseId', courseId)
+      formData.set('mentorId', mentorId)
+      
+      attachments.forEach(att => {
+        formData.append('attachments', att.file)
+      })
+
+      const res = await MentorAPIMethods.riseConcern(formData)
+      setIsSubmitting(false)
+      if (!res.ok) {
+        showErrorToast(res.msg)
+      }
+
+      showSuccessToast("Concern submitted successfully")
+      setMessage("")
+      setAttachments([])
+      setOpen(false)
+      onSuccess?.()
+   
+      
+   
+  }
+
+  const getAttachmentIcon = (type: 'image' | 'audio') => {
+    return type === 'image' 
+      ? <ImageIcon className="w-4 h-4 text-blue-400" />
+      : <Mic className="w-4 h-4 text-purple-400" />
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          className="border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 hover:text-yellow-300 shadow-md rounded-full px-4 py-2 flex items-center gap-2 transition-all"
+        >
+          <MessageCircleWarning size={18} />
+          Raise a Concern
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="bg-gray-900 border border-yellow-700 shadow-2xl rounded-xl max-w-md sm:max-w-xl">
+        <DialogHeader>
+          <DialogTitle className="text-yellow-400 text-2xl font-bold">Report a Concern</DialogTitle>
+          <DialogDescription className="text-gray-400">
+            Please describe the issue and attach any relevant files (images or audio)
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-4">
+          <Textarea
+            placeholder="Describe your concern in detail..."
+            rows={5}
+            className="bg-gray-800 text-gray-200 border border-gray-600 placeholder:text-gray-500 rounded-lg"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            required
+          />
+          
+          <div className="space-y-2">
+            <div 
+              className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-yellow-500 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+                multiple
+                accept="image/*,audio/*"
+              />
+              <Upload className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
+              <p className="text-gray-300">Click to upload files or drag and drop</p>
+              <p className="text-sm text-gray-500">Images, Audio (Max 10MB each)</p>
+            </div>
+            
+            {attachments.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm text-gray-400">Attachments ({attachments.length})</p>
+                <div className="space-y-2">
+                  {attachments.map(att => (
+                    <div key={att.id} className="flex items-center justify-between bg-gray-800/50 p-3 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        {getAttachmentIcon(att.type)}
+                        <div>
+                          <p className="text-gray-200 text-sm font-medium truncate max-w-xs">{att.name}</p>
+                          <p className="text-gray-400 text-xs">{att.size}</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeAttachment(att.id)}
+                        className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <DialogFooter className="pt-4">
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setOpen(false)
+              setMessage("")
+              setAttachments([])
+            }}
+            className="text-gray-300 hover:bg-gray-700"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting || !message.trim()}
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold shadow-md disabled:opacity-50"
+          >
+            {isSubmitting ? "Submitting..." : "Submit Concern"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}

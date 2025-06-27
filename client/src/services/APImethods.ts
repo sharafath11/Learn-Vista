@@ -6,6 +6,7 @@ import { IMentorSignupData } from "../types/mentorTypes";
 
 import { getRequest, patchRequest, postRequest } from "./api";
 import { baseURL } from "./AxiosInstance";
+import { ConcernFormData } from "../types/concernTypes";
 
 const get = getRequest;
 const post = postRequest;
@@ -131,7 +132,8 @@ export const MentorAPIMethods = {
   });
 },
   blockStudentInCourse: (courseId: string, userId: string, status: boolean) => patch("/mentor/student/block", { courseId, userId, status }),
-  generateOptions:(question:string)=>post("/mentor/genarate/options",{question})
+  generateOptions: (question: string) => post("/mentor/genarate/options", { question }),
+  riseConcern:(data:FormData)=>post("/mentor/rise/concern",data)
 } as const;
 
 export const batmanAi = {
