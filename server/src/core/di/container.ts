@@ -102,6 +102,8 @@ import { IMentorStudentService } from '../interfaces/services/mentor/IMentorStud
 import { MentorStudentService } from '../../services/mentor/MentorStudent.Service';
 import { ICategoriesRepository } from '../interfaces/repositories/course/ICategoriesRepository';
 import { CategoriesRepository } from '../../repositories/course/categorieRepository';
+import { IConcernRepository } from '../interfaces/repositories/concern/IConcernRepository';
+import { ConcernRepository } from '../../repositories/course/concernRepository';
 
 const container = new Container();
 
@@ -157,6 +159,7 @@ container.bind<IQuestionsRepository>(TYPES.QuestionsRepository).to(QuestionsRepo
 container.bind<ILessonReportRepository>(TYPES.LessonReportRepository).to(LessonReportRepository);
 container.bind<ICommentstRepository>(TYPES.CommentsRepository).to(CommentsRepository);
 container.bind<ICategoriesRepository>(TYPES.CategoriesRepository).to(CategoriesRepository)
+container.bind<IConcernRepository>(TYPES.ConcernRepository).to(ConcernRepository)
 
 
 export default container;
