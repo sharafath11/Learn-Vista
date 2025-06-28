@@ -133,7 +133,7 @@ export const MentorAPIMethods = {
 },
   blockStudentInCourse: (courseId: string, userId: string, status: boolean) => patch("/mentor/student/block", { courseId, userId, status }),
   generateOptions: (question: string) => post("/mentor/genarate/options", { question }),
-  riseConcern:(data:FormData)=>post("/mentor/rise/concern",data)
+  riseConcern:(data:FormData)=>post("/mentor/raise/concern",data)
 } as const;
 
 export const batmanAi = {

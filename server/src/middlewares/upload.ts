@@ -35,5 +35,20 @@ export const uploadImage = multer({
   }
 });
 
+const AUDIO_MIME_TYPES = ['audio/mpeg', 'audio/wav', 'audio/mp3', 'audio/webm'];
+
+const ALLOWED_MIME_TYPES = [...IMAGE_MIME_TYPES, ...AUDIO_MIME_TYPES];
+
+export const uploadConcernFiles = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, 
+  fileFilter: (req, file, cb) => {
+    if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`Only image/audio files allowed. Received: ${file.mimetype}`));
+    }
+  }
+});
 
 export default upload;

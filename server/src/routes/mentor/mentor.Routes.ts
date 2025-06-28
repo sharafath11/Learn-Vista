@@ -5,18 +5,20 @@ import { IMentorController } from '../../core/interfaces/controllers/mentor/IMen
 import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
 import container from '../../core/di/container';
 import { IMentorProfileController } from '../../core/interfaces/controllers/mentor/IMentorProfile.controller';
-import upload, { uploadImage } from '../../middlewares/upload';
+import upload, { uploadConcernFiles, uploadImage } from '../../middlewares/upload';
 import {  IMentorStreamController } from '../../core/interfaces/controllers/mentor/IMentorStream.controller';
 import { IMentorLessonsController } from '../../core/interfaces/controllers/mentor/IMentorLesson.Controller';
 import { IMentorStudentService } from '../../core/interfaces/services/mentor/IMentorStudent.Service';
 import { IMentorStudentsController } from '../../core/interfaces/controllers/mentor/ImentorStudent.controller';
+import { IMentorConcernController } from '../../core/interfaces/controllers/mentor/IMentorConcern.Controller';
 const router = express.Router();
 const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
 const mentorController = container.get<IMentorController>(TYPES.MentorController);
 const mentorProfileController = container.get<IMentorProfileController>(TYPES.MentorProfileController)
 const mentorLessonController=container.get<IMentorLessonsController>(TYPES.MentorLessonsController)
 const mentorStreamController = container.get<IMentorStreamController>(TYPES.MentorStreamController)
-const mentorStudentsController=container.get<IMentorStudentsController>(TYPES.MentorStudentsController)
+const mentorStudentsController = container.get<IMentorStudentsController>(TYPES.MentorStudentsController)
+const _mentorConcernControler=container.get<IMentorConcernController>(TYPES.mentorConcernController)
 router.post('/signup', (req, res) => mentorAuthController.signupController(req, res));
 router.post('/send-otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
 router.post('/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
@@ -58,5 +60,9 @@ router.get("/course/students/:courseId", verifyMentor, mentorStudentsController.
 router.get("/comments/:lessonId",verifyMentor,mentorLessonController.getComments.bind(mentorLessonController))
 router.patch("/student/block", verifyMentor, mentorStudentsController.blockStudentController.bind(mentorStudentsController));
 router.post("/genarate/options",verifyMentor,mentorLessonController.genarateOptions.bind(mentorLessonController))
-
+router.post(
+  "/raise/concern",
+  uploadConcernFiles.array("attachments", 5), 
+  _mentorConcernControler.addConcern.bind(_mentorConcernControler)
+);
 export default router;

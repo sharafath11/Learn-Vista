@@ -7,19 +7,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter
+  DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { useState, useRef, ChangeEvent } from "react"
+import { useState, useRef, type ChangeEvent } from "react"
 import { MessageCircleWarning, Upload, X, ImageIcon, Mic } from "lucide-react"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
-import { ConcernAttachment, ConcernDialogProps } from "@/src/types/concernTypes"
+import type { ConcernAttachment, ConcernDialogProps } from "@/src/types/concernTypes"
 import { MentorAPIMethods } from "@/src/services/APImethods"
 
-
-
-export function ConcernDialog({ courseId, mentorId, onSuccess }: ConcernDialogProps) {
+export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) {
   const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("")
   const [attachments, setAttachments] = useState<ConcernAttachment[]>([])
@@ -28,23 +26,21 @@ export function ConcernDialog({ courseId, mentorId, onSuccess }: ConcernDialogPr
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return
-    
-    const newFiles = Array.from(e.target.files).map(file => {
-      const type = file.type.startsWith('image/') ? 'image' as const : 'audio' as const
+    const newFiles = Array.from(e.target.files).map((file) => {
+      const type = file.type.startsWith("image/") ? ("image" as const) : ("audio" as const)
       return {
         id: crypto.randomUUID(),
         file,
         type,
         name: file.name,
-        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
       }
     })
-    
-    setAttachments(prev => [...prev, ...newFiles])
+    setAttachments((prev) => [...prev, ...newFiles])
   }
 
   const removeAttachment = (id: string) => {
-    setAttachments(prev => prev.filter(att => att.id !== id))
+    setAttachments((prev) => prev.filter((att) => att.id !== id))
   }
 
   const handleSubmit = async () => {
@@ -52,37 +48,28 @@ export function ConcernDialog({ courseId, mentorId, onSuccess }: ConcernDialogPr
       showErrorToast("Please describe your concern")
       return
     }
-
     setIsSubmitting(true)
-
-    
-      const formData = new FormData()
-      formData.set('message', message)
-      formData.set('courseId', courseId)
-      formData.set('mentorId', mentorId)
-      
-      attachments.forEach(att => {
-        formData.append('attachments', att.file)
-      })
-
-      const res = await MentorAPIMethods.riseConcern(formData)
-      setIsSubmitting(false)
-      if (!res.ok) {
-        showErrorToast(res.msg)
-      }
-
-      showSuccessToast("Concern submitted successfully")
-      setMessage("")
-      setAttachments([])
-      setOpen(false)
-      onSuccess?.()
-   
-      
-   
+    const formData = new FormData()
+    formData.set("message", message)
+    formData.set("courseId", courseId)
+    attachments.forEach((att) => {
+      formData.append("attachments", att.file)
+    })
+    const res = await MentorAPIMethods.riseConcern(formData)
+    setIsSubmitting(false)
+    if (!res.ok) {
+      showErrorToast(res.msg)
+      return
+    }
+    showSuccessToast("Concern submitted successfully")
+    setMessage("")
+    setAttachments([])
+    setOpen(false)
+    onSuccess?.()
   }
 
-  const getAttachmentIcon = (type: 'image' | 'audio') => {
-    return type === 'image' 
+  const getAttachmentIcon = (type: "image" | "audio") => {
+    return type === "image"
       ? <ImageIcon className="w-4 h-4 text-blue-400" />
       : <Mic className="w-4 h-4 text-purple-400" />
   }
@@ -92,12 +79,15 @@ export function ConcernDialog({ courseId, mentorId, onSuccess }: ConcernDialogPr
       <DialogTrigger asChild>
         <Button
           variant="outline"
-          className="border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 hover:text-yellow-300 shadow-md rounded-full px-4 py-2 flex items-center gap-2 transition-all"
+          // --- MODIFIED CLASSES HERE TO MAKE IT SMALLER ---
+          className="border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 hover:text-yellow-300 shadow-md rounded-full px-3 py-1.5 flex items-center gap-1.5 transition-all bg-transparent text-sm"
+          // --- END MODIFIED CLASSES ---
         >
-          <MessageCircleWarning size={18} />
-          Raise a Concern
+          <MessageCircleWarning size={16} /> {/* Reduced icon size to 16 */}
+          Raise Concern
         </Button>
       </DialogTrigger>
+
       <DialogContent className="bg-gray-900 border border-yellow-700 shadow-2xl rounded-xl max-w-md sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="text-yellow-400 text-2xl font-bold">Report a Concern</DialogTitle>
@@ -105,7 +95,7 @@ export function ConcernDialog({ courseId, mentorId, onSuccess }: ConcernDialogPr
             Please describe the issue and attach any relevant files (images or audio)
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           <Textarea
             placeholder="Describe your concern in detail..."
@@ -115,9 +105,9 @@ export function ConcernDialog({ courseId, mentorId, onSuccess }: ConcernDialogPr
             onChange={(e) => setMessage(e.target.value)}
             required
           />
-          
+
           <div className="space-y-2">
-            <div 
+            <div
               className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-yellow-500 transition-colors"
               onClick={() => fileInputRef.current?.click()}
             >
@@ -133,12 +123,12 @@ export function ConcernDialog({ courseId, mentorId, onSuccess }: ConcernDialogPr
               <p className="text-gray-300">Click to upload files or drag and drop</p>
               <p className="text-sm text-gray-500">Images, Audio (Max 10MB each)</p>
             </div>
-            
+
             {attachments.length > 0 && (
               <div className="space-y-2">
                 <p className="text-sm text-gray-400">Attachments ({attachments.length})</p>
                 <div className="space-y-2">
-                  {attachments.map(att => (
+                  {attachments.map((att) => (
                     <div key={att.id} className="flex items-center justify-between bg-gray-800/50 p-3 rounded-lg">
                       <div className="flex items-center gap-3">
                         {getAttachmentIcon(att.type)}
@@ -162,7 +152,7 @@ export function ConcernDialog({ courseId, mentorId, onSuccess }: ConcernDialogPr
             )}
           </div>
         </div>
-        
+
         <DialogFooter className="pt-4">
           <Button
             variant="ghost"

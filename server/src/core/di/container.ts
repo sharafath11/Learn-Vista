@@ -104,6 +104,10 @@ import { ICategoriesRepository } from '../interfaces/repositories/course/ICatego
 import { CategoriesRepository } from '../../repositories/course/categorieRepository';
 import { IConcernRepository } from '../interfaces/repositories/concern/IConcernRepository';
 import { ConcernRepository } from '../../repositories/course/concernRepository';
+import { IMentorConcernController } from '../interfaces/controllers/mentor/IMentorConcern.Controller';
+import { MentorConcernController } from '../../controllers/mentor/mentorConcern.controller';
+import { IMentorConcernService } from '../interfaces/services/mentor/IMentorConcern.Service';
+import { MentorConcernService } from '../../services/mentor/mentorConcern.Service';
 
 const container = new Container();
 
@@ -123,7 +127,8 @@ container.bind<IUserCourseController>(TYPES.UserCourseController).to(UserCourseC
 container.bind<IUserLiveController>(TYPES.UserLiveCOntroller).to(UserLiveCallController);
 container.bind<IMentorLessonsController>(TYPES.MentorLessonsController).to(MentorLessonsController)
 container.bind<IUserLessonsController>(TYPES.UserLessonsController).to(UserLessonsController)
-container.bind<IMentorStudentsController>(TYPES.MentorStudentsController).to(MentorStudentsController)
+container.bind<IMentorStudentsController>(TYPES.MentorStudentsController).to(MentorStudentsController);
+container.bind<IMentorConcernController>(TYPES.mentorConcernController).to(MentorConcernController),
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -141,6 +146,7 @@ container.bind<IUserLiveService>(TYPES.UserLiveService).to(LiveUserService)
 container.bind<IMentorLessonService>(TYPES.MentorLessonsService).to(MentorLessonService),
 container.bind<IUserLessonsService>(TYPES.UserLessonsService).to(UserLessonsService)
 container.bind<IMentorStudentService>(TYPES.MentorStudentsService).to(MentorStudentService);
+container.bind<IMentorConcernService>(TYPES.mentorConcernService).to(MentorConcernService)
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);

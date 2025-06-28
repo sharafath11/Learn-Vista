@@ -15,7 +15,6 @@ export interface ConcernFormData {
 
 export interface ConcernDialogProps {
   courseId: string;
-  mentorId: string;
   onSuccess?: () => void;
 }
 export interface IConcern {

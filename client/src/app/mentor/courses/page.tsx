@@ -1,42 +1,20 @@
 "use client"
 
 import { useMentorContext } from "@/src/context/mentorContext"
-import {
-  CheckCircle2,
-  XCircle,
-  Calendar,
-  Tag,
-  Layers,
-  Clock,
-  BookText,
-  Users
-} from "lucide-react"
+import { CheckCircle2, XCircle, Calendar, Tag, Layers, Clock, BookText, Users } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { format } from "date-fns"
 import { MentorAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import { useState } from "react"
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter
-} from "@/components/ui/card"
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter
-} from "@/components/ui/dialog"
-import { Separator } from "@/components/ui/separator"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { ConcernDialog } from "./ConcernDialog"
-
+import { RaiseConcernDialog } from "./ConcernDialog"
+import { ViewConcernsDialog } from "./ViewConcernsDialog"
 
 export default function CoursesPage() {
   const { courses, setCourses } = useMentorContext()
@@ -48,9 +26,7 @@ export default function CoursesPage() {
     const res = await MentorAPIMethods.courseStatusChange(id, status, reason || "")
     if (res.ok) {
       showSuccessToast(`Course ${status}`)
-      setCourses((prev) =>
-        prev.map((course) => course._id === id ? { ...course, mentorStatus: status } : course)
-      )
+      setCourses((prev) => prev.map((course) => (course._id === id ? { ...course, mentorStatus: status } : course)))
     } else {
       showErrorToast("Something went wrong with the status update")
     }
@@ -70,10 +46,8 @@ export default function CoursesPage() {
   const statusVariants: Record<string, string> = {
     approved: "bg-emerald-500 hover:bg-emerald-600",
     rejected: "bg-rose-500 hover:bg-rose-600",
-    pending: "bg-amber-500 hover:bg-amber-600"
+    pending: "bg-amber-500 hover:bg-amber-600",
   }
-
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-gray-200 p-6">
@@ -94,45 +68,50 @@ export default function CoursesPage() {
                 </AvatarFallback>
               </Avatar>
               <p className="text-gray-300 text-xl font-semibold mb-2">No Courses Awaiting Your Wisdom</p>
-              <p className="text-gray-400 text-lg">All courses are up to date! Enjoy the calm before the next wave of brilliance.</p>
+              <p className="text-gray-400 text-lg">
+                All courses are up to date! Enjoy the calm before the next wave of brilliance.
+              </p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 auto-rows-fr">
             {courses.map((course) => (
-              <Card 
-                key={course._id} 
+              <Card
+                key={course._id}
                 className="group relative bg-gradient-to-br from-gray-800/40 via-gray-800/30 to-gray-800/40 border border-gray-700 hover:shadow-2xl transition-all duration-300 flex flex-col transform hover:-translate-y-1"
               >
-                <CardHeader className="relative p-0 aspect-video overflow-hidden rounded-t-xl"> {/* Rounded-xl for consistency */}
+                <CardHeader className="relative p-0 aspect-video overflow-hidden rounded-t-xl">
                   <Image
                     src={course.thumbnail || "/placeholder.png"}
                     alt={course.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300  group-hover:brightness-100"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300 group-hover:brightness-100"
                   />
-                  <div className="absolute inset-0 " />
-                  <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center"> {/* Increased padding */}
-                    <Badge className={`${statusVariants[course.mentorStatus]} text-white px-3 py-1.5 text-sm font-bold rounded-full shadow-md`}> {/* Enhanced badge */}
+                  <div className="absolute inset-0" />
+                  <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                    <Badge
+                      className={`${statusVariants[course.mentorStatus]} text-white px-3 py-1.5 text-sm font-bold rounded-full shadow-md`}
+                    >
                       {course.mentorStatus.charAt(0).toUpperCase() + course.mentorStatus.slice(1)}
                     </Badge>
                     {course.categoryId?.title && (
-                      <Badge variant="secondary" className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 text-sm font-semibold rounded-full">
+                      <Badge
+                        variant="secondary"
+                        className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 text-sm font-semibold rounded-full"
+                      >
                         {course.categoryId.title}
                       </Badge>
                     )}
                   </div>
                 </CardHeader>
 
-                <CardContent className="flex-grow"> {/* Reduced padding and space */}
-                  <h2 className="text-xl font-bold text-white line-clamp-2 "> {/* Adjusted font size and added min-height */}
-                    {course.title}
-                  </h2>
-                  <p className="text-gray-400 text-sm line-clamp-2 ">{course.description}</p> {/* Added description */}
+                <CardContent className="flex-grow">
+                  <h2 className="text-xl font-bold text-white line-clamp-2">{course.title}</h2>
+                  <p className="text-gray-400 text-sm line-clamp-2">{course.description}</p>
 
-                  <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-300 pt-2"> {/* Reduced font size and gap */}
-                    <div className="flex items-center gap-2"> {/* Reduced gap */}
-                      <Layers className="w-4 h-4 text-purple-400" /> {/* Reduced icon size */}
+                  <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-300 pt-2">
+                    <div className="flex items-center gap-2">
+                      <Layers className="w-4 h-4 text-purple-400" />
                       <span>{course.sessions.length || "0"} Lessons</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -153,28 +132,9 @@ export default function CoursesPage() {
                     </div>
                   </div>
                 </CardContent>
-
-                <CardFooter className="flex flex-col gap-3 p-4 pt-0"> {/* Reduced padding and gap */}
-                  {course.mentorStatus === "pending" && (
-                    <div className="flex gap-2 w-full"> {/* Reduced gap */}
-                      <Button
-                        onClick={() => handleStatusChange(course._id, "approved")}
-                        className="flex-1 gap-2 h-10 text-base bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-md rounded-lg" // Enhanced button styles
-                      >
-                        <CheckCircle2 size={18} /> Approve
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        className="flex-1 gap-2 h-10 text-base bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white shadow-md rounded-lg" // Enhanced button styles
-                        onClick={() => {
-                          setSelectedCourseId(course._id)
-                          setShowReasonModal(true)
-                        }}
-                      >
-                        <XCircle size={18} /> Reject
-                      </Button>
-                    </div>
-                  )}
+ 
+                <CardFooter className="flex flex-col gap-3 p-4 pt-0">
+                  
 
                   {course.mentorStatus === "approved" && (
                     <>
@@ -188,9 +148,11 @@ export default function CoursesPage() {
                           <Users size={18} /> View Students
                         </Button>
                       </Link>
-                      <div className="w-full">
-                        <ConcernDialog />
-                      </div>
+
+<div className="w-full flex items-center gap-4">
+    <RaiseConcernDialog courseId={course._id} />
+    <ViewConcernsDialog />
+</div>
                     </>
                   )}
                 </CardFooter>
@@ -198,9 +160,8 @@ export default function CoursesPage() {
             ))}
           </div>
         )}
-
-        
       </div>
+
     </div>
   )
 }
