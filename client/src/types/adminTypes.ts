@@ -4,6 +4,7 @@ import { IMentor } from "./mentorTypes";
 import { ICategory } from "./categoryTypes";
 import { IPopulatedCourse } from "./courseTypes";
 import { AllStatusFilter } from "./commonTypes";
+import { IConcern } from "./concernTypes";
 
 export type DropDown = 'All' | 'admin' | 'mentor' | 'user';
 
@@ -23,7 +24,7 @@ export interface UserBlock {
 export type SortOrder = 'asc' | 'desc';
 
 
-export type RoleFilter =  'Mentor' | 'User'|'Course'|'Category';
+export type RoleFilter =  'Mentor' | 'User'|'Course'|'Category'|'Concern';
 
 export interface SearchAndFilterProps {
   searchTerm: string;
@@ -100,5 +101,9 @@ export interface AdminContextType {
     total: number;
   };
   avilbleMentors: IMentor[]
-  categories:ICategory[]
+  categories: ICategory[]
+  concern: IConcern[]
+  setConcerns: React.Dispatch<React.SetStateAction<IConcern[]>>;
+  allConcerns: IConcern[]
+  setAllConcerns:React.Dispatch<React.SetStateAction<IConcern[]>>;
 }

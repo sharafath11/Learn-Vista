@@ -12,6 +12,8 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
 import { CourseRepository } from "../../repositories/course/CourseRepository";
 import { IAdminCourserRepository } from "../../core/interfaces/repositories/admin/IAdminCourseRepository";
+import { IConcern } from "../../types/concernTypes";
+import { IConcernRepository } from "../../core/interfaces/repositories/concern/IConcernRepository";
 
 @injectable()
 class AdminCourseServices implements IAdminCourseServices {
@@ -24,7 +26,9 @@ class AdminCourseServices implements IAdminCourseServices {
     @inject(TYPES.AdminCourseRepository) private adminCourseRepo:IAdminCourserRepository,
 
     @inject(TYPES.CourseRepository)
-    private baseCourseRepo: ICourseRepository
+    private baseCourseRepo: ICourseRepository,
+    @inject (TYPES.ConcernRepository) private _concernRepo:IConcernRepository
+
   ) {}
 
   async addCategories(title: string, description: string): Promise<ICategory> {
@@ -218,6 +222,89 @@ async editCategories(categoryId: string, title: string, description: string): Pr
     const updated = await this.baseCourseRepo.update(id, { isBlock: status });
     if (!updated) throwError("Failed to update course status", StatusCode.INTERNAL_SERVER_ERROR);
   }
+  async getConcern(): Promise<IConcern[]> {
+    const result = await this._concernRepo.findAll();
+    if (!result) throwError("Somthing wrong");
+    return result
+  }
+ async updateConcernStatus(
+  concernId: string,
+  status: 'resolved' | 'in-progress',
+  resolution: string
+): Promise<void> {
+  const concern = await this._concernRepo.findById(concernId);
+  if (!concern) throwError("Concern not found");
+
+  const updated = await this._concernRepo.update(concernId, {
+    status,
+    resolution,
+    updatedAt: new Date()
+  });
+
+  if (!updated) throwError("Failed to update concern status");
+}
+async updateConcern(concernId: string, updateData: Partial<IConcern>): Promise<void> {
+  const concern = await this._concernRepo.findById(concernId);
+  if (!concern) throwError("Concern not found");
+
+  const updated = await this._concernRepo.update(concernId, {
+    ...updateData,
+    updatedAt: new Date()
+  });
+
+  if (!updated) throwError("Failed to update concern");
+}
+async getAllConcerns(
+  filters: {
+    status?: 'open' | 'in-progress' | 'resolved';
+    courseId?: string;
+    search?: string;
+  },
+  limit: number,
+  skip: number,
+  sort: Record<string, 1 | -1>
+): Promise<{ concerns: IConcern[]; courses: ICourse[] }> {
+  const query: FilterQuery<IConcern> = {};
+
+  if (filters.status) query.status = filters.status;
+  if (filters.courseId) query.courseId = filters.courseId;
+
+  if (filters.search && filters.search.trim()) {
+    query.$or = [
+      { title: { $regex: filters.search, $options: "i" } },
+      { message: { $regex: filters.search, $options: "i" } }
+    ];
+  }
+
+  const concerns = await this._concernRepo.findWithPagination(query, limit, skip, sort);
+  if (!concerns) throwError("Failed to fetch concerns");
+
+  const courses = await this.baseCourseRepo.findAll();
+  return { concerns, courses };
+}
+
+  async countAllConcerns(filters: {
+  status?: 'open' | 'in-progress' | 'resolved';
+  courseId?: string;
+  search?: string;
+}): Promise<number> {
+  const query: FilterQuery<IConcern> = {};
+
+  if (filters.status) query.status = filters.status;
+  if (filters.courseId) query.courseId = filters.courseId;
+
+  if (filters.search && filters.search.trim()) {
+    query.$or = [
+      { title: { $regex: filters.search, $options: "i" } },
+      { message: { $regex: filters.search, $options: "i" } }
+    ];
+  }
+
+  return this._concernRepo.count(query);
+}
+
+
+
 }
 
 export default AdminCourseServices;

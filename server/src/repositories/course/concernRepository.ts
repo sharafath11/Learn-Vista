@@ -1,3 +1,4 @@
+import { FilterQuery } from "mongoose";
 import { IConcernRepository } from "../../core/interfaces/repositories/concern/IConcernRepository";
 import ConcernModel from "../../models/class/concernModel";
 import { IConcern } from "../../types/concernTypes";
@@ -22,5 +23,22 @@ export class ConcernRepository extends BaseRepository<IConcern, IConcern> implem
       ConcernModel.countDocuments(filters)
     ]);
     return { data, total };
-  }
+    }
+  async findWithPagination(
+  filter: FilterQuery<IConcern>,
+  limit: number,
+  skip: number,
+  sort: Record<string, 1 | -1>
+): Promise<IConcern[]> {
+  return this.model
+    .find(filter)
+    .sort(sort)
+    .skip(skip)
+    .limit(limit)
+    .lean();
+}
+
+async count(filter: FilterQuery<IConcern>): Promise<number> {
+  return this.model.countDocuments(filter);
+}
 }

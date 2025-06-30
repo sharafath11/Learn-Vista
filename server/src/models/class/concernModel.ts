@@ -44,6 +44,11 @@ const concernSchema = new Schema<IConcern>({
     enum: ["open", "in-progress", "resolved"],
     default: "open"
   },
+  resolution: {
+    type: String,
+    default: "",
+   
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -52,6 +57,7 @@ const concernSchema = new Schema<IConcern>({
     type: Date,
     default: Date.now
   }
+  
 })
 
 const ConcernModel: Model<IConcern> = model<IConcern>("Concern", concernSchema)

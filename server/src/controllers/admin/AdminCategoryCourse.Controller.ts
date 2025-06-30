@@ -218,6 +218,131 @@ if (queryParams.filters?.isBlocked !== undefined) {
       handleControllerError(res, error);
     }
   }
+  async getConcernController(req: Request, res: Response): Promise<void> {
+    try {
+      const concerns = await this.adminCourseServices.getConcern();
+      sendResponse(res,StatusCode.OK,"Cioncern fetched succesfully",true,concerns)
+    } catch (error) {
+      handleControllerError(res,error)
+    }
+  }
+  async updateConcernStatus(req: Request, res: Response): Promise<void> {
+  try {
+    const concernId = req.params.id;
+    const { status, resolution } = req.body;
+
+    if (!["resolved", "in-progress"].includes(status)) {
+      return sendResponse(res, StatusCode.BAD_REQUEST, "Invalid status", false);
+    }
+
+    if (!resolution || resolution.trim().length < 10) {
+      return sendResponse(res, StatusCode.BAD_REQUEST, "Resolution must be at least 10 characters", false);
+    }
+
+    await this.adminCourseServices.updateConcernStatus(concernId, status, resolution);
+    sendResponse(res, StatusCode.OK, "Concern status updated successfully", true);
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+}
+
+
+  async updateConcern(req: Request, res: Response): Promise<void> {
+  try {
+    const concernId = req.params.id;
+    const updateData = req.body;
+
+    await this.adminCourseServices.updateConcern(concernId, updateData);
+    sendResponse(res, StatusCode.OK, "Concern updated successfully", true);
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+  }
+ async getAllConcerns(req: Request, res: Response): Promise<void> {
+  try {
+    const queryParams = (req.query as any).params || req.query;
+
+    const page = Math.max(Number(queryParams.page) || 1, 1);
+    const limit = Math.min(Math.max(Number(queryParams.limit) || 6, 1), 100);
+    const search = queryParams.search?.toString() || "";
+
+    const sort: Record<string, 1 | -1> = {};
+    if (queryParams.sort) {
+      for (const key in queryParams.sort) {
+        const value = queryParams.sort[key];
+        sort[key] = value === "asc" || value === "1" || value === 1 ? 1 : -1;
+      }
+    } else {
+      sort.createdAt = -1; // Default: Newest First
+    }
+
+    const filters = queryParams.filters || {};
+    const filterQuery: any = {};
+
+    // Filter by status
+    if (filters.status && filters.status !== "All") {
+      filterQuery.status = filters.status;
+    }
+
+    // Filter by courseId
+    if (filters.courseId && filters.courseId !== "All") {
+      filterQuery.courseId = filters.courseId;
+    }
+
+    // Text search
+    if (search) {
+      filterQuery.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { message: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const skip = (page - 1) * limit;
+
+    // ✅ Debug all parts of query
+    console.log("🟢 Incoming Query Params:", JSON.stringify(queryParams, null, 2));
+    console.log("📄 Page:", page);
+    console.log("📦 Limit:", limit);
+    console.log("🔎 Search Term:", search);
+    console.log("🔃 Sort:", sort);
+    console.log("🧾 Raw Filters:", filters);
+    console.log("🧩 Final MongoDB Filter Query:", JSON.stringify(filterQuery, null, 2));
+    console.log("⏭️ Skip:", skip);
+
+   const [data, total] = await Promise.all([
+  this.adminCourseServices.getAllConcerns(
+    { ...filterQuery, search }, // ✅ Now include search term here
+    limit,
+    skip,
+    sort
+  ),
+  this.adminCourseServices.countAllConcerns(
+    { ...filterQuery, search } // ✅ Same filter for count
+  ),
+]);
+
+    console.log("📊 Total Concerns Fetched:", total);
+    console.log("📬 Concerns Returned:",data.concerns);
+   
+
+    const totalPages = Math.ceil(total / limit);
+
+    sendResponse(res, StatusCode.OK, "Concerns fetched successfully", true, {
+      data,
+      total,
+      totalPages,
+      currentPage: page,
+    });
+  } catch (error) {
+    console.error("❌ Error in getAllConcerns:", error);
+    handleControllerError(res, error);
+  }
+}
+
+
+
+
+
 }
 
 export default AdminCourseController;

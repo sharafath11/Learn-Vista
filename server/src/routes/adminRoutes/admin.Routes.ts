@@ -30,6 +30,9 @@ route.post("/add-categories", verifyAdmin, adminCourseController.addCategories.b
 route.get("/categories", verifyAdmin, adminCourseController.getAllCategories.bind(adminCourseController));
 route.get("/all/categegory",verifyAdmin,adminCourseController.getCategories.bind(adminCourseController))
 route.patch("/categorie/block", verifyAdmin, adminCourseController.blockCategorie.bind(adminCourseController));
-route.patch("/edit/category",verifyAdmin,adminCourseController.editCategories.bind(adminCourseController))
+route.patch("/edit/category", verifyAdmin, adminCourseController.editCategories.bind(adminCourseController));
+route.get("/concers", verifyAdmin, adminCourseController.getConcernController.bind(adminCourseController))
+route.patch("/concern/:id/status",verifyAdmin,adminCourseController.updateConcernStatus.bind(adminCourseController) );
+route.get("/all/concerns",verifyAdmin,adminCourseController.getAllConcerns.bind(adminCourseController))
 
 export default route;

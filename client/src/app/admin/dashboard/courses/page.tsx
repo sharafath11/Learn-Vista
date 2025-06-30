@@ -13,9 +13,10 @@ import { Card } from "@/components/ui/card";
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { useRouter } from "next/navigation";
 import { IReson } from "@/src/types/commonTypes";
+import { ConcernModal } from "./concernModal";
 
 export default function CoursesAdminPage() {
-  const { courses, setCourses } = useAdminContext();
+  const { courses, setCourses, concern } = useAdminContext();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -23,6 +24,8 @@ export default function CoursesAdminPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCourses, setTotalCourses] = useState(0);
+  const [isConcernModalOpen, setIsConcernModalOpen] = useState(false);
+  const [selectedConcernId, setSelectedConcernId] = useState<string | null>(null);
   const coursesPerPage = 2;
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export default function CoursesAdminPage() {
   useEffect(() => {
     fetchCourses();
   }, [debouncedSearchTerm, statusFilter, sortOrder, currentPage]);
-
+ 
   const fetchCourses = async () => {
     const filters: Record<string, unknown> = {};
   
@@ -73,7 +76,25 @@ export default function CoursesAdminPage() {
   };
   
   const totalPages = Math.ceil(totalCourses / coursesPerPage);
-console.log(totalPages)
+
+  const handleConcernClick = (concernId: string) => {
+    setSelectedConcernId(concernId);
+    setIsConcernModalOpen(true);
+  };
+
+  const handleCloseConcernModal = () => {
+    setIsConcernModalOpen(false);
+    setSelectedConcernId(null);
+  };
+
+  const handleConcernStatusChange = () => {
+    fetchCourses(); 
+  };
+
+const selectedConcern = selectedConcernId 
+  ? concern.find(c => c.id === selectedConcernId) || null
+  : null;
+
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -103,7 +124,7 @@ console.log(totalPages)
           <>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6">
               {courses.map((course) => (
-                <Card key={course.id} className="overflow-hidden shadow-md">
+                <Card key={course._id} className="overflow-hidden shadow-md">
                   <div className="relative h-48 w-full">
                     <Image
                       src={course.thumbnail || "/placeholder.svg"}
@@ -118,34 +139,57 @@ console.log(totalPages)
                           {course.isBlock ? "Blocked" : "Active"}
                         </Badge>
                         <span
-  className={`
-    text-xs
-    px-2 py-1
-    rounded-full
-    font-medium
-    ${
-      course.mentorStatus === "approved"
-        ? "bg-green-100 text-green-800"
-        : course.mentorStatus === "rejected"
-        ? "bg-red-100 text-red-800"
-        : "bg-yellow-100 text-yellow-800"
-    }
-  `}
->
-  {course.mentorStatus}
-</span>
+                          className={`
+                            text-xs
+                            px-2 py-1
+                            rounded-full
+                            font-medium
+                            ${
+                              course.mentorStatus === "approved"
+                                ? "bg-green-100 text-green-800"
+                                : course.mentorStatus === "rejected"
+                                ? "bg-red-100 text-red-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }
+                          `}
+                        >
+                          {course.mentorStatus}
+                        </span>
+              
                         <Badge variant="outline" className="text-xs bg-amber-50">
                           {course.courseLanguage}
                         </Badge>
                       </div>
                     </div>
                   </div>
-                 
+                  
+                  {(() => {
+                    const activeConcern = concern.find(i => i.courseId === course._id && i.status !== "resolved");
+                    if (!activeConcern) return null;
+                    const isOpen = activeConcern.status === "open";
+
+                    return (
+                      <div 
+                        className="px-4 mt-3 cursor-pointer" 
+                        onClick={() => handleConcernClick(activeConcern.id)}
+                      >
+                        <div className={`flex items-center gap-2 w-fit px-3 py-1.5 rounded-full border font-medium text-xs shadow-sm
+                          ${isOpen 
+                            ? "bg-yellow-100 text-yellow-800 border-yellow-300" 
+                            : "bg-blue-100 text-blue-800 border-blue-300"}
+                        `}>
+                          <span className="animate-pulse w-2 h-2 rounded-full bg-current" />
+                          <span>Concern: {isOpen ? "Open" : "In Progress"}</span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   <div className="p-4">
                     <h3 className="mb-1 text-lg font-semibold line-clamp-1">{course.title}</h3>
                     <p className="mb-3 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{course.description}</p>
-                    <strong>category:</strong><span>{ course.categoryId.title}</span> <br />
-                    <strong>Mentor:</strong><span>{course?.mentorId.username}</span>
+                    <strong>category:</strong><span>{ course.categoryId?.title}</span> <br />
+                    <strong>Mentor:</strong><span>{course?.mentorId?.username}</span>
                   
                     {course?.mentorStatus === 'rejected' && course.mentorId?.courseRejectReson && (
                       <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/20 rounded-md">
@@ -235,6 +279,13 @@ console.log(totalPages)
           </div>
         )}
       </main>
+
+      {/* Concern Modal */}
+      <ConcernModal
+        concern={selectedConcern}
+        onClose={handleCloseConcernModal}
+        onStatusChange={handleConcernStatusChange}
+      />
     </div>
   );
 }

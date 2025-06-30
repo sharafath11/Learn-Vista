@@ -14,6 +14,7 @@ export interface IConcern extends Document{
   courseId: Types.ObjectId | string
   mentorId: Types.ObjectId | string
   status?: "open" | "in-progress" | "resolved"
+  resolution:string,
   createdAt?: Date
   updatedAt?: Date
 }

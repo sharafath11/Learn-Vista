@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FiHome, FiUsers, FiBook, FiSettings, FiLogOut, FiX } from 'react-icons/fi';
+import { FiHome, FiUsers, FiBook, FiSettings, FiLogOut, FiX, FiAlertCircle } from 'react-icons/fi';
 import { FaChalkboardTeacher } from 'react-icons/fa';
 import { SideBarProps } from '@/src/types/adminTypes';
 import { usePathname } from 'next/navigation';
@@ -13,6 +13,7 @@ const SideBar: React.FC<SideBarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     { name: 'Mentors', icon: <FaChalkboardTeacher />, href: '/admin/dashboard/mentor' },
     { name: 'Courses', icon: <FiBook />, href: '/admin/dashboard/courses' },
     { name: 'Category', icon: <FiBook />, href: '/admin/dashboard/categories' },
+    { name: 'Concern', icon: <FiAlertCircle />, href: '/admin/dashboard/concern' },
     { name: 'Settings', icon: <FiSettings />, href: '/admin/settings' },
     
   ];

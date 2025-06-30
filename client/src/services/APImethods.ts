@@ -6,7 +6,7 @@ import { IMentorSignupData } from "../types/mentorTypes";
 
 import { getRequest, patchRequest, postRequest } from "./api";
 import { baseURL } from "./AxiosInstance";
-import { ConcernFormData } from "../types/concernTypes";
+
 
 const get = getRequest;
 const post = postRequest;
@@ -86,7 +86,17 @@ export const AdminAPIMethods = {
   editCategory: (id: string, title: string, discription: string) =>
     patch(`/admin/edit/category`, { id, title, discription }),
     blockCategorie:(id:string,status:boolean)=>patch("/admin/categorie/block",{id,status}),
-  logout: () => post("/admin/logout", {})
+  logout: () => post("/admin/logout", {}),
+  getConcern: () => get("/admin/concers"),
+   getAllConcernsWithpagenation: (params: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    filters?: Record<string, any>;
+    sort?: Record<string, 1 | -1>;
+  }) => get("/admin/all/concerns", { params }),
+   updateConcernStatus: (concernId: string, status: "resolved" | "in-progress", resolution: string) => 
+  patch(`/admin/concern/${concernId}/status`, { status, resolution }),
 } as const;
 
 export const MentorAPIMethods = {

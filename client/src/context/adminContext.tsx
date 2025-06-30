@@ -7,12 +7,13 @@ import {
   useEffect,
 } from "react";
 import { AdminAPIMethods } from "../services/APImethods";
-import { showInfoToast } from "../utils/Toast";
+import { showErrorToast, showInfoToast } from "../utils/Toast";
 import { AdminContextType } from "../types/adminTypes";
 import { IMentor } from "../types/mentorTypes";
 import { IPopulatedCourse } from "../types/courseTypes";
 import { ICategory } from "../types/categoryTypes";
 import { useUserPagination } from "../hooks/useUserPagination";
+import { IConcern } from "../types/concernTypes";
 
 export const AdminContext = createContext<AdminContextType | null>(null);
 
@@ -23,11 +24,13 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [cat, setCat] = useState<ICategory[]>([]);
   const [categories,setCategories]=useState<ICategory[]>([])
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
+  const [concern,setConcerns]=useState<IConcern[]>([])
   const [mentorPagination, setMentorPagination] = useState({
     page: 1,
     limit: 10,
     total: 0,
   });
+  const [allConcerns,setAllConcerns]=useState<IConcern[]>([])
 
   const {
     users,
@@ -44,6 +47,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     fetchUsers({});
     availvleMentorGet()
     fetchALlCategories()
+    fetchConcernsData()
   }, []);
 
   async function getCategories(params?: {
@@ -124,7 +128,17 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     await fetchUsers(params ?? {});
   };
-
+  const fetchConcernsData = async () => {
+    const res = await AdminAPIMethods.getConcern();
+    if (res.ok) {
+      setConcerns(res.data);
+      return
+    }
+    else showErrorToast(res.msg)
+  }
+  const fetchAllConernsWithPagenation = async () => {
+   
+ }
   return (
     <AdminContext.Provider
       value={{
@@ -147,7 +161,11 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         getCourse,
         getCategories,
         avilbleMentors,
-        categories:categories.filter((ca)=>!ca.isBlock)
+        categories: categories.filter((ca) => !ca.isBlock),
+        concern,
+        setConcerns,
+        allConcerns,
+        setAllConcerns,
       }}
     >
       {children}
