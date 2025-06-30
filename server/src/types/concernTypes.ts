@@ -8,7 +8,7 @@ export interface IAttachment {
 }
 
 export interface IConcern extends Document{
-  
+  title:string
   message: string
   attachments?: IAttachment[]
   courseId: Types.ObjectId | string

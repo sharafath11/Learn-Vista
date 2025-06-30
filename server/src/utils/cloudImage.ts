@@ -57,3 +57,32 @@ export async function deleteFromCloudinary(url: string): Promise<void> {
   }
 }
 
+export async function uploadConcernAttachmentToCloudinary(
+  buffer: Buffer,
+  mimetype: string
+): Promise<string> {
+  const resourceType =
+    mimetype.startsWith('image/') ? 'image' :
+    mimetype.startsWith('audio/') ? 'video' : 
+    'auto'
+
+  const folder =
+    mimetype.startsWith('image/') ? 'concern_attachments/images' :
+    mimetype.startsWith('audio/') ? 'concern_attachments/audio' :
+    'concern_attachments/other'
+
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: resourceType },
+      (error, result) => {
+        if (error) return reject(error)
+        if (!result?.secure_url) return reject(new Error('Upload failed'))
+        resolve(result.secure_url)
+      }
+    )
+
+    const bufferStream = new stream.PassThrough()
+    bufferStream.end(buffer)
+    bufferStream.pipe(uploadStream)
+  })
+}

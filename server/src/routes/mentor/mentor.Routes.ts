@@ -61,8 +61,9 @@ router.get("/comments/:lessonId",verifyMentor,mentorLessonController.getComments
 router.patch("/student/block", verifyMentor, mentorStudentsController.blockStudentController.bind(mentorStudentsController));
 router.post("/genarate/options",verifyMentor,mentorLessonController.genarateOptions.bind(mentorLessonController))
 router.post(
-  "/raise/concern",
+  "/raise/concern",verifyMentor,
   uploadConcernFiles.array("attachments", 5), 
   _mentorConcernControler.addConcern.bind(_mentorConcernControler)
 );
+router.get("/concerns",verifyMentor,_mentorConcernControler.getConcern.bind(_mentorConcernControler))
 export default router;

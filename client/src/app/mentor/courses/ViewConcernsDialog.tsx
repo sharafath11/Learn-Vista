@@ -240,21 +240,7 @@ export function ViewConcernsDialog({ courseId }: ViewConcernsDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="border-orange-500/50 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300 hover:border-orange-400 shadow-lg rounded-full px-4 py-2 flex items-center gap-2 transition-all duration-200 bg-transparent backdrop-blur-sm"
-        >
-          <AlertCircle size={16} />
-          <span className="hidden sm:inline">View Concerns</span>
-          <span className="sm:hidden">Concerns</span>
-          {concerns.length > 0 && (
-            <Badge className="bg-orange-500/20 text-orange-300 border-orange-500/30 text-xs px-1.5 py-0.5 ml-1">
-              {concerns.length}
-            </Badge>
-          )}
-        </Button>
-      </DialogTrigger>
+      
 
       <DialogContent className="bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 border border-orange-700/50 rounded-2xl max-w-6xl max-h-[90vh] flex flex-col shadow-2xl backdrop-blur-sm">
         <DialogHeader className="space-y-4 pb-2">

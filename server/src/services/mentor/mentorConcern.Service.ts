@@ -14,7 +14,17 @@ export class MentorConcernService implements IMentorConcernService {
 
   async addConcern(data: IConcern): Promise<IConcern> {
     validateConcernPayload(data);
+    console.log(data)
     const concern = await this._concernRepo.create(data);
     return concern;
   }
+  async getConcerns(
+    filters: Record<string, any>,
+    sort: Record<string, 1 | -1>,
+    skip: number,
+    limit: number
+  ): Promise<{ data: IConcern[]; total: number }> {
+    return this._concernRepo.findMany(filters, sort, skip, limit);
+  }
+
 }

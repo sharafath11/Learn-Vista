@@ -1,7 +1,7 @@
 "use client"
 
 import { useMentorContext } from "@/src/context/mentorContext"
-import { CheckCircle2, XCircle, Calendar, Tag, Layers, Clock, BookText, Users } from "lucide-react"
+import { CheckCircle2, XCircle, Calendar, Tag, Layers, Clock, BookText, Users, AlertCircle } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { MentorAPIMethods } from "@/src/services/APImethods"
@@ -32,16 +32,7 @@ export default function CoursesPage() {
     }
   }
 
-  const handleReasonSubmit = async () => {
-    if (!selectedCourseId || !rejectionReason.trim()) {
-      showErrorToast("Rejection reason cannot be empty")
-      return
-    }
-    await handleStatusChange(selectedCourseId, "rejected", rejectionReason)
-    setShowReasonModal(false)
-    setSelectedCourseId(null)
-    setRejectionReason("")
-  }
+
 
   const statusVariants: Record<string, string> = {
     approved: "bg-emerald-500 hover:bg-emerald-600",
@@ -52,11 +43,16 @@ export default function CoursesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-gray-200 p-6">
       <div className="max-w-7xl mx-auto py-8">
-        <div className="flex justify-between items-center mb-10">
-          <h1 className="text-4xl font-extrabold text-white">Course Approvals</h1>
-          <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white backdrop-blur-md px-4 py-2 text-lg font-semibold rounded-full shadow-lg">
-            {courses.length} {courses.length === 1 ? "Course" : "Courses"} Pending
-          </Badge>
+        {/* Header with Concerns Link */}
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Your Courses</h1>
+          <Link
+            href="/mentor/courses/concerns"
+            className="flex items-center gap-2 px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/50 text-amber-400 rounded-full transition-colors"
+          >
+            <AlertCircle className="w-4 h-4" />
+            <span className="text-sm font-medium">View All Concerns</span>
+          </Link>
         </div>
 
         {courses.length === 0 ? (
@@ -134,8 +130,6 @@ export default function CoursesPage() {
                 </CardContent>
  
                 <CardFooter className="flex flex-col gap-3 p-4 pt-0">
-                  
-
                   {course.mentorStatus === "approved" && (
                     <>
                       <Link href={`/mentor/courses/${course._id}`} className="w-full">
@@ -149,10 +143,13 @@ export default function CoursesPage() {
                         </Button>
                       </Link>
 
-<div className="w-full flex items-center gap-4">
-    <RaiseConcernDialog courseId={course._id} />
-    <ViewConcernsDialog />
-</div>
+                      {/* Concerns Section - Right Aligned */}
+                      <div className="w-full flex justify-start mt-2">
+                        <RaiseConcernDialog 
+                          courseId={course._id}
+                          
+                        />
+                      </div>
                     </>
                   )}
                 </CardFooter>
@@ -161,7 +158,6 @@ export default function CoursesPage() {
           </div>
         )}
       </div>
-
     </div>
   )
 }

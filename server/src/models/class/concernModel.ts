@@ -1,7 +1,9 @@
 import mongoose, { Schema, model, Model } from "mongoose"
 import { IConcern } from "../../types/concernTypes"
+import { Type } from "@aws-sdk/client-s3"
 
 const concernSchema = new Schema<IConcern>({
+  title:{type:String,required:true},
   message: {
     type: String,
     required: [true, "Description is required"],

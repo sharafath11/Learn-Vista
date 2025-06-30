@@ -7,4 +7,20 @@ export class ConcernRepository extends BaseRepository<IConcern, IConcern> implem
     constructor() {
         super(ConcernModel)
     }
+    async findMany(
+    filters: Record<string, any>,
+    sort: Record<string, 1 | -1> = { createdAt: -1 },
+    skip = 0,
+    limit = 10
+  ): Promise<{ data: IConcern[]; total: number }> {
+    const [data, total] = await Promise.all([
+      ConcernModel.find(filters)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      ConcernModel.countDocuments(filters)
+    ]);
+    return { data, total };
+  }
 }

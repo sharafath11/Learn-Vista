@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import { useState, useRef, type ChangeEvent } from "react"
 import { MessageCircleWarning, Upload, X, ImageIcon, Mic } from "lucide-react"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
@@ -19,6 +20,7 @@ import { MentorAPIMethods } from "@/src/services/APImethods"
 
 export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) {
   const [open, setOpen] = useState(false)
+  const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
   const [attachments, setAttachments] = useState<ConcernAttachment[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -44,24 +46,37 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
   }
 
   const handleSubmit = async () => {
+    if (!title.trim()) {
+      showErrorToast("Please enter a title for your concern")
+      return
+    }
     if (!message.trim()) {
       showErrorToast("Please describe your concern")
       return
     }
+
     setIsSubmitting(true)
     const formData = new FormData()
+    formData.set("title", title)
     formData.set("message", message)
     formData.set("courseId", courseId)
     attachments.forEach((att) => {
       formData.append("attachments", att.file)
     })
+    formData.forEach((value, key) => {
+  console.log(`${key}:`, value)
+})
+
     const res = await MentorAPIMethods.riseConcern(formData)
     setIsSubmitting(false)
+
     if (!res.ok) {
       showErrorToast(res.msg)
       return
     }
+
     showSuccessToast("Concern submitted successfully")
+    setTitle("")
     setMessage("")
     setAttachments([])
     setOpen(false)
@@ -76,27 +91,35 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          // --- MODIFIED CLASSES HERE TO MAKE IT SMALLER ---
-          className="border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 hover:text-yellow-300 shadow-md rounded-full px-3 py-1.5 flex items-center gap-1.5 transition-all bg-transparent text-sm"
-          // --- END MODIFIED CLASSES ---
-        >
-          <MessageCircleWarning size={16} /> {/* Reduced icon size to 16 */}
-          Raise Concern
-        </Button>
-      </DialogTrigger>
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold text-yellow-400">Need Help?</h3>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            className="border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 hover:text-yellow-300 shadow-md rounded-full px-3 py-1.5 flex items-center gap-1.5 transition-all bg-transparent text-sm"
+          >
+            <MessageCircleWarning size={16} />
+            Raise Concern
+          </Button>
+        </DialogTrigger>
+      </div>
 
       <DialogContent className="bg-gray-900 border border-yellow-700 shadow-2xl rounded-xl max-w-md sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="text-yellow-400 text-2xl font-bold">Report a Concern</DialogTitle>
           <DialogDescription className="text-gray-400">
-            Please describe the issue and attach any relevant files (images or audio)
+            Please fill in the title and describe your issue. You can also attach files.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
+          <Input
+            placeholder="Enter a short title for your concern..."
+            className="bg-gray-800 text-gray-200 border border-gray-600 placeholder:text-gray-500 rounded-lg"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+
           <Textarea
             placeholder="Describe your concern in detail..."
             rows={5}
@@ -158,6 +181,7 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
             variant="ghost"
             onClick={() => {
               setOpen(false)
+              setTitle("")
               setMessage("")
               setAttachments([])
             }}
@@ -167,7 +191,7 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={isSubmitting || !message.trim()}
+            disabled={isSubmitting || !title.trim() || !message.trim()}
             className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold shadow-md disabled:opacity-50"
           >
             {isSubmitting ? "Submitting..." : "Submit Concern"}

@@ -130,10 +130,25 @@ export const MentorAPIMethods = {
       sort: JSON.stringify(sort || {}),
     },
   });
+   
 },
   blockStudentInCourse: (courseId: string, userId: string, status: boolean) => patch("/mentor/student/block", { courseId, userId, status }),
   generateOptions: (question: string) => post("/mentor/genarate/options", { question }),
-  riseConcern:(data:FormData)=>post("/mentor/raise/concern",data)
+  riseConcern: (data: FormData) => post("/mentor/raise/concern", data),
+ getConcern: (params: {
+  search?: string
+  status?: string
+  courseId?: string
+  sortBy?: string
+  sortOrder?: "asc" | "desc"
+  page?: number
+  pageSize?: number
+}) => get("/mentor/concerns", {
+  params: {
+    ...params
+  }
+}),
+
 } as const;
 
 export const batmanAi = {

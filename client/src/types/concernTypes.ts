@@ -1,10 +1,11 @@
 export interface ConcernAttachment {
   id: string;
-  file: File;
+  filename: string; 
+  url?: string;    
   type: 'image' | 'audio';
-  name: string;
-  size: string; 
+  size: number;    
 }
+
 
 export interface ConcernFormData {
   message: string;
@@ -19,6 +20,7 @@ export interface ConcernDialogProps {
 }
 export interface IConcern {
   id: string;
+  title:string
   message: string;
   attachments?: ConcernAttachment[];
   courseId: string;
