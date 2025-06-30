@@ -1,4 +1,5 @@
 import multer from "multer";
+import { throwError } from "../utils/ResANDError";
 
 const storage = multer.memoryStorage();
 
@@ -47,6 +48,7 @@ export const uploadConcernFiles = multer({
       cb(null, true);
     } else {
       cb(new Error(`Only image/audio files allowed. Received: ${file.mimetype}`));
+     
     }
   }
 });

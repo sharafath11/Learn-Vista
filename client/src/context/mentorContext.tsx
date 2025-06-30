@@ -20,7 +20,8 @@ export const MentorContext = createContext<IMentorContext | null>(null);
 export const MentorsContextProvider = ({ children }: { children: ReactNode }) => {
   const [mentor, setMentor] = useState<IMentor | null>(null);
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
-  const [lessons,setLessons]=useState<ILessons[]>([])
+  const [lessons, setLessons] = useState<ILessons[]>([])
+
   const router = useRouter();
 
   const getMentorDetils = useCallback(async () => {

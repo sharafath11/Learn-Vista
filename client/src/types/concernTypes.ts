@@ -5,6 +5,14 @@ export interface ConcernAttachment {
   type: 'image' | 'audio';
   size: number;    
 }
+export interface sendAttachement {
+  id: string;
+  file: string; 
+  url?: string;    
+  type: 'image' | 'audio';
+  size: number;  
+  name:string
+}
 
 
 export interface ConcernFormData {

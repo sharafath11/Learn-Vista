@@ -17,22 +17,7 @@ import { RaiseConcernDialog } from "./ConcernDialog"
 import { ViewConcernsDialog } from "./ViewConcernsDialog"
 
 export default function CoursesPage() {
-  const { courses, setCourses } = useMentorContext()
-  const [showReasonModal, setShowReasonModal] = useState(false)
-  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null)
-  const [rejectionReason, setRejectionReason] = useState("")
-
-  const handleStatusChange = async (id: string, status: "approved" | "rejected", reason?: string) => {
-    const res = await MentorAPIMethods.courseStatusChange(id, status, reason || "")
-    if (res.ok) {
-      showSuccessToast(`Course ${status}`)
-      setCourses((prev) => prev.map((course) => (course._id === id ? { ...course, mentorStatus: status } : course)))
-    } else {
-      showErrorToast("Something went wrong with the status update")
-    }
-  }
-
-
+  const { courses, setCourses, } = useMentorContext()
 
   const statusVariants: Record<string, string> = {
     approved: "bg-emerald-500 hover:bg-emerald-600",

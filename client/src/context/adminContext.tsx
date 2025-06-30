@@ -24,7 +24,8 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [cat, setCat] = useState<ICategory[]>([]);
   const [categories,setCategories]=useState<ICategory[]>([])
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
-  const [concern,setConcerns]=useState<IConcern[]>([])
+  const [concern, setConcerns] = useState<IConcern[]>([])
+  const [cMentors,setCMentors]=useState<IMentor[]>([])
   const [mentorPagination, setMentorPagination] = useState({
     page: 1,
     limit: 10,
@@ -71,7 +72,8 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     filters?: Record<string, any>;
   }) {
     const res = await AdminAPIMethods.fetchMentor(params || {});
-    console.log("angi inki ponki",res)
+    console.log("angi inki ponki", res)
+    
     if (res.ok) {
       setMentors(res.data.data);
       setMentorPagination({
@@ -98,6 +100,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     const res = await AdminAPIMethods.fetchMentor({});
     console.log("acdgreghregre",res)
     if (res.ok) {
+       setCMentors(res.data.data)
        const mentor = res.data.data.filter((i: IMentor) => {
         console.log("abcd",i)
         return i.isVerified && !i.isBlock && i.status == "approved"
@@ -166,6 +169,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         setConcerns,
         allConcerns,
         setAllConcerns,
+        cMentors
       }}
     >
       {children}

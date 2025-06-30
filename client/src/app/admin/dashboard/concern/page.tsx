@@ -17,6 +17,9 @@ import {
 import { cn } from "@/lib/utils"
 import { ICourse } from "@/src/types/courseTypes"
 import { IConcern } from "@/src/types/concernTypes"
+import { useAdminContext } from "@/src/context/adminContext"
+import { showErrorToast } from "@/src/utils/Toast"
+import { IMentor } from "@/src/types/mentorTypes"
 
 export default function ConcernsPage() {
   const [concerns, setConcerns] = useState<IConcern[]>([])
@@ -29,11 +32,10 @@ export default function ConcernsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalConcerns, setTotalConcerns] = useState(0)
   const [selectedConcernId, setSelectedConcernId] = useState<string | null>(null)
-
-  const concernsPerPage = 6
+  const [mentors,setMentors]=useState<IMentor[]>([])
+  const concernsPerPage = 2
   const totalPages = Math.ceil(totalConcerns / concernsPerPage)
 
-  // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 300)
     return () => clearTimeout(timer)
@@ -42,7 +44,15 @@ export default function ConcernsPage() {
   useEffect(() => {
     fetchConcerns()
   }, [debouncedSearchTerm, statusFilter, sortOrder, currentPage, selectedCourseId])
-
+  useEffect(() => {
+    fetchAllMentors()
+  },[])
+  const fetchAllMentors = async () => {
+      const res = await AdminAPIMethods.getAllMentor();
+      if (res.ok) setMentors(res.data)
+      
+      else showErrorToast(res.msg)
+    }
   const fetchConcerns = async () => {
     const filters: Record<string, any> = {}
     if (statusFilter !== "All") filters.status = statusFilter
@@ -73,11 +83,9 @@ export default function ConcernsPage() {
 
   return (
     <div className="min-h-screen px-6 py-8 bg-gray-50 dark:bg-gray-900">
-      <h1 className="text-2xl font-bold mb-4">Mentor Concerns</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Mentor Concerns</h1>
 
-      {/* Filters */}
       <div className="flex flex-col md:flex-row flex-wrap gap-3 mb-6 items-start md:items-center">
-        {/* Search */}
         <div className="relative w-full md:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -91,7 +99,6 @@ export default function ConcernsPage() {
           />
         </div>
 
-        {/* Status Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-full md:w-auto justify-between gap-2">
@@ -115,7 +122,6 @@ export default function ConcernsPage() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Course Filter */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-full md:w-auto justify-between gap-2">
@@ -123,7 +129,7 @@ export default function ConcernsPage() {
               <span>
                 {selectedCourseId === "All"
                   ? "All Courses"
-                  : courses.find((c) => c._id === selectedCourseId)?.title || "Unknown"}
+                  : courses.find((c) => c.id === selectedCourseId)?.title || "Unknown"}
               </span>
               <ChevronDown className="h-4 w-4 opacity-50" />
             </Button>
@@ -140,12 +146,12 @@ export default function ConcernsPage() {
             </DropdownMenuItem>
             {courses.map((course) => (
               <DropdownMenuItem
-                key={course._id}
+                key={course.id}
                 onClick={() => {
-                  setSelectedCourseId(course._id)
+                  setSelectedCourseId(course.id)
                   setCurrentPage(1)
                 }}
-                className={cn(selectedCourseId === course._id && "bg-accent")}
+                className={cn(selectedCourseId === course.id && "bg-accent")}
               >
                 {course.title}
               </DropdownMenuItem>
@@ -153,7 +159,6 @@ export default function ConcernsPage() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Sort Order */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="w-full md:w-auto justify-between gap-2">
@@ -184,49 +189,72 @@ export default function ConcernsPage() {
         </DropdownMenu>
       </div>
 
-      {/* Concern Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        {concerns.map((c) => (
-          <Card
-            key={c._id}
-            className="p-4 shadow-md cursor-pointer"
-            onClick={() => setSelectedConcernId(c._id)}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <Badge
-                className={`text-xs px-3 py-1 rounded-full ${
-                  c.status === "open"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : c.status === "in-progress"
-                    ? "bg-blue-100 text-blue-800"
-                    : "bg-green-100 text-green-800"
-                }`}
-              >
-                {c.status}
-              </Badge>
-              <span className="text-xs text-gray-500">
-                <Calendar className="inline mr-1 w-3 h-3" />
-                {formatDate(c.createdAt)}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm font-medium mb-1 text-gray-800 dark:text-white">
-              <AlertCircle className="w-4 h-4 text-red-500" />
-              {c.title}
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300 line-clamp-2">{c.message}</p>
-          </Card>
-        ))}
-      </div>
+      {concerns.length === 0 ? (
+        <div className="w-full text-center mt-24 text-muted-foreground text-sm">
+          🚫 No concerns found for the selected filters.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {concerns.map((c) => {
+            const course = courses.find((course) => course.id === c.courseId)
+            const mentor = mentors.find((m) => m.id === c.mentorId)
 
-      {/* Pagination */}
+            return (
+              <Card
+                key={c._id}
+                className="p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer"
+                onClick={() => setSelectedConcernId(c._id)}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <Badge
+                    className={cn(
+                      "text-xs px-3 py-1 rounded-full capitalize",
+                      c.status === "open" && "bg-yellow-100 text-yellow-800",
+                      c.status === "in-progress" && "bg-blue-100 text-blue-800",
+                      c.status === "resolved" && "bg-green-100 text-green-800"
+                    )}
+                  >
+                    {c.status}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
+                    {formatDate(c.createdAt)}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm font-semibold mb-2 text-gray-800 dark:text-white">
+                  <AlertCircle className="w-4 h-4 text-red-500" />
+                  {c.title}
+                </div>
+
+                <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+                  {c.message}
+                </p>
+
+                <div className="text-xs text-gray-500 space-y-1">
+                  <div>
+                    <strong>Mentor:</strong> {mentor?.username || "Unknown"}
+                  </div>
+                  <div>
+                    <strong>Course:</strong> {course?.title || "Unknown"}
+                  </div>
+                </div>
+              </Card>
+            )
+          })}
+        </div>
+      )}
+
       {totalPages > 1 && (
         <div className="flex justify-center mt-6 gap-2">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded border ${
-                currentPage === i + 1 ? "bg-indigo-600 text-white" : "bg-white text-gray-600"
+              className={`px-3 py-1 rounded border text-sm font-medium ${
+                currentPage === i + 1
+                  ? "bg-indigo-600 text-white"
+                  : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
               }`}
             >
               {i + 1}
@@ -235,7 +263,6 @@ export default function ConcernsPage() {
         </div>
       )}
 
-      {/* Concern Modal */}
       <ConcernModal
         concern={selectedConcern}
         onClose={() => setSelectedConcernId(null)}

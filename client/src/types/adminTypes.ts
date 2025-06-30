@@ -57,6 +57,7 @@ export interface MentorDetailsProps {
   onClose: () => void;
 }
 export interface AdminContextType {
+  cMentors:IMentor[]
   admin: boolean;
   setAdmin: React.Dispatch<React.SetStateAction<boolean>>;
   mentors: IMentor[];

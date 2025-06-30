@@ -15,31 +15,18 @@ import { Input } from "@/components/ui/input"
 import { useState, useRef, type ChangeEvent } from "react"
 import { MessageCircleWarning, Upload, X, ImageIcon, Mic } from "lucide-react"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
-import type { ConcernAttachment, ConcernDialogProps } from "@/src/types/concernTypes"
+import type { ConcernAttachment, ConcernDialogProps, sendAttachement } from "@/src/types/concernTypes"
 import { MentorAPIMethods } from "@/src/services/APImethods"
 
 export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) {
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
-  const [attachments, setAttachments] = useState<ConcernAttachment[]>([])
+  const [attachments, setAttachments] = useState<sendAttachement[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return
-    const newFiles = Array.from(e.target.files).map((file) => {
-      const type = file.type.startsWith("image/") ? ("image" as const) : ("audio" as const)
-      return {
-        id: crypto.randomUUID(),
-        file,
-        type,
-        name: file.name,
-        size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
-      }
-    })
-    setAttachments((prev) => [...prev, ...newFiles])
-  }
+  
 
   const removeAttachment = (id: string) => {
     setAttachments((prev) => prev.filter((att) => att.id !== id))
@@ -137,7 +124,7 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
               <input
                 type="file"
                 ref={fileInputRef}
-                onChange={handleFileChange}
+              
                 className="hidden"
                 multiple
                 accept="image/*,audio/*"
