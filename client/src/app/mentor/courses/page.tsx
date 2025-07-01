@@ -128,7 +128,7 @@ export default function CoursesPage() {
                         </Button>
                       </Link>
 
-                      {/* Concerns Section - Right Aligned */}
+                      
                       <div className="w-full flex justify-start mt-2">
                         <RaiseConcernDialog 
                           courseId={course._id}

@@ -18,6 +18,7 @@
 //   setCourses:React.Dispatch<React.SetStateAction<IPopulatedCourse[]>>;
 
 import { IReson } from "./commonTypes";
+import { IConcern } from "./concernTypes";
 import { ICourse, IPopulatedCourse } from "./courseTypes";
 // import { ICourse } from "./courseTypes";
 
@@ -143,6 +144,7 @@ export interface IMentorContext {
   refreshMentor: () => void;
   courses: IPopulatedCourse[];
   setCourses: React.Dispatch<React.SetStateAction<IPopulatedCourse[]>>;
+    concerns:IConcern[]
 }
 
 export interface IMentorSignupData {

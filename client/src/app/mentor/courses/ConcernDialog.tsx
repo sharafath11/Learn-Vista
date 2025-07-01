@@ -13,10 +13,11 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { useState, useRef, type ChangeEvent } from "react"
-import { MessageCircleWarning, Upload, X, ImageIcon, Mic } from "lucide-react"
+import { MessageCircleWarning, Upload, X, ImageIcon, Mic, Loader2 } from "lucide-react"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
-import type { ConcernAttachment, ConcernDialogProps, sendAttachement } from "@/src/types/concernTypes"
+import type { ConcernDialogProps, sendAttachement } from "@/src/types/concernTypes"
 import { MentorAPIMethods } from "@/src/services/APImethods"
+import { useMentorContext } from "@/src/context/mentorContext"
 
 export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) {
   const [open, setOpen] = useState(false)
@@ -26,7 +27,55 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  
+  const { concerns } = useMentorContext()
+  const concern = concerns.find((i) => i.courseId === courseId)
+  const status = concern?.status
+
+  const isModalAllowed = status !== "open" && status !== "in-progress"
+
+  const getStatusButtonClass = () => {
+    if (status === "open") return "border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 hover:text-yellow-300"
+    if (status === "in-progress") return "border-orange-500 text-orange-400 hover:bg-orange-500/10 hover:text-orange-300"
+    if (status === "resolved") return "border-green-500 text-green-400 hover:bg-green-500/10 hover:text-green-300"
+    return "border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 hover:text-yellow-300"
+  }
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files) return
+
+    const updated: sendAttachement[] = []
+
+    const toBase64 = (file: File) =>
+      new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = (error) => reject(error)
+      })
+
+    for (const file of Array.from(files)) {
+      const type = file.type.startsWith("image") ? "image" : "audio"
+
+      if (file.size > 10 * 1024 * 1024) {
+        showErrorToast(`${file.name} exceeds 10MB limit`)
+        continue
+      }
+
+      const base64 = await toBase64(file)
+
+      updated.push({
+        id: crypto.randomUUID(),
+        file: base64,
+        name: file.name,
+        size: parseFloat((file.size / (1024 * 1024)).toFixed(2)),
+        type,
+      })
+    }
+
+    setAttachments((prev) => [...prev, ...updated])
+    e.target.value = ""
+  }
 
   const removeAttachment = (id: string) => {
     setAttachments((prev) => prev.filter((att) => att.id !== id))
@@ -50,9 +99,6 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
     attachments.forEach((att) => {
       formData.append("attachments", att.file)
     })
-    formData.forEach((value, key) => {
-  console.log(`${key}:`, value)
-})
 
     const res = await MentorAPIMethods.riseConcern(formData)
     setIsSubmitting(false)
@@ -71,29 +117,43 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
   }
 
   const getAttachmentIcon = (type: "image" | "audio") => {
-    return type === "image"
-      ? <ImageIcon className="w-4 h-4 text-blue-400" />
-      : <Mic className="w-4 h-4 text-purple-400" />
+    return type === "image" ? (
+      <ImageIcon className="w-4 h-4 text-blue-400" />
+    ) : (
+      <Mic className="w-4 h-4 text-purple-400" />
+    )
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold text-yellow-400">Need Help?</h3>
-        <DialogTrigger asChild>
+        {isModalAllowed ? (
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              className={`${getStatusButtonClass()} shadow-md rounded-full px-3 py-1.5 flex items-center gap-1.5 transition-all bg-transparent text-sm`}
+            >
+              <MessageCircleWarning size={16} />
+              {status === "resolved" || !status ? "Raise Concern" : `Concern: ${status}`}
+            </Button>
+          </DialogTrigger>
+        ) : (
           <Button
             variant="outline"
-            className="border-yellow-500 text-yellow-400 hover:bg-yellow-500/10 hover:text-yellow-300 shadow-md rounded-full px-3 py-1.5 flex items-center gap-1.5 transition-all bg-transparent text-sm"
+            disabled
+            className={`${getStatusButtonClass()} opacity-70 cursor-not-allowed bg-transparent shadow-md rounded-full px-3 py-1.5 flex items-center gap-1.5 text-sm`}
           >
             <MessageCircleWarning size={16} />
-            Raise Concern
+            Concern: {status}
           </Button>
-        </DialogTrigger>
+        )}
       </div>
 
       <DialogContent className="bg-gray-900 border border-yellow-700 shadow-2xl rounded-xl max-w-md sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-yellow-400 text-2xl font-bold">Report a Concern</DialogTitle>
+          <DialogTitle className="text-yellow-400 text-2xl font-bold">
+            Report a Concern
+          </DialogTitle>
           <DialogDescription className="text-gray-400">
             Please fill in the title and describe your issue. You can also attach files.
           </DialogDescription>
@@ -124,10 +184,10 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
               <input
                 type="file"
                 ref={fileInputRef}
-              
                 className="hidden"
                 multiple
                 accept="image/*,audio/*"
+                onChange={handleFileChange}
               />
               <Upload className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
               <p className="text-gray-300">Click to upload files or drag and drop</p>
@@ -139,12 +199,17 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
                 <p className="text-sm text-gray-400">Attachments ({attachments.length})</p>
                 <div className="space-y-2">
                   {attachments.map((att) => (
-                    <div key={att.id} className="flex items-center justify-between bg-gray-800/50 p-3 rounded-lg">
+                    <div
+                      key={att.id}
+                      className="flex items-center justify-between bg-gray-800/50 p-3 rounded-lg"
+                    >
                       <div className="flex items-center gap-3">
                         {getAttachmentIcon(att.type)}
                         <div>
-                          <p className="text-gray-200 text-sm font-medium truncate max-w-xs">{att.name}</p>
-                          <p className="text-gray-400 text-xs">{att.size}</p>
+                          <p className="text-gray-200 text-sm font-medium truncate w-44">
+                            {att.name}
+                          </p>
+                          <p className="text-gray-400 text-xs">{att.size} MB</p>
                         </div>
                       </div>
                       <Button
@@ -181,7 +246,14 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
             disabled={isSubmitting || !title.trim() || !message.trim()}
             className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold shadow-md disabled:opacity-50"
           >
-            {isSubmitting ? "Submitting..." : "Submit Concern"}
+            {isSubmitting ? (
+              <span className="flex items-center gap-1">
+                <Loader2 className="animate-spin w-4 h-4" />
+                Submitting...
+              </span>
+            ) : (
+              "Submit Concern"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

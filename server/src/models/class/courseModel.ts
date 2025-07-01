@@ -16,7 +16,7 @@ const CourseSchema: Schema = new Schema(
     mentorStatus: {
       type: String,
       enum: ['approved', 'rejected',"pending"],
-      default: 'pending',
+      default: 'approved',
       required: true,
     },
     isStreaming:{type:Boolean,default:false},
