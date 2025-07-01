@@ -24,7 +24,7 @@ export default function ConcernsPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [pagination, setPagination] = useState({
     page: 1,
-    pageSize: 10,
+    pageSize: 2,
     total: 0
   })
 

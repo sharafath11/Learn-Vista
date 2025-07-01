@@ -273,23 +273,17 @@ if (queryParams.filters?.isBlocked !== undefined) {
         sort[key] = value === "asc" || value === "1" || value === 1 ? 1 : -1;
       }
     } else {
-      sort.createdAt = -1; // Default: Newest First
+      sort.createdAt = -1; 
     }
 
     const filters = queryParams.filters || {};
     const filterQuery: any = {};
-
-    // Filter by status
     if (filters.status && filters.status !== "All") {
       filterQuery.status = filters.status;
     }
-
-    // Filter by courseId
     if (filters.courseId && filters.courseId !== "All") {
       filterQuery.courseId = filters.courseId;
     }
-
-    // Text search
     if (search) {
       filterQuery.$or = [
         { title: { $regex: search, $options: "i" } },
@@ -298,31 +292,20 @@ if (queryParams.filters?.isBlocked !== undefined) {
     }
 
     const skip = (page - 1) * limit;
-
-    // ✅ Debug all parts of query
-    console.log("🟢 Incoming Query Params:", JSON.stringify(queryParams, null, 2));
-    console.log("📄 Page:", page);
-    console.log("📦 Limit:", limit);
-    console.log("🔎 Search Term:", search);
-    console.log("🔃 Sort:", sort);
-    console.log("🧾 Raw Filters:", filters);
-    console.log("🧩 Final MongoDB Filter Query:", JSON.stringify(filterQuery, null, 2));
-    console.log("⏭️ Skip:", skip);
+ 
 
    const [data, total] = await Promise.all([
   this.adminCourseServices.getAllConcerns(
-    { ...filterQuery, search }, // ✅ Now include search term here
+    { ...filterQuery, search },
     limit,
     skip,
     sort
   ),
   this.adminCourseServices.countAllConcerns(
-    { ...filterQuery, search } // ✅ Same filter for count
+    { ...filterQuery, search } 
   ),
 ]);
 
-    console.log("📊 Total Concerns Fetched:", total);
-    console.log("📬 Concerns Returned:",data.concerns);
    
 
     const totalPages = Math.ceil(total / limit);
@@ -334,7 +317,7 @@ if (queryParams.filters?.isBlocked !== undefined) {
       currentPage: page,
     });
   } catch (error) {
-    console.error("❌ Error in getAllConcerns:", error);
+    
     handleControllerError(res, error);
   }
 }

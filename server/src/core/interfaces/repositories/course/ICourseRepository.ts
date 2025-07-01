@@ -12,6 +12,15 @@ export interface ICourseRepository extends IBaseRepository <ICourse, ICourse>{
         search?: string;
         filters?: { categoryId?: string };
         sort?: { [key: string]: 1 | -1 };
-    }):Promise<{ data: IPopulatedCourse[]; total: number; totalPages: number }>
+    }): Promise<{ data: IPopulatedCourse[]; total: number; totalPages: number }>
+    fetchMentorCoursesWithFilters(params: {
+  mentorId: string;
+  page?: number;
+  limit?: number;
+  search?: string;
+  filters?: { categoryId?: string };
+  sort?: { [key: string]: 1 | -1 };
+}): Promise<{ data: IPopulatedCourse[]; total: number; totalPages: number }>;
+
 
 }

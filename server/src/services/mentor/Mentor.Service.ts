@@ -86,5 +86,33 @@ export class MentorService implements IMentorService {
       mentorStatus: "rejected"
     });
   }
+  async courseWithPagenated({
+  mentorId,
+  page,
+  limit,
+  search,
+  filters,
+  sort
+}: {
+  mentorId: string;
+  page: number;
+  limit: number;
+  search?: string;
+  filters?: Record<string, any>;
+  sort?: Record<string, 1 | -1>;
+}): Promise<{ data: IPopulatedCourse[]; total: number }> {
+  const { data, total } = await this.courseRepo.fetchMentorCoursesWithFilters({
+    mentorId,
+    page,
+    limit,
+    search,
+    filters,
+    sort: sort || { createdAt: -1 },
+  });
+
+  return { data, total };
+}
+
+
 }
 

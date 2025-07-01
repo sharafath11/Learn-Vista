@@ -12,7 +12,7 @@ export class ConcernRepository extends BaseRepository<IConcern, IConcern> implem
     filters: Record<string, any>,
     sort: Record<string, 1 | -1> = { createdAt: -1 },
     skip = 0,
-    limit = 10
+    limit = 2
   ): Promise<{ data: IConcern[]; total: number }> {
     const [data, total] = await Promise.all([
       ConcernModel.find(filters)

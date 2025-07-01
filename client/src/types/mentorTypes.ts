@@ -144,7 +144,8 @@ export interface IMentorContext {
   refreshMentor: () => void;
   courses: IPopulatedCourse[];
   setCourses: React.Dispatch<React.SetStateAction<IPopulatedCourse[]>>;
-    concerns:IConcern[]
+  concerns: IConcern[]
+  setConcerns: React.Dispatch<React.SetStateAction<IConcern[]>>;
 }
 
 export interface IMentorSignupData {

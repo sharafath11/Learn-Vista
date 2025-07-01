@@ -11,6 +11,7 @@ import { IMentorLessonsController } from '../../core/interfaces/controllers/ment
 import { IMentorStudentService } from '../../core/interfaces/services/mentor/IMentorStudent.Service';
 import { IMentorStudentsController } from '../../core/interfaces/controllers/mentor/ImentorStudent.controller';
 import { IMentorConcernController } from '../../core/interfaces/controllers/mentor/IMentorConcern.Controller';
+import { MarketplaceDeployment } from 'aws-sdk';
 const router = express.Router();
 const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
 const mentorController = container.get<IMentorController>(TYPES.MentorController);
@@ -65,5 +66,6 @@ router.post(
   uploadConcernFiles.array("attachments", 5), 
   _mentorConcernControler.addConcern.bind(_mentorConcernControler)
 );
-router.get("/concerns",verifyMentor,_mentorConcernControler.getConcern.bind(_mentorConcernControler))
+router.get("/concerns", verifyMentor, _mentorConcernControler.getConcern.bind(_mentorConcernControler))
+router.get("/pagenated/courses",verifyMentor,mentorController.coursePagenated.bind(mentorController))
 export default router;

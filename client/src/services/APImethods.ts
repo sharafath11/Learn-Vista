@@ -141,7 +141,9 @@ export const MentorAPIMethods = {
     },
   });
    
-},
+   
+  },
+ 
   blockStudentInCourse: (courseId: string, userId: string, status: boolean) => patch("/mentor/student/block", { courseId, userId, status }),
   generateOptions: (question: string) => post("/mentor/genarate/options", { question }),
   riseConcern: (data: FormData) => post("/mentor/raise/concern", data),
@@ -158,6 +160,16 @@ export const MentorAPIMethods = {
     ...params
   }
 }),
+getCourseWithFilter: (params: {
+  page: number;
+  limit: number;
+  search?: string;
+  filters?: Record<string, any>;
+  sort?: Record<string, 1 | -1>;
+}) =>  get("/mentor/pagenated/courses", { params })
+
+
+
 
 } as const;
 

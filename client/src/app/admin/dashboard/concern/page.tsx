@@ -238,6 +238,9 @@ export default function ConcernsPage() {
                   <div>
                     <strong>Course:</strong> {course?.title || "Unknown"}
                   </div>
+                  <div>
+                    <strong>Reselution:</strong> {c?.resolution || "No Reselution"}
+                  </div>
                 </div>
               </Card>
             )

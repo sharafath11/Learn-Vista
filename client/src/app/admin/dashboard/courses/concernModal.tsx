@@ -87,7 +87,7 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
     'in-progress': "Failed to mark concern as in-progress",
   };
 
-  const res = await AdminAPIMethods.updateConcernStatus(concern.id, status, resolution)
+  const res = await AdminAPIMethods.updateConcernStatus(concern._id, status, resolution)
 
   setIsProcessing(false);
 

@@ -109,5 +109,48 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
   
     return { data: paginatedCourses, total, totalPages };
   }
+  async fetchMentorCoursesWithFilters({
+  mentorId,
+  page = 1,
+  limit=2,
+  search,
+  filters = {},
+  sort = { createdAt: -1 },
+}: {
+  mentorId: string;
+  page?: number;
+  limit?: number;
+  search?: string;
+  filters?: { categoryId?: string };
+  sort?: { [key: string]: 1 | -1 };
+}): Promise<{ data: IPopulatedCourse[]; total: number; totalPages: number }> {
+  const query: any = { mentorId };
+
+  if (search) {
+    query.title = { $regex: search, $options: "i" };
+  }
+
+  if (filters.categoryId) {
+    query.categoryId = filters.categoryId;
+  }
+
+  const total = await CourseModel.countDocuments(query);
+  const data = await CourseModel.find(query)
+  .populate("mentorId")
+  .populate("categoryId")
+  .sort(sort)
+  .skip((page - 1) * limit)
+  .limit(limit)
+  .lean<IPopulatedCourse[]>(); 
+
+
+
+  return {
+    data,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
+}
+
   
 }

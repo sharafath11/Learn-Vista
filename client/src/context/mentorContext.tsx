@@ -66,7 +66,8 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
     refreshMentor: getMentorDetils,
     courses,
     setCourses,
-    concerns
+    concerns,
+    setConcerns
   };
 
   return (

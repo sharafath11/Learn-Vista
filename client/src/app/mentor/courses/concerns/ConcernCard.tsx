@@ -79,8 +79,8 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
   }
 
   const statusDisplay = getStatusDisplay(concern.status)
-  const courseName =
-    courses?.find((c) => c._id === concern.courseId)?.title || concern.courseId
+  const courseName =courses?.find((c) => c._id === concern.courseId)?.title || concern.courseId
+
 
   return (
     <Card className="bg-gray-800/50 border border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl">
@@ -145,32 +145,47 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
                     </div>
 
                     {att.url ? (
-  <Button
-    variant="ghost"
-    size="sm"
-    className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 p-2 rounded-lg transition-all"
-    onClick={() => {
-      if (att.type === "audio") {
-        const audio = new Audio(att.url)
-        audio.play()
-      } else if (att.type === "image") {
-        window.open(att.url, "_blank")
-      } else {
-        window.open(att.url, "_blank") 
-      }
-    }}
-  >
-    <Play className="w-4 h-4" />
-  </Button>
-) : (
-  <div className="text-red-400 text-xs flex items-center gap-1 px-2">
-    <XCircle className="w-3 h-3" />
-    <span className="hidden sm:inline">Unavailable</span>
-  </div>
-)}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 p-2 rounded-lg transition-all"
+                        onClick={() => {
+                          if (att.type === "audio") {
+                            const audio = new Audio(att.url)
+                            audio.play()
+                          } else if (att.type === "image") {
+                            window.open(att.url, "_blank")
+                          } else {
+                            window.open(att.url, "_blank")
+                          }
+                        }}
+                      >
+                        <Play className="w-4 h-4" />
+                      </Button>
+                    ) : (
+                      <div className="text-red-400 text-xs flex items-center gap-1 px-2">
+                        <XCircle className="w-3 h-3" />
+                        <span className="hidden sm:inline">Unavailable</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
+
+        {concern.status !== "open" && concern.resolution && (
+          <div className="space-y-3">
+            <Separator className="bg-gray-700/50" />
+            <div className="bg-emerald-900/20 border border-emerald-600/30 p-4 rounded-xl">
+              <h4 className="text-emerald-400 font-semibold text-sm mb-1 flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" />
+                Resolution
+              </h4>
+              <p className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">
+                {concern.resolution}
+              </p>
             </div>
           </div>
         )}

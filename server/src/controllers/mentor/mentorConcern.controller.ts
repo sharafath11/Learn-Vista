@@ -53,16 +53,13 @@ export class MentorConcernController implements IMentorConcernController {
  async getConcern(req: Request, res: Response): Promise<void> {
   try {
     const decoded = decodeToken(req.cookies.token);
-    // Log decoded token information for debugging
+
     console.log("Decoded Token:", decoded);
 
     if (!decoded?.id) {
       console.log("Unauthorized: No decoded ID found.");
       throwError("Unauthorized", StatusCode.UNAUTHORIZED);
     }
-
-    // Access the parameters from req.query.params
-    // Make sure req.query.params is treated as a Record<string, string>
     const queryParams = (req.query.params || {}) as Record<string, string>;
 
     const {
@@ -74,8 +71,6 @@ export class MentorConcernController implements IMentorConcernController {
       sortBy = "createdAt",
       sortOrder = "desc"
     } = queryParams; 
-
-    // Log raw query parameters
     console.log("Raw Query Parameters (from req.query):", req.query);
     console.log("Extracted Query Parameters (from req.query.params):", queryParams);
     console.log("Search Term Extracted:", search); // Confirm the search term is picked up
@@ -92,16 +87,12 @@ export class MentorConcernController implements IMentorConcernController {
     const filters: Record<string, any> = { mentorId: decoded.id };
     if (status) filters.status = status;
     if (courseId) filters.courseId = courseId;
-
-    // --- KEY CHANGE FOR SEARCH ---
     if (search) {
-      // Use $or to search across both title and message fields
       filters.$or = [
         { title: { $regex: search, $options: "i" } },
         { message: { $regex: search, $options: "i" } }
       ];
     }
-    // --- END KEY CHANGE ---
 
 
     console.log("Constructed Filters:", filters);
@@ -118,8 +109,6 @@ export class MentorConcernController implements IMentorConcernController {
       totalPages: Math.ceil(total / limit)
     });
   } catch (error) {
-    // Log any errors that occur
-    console.error("Error in getConcern:", error);
     handleControllerError(res, error);
   }
 }
