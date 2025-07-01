@@ -9,6 +9,7 @@ import { IUserController } from "../../core/interfaces/controllers/user/IUserCon
 import { IUserCourseController } from "../../core/interfaces/controllers/user/IUserCourseController";
 import { IUserLiveController } from "../../core/interfaces/controllers/user/IUserLiveVideoController";
 import { IUserLessonsController } from "../../core/interfaces/controllers/user/IUserLessonsContoller";
+import { IUserDonationController } from "../../core/interfaces/controllers/user/IUserDonationController";
 
 
 const router = express.Router();
@@ -18,7 +19,8 @@ const profileController = container.get<ProfileController>(TYPES.ProfileControll
 const userController = container.get<IUserController>(TYPES.UserController);
 const userCourseController = container.get<IUserCourseController>(TYPES.UserCourseController)
 const userLiveController = container.get<IUserLiveController>(TYPES.UserLiveCOntroller)
-const userLessonsController=container.get<IUserLessonsController>(TYPES.UserLessonsController)
+const userLessonsController = container.get<IUserLessonsController>(TYPES.UserLessonsController)
+const userDonationController=container.get<IUserDonationController>(TYPES.UserDonationController)
 
 router.post("/signup", authController.signup.bind(authController));
 router.post("/google/signup", authController.googleAuth.bind(authController));
@@ -44,6 +46,7 @@ router.get("/lesson/questions/:lessonId", authenticateToken, userLessonsControll
 router.post("/lessonDetils", authenticateToken, userLessonsController.getAllDetilsInLesson.bind(userLessonsController));
 router.post("/lesson/report", authenticateToken, userLessonsController.getLessonReport.bind(userLessonsController));
 router.get("/categories",userCourseController.getCategories.bind(userCourseController))
-router.post("/lesson/comment",authenticateToken,userLessonsController.saveComments.bind(userLessonsController))
-
+router.post("/lesson/comment", authenticateToken, userLessonsController.saveComments.bind(userLessonsController))
+router.post("/create-checkout-session",userDonationController.createCheckoutSession.bind(userDonationController))
+router.get("/stripe/verify-session/:sessionId",userDonationController.verifySession.bind(userDonationController))
 export default router;

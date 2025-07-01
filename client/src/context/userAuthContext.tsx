@@ -18,6 +18,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [allCourses, setAllCourses] = useState<IPopulatedCourse[]>([]);
   const [lessons, setLessons] = useState<ILessons[]>([])
+  const [curentUrl,setCurentUrl]=useState<string>("")
   
   const router = useRouter();
 
@@ -61,7 +62,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     user,
     setUser,
     allCourses,
-    fetchLessons
+    fetchLessons,
+    curentUrl,
+    setCurentUrl
   };
 
   return (

@@ -74,4 +74,5 @@ export class UserController implements IUserController {
             handleControllerError(res, error);
         }
     }
+     
 }

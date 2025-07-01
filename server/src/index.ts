@@ -15,6 +15,11 @@ import { getGemaniResponse } from "./config/gemaniAi";
 import { sendResponse } from "./utils/ResANDError";
 import { StatusCode } from "./enums/statusCode.enum";
 import { batmanPrompt } from "./utils/Rportprompt";
+import { UserDonationController } from "./controllers/user/UserDonation.Controller";
+import container from "./core/di/container";
+import { IUserDonationController } from "./core/interfaces/controllers/user/IUserDonationController";
+import { TYPES } from "./core/types";
+const userDonationController = container.get<IUserDonationController>(TYPES.UserDonationController);
 
 dotenv.config();
 

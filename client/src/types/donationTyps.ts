@@ -1,0 +1,19 @@
+export interface IDonation{
+  donorName: string;
+  donorEmail: string;
+  amount: number;
+  currency: string;
+  message?: string;
+  status: "processing" | "succeeded" | "failed" | "canceled";
+  paymentIntentId: string;
+  stripeCustomerId?: string;
+  receiptUrl?: string;
+  donorId?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+export interface IStripeSuccessSession {
+  customer_email: string;
+  amount_total: number;
+  receipt_url: string;
+}

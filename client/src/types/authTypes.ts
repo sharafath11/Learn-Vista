@@ -46,6 +46,8 @@ export interface UserContextType {
   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
   allCourses: IPopulatedCourse[]
   fetchLessons: (courseId: string) => Promise<ILessons[]>;
+  curentUrl:string,
+  setCurentUrl:React.Dispatch<React.SetStateAction<string>>
   
 }
 

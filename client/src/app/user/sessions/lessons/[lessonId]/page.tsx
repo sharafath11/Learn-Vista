@@ -17,6 +17,7 @@ import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from 'date-fns';
 import ReportModal from "./ReportModal";
+import DonationComponent from "@/src/components/user/Donation";
 
 export default function LessonPage() {
   const params = useParams();
@@ -162,7 +163,6 @@ export default function LessonPage() {
     );
   }
 
-  // Determine if all sections are completed to show the "View Report" button
   const allSectionsCompleted = videoCompleted && theoryCompleted && practicalCompleted && mcqCompleted;
 
   return (
@@ -181,6 +181,7 @@ export default function LessonPage() {
               View Report
             </Button>
           )}
+          <DonationComponent />
            {(!allSectionsCompleted || !report) && <div className="w-[120px]"></div>} 
         </div>
 
@@ -296,7 +297,6 @@ export default function LessonPage() {
                     isCompleted={practicalCompleted}
                   />
                 )}
-                {/* Render MCQQuestions component when 'mcq' tab is active */}
                 {activeTab === "mcq" && (
                   <MCQQuestions
                     questions={questions.filter((i) => i.type === "mcq")}
