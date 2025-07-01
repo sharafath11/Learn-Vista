@@ -240,16 +240,7 @@ console.log("courseId",user?.enrolledCourses)
                   </CardContent>
 
                   <CardFooter className="flex justify-between items-center border-t border-gray-100 pt-4 px-6 pb-6 mt-auto">
-                    <div className="flex items-center gap-2">
-                      <span className="font-extrabold text-2xl text-green-700">
-                        {course.price === 0 ? "Free" : `₹${course.price}`}
-                      </span>
-                      {course.price !== 0 && (
-                        <span className="text-sm text-gray-500 line-through">
-                          ₹{Math.round((course.price || 0) * 1.5)}
-                        </span>
-                      )}
-                    </div>
+                    
                     <div className="flex gap-2">
                       {(() => {
                         const isEnrolled = user?.enrolledCourses?.some((enrolledCourse) => enrolledCourse.courseId ==course._id);

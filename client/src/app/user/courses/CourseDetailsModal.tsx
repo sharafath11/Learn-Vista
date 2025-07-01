@@ -237,17 +237,7 @@ const CourseDetailsModal = ({
                         </div>
                       </div>
                       
-                      <div className="pt-4 border-t border-gray-200">
-                        <h4 className="font-medium mb-2">Course Price</h4>
-                        <div className="flex items-center justify-between">
-                          <span className="text-2xl font-bold">₹{course.price || 0}</span>
-                          {course.price && course.price > 0 && (
-                            <span className="text-sm text-gray-500 line-through">
-                              ₹{Math.round(course.price * 1.5)}
-                            </span>
-                          )}
-                        </div>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>

@@ -14,7 +14,7 @@ interface ICourseFormData {
   mentorId: string
   categoryId: string
   categoryName?: string
-  price: string
+  // price: string
   language: string
   tags: string[]
   currentTag: string
@@ -39,7 +39,7 @@ const initialFormData: ICourseFormData = {
   mentorId: "",
   categoryId: "",
   categoryName: "",
-  price: "",
+  // price: "",
   language: "",
   tags: [],
   currentTag: "",

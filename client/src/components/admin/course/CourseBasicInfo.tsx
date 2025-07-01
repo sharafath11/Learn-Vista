@@ -11,7 +11,6 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select"
-import { useAdminContext } from "@/src/context/adminContext"
 
 interface CourseBasicInfoProps {
   formData: {
@@ -19,7 +18,7 @@ interface CourseBasicInfoProps {
     description: string
     mentorId: string
     categoryId: string
-    price: string
+    // price: string
   }
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   handleSelectChange: (name: string, value: string) => void
@@ -103,20 +102,7 @@ export default function CourseBasicInfo({
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="price">Price</Label>
-          <Input
-            id="price"
-            name="price"
-            type="number"
-            value={formData.price}
-            onChange={handleChange}
-            placeholder="Enter price"
-            required
-          />
-        </div>
+        </div>        
       </CardContent>
     </Card>
   )
