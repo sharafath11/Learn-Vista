@@ -76,6 +76,8 @@ export default function DonationComponent() {
       if (!res.ok) {
         showErrorToast(res.msg)
       }
+      //  localStorage.setItem("url",currentUrl)
+      setCurentUrl(currentUrl)
       setIsOpen(false);
       const result = await stripe.redirectToCheckout({
         sessionId: res.data.id,
@@ -85,8 +87,7 @@ export default function DonationComponent() {
         showErrorToast(result.error.message || "Failed to redirect to Stripe Checkout.");
         return 
       }
-      localStorage.setItem("url",currentUrl)
-      setCurentUrl(currentUrl)
+     
   };
 
   return (

@@ -10,10 +10,13 @@ type Props = {
 }
 
 export default function SuccessView({ session }: Props) {
-    const router = useRouter()
+    const router = useRouter();
+   
     const handleBack = () => {
-       const url= localStorage.getItem("url");
-        console.log("url",url)
+        const url = localStorage.getItem("url");
+        if (url) router.push(url);
+        else router.push("/");
+        localStorage.removeItem("url")
  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
@@ -76,7 +79,7 @@ export default function SuccessView({ session }: Props) {
                 className="inline-flex items-center justify-center gap-2 px-6 py-4 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded-xl font-medium transition-all duration-200 w-full sm:w-auto"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Home
+                Continue to learning
               </button>
             </div>
           </div>

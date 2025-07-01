@@ -7,12 +7,14 @@ import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IA
 import { IAdminMentorController } from "../../core/interfaces/controllers/admin/IAdminMentor.Controller";
 import { IAdminCourseController } from "../../core/interfaces/controllers/admin/IAdminCourse.Controller";
 import { uploadImage } from "../../middlewares/upload";
+import { IAdminDonationController } from "../../core/interfaces/controllers/admin/IAdminDonation.Controller";
 const route = express.Router();
 
 const adminMentorController = container.get<IAdminMentorController>(TYPES.AdminMentorController);
 const adminUsersController = container.get<IAdminUserController>(TYPES.AdminUserController); 
 const adminAuthController = container.get<IAdminAuthController>(TYPES.AdminAuthController)
-const adminCourseController=container.get<IAdminCourseController>(TYPES.AdminCourseController)
+const adminCourseController = container.get<IAdminCourseController>(TYPES.AdminCourseController)
+const adminDonationController=container.get<IAdminDonationController>(TYPES.AdminDonationCOntroller)
 route.post("/login", adminAuthController.login.bind(adminAuthController));
 route.post("/logout", verifyAdmin, adminAuthController.logout.bind(adminAuthController));
 route.get("/users", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));
@@ -34,5 +36,5 @@ route.patch("/edit/category", verifyAdmin, adminCourseController.editCategories.
 route.get("/concers", verifyAdmin, adminCourseController.getConcernController.bind(adminCourseController))
 route.patch("/concern/:id/status",verifyAdmin,adminCourseController.updateConcernStatus.bind(adminCourseController) );
 route.get("/all/concerns",verifyAdmin,adminCourseController.getAllConcerns.bind(adminCourseController))
-
+route.get("/donations",verifyAdmin,adminDonationController.getDonations.bind(adminDonationController))
 export default route;

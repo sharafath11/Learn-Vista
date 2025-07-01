@@ -114,6 +114,10 @@ import { IUserDonationServices } from '../interfaces/services/user/IUserDonation
 import { UserDonationServices } from '../../services/user/UserDonation.service';
 import { IDonationRepoitory } from '../interfaces/repositories/donation/IDonationRepoitory';
 import { DonationRepoitory } from '../../repositories/user/DonationRepository';
+import { IAdminDonationServices } from '../interfaces/services/admin/IAdminDonationService';
+import { AdminDonationService } from '../../services/admin/AdminDonation.Service';
+import { IAdminDonationController } from '../interfaces/controllers/admin/IAdminDonation.Controller';
+import { AdminDonationController } from '../../controllers/admin/adminDonation.Controller';
 
 const container = new Container();
 
@@ -135,7 +139,8 @@ container.bind<IMentorLessonsController>(TYPES.MentorLessonsController).to(Mento
 container.bind<IUserLessonsController>(TYPES.UserLessonsController).to(UserLessonsController)
 container.bind<IMentorStudentsController>(TYPES.MentorStudentsController).to(MentorStudentsController);
 container.bind<IMentorConcernController>(TYPES.mentorConcernController).to(MentorConcernController),
-container.bind<IUserDonationController>(TYPES.UserDonationController).to(UserDonationController)
+container.bind<IUserDonationController>(TYPES.UserDonationController).to(UserDonationController),
+container.bind<IAdminDonationController>(TYPES.AdminDonationCOntroller).to(AdminDonationController)    
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -155,6 +160,7 @@ container.bind<IUserLessonsService>(TYPES.UserLessonsService).to(UserLessonsServ
 container.bind<IMentorStudentService>(TYPES.MentorStudentsService).to(MentorStudentService);
 container.bind<IMentorConcernService>(TYPES.mentorConcernService).to(MentorConcernService);
 container.bind<IUserDonationServices>(TYPES.UserDonationServices).to(UserDonationServices)
+container.bind<IAdminDonationServices>(TYPES.AdminDonationService).to(AdminDonationService)
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);

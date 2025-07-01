@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Search, Menu, X, ChevronDown, Home, BookOpen, Video, Users } from "lucide-react";
+import { Search, Menu, X, ChevronDown, Home, BookOpen, Video, Users, Heart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -30,7 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { name: "Home", path: "/", icon: Home },
   { name: "Courses", path: "/user/courses", icon: BookOpen },
   { name: "Live Classes", path: "/user/live-classes", icon: Video },
-  { name: "Community", path: "/community", icon: Users },
+   { name: "Donation", path: "/user/donation", icon: Heart },
 ];
 
 interface UserDropdownProps {

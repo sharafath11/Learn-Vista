@@ -97,7 +97,8 @@ export const AdminAPIMethods = {
     sort?: Record<string, 1 | -1>;
   }) => get("/admin/all/concerns", { params }),
    updateConcernStatus: (concernId: string, status: "resolved" | "in-progress", resolution: string) => 
-  patch(`/admin/concern/${concernId}/status`, { status, resolution }),
+    patch(`/admin/concern/${concernId}/status`, { status, resolution }),
+   getDonation:()=>get("/admin/donations")
 } as const;
 
 export const MentorAPIMethods = {
