@@ -1,8 +1,17 @@
+"use client"
+
+import React, { useState, useEffect } from "react"
 import { IConcern } from "@/src/types/concernTypes"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { ICourse } from "@/src/types/courseTypes"
+import {
+  Card,
+  CardContent,
+  CardHeader
+} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import {
   CheckCircle,
   Clock,
@@ -11,21 +20,31 @@ import {
   ImageIcon,
   Music,
   FileText,
-  Download,
   XCircle,
   Play
 } from "lucide-react"
-import React from "react"
-import { ICourse } from "@/src/types/courseTypes"
+
+type ConcernStatus = "open" | "in-progress" | "resolved"
 
 interface ConcernCardProps {
   concern: IConcern
   courses: ICourse[]
 }
 
-type ConcernStatus = "open" | "in-progress" | "resolved"
-
 const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null)
+  const [playingFile, setPlayingFile] = useState<string | null>(null)
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (currentAudio) {
+        currentAudio.pause()
+        currentAudio.currentTime = 0
+      }
+    }
+  }, [currentAudio])
+
   const getStatusDisplay = (status: ConcernStatus) => {
     const statusConfig = {
       resolved: {
@@ -79,118 +98,159 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
   }
 
   const statusDisplay = getStatusDisplay(concern.status)
-  const courseName =courses?.find((c) => c._id === concern.courseId)?.title || concern.courseId
-
+  const courseName =
+    courses?.find((c) => c._id === concern.courseId)?.title || concern.courseId
 
   return (
-    <Card className="bg-gray-800/50 border border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl">
-      <CardHeader className="pb-4">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div className="flex-1 space-y-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge
-                className={`${statusDisplay.colorClasses} border px-3 py-1.5 text-xs font-semibold shadow-sm`}
-              >
-                <div className="flex items-center gap-1.5">
-                  {statusDisplay.icon}
-                  {statusDisplay.label}
-                </div>
-              </Badge>
-              <Badge className="bg-gray-700/50 text-gray-300 border-gray-600/50 px-3 py-1.5 text-xs font-semibold">
-                {courseName}
-              </Badge>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <Calendar className="w-4 h-4" />
-              <span>{formatDate(concern.createdAt)}</span>
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="pt-0 space-y-4">
-        <div className="space-y-2">
-          <h3 className="text-orange-400 font-semibold text-lg">{concern.title}</h3>
-          <p className="text-gray-200 leading-relaxed text-base">{concern.message}</p>
-        </div>
-
-        {concern.attachments && concern.attachments.length > 0 && (
-          <div className="space-y-3">
-            <Separator className="bg-gray-700/50" />
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <FileText className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-400 text-sm font-medium">
-                  Attachments ({concern.attachments.length})
-                </span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {concern.attachments.map((att, j) => (
-                  <div
-                    key={j}
-                    className="flex items-center justify-between bg-gray-700/50 p-4 rounded-xl border border-gray-600/50 hover:border-gray-500/70 transition-all duration-200 group"
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="p-2 bg-gray-600/50 rounded-lg group-hover:bg-gray-600/70 transition-colors">
-                        {getAttachmentIcon(att.type)}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-gray-200 text-sm font-medium truncate">
-                          {att.filename}
-                        </p>
-                        <p className="text-gray-500 text-xs">
-                          {(att.size / 1024).toFixed(1)} KB
-                        </p>
-                      </div>
-                    </div>
-
-                    {att.url ? (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 p-2 rounded-lg transition-all"
-                        onClick={() => {
-                          if (att.type === "audio") {
-                            const audio = new Audio(att.url)
-                            audio.play()
-                          } else if (att.type === "image") {
-                            window.open(att.url, "_blank")
-                          } else {
-                            window.open(att.url, "_blank")
-                          }
-                        }}
-                      >
-                        <Play className="w-4 h-4" />
-                      </Button>
-                    ) : (
-                      <div className="text-red-400 text-xs flex items-center gap-1 px-2">
-                        <XCircle className="w-3 h-3" />
-                        <span className="hidden sm:inline">Unavailable</span>
-                      </div>
-                    )}
+    <>
+      <Card className="bg-gray-800/50 border border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex-1 space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge
+                  className={`${statusDisplay.colorClasses} border px-3 py-1.5 text-xs font-semibold shadow-sm`}
+                >
+                  <div className="flex items-center gap-1.5">
+                    {statusDisplay.icon}
+                    {statusDisplay.label}
                   </div>
-                ))}
+                </Badge>
+                <Badge className="bg-gray-700/50 text-gray-300 border-gray-600/50 px-3 py-1.5 text-xs font-semibold">
+                  {courseName}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-400">
+                <Calendar className="w-4 h-4" />
+                <span>{formatDate(concern.createdAt)}</span>
               </div>
             </div>
           </div>
-        )}
+        </CardHeader>
 
-        {concern.status !== "open" && concern.resolution && (
-          <div className="space-y-3">
-            <Separator className="bg-gray-700/50" />
-            <div className="bg-emerald-900/20 border border-emerald-600/30 p-4 rounded-xl">
-              <h4 className="text-emerald-400 font-semibold text-sm mb-1 flex items-center gap-2">
-                <CheckCircle className="w-4 h-4" />
-                Resolution
-              </h4>
-              <p className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">
-                {concern.resolution}
-              </p>
-            </div>
+        <CardContent className="pt-0 space-y-4">
+          <div className="space-y-2">
+            <h3 className="text-orange-400 font-semibold text-lg">{concern.title}</h3>
+            <p className="text-gray-200 leading-relaxed text-base">{concern.message}</p>
           </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {concern.attachments && concern.attachments.length > 0 && (
+            <div className="space-y-3">
+              <Separator className="bg-gray-700/50" />
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-400 text-sm font-medium">
+                    Attachments ({concern.attachments.length})
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {concern.attachments.map((att, j) => (
+                    <div
+                      key={j}
+                      className="flex items-center justify-between bg-gray-700/50 p-4 rounded-xl border border-gray-600/50 hover:border-gray-500/70 transition-all duration-200 group"
+                    >
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="p-2 bg-gray-600/50 rounded-lg group-hover:bg-gray-600/70 transition-colors">
+                          {getAttachmentIcon(att.type)}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-gray-200 text-sm font-medium truncate">
+                            {att.filename}
+                          </p>
+                          <p className="text-gray-500 text-xs">
+                            {(att.size / 1024).toFixed(1)} KB
+                          </p>
+                        </div>
+                      </div>
+
+                      {att.url ? (
+                        <Button
+  variant="ghost"
+  size="sm"
+  className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 p-2 rounded-lg transition-all"
+  onClick={() => {
+    if (att.type === "audio") {
+      if (playingFile === att.url) {
+        currentAudio?.pause()
+        if (currentAudio) currentAudio.currentTime = 0
+        setCurrentAudio(null)
+        setPlayingFile(null)
+      } else {
+        currentAudio?.pause()
+        if (currentAudio) currentAudio.currentTime = 0
+        const audio = new Audio(att.url)
+        audio.play()
+        setCurrentAudio(audio)
+        setPlayingFile(att.url || "")
+
+        audio.onended = () => {
+          setCurrentAudio(null)
+          setPlayingFile(null)
+        }
+      }
+    } else if (att.type === "image") {
+      setPreviewImage(att.url||"")
+    } else {
+      window.open(att.url, "_blank")
+    }
+  }}
+>
+  {att.type === "audio" && playingFile === att.url ? (
+    <XCircle className="w-4 h-4 text-red-400" />
+  ) : (
+    <Play className="w-4 h-4" />
+  )}
+</Button>
+
+                      ) : (
+                        <div className="text-red-400 text-xs flex items-center gap-1 px-2">
+                          <XCircle className="w-3 h-3" />
+                          <span className="hidden sm:inline">Unavailable</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {concern.status !== "open" && concern.resolution && (
+            <div className="space-y-3">
+              <Separator className="bg-gray-700/50" />
+              <div className="bg-emerald-900/20 border border-emerald-600/30 p-4 rounded-xl">
+                <h4 className="text-emerald-400 font-semibold text-sm mb-1 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  Resolution
+                </h4>
+                <p className="text-gray-200 text-sm leading-relaxed whitespace-pre-line">
+                  {concern.resolution}
+                </p>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
+        <DialogContent className="bg-gray-900 border border-gray-700 max-w-xl mx-auto">
+          {previewImage && (
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="rounded-lg max-h-[80vh] mx-auto"
+            />
+          )}
+          <Button
+            className="mt-4 text-sm bg-red-600 hover:bg-red-700 text-white"
+            onClick={() => setPreviewImage(null)}
+          >
+            Close
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

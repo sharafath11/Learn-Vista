@@ -26,7 +26,8 @@ export default function CoursesPage() {
   const [courses, setCourses] = useState<ICourse[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
+  const [totalPages, setTotalPages] = useState(1);
+  const [categories,setCategories]=useState<ICategory[]>([])
 
   const fetchCourses = () => {
     setLoading(true)
@@ -44,7 +45,9 @@ export default function CoursesPage() {
     MentorAPIMethods.getCourseWithFilter(params)
       .then((res) => {
         setCourses(res?.data?.data || [])
-        setTotalPages(res?.data?.totalPages || 1)
+        setTotalPages(res?.data?.totalPages || 1);
+        setCategories(res.data.categories)
+        
       })
       .catch(() => {
         showErrorToast("Failed to fetch courses.")
@@ -60,22 +63,18 @@ export default function CoursesPage() {
     setPage(1)
   }, [filters])
 
-  const categoryOptions: ICategory[] = Array.from(
-    new Map(
-      courses
-        .filter((c) => typeof c.categoryId === "object" && c.categoryId !== null)
-        .map((c) => [
-          (c.categoryId as ICategory)._id,
-          c.categoryId as ICategory,
-        ])
-    ).values()
-  )
+  // const categoryOptions: ICategory[] = Array.from(
+  //   new Map(
+  //     courses
+  //       .filter((c) => typeof c.categoryId === "object" && c.categoryId !== null)
+  //       .map((c) => [
+  //         (c.categoryId as ICategory)._id,
+  //         c.categoryId as ICategory,
+  //       ])
+  //   ).values()
+  // )
 
-  const statusVariants: Record<string, string> = {
-    approved: "bg-emerald-500 hover:bg-emerald-600",
-    rejected: "bg-rose-500 hover:bg-rose-600",
-    pending: "bg-amber-500 hover:bg-amber-600",
-  }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-gray-200 p-6">
@@ -91,7 +90,7 @@ export default function CoursesPage() {
           </Link>
         </div>
 
-        <CourseFilters categories={categoryOptions} onChange={setFilters} />
+        <CourseFilters categories={categories} onChange={setFilters} />
 
         {loading ? (
           <div className="text-center py-20 text-gray-400 text-lg">Loading courses...</div>
@@ -144,13 +143,13 @@ export default function CoursesPage() {
                         <span>{course.sessions?.length || "0"} Lessons</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Tag className="w-4 h-4 text-teal-400" />
-                        <span>{course.price ? `₹${course.price}` : "Free"}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-pink-400" />
                         <span>{course.startDate}</span>
                       </div>
+                      {/* <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-pink-400" />
+                        <span>{course.startDate}</span>
+                      </div> */}
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-yellow-400" />
                         <span>{course.startTime || "N/A"}</span>
@@ -190,7 +189,8 @@ export default function CoursesPage() {
                 <Button
                   variant="outline"
                   disabled={page === 1}
-                  onClick={() => setPage((p) => p - 1)}
+                      onClick={() => setPage((p) => p - 1)}
+                      className="text-black"
                 >
                   Previous
                 </Button>
@@ -200,7 +200,8 @@ export default function CoursesPage() {
                 <Button
                   variant="outline"
                   disabled={page === totalPages}
-                  onClick={() => setPage((p) => p + 1)}
+                      onClick={() => setPage((p) => p + 1)}
+                      className="text-black"
                 >
                   Next
                 </Button>

@@ -122,7 +122,7 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
             <DropdownMenuItem
               key={option.value}
               onClick={() => setStatusFilter(option.value as ConcernStatus | "all")}
-              className="flex justify-between items-center"
+              className="flex justify-between items-center text-amber-50"
             >
               <div className="flex items-center gap-2">
                 {option.icon && <span className="w-4 h-4">{option.icon}</span>}
@@ -151,7 +151,7 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
             <DropdownMenuItem
               key={option.value}
               onClick={() => setCourseFilter(option.value)}
-              className="flex justify-between items-center"
+              className="flex justify-between items-center text-amber-50"
             >
               <span>{option.label}</span>
             </DropdownMenuItem>
@@ -175,7 +175,7 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
                 setSortBy(option.value)
                 setSortOrder(option.defaultOrder || 'asc')
               }}
-              className={`flex justify-between items-center ${sortOrder === option.defaultOrder ? 'bg-gray-700' : ''}`}
+              className={`flex justify-between items-center text-amber-50 ${sortOrder === option.defaultOrder ? 'bg-gray-700' : ''}`}
             >
               <span>{option.label}</span>
             </DropdownMenuItem>

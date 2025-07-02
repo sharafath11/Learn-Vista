@@ -71,12 +71,13 @@ export default function DonationComponent() {
       return;
     }
    
-      const res = await UserAPIMethods.createCheckoutSession(finalAmount,"inr")
+    const res = await UserAPIMethods.createCheckoutSession(finalAmount, "inr")
+    localStorage.setItem("url",currentUrl)
       console.log("createCheckoutSession : ",res)
       if (!res.ok) {
         showErrorToast(res.msg)
       }
-      //  localStorage.setItem("url",currentUrl)
+       
       setCurentUrl(currentUrl)
       setIsOpen(false);
       const result = await stripe.redirectToCheckout({

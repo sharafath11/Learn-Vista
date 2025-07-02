@@ -78,8 +78,6 @@ export class MentorController implements IMentorController {
     const page = parseInt(query.page) || 1;
     const limit = parseInt(query.limit) || 12;
     const search = query.search;
-
-    // ✅ Fix sort parsing
     let sort: Record<string, 1 | -1> | undefined = undefined;
     if (query.sort) {
       const rawSort = query.sort;
@@ -92,7 +90,7 @@ export class MentorController implements IMentorController {
 
     const filters = query.filters;
 
-    console.log("📄 Final Query Params:", {
+    console.log(" Final Query Params:", {
       page,
       limit,
       search,
@@ -100,7 +98,7 @@ export class MentorController implements IMentorController {
       sort,
     });
 
-    const { data, total } = await this.mentorService.courseWithPagenated({
+    const { data, total ,categories} = await this.mentorService.courseWithPagenated({
       mentorId,
       page,
       limit,
@@ -113,10 +111,10 @@ export class MentorController implements IMentorController {
       data,
       total,
       totalPages: Math.ceil(total / limit),
+      categories
     });
 
   } catch (error) {
-    console.error("🔥 Error in coursePagenated:", error);
     handleControllerError(res, error);
   }
 }

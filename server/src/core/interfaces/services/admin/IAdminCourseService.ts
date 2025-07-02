@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { ICategory, ICourse, IPopulatedCourse } from "../../../../types/classTypes";
 import { IConcern } from "../../../../types/concernTypes";
 type ConcernFilter = {
@@ -27,7 +28,7 @@ export interface IAdminCourseServices{
     updateConcern(concernId: string, updateData: Partial<IConcern>): Promise<void>;
 
   updateConcernStatus(
-    concernId: string,
+    concernId: string|ObjectId,
     status: 'resolved' | 'in-progress',
     resolution: string
   ): Promise<void>;

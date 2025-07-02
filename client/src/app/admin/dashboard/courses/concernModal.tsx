@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { AdminAPIMethods, MentorAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast"
 import { IConcern } from "@/src/types/concernTypes"
+import { useAdminContext } from "@/src/context/adminContext"
 
 interface ConcernModalProps {
   concern: IConcern | null
@@ -32,7 +33,8 @@ interface ConcernModalProps {
 
 export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalProps) {
   const [resolution, setResolution] = useState("")
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false);
+  const {setAllConcerns}=useAdminContext()
 
   const getStatusDisplay = (status: string) => {
     const statusConfig: Record<string, { icon: React.ReactNode; colorClasses: string; label: string }> = {
@@ -82,17 +84,18 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
     'in-progress': "Concern marked as in-progress",
   };
 
-  const errorMessages = {
-    resolved: "Failed to resolve concern",
-    'in-progress': "Failed to mark concern as in-progress",
-  };
 
   const res = await AdminAPIMethods.updateConcernStatus(concern._id, status, resolution)
 
-  setIsProcessing(false);
+    setIsProcessing(false);
+
 
   if (!res?.ok) return showInfoToast(res.msg);
-
+    setAllConcerns((prev) =>
+    prev.map((c) =>
+      c.id === concern.id ? { ...c, status, resolution } : c
+    )
+  );
   showSuccessToast(messages[status]);
   onStatusChange();
   onClose();

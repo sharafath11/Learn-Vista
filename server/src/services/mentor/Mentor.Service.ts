@@ -4,15 +4,17 @@ import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Se
 import { TYPES } from '../../core/types';
 import { IMentor } from '../../types/mentorTypes';
 import { throwError } from '../../utils/ResANDError'; 
-import { ICourse, IPopulatedCourse } from '../../types/classTypes';
+import { ICategory, ICourse, IPopulatedCourse } from '../../types/classTypes';
 import { ICourseRepository } from '../../core/interfaces/repositories/course/ICourseRepository';
 import { StatusCode } from '../../enums/statusCode.enum'; // Consistent StatusCode Enum
+import { ICategoriesRepository } from '../../core/interfaces/repositories/course/ICategoriesRepository';
 
 @injectable()
 export class MentorService implements IMentorService {
   constructor(
     @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
-    @inject(TYPES.CourseRepository) private courseRepo: ICourseRepository
+    @inject(TYPES.CourseRepository) private courseRepo: ICourseRepository,
+    @inject(TYPES.CategoriesRepository) private catRepo:ICategoriesRepository
   ) {}
 
   async getMentor(id: string): Promise<Partial<IMentor>> {
@@ -100,7 +102,7 @@ export class MentorService implements IMentorService {
   search?: string;
   filters?: Record<string, any>;
   sort?: Record<string, 1 | -1>;
-}): Promise<{ data: IPopulatedCourse[]; total: number }> {
+    }): Promise<{ data: IPopulatedCourse[]; total: number; categories:ICategory[] }> {
   const { data, total } = await this.courseRepo.fetchMentorCoursesWithFilters({
     mentorId,
     page,
@@ -109,8 +111,8 @@ export class MentorService implements IMentorService {
     filters,
     sort: sort || { createdAt: -1 },
   });
-
-  return { data, total };
+  const categories=await this.catRepo.findAll()
+  return { data, total,categories };
 }
 
 

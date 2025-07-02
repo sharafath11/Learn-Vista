@@ -24,6 +24,7 @@ export const CourseFilters = ({ categories, onChange }: CourseFiltersProps) => {
   const [search, setSearch] = useState("")
   const [sort, setSort] = useState<"latest" | "oldest">("latest")
   const [category, setCategory] = useState("all")
+  // console.log("categ",categories)
 
   useEffect(() => {
     onChange({
@@ -59,9 +60,9 @@ export const CourseFilters = ({ categories, onChange }: CourseFiltersProps) => {
         <SelectContent>
           <SelectItem value="all">All Categories</SelectItem>
           {categories
-  .filter((c) => !!c._id && !!c.title)
+  .filter((c) => !!c.id && !!c.title)
   .map((category) => (
-    <SelectItem key={category._id} value={category._id as string}>
+    <SelectItem key={category.id} value={category.id as string}>
       {category.title}
     </SelectItem>
   ))}

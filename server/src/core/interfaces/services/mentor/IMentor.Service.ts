@@ -1,4 +1,4 @@
-import { ICourse, IPopulatedCourse } from "../../../../types/classTypes";
+import { ICategory, ICourse, IPopulatedCourse } from "../../../../types/classTypes";
 import { IMentor } from "../../../../types/mentorTypes";
 
 
@@ -13,6 +13,6 @@ export interface IMentorService {
   search?: string;
   filters?: Record<string, any>;
   sort?: Record<string, 1 | -1>;
-}): Promise<{ data: IPopulatedCourse[]; total: number }>;
+  }): Promise<{ data: IPopulatedCourse[]; total: number; categories:ICategory[] }>;
 
 }

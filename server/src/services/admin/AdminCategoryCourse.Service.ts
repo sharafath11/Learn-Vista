@@ -234,7 +234,7 @@ async editCategories(categoryId: string, title: string, description: string): Pr
 ): Promise<void> {
   const concern = await this._concernRepo.findById(concernId);
   if (!concern) throwError("Concern not found");
-
+console.log("concernId" ,concernId)
   const updated = await this._concernRepo.update(concernId, {
     status,
     resolution,
@@ -246,7 +246,7 @@ async editCategories(categoryId: string, title: string, description: string): Pr
 async updateConcern(concernId: string, updateData: Partial<IConcern>): Promise<void> {
   const concern = await this._concernRepo.findById(concernId);
   if (!concern) throwError("Concern not found");
-
+  
   const updated = await this._concernRepo.update(concernId, {
     ...updateData,
     updatedAt: new Date()

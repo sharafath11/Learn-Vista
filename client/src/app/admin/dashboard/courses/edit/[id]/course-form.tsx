@@ -239,7 +239,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
               <CardTitle>Course Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="price">Price *</Label>
                 <div className="relative">
                   <span className="absolute left-3 top-2.5">$</span>
@@ -253,7 +253,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                     required
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="space-y-2">
                 <Label>Language *</Label>

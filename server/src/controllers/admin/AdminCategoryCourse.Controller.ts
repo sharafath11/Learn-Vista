@@ -230,7 +230,7 @@ if (queryParams.filters?.isBlocked !== undefined) {
   try {
     const concernId = req.params.id;
     const { status, resolution } = req.body;
-
+    console.log("hyyyy",req.params,req.query)
     if (!["resolved", "in-progress"].includes(status)) {
       return sendResponse(res, StatusCode.BAD_REQUEST, "Invalid status", false);
     }
@@ -247,17 +247,17 @@ if (queryParams.filters?.isBlocked !== undefined) {
 }
 
 
-  async updateConcern(req: Request, res: Response): Promise<void> {
-  try {
-    const concernId = req.params.id;
-    const updateData = req.body;
+  // async updateConcern(req: Request, res: Response): Promise<void> {
+  // try {
+  //   const concernId = req.params.id;
+  //   const updateData = req.body;
 
-    await this.adminCourseServices.updateConcern(concernId, updateData);
-    sendResponse(res, StatusCode.OK, "Concern updated successfully", true);
-  } catch (error) {
-    handleControllerError(res, error);
-  }
-  }
+  //   await this.adminCourseServices.updateConcern(concernId, updateData);
+  //   sendResponse(res, StatusCode.OK, "Concern updated successfully", true);
+  // } catch (error) {
+  //   handleControllerError(res, error);
+  // }
+  // }
  async getAllConcerns(req: Request, res: Response): Promise<void> {
   try {
     const queryParams = (req.query as any).params || req.query;
