@@ -87,7 +87,7 @@ const Page = () => {
 
     if (res.ok) {
       const { data: newCourses, total, totalPages } = res.data;
-      setCourses(newCourses);
+      setCourses(newCourses.filter((i:IPopulatedCourse)=>!i.isBlock));
       setTotalPages(totalPages);
     } else {
       console.error(res.msg);

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { showErrorToast, showInfoToast } from "../utils/Toast";
+import { showInfoToast } from "../utils/Toast";
 import { useLoading } from "../hooks/useLoading";
 
 export const baseURL = "http://localhost:4000";

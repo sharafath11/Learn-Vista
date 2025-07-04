@@ -148,10 +148,10 @@ export default function Page() {
             value={fetchParams.filters?.status || "all"}
             onValueChange={handleStatusFilterChange}
           >
-            <SelectTrigger className="w-[180px] bg-gray-900 border-gray-700">
+            <SelectTrigger className="w-[180px] bg-gray-900  text-white border-gray-700">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-900 border-gray-700">
+            <SelectContent className="bg-gray-900 text-amber-50 border-gray-700">
               <SelectItem value="all">All Students</SelectItem>
               <SelectItem value="allowed">Allowed Only</SelectItem>
               <SelectItem value="blocked">Blocked Only</SelectItem>
@@ -162,10 +162,10 @@ export default function Page() {
             onValueChange={handleSortChange}
             defaultValue="desc"
           >
-            <SelectTrigger className="w-[180px] bg-gray-900 border-gray-700">
+            <SelectTrigger className="w-[180px] bg-gray-900 text-white border-gray-700">
               <SelectValue placeholder="Sort by date" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-900 border-gray-700">
+            <SelectContent className="bg-gray-900 text-white border-gray-700">
               <SelectItem value="desc">Newest First</SelectItem>
               <SelectItem value="asc">Oldest First</SelectItem>
             </SelectContent>

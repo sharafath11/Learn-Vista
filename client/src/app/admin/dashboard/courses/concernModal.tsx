@@ -85,7 +85,7 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
   };
 
 
-  const res = await AdminAPIMethods.updateConcernStatus(concern._id, status, resolution)
+  const res = await AdminAPIMethods.updateConcernStatus(concern._id?concern._id:concern.id, status, resolution)
 
     setIsProcessing(false);
 

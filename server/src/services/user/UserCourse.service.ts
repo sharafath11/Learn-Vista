@@ -35,11 +35,11 @@ export class UserCourseService implements IUserCourseService {
         };
 
      console.log("queryParams for repo:", queryParams) 
-   
+    
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(
          queryParams 
     );
-  
+     
         if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
         return { data, total, totalPages };
   }
