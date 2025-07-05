@@ -39,7 +39,8 @@ const AdminLogin = () => {
           admin?.setAdmin(true);
           route.push("/admin/dashboard")
         }
-  }
+    }
+  
   return (
     <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 to-purple-50'}`}>
       <motion.div

@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@chakra-ui/cli": "^3.17.0",
-    "@eslint/eslintrc": "^3",
+    "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20",
@@ -80,7 +80,7 @@
     "@types/react-redux": "^7.1.34",
     "@types/simple-peer": "^9.11.8",
     "@types/socket.io-client": "^1.4.36",
-    "eslint": "^9",
+    "eslint": "^9.30.1",
     "eslint-config-next": "15.2.4",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.2.9",
