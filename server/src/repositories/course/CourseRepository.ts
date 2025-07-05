@@ -4,10 +4,11 @@ import { ICourseRepository } from '../../core/interfaces/repositories/course/ICo
 import { ICategory, ICourse, IPopulatedCourse } from '../../types/classTypes';
 import CourseModel from '../../models/class/courseModel';
 import { IMentor } from '../../types/mentorTypes';
-import { IAdminCategoriesRepostory } from '../../core/interfaces/repositories/admin/IAdminCategoryRepository';
+// import { IAdminCategoriesRepostory } from '../../core/interfaces/repositories/admin/IAdminCategoryRepository';
 import { TYPES } from '../../core/types';
-import { ObjectId } from 'mongoose';
+import { FilterQuery, ObjectId } from 'mongoose';
 import { ICategoriesRepository } from '../../core/interfaces/repositories/course/ICategoriesRepository';
+import { throwError } from '../../utils/ResANDError';
 
 interface CourseQueryParams {
   page?: number;
@@ -152,5 +153,51 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
   };
 }
 
+   async AdmingetClassRepo(
+    page: number = 1,
+    limit: number = 2,
+    search?: string,
+    filters: FilterQuery<ICourse> = {},
+    sort: Record<string, 1 | -1> = { createdAt: -1 }
+  ): Promise<{ data: ICourse[]; total: number; totalPages: number }> {
+    try {
+   
+      if (search) {
+        const searchRegex = new RegExp(search, "i");
+        filters.$or = [
+          { title: { $regex: searchRegex } },
+          { description: { $regex: searchRegex } },
+          { tag: { $regex: searchRegex } }
+        ];
+      }
   
+      const skip = (page - 1) * 2;
+  
+      const query = this.model
+        .find(filters)
+        .sort(sort)
+        .skip(skip)
+        .limit(2)
+        .populate('mentorId')
+        .populate('categoryId');
+  
+      const [documents, total] = await Promise.all([
+        query,
+        this.model.countDocuments(filters)
+      ]);
+  //all limit change to 2
+      const totalPages = Math.ceil(total / limit);
+      console.log("Limit:", limit, "Skip:", skip);
+     console.log("Documents length:", documents.length);
+  
+      return {
+        data: documents,
+        total,
+        totalPages
+      };
+    } catch (error) {
+      console.error("Error in getClassRepo:", error);
+      throwError("Failed to fetch courses", 500);
+    }
+  }
 }

@@ -41,4 +41,5 @@ export class ConcernRepository extends BaseRepository<IConcern, IConcern> implem
 async count(filter: FilterQuery<IConcern>): Promise<number> {
   return this.model.countDocuments(filter);
 }
+  
 }
