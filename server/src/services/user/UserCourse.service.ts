@@ -8,13 +8,16 @@ import { ICategory, ICourse, IPopulatedCourse } from "../../types/classTypes";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
+import { IUserCourseProgress } from "../../types/userCourseProgress";
+import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
 
 @injectable()
 export class UserCourseService implements IUserCourseService {
   constructor(
     @inject(TYPES.CourseRepository) private _baseCourseRepo: ICourseRepository,
     @inject(TYPES.UserRepository) private _baseUserRepo: IUserRepository,
-    @inject(TYPES.CategoriesRepository) private _categoriesRepo :ICategoriesRepository
+    @inject(TYPES.CategoriesRepository) private _categoriesRepo: ICategoriesRepository,
+    @inject(TYPES.UserCourseProgressRepository) private _userCourseProgressRepo:IUserCourseProgressRepository
   ) {}
 
   async getAllCourses(
@@ -68,6 +71,11 @@ export class UserCourseService implements IUserCourseService {
   }
   async getCategries(): Promise<ICategory[]> {
     const result = await this._categoriesRepo.findAll();
+    return result
+  }
+  async getProgress(userId: string): Promise<IUserCourseProgress[]> {
+    const result = await this._userCourseProgressRepo.findAll({ userId: userId });
+    if (!result) throwError("Somthing wrent wrong")
     return result
   }
 }

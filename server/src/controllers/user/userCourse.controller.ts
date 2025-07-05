@@ -4,7 +4,7 @@ import { decodeToken } from "../../utils/JWTtoken";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController";
-import { handleControllerError, sendResponse } from "../../utils/ResANDError";
+import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 
 @injectable()
@@ -76,5 +76,15 @@ export class UserCourseController implements IUserCourseController {
             handleControllerError(res, error);
         }
     }
+  async getProgressDetiles(req: Request, res: Response): Promise<void> {
+    try {
+      const decoded = decodeToken(req.cookies.token)
+      if(!decoded?.id)throwError("Unauthorized",StatusCode.UNAUTHORIZED)
+      const progress = await this._userCourseService.getProgress(decoded?.id);
+      sendResponse(res,StatusCode.OK,"Progress fetched succesfully",true,progress)
+    } catch (error) {
+      handleControllerError(res,error)
+    }
+  }
 
 }

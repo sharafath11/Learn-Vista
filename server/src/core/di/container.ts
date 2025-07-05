@@ -118,6 +118,8 @@ import { IAdminDonationServices } from '../interfaces/services/admin/IAdminDonat
 import { AdminDonationService } from '../../services/admin/AdminDonation.Service';
 import { IAdminDonationController } from '../interfaces/controllers/admin/IAdminDonation.Controller';
 import { AdminDonationController } from '../../controllers/admin/adminDonation.Controller';
+import { IUserCourseProgressRepository } from '../interfaces/repositories/user/IUserCourseProgressRepository';
+import { UserCourseProgressRepository } from '../../repositories/user/UserCourseProgressRepository';
 
 const container = new Container();
 
@@ -181,6 +183,7 @@ container.bind<ICommentstRepository>(TYPES.CommentsRepository).to(CommentsReposi
 container.bind<ICategoriesRepository>(TYPES.CategoriesRepository).to(CategoriesRepository)
 container.bind<IConcernRepository>(TYPES.ConcernRepository).to(ConcernRepository)
 container.bind<IDonationRepoitory>(TYPES.DonationRepository).to(DonationRepoitory)
+container.bind<IUserCourseProgressRepository>(TYPES.UserCourseProgressRepository).to(UserCourseProgressRepository)
 
 
 export default container;

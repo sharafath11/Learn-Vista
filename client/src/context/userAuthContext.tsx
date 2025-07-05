@@ -11,6 +11,7 @@ import {
 import { IPopulatedCourse } from "../types/courseTypes";
 import { showErrorToast } from "../utils/Toast";
 import { ILessons } from "../types/lessons";
+import { IUserCourseProgress } from "../types/userProgressTypes";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
@@ -18,7 +19,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [allCourses, setAllCourses] = useState<IPopulatedCourse[]>([]);
   const [lessons, setLessons] = useState<ILessons[]>([])
-  const [curentUrl,setCurentUrl]=useState<string>("")
+  const [curentUrl, setCurentUrl] = useState<string>("");
+const [progresses, setProgress] = useState<IUserCourseProgress[]>([])
   
   const router = useRouter();
 
@@ -36,6 +38,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       router.push("/user/login");
     }
   }, [router]);
+  const fetchProgress = async () => {
+    const res = await UserAPIMethods.getUserProgress();
+    if (res.ok) setProgress(res.data);
+    else showErrorToast("Somthing wrent wronghhh")
+  }
 
    
    const fetchLessons = async (courseId:string) => {
@@ -50,6 +57,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   useEffect(() => {
     fetchUserData();
     fetchCourses();
+    fetchProgress()
   }, [fetchUserData]);
   const fetchCourses = async () => {
     const res = await UserAPIMethods.fetchAllCourse({});
@@ -64,7 +72,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     allCourses,
     fetchLessons,
     curentUrl,
-    setCurentUrl
+    setCurentUrl,
+    setProgress,
+    progresses
   };
 
   return (

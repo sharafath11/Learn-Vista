@@ -1,5 +1,7 @@
+import React from "react";
 import { IPopulatedCourse } from "./courseTypes";
 import { ILessons } from "./lessons";
+import { IUserCourseProgress } from "./userProgressTypes";
 
 export type UserRole = "user" | "mentor";
 
@@ -47,7 +49,9 @@ export interface UserContextType {
   allCourses: IPopulatedCourse[]
   fetchLessons: (courseId: string) => Promise<ILessons[]>;
   curentUrl:string,
-  setCurentUrl:React.Dispatch<React.SetStateAction<string>>
+  setCurentUrl: React.Dispatch<React.SetStateAction<string>>
+setProgress: React.Dispatch<React.SetStateAction<IUserCourseProgress[]>>;
+  progresses:IUserCourseProgress[]
   
 }
 

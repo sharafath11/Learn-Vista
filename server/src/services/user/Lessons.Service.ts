@@ -16,6 +16,9 @@ import { buildPrompt } from "../../utils/Rportprompt";
 import { getGemaniResponse } from "../../config/gemaniAi";
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
+import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
+import { toObjectId } from "../../utils/convertStringToObjectId";
+import { Types } from "mongoose";
 @injectable()
 export class UserLessonsService implements IUserLessonsService{
     constructor(
@@ -24,10 +27,11 @@ export class UserLessonsService implements IUserLessonsService{
         @inject(TYPES.QuestionsRepository) private _qustionRepository: IQuestionsRepository,
         @inject(TYPES.LessonReportRepository) private _lessonReportRepo: ILessonReportRepository,
         @inject(TYPES.CommentsRepository) private _commentsRepo: ICommentstRepository,
-        @inject(TYPES.UserRepository) private _userRepo:IUserRepository
+       @inject(TYPES.UserRepository) private _userRepo: IUserRepository,
+       @inject(TYPES.UserCourseProgressRepository) private _userCourseProgresRepo:IUserCourseProgressRepository
     ) { }
-    async getLessons(courseId: string | ObjectId, userId: string): Promise<ILesson[]> {
-  const user = await this._userRepo.findById(userId);
+    async getLessons(courseId: string | ObjectId, userId: string|ObjectId): Promise<ILesson[]> {
+  const user = await this._userRepo.findById(userId as string);
   if (!user) throwError("User not found", StatusCode.NOT_FOUND);
 
   const enrolledCourse = user.enrolledCourses.find(
@@ -42,11 +46,15 @@ export class UserLessonsService implements IUserLessonsService{
   }
   const course = await this._courseRepository.findById(courseId.toString());
   if (!course) throwError("Course not found", StatusCode.NOT_FOUND);
+      console.error("somt", userId, "enrolled user", course.enrolledUsers)
+  const userObjectId = new Types.ObjectId(userId as string);
+ const userEnrolled = course.enrolledUsers.some((id) =>
+  new Types.ObjectId(id.toString()).equals(userObjectId)
+);
+if (!userEnrolled) {
+  throwError("User not listed in course enrollment", StatusCode.BAD_REQUEST);
+}
 
-  const userEnrolled = course.enrolledUsers.includes(userId);
-  if (!userEnrolled) {
-    throwError("User not listed in course enrollment", StatusCode.BAD_REQUEST);
-  }
 
   const lessons = await this._lessonRepository.findAll({ courseId });
   if (!lessons || lessons.length === 0) {
@@ -92,23 +100,45 @@ console.log('Value of lessonId.toString():', lessonId.toString());
         if(report)return {questions,videoUrl:signedUrl,lesson,comments,report}
         return {questions,videoUrl:signedUrl,lesson,comments}
     }
-    async lessonReport(userId: string, lessonId: string, data: LessonQuestionInput): Promise<ILessonReport> {
-       const existingReport = await this._lessonReportRepo.findAll({ lessonId, userId });
+    async lessonReport(userId: string|ObjectId, lessonId: string|ObjectId, data: LessonQuestionInput): Promise<ILessonReport> {
+      const existingReport = await this._lessonReportRepo.findAll({ lessonId, userId });
+      if(!userId) throwError("user not identify")
        if(!existingReport)throwError("You already get the report please check in report session")
-       const lesson = await this._lessonRepository.findById(lessonId);
+       const lesson = await this._lessonRepository.findById(lessonId as string);
        if (!lesson) throwError("invalid lessons");
        const course = await this._courseRepository.findById(lesson.courseId as string);
        if (!course) throwError("Invalid course");
        const prompt = buildPrompt(data);
        const geminiRpoert = await getGemaniResponse(prompt);
        if (!geminiRpoert) throwError("Server bcy");
-       const report=await this._lessonReportRepo.create({
-           userId:userId,
-           lessonId: lessonId,
-           courseId: course.id,
-           mentorId: course.mentorId,
-           report: geminiRpoert
-       })
+      const report = await this._lessonReportRepo.create({
+        userId: userId,
+        lessonId: lessonId,
+        courseId: course.id,
+        mentorId: course.mentorId,
+        report: geminiRpoert
+      });
+       const totalLessons = course.sessions.length;
+
+  let userProgress = await this._userCourseProgresRepo.findOne({ userId, courseId: course.id });
+  const convertedLessonId=toObjectId(lessonId as string)
+  if (!userProgress) {
+    userProgress = await this._userCourseProgresRepo.create({
+      userId:toObjectId(userId as string),
+      courseId: course.id,
+      completedLessons: [convertedLessonId],
+      totalLessons,
+      overallProgressPercent: Math.round((1 / totalLessons) * 100),
+    });
+  } else {
+    if (!userProgress.completedLessons.includes(convertedLessonId)) {
+      userProgress.completedLessons.push(convertedLessonId);
+      userProgress.overallProgressPercent = Math.round(
+        (userProgress.completedLessons.length / totalLessons) * 100
+      );
+      await userProgress.save();
+    }
+  }
        return report
     }
     async saveComments(userId: string, lessonId: string | ObjectId, comment: string): Promise<IComment> {

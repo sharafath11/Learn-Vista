@@ -48,5 +48,6 @@ router.post("/lesson/report", authenticateToken, userLessonsController.getLesson
 router.get("/categories",userCourseController.getCategories.bind(userCourseController))
 router.post("/lesson/comment", authenticateToken, userLessonsController.saveComments.bind(userLessonsController))
 router.post("/create-checkout-session",userDonationController.createCheckoutSession.bind(userDonationController))
-router.get("/stripe/verify-session/:sessionId",userDonationController.verifySession.bind(userDonationController))
+router.get("/stripe/verify-session/:sessionId", userDonationController.verifySession.bind(userDonationController))
+router.get("/course/progress",authenticateToken,userCourseController.getProgressDetiles.bind(userCourseController))
 export default router;

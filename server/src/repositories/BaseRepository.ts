@@ -9,23 +9,30 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
   }
 
   // Modified to optionally include password
-  public toDTO(document: T, includePassword = false): U {
-    const obj = document.toObject();
-    const { _id, __v, ...rest } = obj;
-    // Convert all ObjectIds to strings
-    const converted = Object.entries(rest).reduce((acc, [key, value]) => {
-      if (value instanceof Types.ObjectId) {
-        acc[key] = value.toString();
-      } else if (Array.isArray(value) && value.every(v => v instanceof Types.ObjectId)) {
-        acc[key] = value.map(v => v.toString());
-      } else {
-        acc[key] = value;
-      }
-      return acc;
-    }, {} as any);
+  // public toDTO(document: T, includePassword = false): U {
+  //   const obj = document.toObject();
+  //   const { _id, __v, ...rest } = obj;
+  //   // Convert all ObjectIds to strings
+  //   const converted = Object.entries(rest).reduce((acc, [key, value]) => {
+  //     if (value instanceof Types.ObjectId) {
+  //       acc[key] = value.toString();
+  //     } else if (Array.isArray(value) && value.every(v => v instanceof Types.ObjectId)) {
+  //       acc[key] = value.map(v => v.toString());
+  //     } else {
+  //       acc[key] = value;
+  //     }
+  //     return acc;
+  //   }, {} as any);
 
-    return { id: _id as string, ...converted } as unknown as U;
-  }
+  //   return { id: _id as string, ...converted } as unknown as U;
+  // }
+ public toDTO(document: T): U {
+  const obj = document.toObject();
+  const { _id, __v, password, updatedAt, ...rest } = obj;
+  return { id: _id.toString(), ...rest } as unknown as U;
+}
+
+
 
   public handleError(error: unknown, message: string): Error {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

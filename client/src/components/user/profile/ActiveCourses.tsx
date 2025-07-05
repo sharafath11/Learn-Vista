@@ -6,6 +6,7 @@ import { useUserContext } from "@/src/context/userAuthContext";
 import { ICourse } from "@/src/types/courseTypes";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { getCourseProgress } from "@/src/utils/getProgress";
 
 const CourseCard = ({ course }: { course: ICourse }) => {
   const {
@@ -18,7 +19,7 @@ const CourseCard = ({ course }: { course: ICourse }) => {
     endDate,
     enrolledUsers,
   } = course;
-
+ const {progresses}=useUserContext()
   const lessons = sessions?.length || 0;
   const progress = 75; 
   const completedLessons = Math.round((lessons * progress) / 100);
@@ -57,7 +58,7 @@ const CourseCard = ({ course }: { course: ICourse }) => {
         </div>
         <div className="mb-3">
           <div className="flex justify-between text-xs mb-1">
-            <span className="font-medium">{progress}% Complete</span>
+             <span>{getCourseProgress(course._id, progresses)}%</span>
             <span className="text-gray-500">
               {completedLessons}/{lessons} lessons
             </span>

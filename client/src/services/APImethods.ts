@@ -40,7 +40,8 @@ export const UserAPIMethods = {
   getReport: (lessonId: string, data: AnswerWithType[]) => post("/lesson/report", { lessonId, data }),
   saveComment: (lessonId: string, comment: string) => post("/lesson/comment", { lessonId, comment }),
   createCheckoutSession: (amount: number, currency: string) => post("/create-checkout-session", { amount, currency }),
-  getStripeCheckoutSession: (sessionId: string) =>get(`/stripe/verify-session/${sessionId }`),
+  getStripeCheckoutSession: (sessionId: string) => get(`/stripe/verify-session/${sessionId}`),
+  getUserProgress:()=>get("/course/progress")
 } as const;
 
 export const AdminAPIMethods = {
