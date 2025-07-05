@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
+// import { I_mentorRepository } from "../../core/interfaces/repositories/admin/I_mentorRepository";
 import { TYPES } from "../../core/types";
 import { sendMentorStatusChangeEmail } from "../../utils/emailService";
 import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";
@@ -7,15 +7,16 @@ import { IMentor } from "../../types/mentorTypes";
 import { throwError } from "../../utils/ResANDError";  
 import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
+import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
 
 @injectable()
 export class AdminMentorService implements IAdminMentorServices {
   constructor(
-    @inject(TYPES.AdminMentorRepository)
-    private adminMentorRepo: IAdminMentorRepository
+    @inject(TYPES.MentorRepository)
+    private _mentorRepo: IMentorRepository
   ) { }
   async getAllMentorWithoutFiltring(): Promise<IMentor[]> {
-    const result = await this.adminMentorRepo.findAll();
+    const result = await this._mentorRepo.findAll();
     return result
   }
 
@@ -26,7 +27,7 @@ export class AdminMentorService implements IAdminMentorServices {
     filters: FilterQuery<IMentor> = {},
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: IMentor[]; total: number; totalPages?: number }> {
-    const { data, total, totalPages } = await this.adminMentorRepo.findPaginated(
+    const { data, total, totalPages } = await this._mentorRepo.findPaginated(
       filters,
       page,
       limit,
@@ -49,7 +50,7 @@ export class AdminMentorService implements IAdminMentorServices {
   async changeMentorStatus(id: string, status: boolean, email: string): Promise<IMentor | null> {
     const statusString = status ? "approved" : "rejected";
 
-    const updated = await this.adminMentorRepo.update(id, { status });
+    const updated = await this._mentorRepo.update(id, { status });
     if (!updated) throwError(`Error changing mentor status for ID ${id}`, StatusCode.INTERNAL_SERVER_ERROR);
 
     if (updated && status) {
@@ -60,13 +61,13 @@ export class AdminMentorService implements IAdminMentorServices {
   }
 
   async toggleMentorBlock(id: string, isBlock: boolean): Promise<IMentor | null> {
-    const updated = await this.adminMentorRepo.update(id, { isBlock });
+    const updated = await this._mentorRepo.update(id, { isBlock });
     if (!updated) throwError(`Error toggling block status for mentor ${id}`, StatusCode.INTERNAL_SERVER_ERROR);
     return updated;
   }
 
   async mentorDetails(id: string): Promise<IMentor> {
-    const mentor = await this.adminMentorRepo.findById(id);
+    const mentor = await this._mentorRepo.findById(id);
     if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
     return mentor;
   }

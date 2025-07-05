@@ -22,5 +22,11 @@ export interface ICourseRepository extends IBaseRepository <ICourse, ICourse>{
   sort?: { [key: string]: 1 | -1 };
 }): Promise<{ data: IPopulatedCourse[]; total: number; totalPages: number }>;
 
-
+AdmingetClassRepo(
+    page: number,
+    limit: number,
+    search?: string,
+    filters?: any,
+    sort?: Record<string, 1 | -1>
+  ): Promise<{ data: ICourse[]; total: number; totalPages: number }>;
 }

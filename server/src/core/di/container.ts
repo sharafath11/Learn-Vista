@@ -33,10 +33,10 @@ import { IMentorRepository } from '../interfaces/repositories/mentor/IMentorRepo
 import { MentorRepository } from '../../repositories/mentor/MentorRepository';
 import { IMentorOtpRepository } from '../interfaces/repositories/mentor/IMentorOtpRepository';
 import { MentorOtpRepository } from '../../repositories/mentor/otpRepo';
-import { IAdminMentorRepository } from '../interfaces/repositories/admin/IAdminMentorRepository';
-import { AdminMentorRepository } from '../../repositories/admin/AdminMentorRepo';
-import { IAdminUsersRepository } from '../interfaces/repositories/admin/IAdminUsersRepository';
-import { AdminUsersRepo } from '../../repositories/admin/AdminUsersRepo';
+// import { IAdminMentorRepository } from '../interfaces/repositories/admin/IAdminMentorRepository';
+// import { AdminMentorRepository } from '../../repositories/admin/AdminMentorRepo';
+// import { IAdminUsersRepository } from '../interfaces/repositories/admin/IAdminUsersRepository';
+// import { AdminUsersRepo } from '../../repositories/admin/AdminUsersRepo';
 import { IUserRepository } from '../interfaces/repositories/user/IUserRepository';
 import { UserRepository } from '../../repositories/user/userRepository';
 import { IOtpRepository } from '../interfaces/repositories/user/IOtpRepository';
@@ -58,10 +58,10 @@ import AdminCourseController from '../../controllers/admin/AdminCategoryCourse.C
 import { IAdminCourseController } from '../interfaces/controllers/admin/IAdminCourse.Controller';
 import { IAdminCourseServices } from '../interfaces/services/admin/IAdminCourseService';
 import AdminCourseServices from '../../services/admin/AdminCategoryCourse.Service';
-import { IAdminCourserRepository } from '../interfaces/repositories/admin/IAdminCourseRepository';
-import { IAdminCategoriesRepostory } from '../interfaces/repositories/admin/IAdminCategoryRepository';
-import { AdminCourseRepository } from '../../repositories/admin/AdminCourseRepo';
-import { AdminCategoriesRepo } from '../../repositories/admin/AdminCategoriesRepo';
+// import { IAdminCourserRepository } from '../interfaces/repositories/admin/IAdminCourseRepository';
+// import { IAdminCategoriesRepostory } from '../interfaces/repositories/admin/IAdminCategoryRepository';
+// import { AdminCourseRepository } from '../../repositories/admin/AdminCourseRepo';
+// import { AdminCategoriesRepo } from '../../repositories/admin/AdminCategoriesRepo';
 import { ICourseRepository } from '../interfaces/repositories/course/ICourseRepository';
 import { CourseRepository } from '../../repositories/course/CourseRepository';
 import { ILiveRepository } from '../interfaces/repositories/course/ILiveRepository';
@@ -164,14 +164,14 @@ container.bind<IAdminDonationServices>(TYPES.AdminDonationService).to(AdminDonat
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);
-container.bind<IAdminMentorRepository>(TYPES.AdminMentorRepository).to(AdminMentorRepository);
-container.bind<IAdminUsersRepository>(TYPES.AdminUsersRepository).to(AdminUsersRepo);
+// container.bind<IAdminMentorRepository>(TYPES.AdminMentorRepository).to(AdminMentorRepository);
+// container.bind<IAdminUsersRepository>(TYPES.AdminUsersRepository).to(AdminUsersRepo);
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpRepository);
-container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository);
+// container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository);
 container.bind<ICourseRepository>(TYPES.CourseRepository).to(CourseRepository)
-container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository).to(AdminCourseRepository);
-container.bind<IAdminCategoriesRepostory>(TYPES.AdminCategoriesRepository).to(AdminCategoriesRepo);
+// container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository).to(AdminCourseRepository);
+// container.bind<IAdminCategoriesRepostory>(TYPES.AdminCategoriesRepository).to(AdminCategoriesRepo);
 container.bind<ILiveRepository>(TYPES.LiveRepository).to(LiveRepository);
 container.bind<ISessionRepository>(TYPES.SessionRepository).to(SessionRepository);
 container.bind<ILessonsRepository>(TYPES.LessonsRepository).to(LessonsRepository)

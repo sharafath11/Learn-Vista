@@ -2,8 +2,8 @@ import { inject, injectable } from "inversify";
 import { IAdminCourseServices } from "../../core/interfaces/services/admin/IAdminCourseService";
 import { ICategory, ICourse, IPopulatedCourse } from "../../types/classTypes";
 import { TYPES } from "../../core/types";
-import { IAdminCategoriesRepostory } from "../../core/interfaces/repositories/admin/IAdminCategoryRepository";
-import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
+// import { IAdminCategoriesRepostory } from "../../core/interfaces/repositories/admin/IAdminCategoryRepository";
+// import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { throwError } from "../../utils/ResANDError";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
@@ -11,19 +11,21 @@ import { validateCoursePayload } from "../../validation/adminValidation";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
 import { CourseRepository } from "../../repositories/course/CourseRepository";
-import { IAdminCourserRepository } from "../../core/interfaces/repositories/admin/IAdminCourseRepository";
+// import { IAdminCourserRepository } from "../../core/interfaces/repositories/admin/IAdminCourseRepository";
 import { IConcern } from "../../types/concernTypes";
 import { IConcernRepository } from "../../core/interfaces/repositories/concern/IConcernRepository";
+import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
+import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
 
 @injectable()
 class AdminCourseServices implements IAdminCourseServices {
   constructor(
-    @inject(TYPES.AdminCategoriesRepository)
-    private categoryRepo: IAdminCategoriesRepostory,
+    @inject(TYPES.CategoriesRepository)
+    private categoryRepo: ICategoriesRepository,
 
-    @inject(TYPES.AdminMentorRepository)
-    private mentorRepo: IAdminMentorRepository,
-    @inject(TYPES.AdminCourseRepository) private adminCourseRepo:IAdminCourserRepository,
+    @inject(TYPES.MentorRepository)
+    private mentorRepo: IMentorRepository,
+    @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository,
 
     @inject(TYPES.CourseRepository)
     private baseCourseRepo: ICourseRepository,
@@ -199,7 +201,7 @@ async editCategories(categoryId: string, title: string, description: string): Pr
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: ICourse[]; total: number; totalPages?: number }> {
    
-    const { data, total, totalPages } = await this.adminCourseRepo.getClassRepo(
+    const { data, total, totalPages } = await this._courseRepo.AdmingetClassRepo(
       page,     
       limit,   
       search,   

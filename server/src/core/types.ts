@@ -43,7 +43,7 @@ export const TYPES = {
   // Repositories
   MentorRepository: Symbol.for('MentorRepository'),
   MentorOtpRepository: Symbol.for('MentorOtpRepository'),
-  AdminMentorRepository: Symbol.for('AdminMentorRepository'),
+  // AdminMentorRepository: Symbol.for('AdminMentorRepository'),
   AdminUsersRepository: Symbol.for('AdminUsersRepository'),
   UserRepository: Symbol.for('UserRepository'),
   OtpRepository: Symbol.for('OtpRepository'),
