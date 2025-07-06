@@ -15,13 +15,9 @@ export default function ProgressOverview() {
         categories: [],
       }
     }
-
-    // Get user's enrolled courses
     const enrolledCourses = allCourses.filter((course) =>
       user.enrolledCourses?.some((enrolled) => enrolled.courseId === course._id),
     )
-
-    // Calculate overall progress
     let totalProgress = 0
     let totalLessons = 0
     let completedLessons = 0
