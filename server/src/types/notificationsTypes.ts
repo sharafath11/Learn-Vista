@@ -1,5 +1,6 @@
 // ✅ types/notificationTypes.ts
 import { Types, Document } from "mongoose"
+import { INotificationService } from "../core/interfaces/services/notifications/INotificationService"
 
 export type NotificationType = "info" | "success" | "error" | "warning"
 
@@ -19,3 +20,10 @@ export interface ICreateNotification{
 }
 
 
+export interface NotifyParams {
+  notificationService: INotificationService;
+  userId?: string;
+  title: string;
+  message: string;
+  type: NotificationType;
+}

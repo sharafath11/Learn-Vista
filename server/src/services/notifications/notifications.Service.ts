@@ -3,32 +3,20 @@ import { INotificationService } from "../../core/interfaces/services/notificatio
 import { TYPES } from "../../core/types";
 import { INotificationRepository } from "../../core/interfaces/repositories/notifications/INotificationsRepository";
 import { ICreateNotification, INotification } from "../../types/notificationsTypes";
-import { Server } from "socket.io";
-import { emitServerNotification } from "../../utils/emitServerNotification";
 
 @injectable()
 export class NotificationService implements INotificationService {
   constructor(
-    @inject(TYPES.NotificationRepository) private _notificationRepo: INotificationRepository
+    @inject(TYPES.NotificationRepository)
+    private _notificationRepo: INotificationRepository
   ) {}
 
-  async createNotification(data: ICreateNotification, io?: Server): Promise<void> {
-  await this._notificationRepo.create(data);
-
-  if (io) {
-    emitServerNotification({
-      io,
-      userId: data.userId,
-      title: data.title,
-      message: data.message,
-      type: data.type,
-    });
+  async createNotification(data: ICreateNotification): Promise<void> {
+    await this._notificationRepo.create(data);
   }
-}
-
 
   async getMyNotifications(userId: string): Promise<INotification[]> {
-    return await this._notificationRepo.findAll({ userId });
+    return this._notificationRepo.findAll({ userId });
   }
 
   async markAsRead(id: string): Promise<boolean> {
@@ -45,6 +33,6 @@ export class NotificationService implements INotificationService {
   }
 
   async deleteNotification(id: string): Promise<boolean> {
-    return await this._notificationRepo.delete(id);
+    return this._notificationRepo.delete(id);
   }
 }

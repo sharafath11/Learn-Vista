@@ -8,13 +8,16 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserDonationServices } from "../../core/interfaces/services/user/IUserDonationServices";
+import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { decodeToken } from "../../utils/JWTtoken";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
     apiVersion: '2025-05-28.basil', 
 });
 @injectable()
 export class UserDonationController implements IUserDonationController {
     constructor(
-        @inject(TYPES.UserDonationServices) private _donationService:IUserDonationServices
+        @inject(TYPES.UserDonationServices) private _donationService: IUserDonationServices,
+        @inject(TYPES.NotificationService) private _notificationService:INotificationService
     ) { }
 
     async createCheckoutSession(req: Request, res: Response): Promise<void> {
@@ -56,25 +59,25 @@ export class UserDonationController implements IUserDonationController {
             handleControllerError(res, error);
         }
     }
-  async verifySession(req: Request, res: Response): Promise<void> {
-      try {
-       const sessionId = req.params.sessionId;
-if (!sessionId) {
-  throwError("Missing session_id", StatusCode.BAD_REQUEST);
-}
-
-
-    const donation = await this._donationService.verifyDonation(sessionId);
-
+    async verifySession(req: Request, res: Response): Promise<void> {
+  try {
+    const sessionId = req.params.sessionId;
+    if (!sessionId) {
+      throwError("Missing session_id", StatusCode.BAD_REQUEST);
+    }
+    const io = req.app.get("io");
+    const decoded = decodeToken(req.cookies.token);
+    const userId = decoded?.id || "anonymous";
+    const donation = await this._donationService.verifyDonation(sessionId, io, userId);
     sendResponse(res, StatusCode.OK, "Donation verified", true, {
       customer_email: donation.donorEmail,
-      amount_total: donation.amount * 100, 
+      amount_total: donation.amount * 100,
       receipt_url: donation.receiptUrl,
     });
+
   } catch (error) {
     handleControllerError(res, error);
   }
+}
 
-   
-  }
 }

@@ -1,43 +1,57 @@
-// components/NotificationListener.tsx
-"use client"
+"use client";
 
-import { useEffect, useRef } from "react"
-import { showInfoToast } from "../utils/Toast"
-import { initializeSocket } from "../utils/socket"
-import { INotification } from "../types/notificationsTypes"
+import { useEffect, useRef } from "react";
+import { showErrorToast, showInfoToast, showSuccessToast } from "../utils/Toast";
+import { initializeSocket } from "../utils/socket";
+import { INotification } from "../types/notificationsTypes";
 
 interface Props {
-  userId: string
-  role: "user" | "mentor" | "admin"
+  userId: string;
 }
 
-export const NotificationListener = ({ userId, role }: Props) => {
-  const socketRef = useRef<any>(null)
+export const NotificationListener = ({ userId }: Props) => {
+  const socketRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!userId || !role) return
+    if (!userId) {
+      console.warn("No userId provided to NotificationListener.");
+      return;
+    }
 
-    const roomId = `${role}:${userId}`
-    const socket = initializeSocket(roomId, role)
-
-    socketRef.current = socket
+    const socket = initializeSocket();
+    socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log("🔌 Notification socket connected")
-    })
+      console.log(`Connected to socket.io server: ${socket.id}`);
+      console.log(`Registering user for notifications: ${userId}`);
+      socket.emit("register-user", userId);
+    });
 
-    socket.on("notification", (data:INotification) => {
-      showInfoToast(`${data.title}: ${data.message}`)
-    })
+    socket.on("notification", (data: INotification) => {
+      const { title, message, type } = data;
+      console.log("Notification received:", title, message);
+
+      switch (type) {
+        case "success":
+          showSuccessToast(`${title}: ${message}`);
+          break;
+        case "error":
+          showErrorToast(`${title}: ${message}`);
+          break;
+        default:
+          showInfoToast(`${title}: ${message}`);
+      }
+    });
 
     socket.on("disconnect", () => {
-      console.log("🔌 Notification socket disconnected")
-    })
+      console.warn("🔌 Socket disconnected.");
+    });
 
     return () => {
-      socket.disconnect()
-    }
-  }, [userId, role])
+      console.log(" Disconnecting socket...");
+      socket.disconnect();
+    };
+  }, [userId]);
 
-  return null
-}
+  return null;
+};

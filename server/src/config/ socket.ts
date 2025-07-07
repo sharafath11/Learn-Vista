@@ -97,13 +97,15 @@ export function socketHandler(io: Server) {
       console.log(`Received comment in room ${roomId} from ${sender} (socket: ${socket.id}): "${message}"`);
       io.to(roomId).emit('receive-comment', message, sender);
     });
-    socket.on("register-user", (userId: string) => {
+     socket.on("register-user", (userId: string) => {
   if (userId) {
-    socket.join(userId); 
-    console.log(`User ${userId} joined their personal notification room.`);
+    socket.join(userId);
+    console.log(`✅ Registered user ${userId} to room. Socket ID: ${socket.id}`);
+    console.log(`🧾 Current rooms of socket ${socket.id}:`, Array.from(socket.rooms));
+  } else {
+    console.warn("❌ No userId provided in register-user event.");
   }
 });
-
     socket.on("stream-ended", (roomId) => {
       io.to(roomId).emit("end-stream","Stream was ended")
     })

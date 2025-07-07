@@ -19,6 +19,7 @@ import { UserDonationController } from "./controllers/user/UserDonation.Controll
 import container from "./core/di/container";
 import { IUserDonationController } from "./core/interfaces/controllers/user/IUserDonationController";
 import { TYPES } from "./core/types";
+import { setIOInstance } from "./config/globalSocket";
 const userDonationController = container.get<IUserDonationController>(TYPES.UserDonationController);
 
 dotenv.config();
@@ -33,7 +34,7 @@ const io = new Server(httpServer, {
   },
 });
 socketHandler(io);
-app.set("io", io);
+setIOInstance(io);
 app.use(express.json());
 app.use(cors({
   origin: "http://localhost:3000",

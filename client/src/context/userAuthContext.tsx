@@ -18,7 +18,6 @@ export const UserContext = createContext<UserContextType | null>(null);
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [allCourses, setAllCourses] = useState<IPopulatedCourse[]>([]);
-  const [lessons, setLessons] = useState<ILessons[]>([])
   const [curentUrl, setCurentUrl] = useState<string>("");
 const [progresses, setProgress] = useState<IUserCourseProgress[]>([])
   

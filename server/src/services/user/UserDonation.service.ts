@@ -5,6 +5,9 @@ import { TYPES } from "../../core/types";
 import { IDonationRepoitory } from "../../core/interfaces/repositories/donation/IDonationRepoitory";
 import { CreateDonationInput, IDonation } from "../../types/donationTypes";
 import { throwError } from "../../utils/ResANDError";
+import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { Server } from "socket.io";
+import { notifyWithSocket } from "../../utils/notifyWithSocket";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-05-28.basil",
@@ -14,10 +17,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export class UserDonationServices implements IUserDonationServices {
   constructor(
     @inject(TYPES.DonationRepository)
-    private _donationRepo: IDonationRepoitory
+    private _donationRepo: IDonationRepoitory,
+    @inject(TYPES.NotificationService)
+    private _notificationService: INotificationService
   ) {}
 
-  async verifyDonation(sessionId: string): Promise<IDonation> {
+  async verifyDonation(sessionId: string,io?:Server,userId?:string): Promise<IDonation> {
     if (!sessionId) throwError(" Missing session_id");
 
     console.log(" Verifying Stripe session ID:", sessionId);
@@ -51,7 +56,7 @@ export class UserDonationServices implements IUserDonationServices {
 
     const existing = await this._donationRepo.findByPaymentIntentId(paymentIntent.id);
     if (existing) {
-      console.log("⚠️ Donation already recorded for this paymentIntent:", paymentIntent.id);
+      console.log(" Donation already recorded for this paymentIntent:", paymentIntent.id);
       return existing;
     }
 
@@ -68,6 +73,16 @@ export class UserDonationServices implements IUserDonationServices {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+   
+       if (userId) {
+      await notifyWithSocket({
+        notificationService: this._notificationService,
+        userId,
+        title: "🎉 Donation Successful",
+        message: `Thank you for your donation of ₹${donation.amount}!`,
+        type: "success",
+      });
+    }
     return await this._donationRepo.create(donation);
   }
 }

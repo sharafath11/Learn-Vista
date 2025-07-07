@@ -6,9 +6,6 @@ import { handleControllerError, sendResponse, throwError,  } from "../../utils/R
 import { StatusCode } from "../../enums/statusCode.enum";
 import { INotificationController } from "../../core/interfaces/controllers/notifications/INotifications.Controller";
 import { decodeToken } from "../../utils/JWTtoken";
-import { emitServerNotification } from "../../utils/emitServerNotification";
-import { ICreateNotification } from "../../types/notificationsTypes";
-
 @injectable()
 export class NotificationController implements INotificationController {
   constructor(
