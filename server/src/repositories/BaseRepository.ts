@@ -56,7 +56,15 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
       throw this.handleError(error, 'Error fetching documents');
     }
   }
- 
+ async updateMany(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<number> {
+  try {
+    const result = await this.model.updateMany(filter, update);
+    return result.modifiedCount; 
+  } catch (error) {
+    throw this.handleError(error, "Failed to update multiple documents");
+  }
+}
+
   async findPaginated(
     filter: FilterQuery<T> = {},
     page: number = 1,

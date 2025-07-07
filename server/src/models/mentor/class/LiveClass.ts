@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { ILiveClass } from '../../types/classTypes';
+import { ILiveClass } from '../../../types/classTypes';
 
 const LiveClassSchema: Schema = new Schema(
   {

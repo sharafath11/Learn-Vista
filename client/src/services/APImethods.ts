@@ -6,6 +6,7 @@ import { IMentorSignupData } from "../types/mentorTypes";
 
 import { getRequest, patchRequest, postRequest } from "./api";
 import { baseURL } from "./AxiosInstance";
+import { INotificationPayload } from "../types/notificationsTypes";
 
 
 const get = getRequest;
@@ -182,3 +183,10 @@ export const batmanAi = {
     return response.data;
   },
 };
+export const NotificationAPIMethods = {
+  getMyNotifications: () => get("/notifications"),
+  markAsRead: (id: string) => patch(`/notifications/${id}/read`, {}),
+  markAllAsRead: () => patch("/notifications/mark-all-read", {}),
+  deleteNotification: (id: string) => patch(`/notifications/${id}/delete`, {}),
+  createNotification: (data: INotificationPayload) => post("/notifications", data),
+}

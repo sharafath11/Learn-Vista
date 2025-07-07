@@ -1,5 +1,5 @@
 import { ILiveRepository } from "../../core/interfaces/repositories/course/ILiveRepository";
-import LiveClassModel from "../../models/class/LiveClass";
+import LiveClassModel from "../../models/mentor/class/LiveClass";
 import { ILiveClass } from "../../types/classTypes";
 import { BaseRepository } from "../BaseRepository";
 

@@ -4,8 +4,9 @@ import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { LoaderCircle } from "lucide-react"
 import SuccessView from "./SuccessView"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { NotificationAPIMethods, UserAPIMethods } from "@/src/services/APImethods"
 import { IDonation, IStripeSuccessSession } from "@/src/types/donationTyps"
+import { INotificationPayload } from "@/src/types/notificationsTypes"
 
 export default function SuccessPage() {
   const searchParams = useSearchParams()
@@ -20,7 +21,13 @@ export default function SuccessPage() {
       
         const res = await UserAPIMethods.getStripeCheckoutSession(sessionId)
         if (res.ok) {
-          setSession(res.data)
+          setSession(res.data);
+           const notification: INotificationPayload = {
+          title: "Donation Successful",
+          message: `Thank you for donating ₹${(res.data.amount_total / 100).toFixed(2)}!`,
+          type: "success",
+        }
+          await NotificationAPIMethods.createNotification(notification);
         } else {
           console.error("Failed to fetch donation session")
         }

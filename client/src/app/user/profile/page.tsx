@@ -1,4 +1,4 @@
-import Header from "@/src/components/user/Header"
+import Header from "@/src/components/user/header/Header"
 import ProfileCard from "@/src/components/user/profile/ProfileCard"
 import BioCard from "@/src/components/user/profile/BioCard"
 import StatsCard from "@/src/components/user/profile/StatsCard"
