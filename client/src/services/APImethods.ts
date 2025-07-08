@@ -184,9 +184,9 @@ export const batmanAi = {
   },
 };
 export const NotificationAPIMethods = {
-  getMyNotifications: () => get("/notifications"),
-  markAsRead: (id: string) => patch(`/notifications/${id}/read`, {}),
-  markAllAsRead: () => patch("/notifications/mark-all-read", {}),
-  deleteNotification: (id: string) => patch(`/notifications/${id}/delete`, {}),
-  createNotification: (data: INotificationPayload) => post("/notifications", data),
-}
+  getMyNotifications: () => get("/shared/notifications"),
+  markAsRead: (id: string) => patch(`/shared/notifications/${id}/read`, {}),
+  markAllAsRead: () => patch("/shared/notifications/mark-all-read", {}),
+  createNotification: (data: INotificationPayload) => post("/shared/notifications", data),
+};
+

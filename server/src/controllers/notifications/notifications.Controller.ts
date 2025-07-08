@@ -15,7 +15,7 @@ export class NotificationController implements INotificationController {
 
   async createNotification(req: Request, res: Response): Promise<void> {
   try {
-    const io = req.app.get("io"); // ✅ available in controller
+    const io = req.app.get("io"); 
     await this.notificationService.createNotification(req.body, io);
     sendResponse(res, StatusCode.CREATED, "Notification created successfully", true);
   } catch (error) {
@@ -25,7 +25,8 @@ export class NotificationController implements INotificationController {
 
   async getMyNotifications(req: Request, res: Response): Promise<void> {
     try {
-      const userId = req.user?.id || req.body.userId; 
+      const userId = decodeToken(req.cookies.token)?.id
+      if(!userId)throwError("Unhotharized",StatusCode.UNAUTHORIZED)
       const notifications = await this.notificationService.getMyNotifications(userId);
       sendResponse(res, StatusCode.OK, "Notifications fetched", true, notifications);
     } catch (error) {

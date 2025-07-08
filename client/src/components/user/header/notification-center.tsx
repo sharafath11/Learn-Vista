@@ -1,18 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Bell, X, Check, Trash2, BookOpen, Video, Heart } from "lucide-react"
+import {
+  Bell,
+  X,
+  Check,
+  Trash2,
+  BookOpen,
+  Video,
+  Heart,
+} from "lucide-react"
 import { cn } from "@/src/utils/cn"
-
-interface Notification {
-  id: string
-  title: string
-  message: string
-  type: "course" | "live" | "donation" | "general"
-  time: string
-  read: boolean
-}
+import { INotification } from "@/src/types/notificationsTypes"
+import { useUserContext } from "@/src/context/userAuthContext"
+import { NotificationAPIMethods } from "@/src/services/APImethods"
 
 interface NotificationCenterProps {
   isOpen: boolean
@@ -20,41 +22,6 @@ interface NotificationCenterProps {
   unreadCount: number
   setUnreadCount: (count: number) => void
 }
-
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    title: "New Course Available",
-    message: "Advanced React Patterns course is now live!",
-    type: "course",
-    time: "2 hours ago",
-    read: false,
-  },
-  {
-    id: "2",
-    title: "Live Class Starting Soon",
-    message: "JavaScript Fundamentals class starts in 30 minutes",
-    type: "live",
-    time: "30 minutes ago",
-    read: false,
-  },
-  {
-    id: "3",
-    title: "Thank You for Your Donation",
-    message: "Your contribution helps us create better content",
-    type: "donation",
-    time: "1 day ago",
-    read: false,
-  },
-  {
-    id: "4",
-    title: "Course Completed",
-    message: "Congratulations on completing React Basics!",
-    type: "course",
-    time: "2 days ago",
-    read: true,
-  },
-]
 
 const getNotificationIcon = (type: string) => {
   switch (type) {
@@ -82,25 +49,42 @@ const getNotificationColor = (type: string) => {
   }
 }
 
-export const NotificationCenter = ({ isOpen, onClose, unreadCount, setUnreadCount }: NotificationCenterProps) => {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications)
+export const NotificationCenter = ({
+  isOpen,
+  onClose,
+  unreadCount,
+  setUnreadCount,
+}: NotificationCenterProps) => {
+  const { userNotifications, setUserNotifications } = useUserContext()
+  const [notifications, setNotifications] = useState<INotification[]>([])
+  console.log("notifcationsd",notifications)
+  useEffect(() => {
+  if (userNotifications) {
+    const sorted = [...userNotifications].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+    setNotifications(sorted)
+  }
+}, [userNotifications])
 
-  const markAsRead = (id: string) => {
-    setNotifications((prev) => prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif)))
-    const unread = notifications.filter((n) => !n.read && n.id !== id).length
-    setUnreadCount(unread)
+
+  const markAsRead = async (id: string) => {
+    await NotificationAPIMethods.markAsRead(id)
+    const updated = notifications.map((n) =>
+      n.id === id ? { ...n, isRead: true } : n
+    )
+    setNotifications(updated)
+    setUnreadCount(updated.filter((n) => !n.isRead).length)
   }
 
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })))
+  const markAllAsRead = async () => {
+    await NotificationAPIMethods.markAllAsRead()
+    const updated = notifications.map((n) => ({ ...n, isRead: true }))
+    setNotifications(updated)
     setUnreadCount(0)
   }
 
-  const deleteNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((notif) => notif.id !== id))
-    const unread = notifications.filter((n) => !n.read && n.id !== id).length
-    setUnreadCount(unread)
-  }
+ 
 
   return (
     <AnimatePresence>
@@ -118,7 +102,9 @@ export const NotificationCenter = ({ isOpen, onClose, unreadCount, setUnreadCoun
               <Bell size={18} className="text-purple-400" />
               <h3 className="font-semibold text-white">Notifications</h3>
               {unreadCount > 0 && (
-                <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{unreadCount}</span>
+                <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  {unreadCount}
+                </span>
               )}
             </div>
             <div className="flex items-center gap-1">
@@ -157,7 +143,7 @@ export const NotificationCenter = ({ isOpen, onClose, unreadCount, setUnreadCoun
                       key={notification.id}
                       className={cn(
                         "p-4 hover:bg-zinc-700/30 transition-colors group",
-                        !notification.read && "bg-zinc-700/20",
+                        !notification.isRead && "bg-zinc-700/20"
                       )}
                     >
                       <div className="flex items-start gap-3">
@@ -168,12 +154,17 @@ export const NotificationCenter = ({ isOpen, onClose, unreadCount, setUnreadCoun
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <h4
-                              className={cn("text-sm font-medium", notification.read ? "text-gray-300" : "text-white")}
+                              className={cn(
+                                "text-sm font-medium",
+                                notification.isRead
+                                  ? "text-gray-300"
+                                  : "text-white"
+                              )}
                             >
                               {notification.title}
                             </h4>
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              {!notification.read && (
+                              {!notification.isRead && (
                                 <button
                                   onClick={() => markAsRead(notification.id)}
                                   className="p-1 text-green-400 hover:bg-green-900/20 rounded transition-colors"
@@ -182,24 +173,29 @@ export const NotificationCenter = ({ isOpen, onClose, unreadCount, setUnreadCoun
                                   <Check size={12} />
                                 </button>
                               )}
-                              <button
-                                onClick={() => deleteNotification(notification.id)}
-                                className="p-1 text-red-400 hover:bg-red-900/20 rounded transition-colors"
-                                title="Delete"
-                              >
-                                <Trash2 size={12} />
-                              </button>
+                              
                             </div>
                           </div>
 
-                          <p className={cn("text-sm mt-1", notification.read ? "text-gray-400" : "text-gray-300")}>
+                          <p
+                            className={cn(
+                              "text-sm mt-1",
+                              notification.isRead
+                                ? "text-gray-400"
+                                : "text-gray-300"
+                            )}
+                          >
                             {notification.message}
                           </p>
 
-                          <p className="text-xs text-gray-500 mt-2">{notification.time}</p>
+                          <p className="text-xs text-gray-500 mt-2">
+                            {new Date(notification.createdAt).toLocaleString()}
+                          </p>
                         </div>
 
-                        {!notification.read && <div className="w-2 h-2 bg-purple-500 rounded-full mt-2" />}
+                        {!notification.isRead && (
+                          <div className="w-2 h-2 bg-purple-500 rounded-full mt-2" />
+                        )}
                       </div>
                     </div>
                   )

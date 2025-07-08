@@ -10,6 +10,7 @@ import { IUserCourseController } from "../../core/interfaces/controllers/user/IU
 import { IUserLiveController } from "../../core/interfaces/controllers/user/IUserLiveVideoController";
 import { IUserLessonsController } from "../../core/interfaces/controllers/user/IUserLessonsContoller";
 import { IUserDonationController } from "../../core/interfaces/controllers/user/IUserDonationController";
+import { INotificationController } from "../../core/interfaces/controllers/notifications/INotifications.Controller";
 
 
 const router = express.Router();
@@ -20,7 +21,7 @@ const userController = container.get<IUserController>(TYPES.UserController);
 const userCourseController = container.get<IUserCourseController>(TYPES.UserCourseController)
 const userLiveController = container.get<IUserLiveController>(TYPES.UserLiveCOntroller)
 const userLessonsController = container.get<IUserLessonsController>(TYPES.UserLessonsController)
-const userDonationController=container.get<IUserDonationController>(TYPES.UserDonationController)
+const userDonationController = container.get<IUserDonationController>(TYPES.UserDonationController);
 
 router.post("/signup", authController.signup.bind(authController));
 router.post("/google/signup", authController.googleAuth.bind(authController));
@@ -49,5 +50,5 @@ router.get("/categories",userCourseController.getCategories.bind(userCourseContr
 router.post("/lesson/comment", authenticateToken, userLessonsController.saveComments.bind(userLessonsController))
 router.post("/create-checkout-session",userDonationController.createCheckoutSession.bind(userDonationController))
 router.get("/stripe/verify-session/:sessionId", userDonationController.verifySession.bind(userDonationController))
-router.get("/course/progress",authenticateToken,userCourseController.getProgressDetiles.bind(userCourseController))
+router.get("/course/progress", authenticateToken, userCourseController.getProgressDetiles.bind(userCourseController))
 export default router;

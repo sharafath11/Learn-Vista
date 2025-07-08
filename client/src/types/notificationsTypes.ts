@@ -2,7 +2,7 @@
 export type NotificationType = "info" | "success" | "error" | "warning"
 
 export interface INotification {
-  _id: string
+  id: string
   title: string
   message?: string
   type: NotificationType
