@@ -46,7 +46,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }
   const fetchNotifications = async () => {
     const res = await NotificationAPIMethods.getMyNotifications();
-    console.log("abcdedghijklmno",res)
+   
     if (res.ok) {
       setUserNotifications(res.data);
       const unread = res.data.filter((n: INotification) => !n.isRead).length;

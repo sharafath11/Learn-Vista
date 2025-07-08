@@ -20,6 +20,7 @@
 import { IReson } from "./commonTypes";
 import { IConcern } from "./concernTypes";
 import { ICourse, IPopulatedCourse } from "./courseTypes";
+import { INotification } from "./notificationsTypes";
 // import { ICourse } from "./courseTypes";
 
   
@@ -146,6 +147,10 @@ export interface IMentorContext {
   setCourses: React.Dispatch<React.SetStateAction<IPopulatedCourse[]>>;
   concerns: IConcern[]
   setConcerns: React.Dispatch<React.SetStateAction<IConcern[]>>;
+  mentorNotification: INotification[];
+  setMentorNotifications: React.Dispatch<React.SetStateAction<INotification[]>>; 
+  mentorUnreadNotification: number;
+  setMentorUnreadNotification: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface IMentorSignupData {

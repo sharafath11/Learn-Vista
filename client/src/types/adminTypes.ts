@@ -5,6 +5,7 @@ import { ICategory } from "./categoryTypes";
 import { IPopulatedCourse } from "./courseTypes";
 import { AllStatusFilter } from "./commonTypes";
 import { IConcern } from "./concernTypes";
+import { INotification } from "./notificationsTypes";
 
 export type DropDown = 'All' | 'admin' | 'mentor' | 'user';
 
@@ -106,5 +107,10 @@ export interface AdminContextType {
   concern: IConcern[]
   setConcerns: React.Dispatch<React.SetStateAction<IConcern[]>>;
   allConcerns: IConcern[]
-  setAllConcerns:React.Dispatch<React.SetStateAction<IConcern[]>>;
+  setAllConcerns: React.Dispatch<React.SetStateAction<IConcern[]>>;
+  adminNotifications: INotification[];
+setAdminNotifications: React.Dispatch<React.SetStateAction<INotification[]>>;
+adminUnreadNotification: number;
+setAdminUnreadNotification: React.Dispatch<React.SetStateAction<number>>;
+
 }

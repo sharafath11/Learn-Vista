@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { ToastContainer } from "react-toastify";
 import { MentorsContextProvider, useMentorContext } from "@/src/context/mentorContext";
-import HeaderWrapper from "@/src/components/mentor/HeaderWrapper";
 import { MentorNotificationWrapper } from "@/src/components/mentor/MentorNotificationWrapper";
+import HeaderWrapper from "@/src/components/mentor/header/HeaderWrapper";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
