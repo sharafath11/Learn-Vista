@@ -8,12 +8,16 @@ import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
+import { notifyWithSocket } from "../../utils/notifyWithSocket";
+import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 
 @injectable()
 export class AdminMentorService implements IAdminMentorServices {
   constructor(
     @inject(TYPES.MentorRepository)
-    private _mentorRepo: IMentorRepository
+    private _mentorRepo: IMentorRepository,
+    @inject(TYPES.NotificationService)
+    private _notificationService: INotificationService
   ) { }
   async getAllMentorWithoutFiltring(): Promise<IMentor[]> {
     const result = await this._mentorRepo.findAll();
@@ -63,6 +67,14 @@ export class AdminMentorService implements IAdminMentorServices {
   async toggleMentorBlock(id: string, isBlock: boolean): Promise<IMentor | null> {
     const updated = await this._mentorRepo.update(id, { isBlock });
     if (!updated) throwError(`Error toggling block status for mentor ${id}`, StatusCode.INTERNAL_SERVER_ERROR);
+    const statusText = isBlock ? "blocked" : "unblocked";
+   await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [id],
+    title: `⚠️ Your account was ${statusText}`,
+    message: `Your mentor account has been ${statusText} by the admin.`,
+    type: isBlock ? "error" : "success",
+  });
     return updated;
   }
 

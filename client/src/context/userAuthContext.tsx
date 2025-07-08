@@ -21,7 +21,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [curentUrl, setCurentUrl] = useState<string>("");
   const [progresses, setProgress] = useState<IUserCourseProgress[]>([]);
   const [userNotifications, setUserNotifications] = useState<INotification[]>([]);
-
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   
   const router = useRouter();
 
@@ -47,7 +47,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const fetchNotifications = async () => {
     const res = await NotificationAPIMethods.getMyNotifications();
     console.log("abcdedghijklmno",res)
-    if (res.ok) setUserNotifications(res.data);
+    if (res.ok) {
+      setUserNotifications(res.data);
+      const unread = res.data.filter((n: INotification) => !n.isRead).length;
+      setUnreadCount(unread);
+    }
     else showInfoToast(res.msg)
   }
    
@@ -84,6 +88,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     progresses,
     setUserNotifications,
     userNotifications,
+    unreadCount,
+    setUnreadCount,
   };
 
   return (

@@ -22,4 +22,6 @@
     updateMany(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<number>;
     handleError(error: unknown, message: string): Error;
     updateOne(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<U | null>;
+    findWithPassword(condition: FilterQuery<T>): Promise<T | null>;
+
   }

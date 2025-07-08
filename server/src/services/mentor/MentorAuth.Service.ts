@@ -26,12 +26,13 @@ export class MentorAuthService implements IMentorAuthService {
     email: string,
     password: string,
   ): Promise<{ mentor: any; token: string; refreshToken: string }> {
-    const mentor = await this.mentorRepo.findOne({ email });
+    const mentor = await this.mentorRepo.findWithPassword({ email });
+    console.log(mentor)
     if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
     if (mentor.isBlock) throwError("This account is blocked", StatusCode.FORBIDDEN);
     if (mentor.status !== "approved") throwError(`This user is ${mentor?.status}`, StatusCode.FORBIDDEN);
     if (!mentor.isVerified) throwError("Please signup", StatusCode.BAD_REQUEST);
-    
+    console.log("console.log",password)
     const isPasswordValid = await bcrypt.compare(password, mentor?.password || "");
     if (!isPasswordValid) {
       throwError("Invalid email or password", StatusCode.BAD_REQUEST);

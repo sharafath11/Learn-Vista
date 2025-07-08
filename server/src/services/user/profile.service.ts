@@ -114,9 +114,8 @@ export class ProfileService implements IProfileService {
     };
   }
   async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userRepository.findWithPassword({id:userId});
     console.log(userId, currentPassword, newPassword);
-    
     if (!user) {
       throwError("User not found", StatusCode.NOT_FOUND);
     }

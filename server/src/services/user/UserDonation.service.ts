@@ -8,11 +8,11 @@ import { throwError } from "../../utils/ResANDError";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { Server } from "socket.io";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
-
+import dotenv from "dotenv"
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-05-28.basil",
 });
-
+dotenv.config()
 @injectable()
 export class UserDonationServices implements IUserDonationServices {
   constructor(
@@ -73,11 +73,12 @@ export class UserDonationServices implements IUserDonationServices {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-   
+    const ADMIN_ID=process.env.ADMIN_ID
+    if(!ADMIN_ID) throwError("somthing wront wrong")
      if (userId) {
   await notifyWithSocket({
     notificationService: this._notificationService,
-    userIds: [userId], 
+    userIds: [userId,ADMIN_ID], 
     roles: ["admin"],
     title: "🎉 Donation Successful",
     message: `User donated ₹${donation.amount}. Thank you!`,

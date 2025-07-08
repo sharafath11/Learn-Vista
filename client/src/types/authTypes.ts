@@ -54,7 +54,9 @@ export interface UserContextType {
   setProgress: React.Dispatch<React.SetStateAction<IUserCourseProgress[]>>;
   progresses: IUserCourseProgress[]
   setUserNotifications:React.Dispatch<React.SetStateAction<INotification[]>>,
-  userNotifications:INotification[],
+  userNotifications: INotification[],
+  unreadCount: number,
+  setUnreadCount:React.Dispatch<React.SetStateAction<number>>
   
 }
 

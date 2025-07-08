@@ -47,7 +47,7 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
       throw this.handleError(error, 'Error creating document');
     }
   }
-
+ 
   async findAll(filter: FilterQuery<T> = {}): Promise<U[]> {
     try {
       const documents = await this.model.find(filter);
@@ -131,14 +131,15 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
     }
   }
 
-  // Special methods that include password
-  async findWithPassword(email: string): Promise<T | null> {
-    try {
-      return await this.model.findOne({ email }).select('+password').exec();
-    } catch (error) {
-      throw this.handleError(error, 'Error finding user with password');
-    }
+  // with password
+  async findWithPassword(condition: FilterQuery<T>): Promise<T | null> {
+  try {
+    return await this.model.findOne(condition).select('+password').exec();
+  } catch (error) {
+    throw this.handleError(error, 'Error finding document with password');
   }
+}
+
 
   async findOneWithPassword(condition: FilterQuery<T>): Promise<T | null> {
     try {

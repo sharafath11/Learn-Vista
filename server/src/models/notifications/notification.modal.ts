@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose"
 import { INotification } from "../../types/notificationsTypes"
 
 const NotificationSchema = new Schema<INotification>({
-  userId: { type: Schema.Types.ObjectId, ref: "User", required: true }, 
+  userId: { type: Schema.Types.Mixed, required: true }, 
   title: { type: String, required: true },
   message: { type: String },
   type: { type: String, enum: ["info", "success", "error", "warning"], default: "info" },

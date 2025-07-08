@@ -32,6 +32,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   
     if (res?.ok) {
       setMentor(res.data); 
+      
     } else {
       router.push("/mentor/login");
     }
