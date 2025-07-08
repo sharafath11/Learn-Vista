@@ -14,8 +14,15 @@ function NotificationWrapper() {
   const { user } = useUserContext();
 
   if (!user) return null;
-  return <NotificationListener userId={user._id || user.id} />;
+
+  return (
+    <NotificationListener
+      userId={user._id || user.id}
+      role="user"
+    />
+  );
 }
+
 
 export default function UserLayout({ children }: UserLayoutProps) {
   return (

@@ -1,38 +1,27 @@
-"use client";
-import { useEffect, useRef } from "react";
+"use client"
+import { INotification } from "@/src/types/notificationsTypes";
 import { initializeSocket } from "@/src/utils/socket";
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast";
-import { INotification } from "@/src/types/notificationsTypes";
+import { useEffect, useRef } from "react";
 
-interface Props {
-  userId: string;
-  role: "admin" | "mentor" | "user";
-}
-
-export const NotificationListener = ({ userId, role }: Props) => {
+export const AdminNotificationListener = () => {
   const socketRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!userId || !role) {
-      console.warn("NotificationListener: Missing userId or role");
-      return;
-    }
-
     const socket = initializeSocket();
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log(`[SOCKET] Connected: ${socket.id}`);
-      socket.emit("register-user", userId);
-      socket.emit("join-room", `${role}-room`);
-      console.log(`[SOCKET] Registered ${userId} and joined room ${role}-room`);
+      console.log("Admin connected:", socket.id);
+      socket.emit("join-room", "admin-room");
     });
 
     socket.on("notification", (data: INotification) => {
       const { title, message, type } = data;
-      console.log(`[SOCKET] Notification received (${role}):`, title, message);
+      console.log("Admin notification received:", title, message);
 
       switch (type) {
+        case "warning":
         case "success":
           showSuccessToast(`${title}: ${message}`);
           break;
@@ -45,14 +34,13 @@ export const NotificationListener = ({ userId, role }: Props) => {
     });
 
     socket.on("disconnect", () => {
-      console.warn("[SOCKET] Disconnected");
+      console.warn("Admin socket disconnected.");
     });
 
     return () => {
       socket.disconnect();
-      console.log("[SOCKET] Disconnected on unmount");
     };
-  }, [userId, role]);
+  }, []);
 
   return null;
 };

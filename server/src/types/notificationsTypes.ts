@@ -23,6 +23,8 @@ export interface ICreateNotification{
 export interface NotifyParams {
   notificationService: INotificationService;
   userId?: string;
+  userIds?: string[]; 
+  roles?: ("admin" | "mentor" | "user")[];
   title: string;
   message: string;
   type: NotificationType;

@@ -74,15 +74,17 @@ export class UserDonationServices implements IUserDonationServices {
       updatedAt: new Date(),
     };
    
-       if (userId) {
-      await notifyWithSocket({
-        notificationService: this._notificationService,
-        userId,
-        title: "🎉 Donation Successful",
-        message: `Thank you for your donation of ₹${donation.amount}!`,
-        type: "success",
-      });
-    }
+     if (userId) {
+  await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [userId], 
+    roles: ["admin"],
+    title: "🎉 Donation Successful",
+    message: `User donated ₹${donation.amount}. Thank you!`,
+    type: "success",
+  });
+}
+
     return await this._donationRepo.create(donation);
   }
 }
