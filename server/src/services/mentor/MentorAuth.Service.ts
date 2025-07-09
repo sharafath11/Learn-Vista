@@ -14,12 +14,15 @@ import { generateAccessToken, generateRefreshToken } from '../../utils/JWTtoken'
 import { throwError } from '../../utils/ResANDError';
 import { validateMentorSignupInput } from '../../validation/mentorValidation';
 import { StatusCode } from '../../enums/statusCode.enum';
+import { INotificationService } from '../../core/interfaces/services/notifications/INotificationService';
+import { notifyWithSocket } from '../../utils/notifyWithSocket';
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {
   constructor(
     @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
-    @inject(TYPES.MentorOtpRepository) private mentorOtpRepo: IMentorOtpRepository
+    @inject(TYPES.MentorOtpRepository) private mentorOtpRepo: IMentorOtpRepository,
+    @inject(TYPES.NotificationService) private _notificationService:INotificationService
   ) {}
 
   async loginMentor(
@@ -106,7 +109,7 @@ export class MentorAuthService implements IMentorAuthService {
     const mentor = await this.mentorRepo.findOne({ email });
     if (!mentor) throwError("User not found", StatusCode.NOT_FOUND);
     if(!mentor.password) throwError ("Please Register then you can change password",StatusCode.BAD_REQUEST)
-    
+
     const token = generateAccessToken(mentor.id, "mentor");
     const resetLink = `${process.env.CLIENT_URL}/mentor/reset-password/${token}`;
     
@@ -122,5 +125,12 @@ export class MentorAuthService implements IMentorAuthService {
     
     const hashedPassword = await bcrypt.hash(password, 10);
     await this.mentorRepo.update(id, { password: hashedPassword });
+    await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [id.toString()],
+    title: " Password Reset",
+    message: "Your password has been reset.",
+    type: "info",
+  });
   }
 }

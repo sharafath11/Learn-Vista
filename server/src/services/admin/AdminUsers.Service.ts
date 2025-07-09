@@ -8,12 +8,15 @@ import { IAdminUserServices } from "../../core/interfaces/services/admin/IAdminU
 import { StatusCode } from "../../enums/statusCode.enum";  
 import { FilterQuery } from "mongoose";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
+import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { notifyWithSocket } from "../../utils/notifyWithSocket";
 
 @injectable()
 export class AdminUsersServices implements IAdminUserServices {
   constructor(
     @inject(TYPES.UserRepository)
-    private _userRepo:IUserRepository
+    private _userRepo: IUserRepository,
+    @inject(TYPES.NotificationService) private _notificationService:INotificationService
   ) {}
 
   async getAllUsers(
@@ -50,12 +53,19 @@ export class AdminUsersServices implements IAdminUserServices {
     if (!updatedUser) {
       throwError("User not found", StatusCode.NOT_FOUND); 
     }
-
+    await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [id.toString()],
+    title: status ? " Account Blocked" : "Account Unblocked",
+    message: `Your account has been ${status ? "blocked" : "unblocked"} by the admin.`,
+    type: status ? "error" : "success",
+  });
     return {
       ok: true,
       data: updatedUser,
       msg: `User ${status ? "Blocked" : "Unblocked"} successfully`
     };
+
   }
 }
 

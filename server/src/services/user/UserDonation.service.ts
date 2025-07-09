@@ -80,7 +80,7 @@ export class UserDonationServices implements IUserDonationServices {
     notificationService: this._notificationService,
     userIds: [userId,ADMIN_ID], 
     roles: ["admin"],
-    title: "🎉 Donation Successful",
+    title: " Donation Successful",
     message: `User donated ₹${donation.amount}. Thank you!`,
     type: "success",
   });

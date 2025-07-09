@@ -19,6 +19,8 @@ import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRe
 import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
 import { toObjectId } from "../../utils/convertStringToObjectId";
 import { Types } from "mongoose";
+import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { notifyWithSocket } from "../../utils/notifyWithSocket";
 @injectable()
 export class UserLessonsService implements IUserLessonsService{
     constructor(
@@ -28,7 +30,8 @@ export class UserLessonsService implements IUserLessonsService{
         @inject(TYPES.LessonReportRepository) private _lessonReportRepo: ILessonReportRepository,
         @inject(TYPES.CommentsRepository) private _commentsRepo: ICommentstRepository,
        @inject(TYPES.UserRepository) private _userRepo: IUserRepository,
-       @inject(TYPES.UserCourseProgressRepository) private _userCourseProgresRepo:IUserCourseProgressRepository
+      @inject(TYPES.UserCourseProgressRepository) private _userCourseProgresRepo: IUserCourseProgressRepository,
+       @inject(TYPES.NotificationService) private _notificationService:INotificationService
     ) { }
     async getLessons(courseId: string | ObjectId, userId: string|ObjectId): Promise<ILesson[]> {
   const user = await this._userRepo.findById(userId as string);
@@ -141,10 +144,40 @@ console.log('Value of lessonId.toString():', lessonId.toString());
   }
        return report
     }
-    async saveComments(userId: string, lessonId: string | ObjectId, comment: string): Promise<IComment> {
-        const userData=await this._userRepo.findById(userId)
-        if (!lessonId || !comment) throwError("Invalid datas");
-        const data=await this._commentsRepo.create({ lessonId, comment, userId: userId, userName: userData?.username });
-        return data
-    }
+    async saveComments(
+  userId: string,
+  lessonId: string | ObjectId,
+  comment: string
+): Promise<IComment> {
+  if (!lessonId || !comment || !userId) {
+    throwError("Invalid data provided");
+  }
+
+  const userData = await this._userRepo.findById(userId);
+  if (!userData) throwError("User not found");
+
+  const lesson = await this._lessonRepository.findById(lessonId as string);
+  if (!lesson) throwError("Lesson not found");
+
+  const course = await this._courseRepository.findById(lesson.courseId.toString());
+  if (!course || !course.mentorId) throwError("Course or mentor not found");
+
+  const savedComment = await this._commentsRepo.create({
+    lessonId,
+    comment,
+    userId,
+    userName: userData.username,
+  });
+
+  await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [course.mentorId.toString()],
+    title: " New Comment on Lesson",
+    message: `${userData.username} commented on "${lesson.title}": "${comment.slice(0, 50)}..."`,
+    type: "info",
+  });
+
+  return savedComment;
+}
+
 }

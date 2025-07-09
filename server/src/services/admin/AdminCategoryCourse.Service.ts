@@ -16,6 +16,9 @@ import { IConcern } from "../../types/concernTypes";
 import { IConcernRepository } from "../../core/interfaces/repositories/concern/IConcernRepository";
 import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
+import { notifyWithSocket } from "../../utils/notifyWithSocket";
+import { INotificationRepository } from "../../core/interfaces/repositories/notifications/INotificationsRepository";
+import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 
 @injectable()
 class AdminCourseServices implements IAdminCourseServices {
@@ -29,7 +32,8 @@ class AdminCourseServices implements IAdminCourseServices {
 
     @inject(TYPES.CourseRepository)
     private baseCourseRepo: ICourseRepository,
-    @inject (TYPES.ConcernRepository) private _concernRepo:IConcernRepository
+    @inject(TYPES.ConcernRepository) private _concernRepo: IConcernRepository,
+    @inject(TYPES.NotificationService) private _notificationService:INotificationService
 
   ) {}
 
@@ -102,7 +106,14 @@ class AdminCourseServices implements IAdminCourseServices {
 
     const createdCourse = await this.baseCourseRepo.create(courseData);
     if (!createdCourse) throwError("Failed to create course", StatusCode.INTERNAL_SERVER_ERROR);
-
+      await notifyWithSocket({
+     notificationService: this._notificationService,
+        userIds: [createdCourse.mentorId.toString()],
+     roles:["user"],
+     title: "Course Updated",
+     message: `New course "${createdCourse.title}" has been Started.`,
+    type: "info",
+    });
     return createdCourse;
   }
   async editCourseService(
@@ -172,6 +183,13 @@ class AdminCourseServices implements IAdminCourseServices {
     if (!updatedCourse) {
       throwError("Failed to update course", StatusCode.INTERNAL_SERVER_ERROR);
     }
+   await notifyWithSocket({
+  notificationService: this._notificationService,
+  userIds: [updatedCourse.mentorId.toString()],
+  title: "Course Updated",
+  message: `Your course "${updatedCourse.title}" has been updated by the admin.`,
+  type: "info",
+});
   
     return updatedCourse;
   }
@@ -218,12 +236,37 @@ async editCategories(categoryId: string, title: string, description: string): Pr
     };
   }
   
-  async blockCourse(id: string, status: boolean): Promise<void> {
-    if (!id || id.length !== 24) throwError("Invalid course ID", StatusCode.BAD_REQUEST);
-
-    const updated = await this.baseCourseRepo.update(id, { isBlock: status });
-    if (!updated) throwError("Failed to update course status", StatusCode.INTERNAL_SERVER_ERROR);
+  async blockCourse(id: string, isBlock: boolean): Promise<void> {
+  if (!id || id.length !== 24) {
+    throwError("Invalid course ID", StatusCode.BAD_REQUEST);
   }
+
+  const updated = await this.baseCourseRepo.update(id, { isBlock });
+
+  if (!updated) {
+    throwError("Failed to update course status", StatusCode.INTERNAL_SERVER_ERROR);
+  }
+
+  const statusText = isBlock ? "blocked" : "unblocked";
+
+  if (!updated.mentorId) {
+    throwError("No mentor associated with this course", StatusCode.NOT_FOUND);
+  }
+  console.log("nb",updated.enrolledUsers)
+  await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [
+      updated.mentorId.toString(),
+      ...(Array.isArray(updated.enrolledUsers)
+        ? updated.enrolledUsers.map((id) => id.toString())
+        : []),
+    ],
+    title: ` Course ${statusText}`,
+    message: `Your ${updated.title} course has been ${statusText} by the admin.`,
+    type: isBlock ? "error" : "success",
+  });
+}
+
   async getConcern(): Promise<IConcern[]> {
     const result = await this._concernRepo.findAll();
     if (!result) throwError("Somthing wrong");
@@ -233,22 +276,33 @@ async editCategories(categoryId: string, title: string, description: string): Pr
   concernId: string,
   status: 'resolved' | 'in-progress',
   resolution: string
-): Promise<void> {
+ ): Promise<void> {
+   console.log("1")
   const concern = await this._concernRepo.findById(concernId);
   if (!concern) throwError("Concern not found");
-console.log("concernId" ,concernId)
+  console.log("concernId" ,concernId)
   const updated = await this._concernRepo.update(concernId, {
     status,
     resolution,
     updatedAt: new Date()
   });
+   if (concern.mentorId) {
+    const statusText = status === "resolved" ? "resolved" : "marked as in-progress";
 
+    await notifyWithSocket({
+      notificationService: this._notificationService,
+      userIds: [concern.mentorId.toString()],
+      title: status === "resolved" ? " Concern Resolved" : " Concern In-Progress",
+      message: `Your concern titled "${concern.title}" has been ${statusText} by the admin.`,
+      type: status === "resolved" ? "success" : "info",
+    });
+  }
   if (!updated) throwError("Failed to update concern status");
 }
 async updateConcern(concernId: string, updateData: Partial<IConcern>): Promise<void> {
   const concern = await this._concernRepo.findById(concernId);
   if (!concern) throwError("Concern not found");
-  
+  console.log("2")
   const updated = await this._concernRepo.update(concernId, {
     ...updateData,
     updatedAt: new Date()

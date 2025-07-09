@@ -71,7 +71,7 @@ export class AdminMentorService implements IAdminMentorServices {
    await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [id],
-    title: `⚠️ Your account was ${statusText}`,
+    title: ` Your account was ${statusText}`,
     message: `Your mentor account has been ${statusText} by the admin.`,
     type: isBlock ? "error" : "success",
   });
