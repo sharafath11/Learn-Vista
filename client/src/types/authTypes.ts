@@ -56,7 +56,8 @@ export interface UserContextType {
   setUserNotifications:React.Dispatch<React.SetStateAction<INotification[]>>,
   userNotifications: INotification[],
   unreadCount: number,
-  setUnreadCount:React.Dispatch<React.SetStateAction<number>>
+  setUnreadCount: React.Dispatch<React.SetStateAction<number>>
+  refereshNotifcation:()=>void
   
 }
 

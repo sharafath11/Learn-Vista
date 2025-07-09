@@ -172,7 +172,7 @@ console.log('Value of lessonId.toString():', lessonId.toString());
   await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [course.mentorId.toString()],
-    title: " New Comment on Lesson",
+    title: `New Comment  ${course.title} on ${lesson.title}`,
     message: `${userData.username} commented on "${lesson.title}": "${comment.slice(0, 50)}..."`,
     type: "info",
   });

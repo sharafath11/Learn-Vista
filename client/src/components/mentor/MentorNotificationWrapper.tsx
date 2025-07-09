@@ -6,7 +6,7 @@ import { useMentorContext } from "@/src/context/mentorContext";
 export function MentorNotificationWrapper() {
   const { mentor} = useMentorContext();
   if (!mentor) return null;
- console.log("mentor in notifcation",mentor)
+ 
   return (
     <NotificationListener
       userId={mentor._id || mentor.id}

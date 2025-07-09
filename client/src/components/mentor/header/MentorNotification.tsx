@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Bell, Check, X, Clock, User, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -19,7 +19,11 @@ export default function MentorNotification() {
     setMentorNotifications,
     mentorUnreadNotification,
     setMentorUnreadNotification,
-  } = useMentorContext()
+    refreshMentorNotification
+  } = useMentorContext();
+  useEffect(() => {
+    refreshMentorNotification()
+  },[isOpen])
 
   const unreadNotifications = [...mentorNotification]
     .filter((n) => !n.isRead)
@@ -59,12 +63,6 @@ export default function MentorNotification() {
       showErrorToast(res.msg)
     }
   }
-
-  const removeNotification = (id: string) => {
-    setMentorNotifications((prev) => prev.filter((n) => n.id !== id))
-    setMentorUnreadNotification((prev) => Math.max(0, prev - 1))
-  }
-
   const getTypeColor = (type: INotification["type"]) => {
     switch (type) {
       case "success":
@@ -142,14 +140,7 @@ export default function MentorNotification() {
                           >
                             <Check className="w-3 h-3" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => removeNotification(notification.id)}
-                            className="h-6 w-6 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50"
-                          >
-                            <X className="w-3 h-3" />
-                          </Button>
+                          
                         </div>
                       </div>
                     </div>

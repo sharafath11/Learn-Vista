@@ -117,16 +117,18 @@ export const MobileMenu = ({
                 </div>
 
                 {/* Notification Center for Mobile */}
-                {isNotificationOpen && (
-                  <div className="relative">
-                    <NotificationCenter
-                      isOpen={isNotificationOpen}
-                      onClose={() => setIsNotificationOpen(false)}
-                      unreadCount={unreadCount}
-                      setUnreadCount={setUnreadCount}
-                    />
-                  </div>
-                )}
+             
+{isNotificationOpen && (
+  <div className="relative">
+    <NotificationCenter
+      isOpen={isNotificationOpen}
+      onClose={() => setIsNotificationOpen(false)}
+      unreadCount={unreadCount}
+      setUnreadCount={setUnreadCount}
+    />
+  </div>
+)}
+
 
                 {/* User Menu */}
                 <div className="space-y-1">

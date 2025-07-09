@@ -48,6 +48,13 @@ export class MentorStreamService implements IMentorStreamService{
           this._baseLiveRepo.update(stream.id, { isActive: false, isEnd: true }),
           this._baseMentorRepo.update(mentorId, { $addToSet: { liveClasses: stream?.id } })
         ]);
+         await notifyWithSocket({
+             notificationService: this._notificationService,
+             userIds: stream.participants.map((id) => id.toString()),
+             title: " Live Session ended",
+             message: ``,
+             type: "info",
+         });
       }
     
     

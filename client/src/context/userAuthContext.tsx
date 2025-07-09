@@ -90,6 +90,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     userNotifications,
     unreadCount,
     setUnreadCount,
+    refereshNotifcation:fetchNotifications
   };
 
   return (

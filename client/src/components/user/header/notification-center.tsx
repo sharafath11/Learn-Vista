@@ -55,9 +55,12 @@ export const NotificationCenter = ({
   unreadCount,
   setUnreadCount,
 }: NotificationCenterProps) => {
-  const { userNotifications, setUserNotifications } = useUserContext()
+  const { userNotifications, setUserNotifications,refereshNotifcation } = useUserContext()
   const [notifications, setNotifications] = useState<INotification[]>([])
-  console.log("notifcationsd",notifications)
+  console.log("notifcationsd", notifications)
+  useEffect(() => {
+    refereshNotifcation()
+  },[isOpen])
   useEffect(() => {
   if (userNotifications) {
     const sorted = [...userNotifications].sort(

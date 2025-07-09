@@ -151,6 +151,7 @@ export interface IMentorContext {
   setMentorNotifications: React.Dispatch<React.SetStateAction<INotification[]>>; 
   mentorUnreadNotification: number;
   setMentorUnreadNotification: React.Dispatch<React.SetStateAction<number>>;
+  refreshMentorNotification:()=>void
 }
 
 export interface IMentorSignupData {

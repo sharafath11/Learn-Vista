@@ -84,6 +84,7 @@ const contextValue: IMentorContext = {
   setMentorNotifications,
   mentorUnreadNotification,
   setMentorUnreadNotification, 
+  refreshMentorNotification:fetchNotifications
 };
 
 
