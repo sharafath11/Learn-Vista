@@ -69,11 +69,7 @@ export class UserDonationController implements IUserDonationController {
     const decoded = decodeToken(req.cookies.token);
     const userId = decoded?.id || "anonymous";
     const donation = await this._donationService.verifyDonation(sessionId, io, userId);
-    sendResponse(res, StatusCode.OK, "Donation verified", true, {
-      customer_email: donation.donorEmail,
-      amount_total: donation.amount * 100,
-      receipt_url: donation.receiptUrl,
-    });
+    sendResponse(res, StatusCode.OK, "Donation verified", true,donation);
 
   } catch (error) {
     handleControllerError(res, error);

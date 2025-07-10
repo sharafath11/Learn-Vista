@@ -51,4 +51,5 @@ router.post("/lesson/comment", authenticateToken, userLessonsController.saveComm
 router.post("/create-checkout-session",userDonationController.createCheckoutSession.bind(userDonationController))
 router.get("/stripe/verify-session/:sessionId", userDonationController.verifySession.bind(userDonationController))
 router.get("/course/progress", authenticateToken, userCourseController.getProgressDetiles.bind(userCourseController))
+router.get("/let-fun/psc", userController.getQuestionByNumber.bind(userController));
 export default router;

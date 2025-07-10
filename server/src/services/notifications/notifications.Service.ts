@@ -16,7 +16,8 @@ export class NotificationService implements INotificationService {
   }
 
   async getMyNotifications(userId: string): Promise<INotification[]> {
-    return this._notificationRepo.findAll({ userId });
+    const notification = await this._notificationRepo.findAll({ userId });
+    return notification.filter((i)=>!i.isRead)
   }
 
   async markAsRead(id: string): Promise<boolean> {

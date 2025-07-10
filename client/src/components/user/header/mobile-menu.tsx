@@ -1,15 +1,12 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Bell, User, Settings, LogOut } from "lucide-react"
+import { Search, User, Settings, LogOut } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/src/utils/cn"
 import type { IUser } from "@/src/types/userTypes"
-import { NotificationCenter } from "./notification-center"
 
 interface NavItem {
   name: string
@@ -25,8 +22,6 @@ interface MobileMenuProps {
   handleLogout: () => void
   setActiveLink: (path: string) => void
   navItems: NavItem[]
-  unreadCount: number
-  setUnreadCount: (count: number) => void
 }
 
 export const MobileMenu = ({
@@ -37,11 +32,7 @@ export const MobileMenu = ({
   handleLogout,
   setActiveLink,
   navItems,
-  unreadCount,
-  setUnreadCount,
 }: MobileMenuProps) => {
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -50,7 +41,7 @@ export const MobileMenu = ({
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
           transition={{ duration: 0.3 }}
-          className="md:hidden fixed top-16 left-0 right-0 bg-zinc-900/95 backdrop-blur-md z-40 border-b border-zinc-700 shadow-lg"
+          className="md:hidden fixed top-16 left-0 right-0 bg-zinc-900/95 backdrop-blur-md z-30 border-b border-zinc-700 shadow-lg"
         >
           <div className="px-4 py-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
             {/* Search */}
@@ -86,88 +77,66 @@ export const MobileMenu = ({
 
             {user ? (
               <div className="space-y-4">
-                {/* User Info */}
-                <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg">
-                  <Image
-                    src={user.profilePicture || "/images/ai.png"}
-                    alt="Profile"
-                    width={40}
-                    height={40}
-                    className="rounded-full border-2 border-purple-400/50"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-white truncate">{user.username || "User"}</p>
-                    <p className="text-xs text-gray-400 truncate">{user.email || ""}</p>
-                  </div>
-
-                  {/* Mobile Notification Button */}
+                {/* User Info - Clean design without notification */}
+                <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-zinc-800/50 to-zinc-700/30 rounded-xl border border-zinc-700/50">
                   <div className="relative">
-                    <button
-                      onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-                      className="p-2 text-gray-400 hover:text-purple-400 hover:bg-zinc-700 rounded-lg transition-colors"
-                    >
-                      <Bell size={18} />
-                      {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium">
-                          {unreadCount > 9 ? "9+" : unreadCount}
-                        </span>
-                      )}
-                    </button>
+                    <Image
+                      src={user.profilePicture || "/images/ai.png"}
+                      alt="Profile"
+                      width={48}
+                      height={48}
+                      className="rounded-full border-2 border-purple-400/50 shadow-lg"
+                    />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-zinc-900 rounded-full"></div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-white truncate text-base">{user.username || "User"}</p>
+                    <p className="text-sm text-gray-400 truncate">{user.email || ""}</p>
                   </div>
                 </div>
-
-                {/* Notification Center for Mobile */}
-             
-{isNotificationOpen && (
-  <div className="relative">
-    <NotificationCenter
-      isOpen={isNotificationOpen}
-      onClose={() => setIsNotificationOpen(false)}
-      unreadCount={unreadCount}
-      setUnreadCount={setUnreadCount}
-    />
-  </div>
-)}
-
 
                 {/* User Menu */}
                 <div className="space-y-1">
                   <Link
                     href="/user/profile"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-300 hover:bg-zinc-800 rounded-lg transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-purple-400 rounded-lg transition-all duration-200 group"
                     onClick={onClose}
                   >
-                    <User size={16} />
-                    Profile
+                    <User size={18} className="group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">Profile</span>
                   </Link>
-
                   <Link
                     href="/user/settings"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-300 hover:bg-zinc-800 rounded-lg transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-purple-400 rounded-lg transition-all duration-200 group"
                     onClick={onClose}
                   >
-                    <Settings size={16} />
-                    Settings
+                    <Settings size={18} className="group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">Settings</span>
                   </Link>
-
                   <Link
                     href="/user/lv-code"
-                    className="flex items-center gap-3 px-3 py-2.5 text-gray-300 hover:bg-zinc-800 rounded-lg transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-purple-400 rounded-lg transition-all duration-200 group"
                     onClick={onClose}
                   >
-                    LV CODE
+                    <div className="w-[18px] h-[18px] bg-gradient-to-r from-purple-500 to-purple-600 rounded text-white text-xs flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
+                      LV
+                    </div>
+                    <span className="font-medium">LV CODE</span>
                   </Link>
 
-                  <button
-                    onClick={() => {
-                      handleLogout()
-                      onClose()
-                    }}
-                    className="flex items-center gap-3 w-full px-3 py-2.5 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
-                  >
-                    <LogOut size={16} />
-                    Logout
-                  </button>
+                  {/* Logout Button */}
+                  <div className="pt-2 mt-2 border-t border-zinc-700">
+                    <button
+                      onClick={() => {
+                        handleLogout()
+                        onClose()
+                      }}
+                      className="flex items-center gap-3 w-full px-4 py-3 text-red-400 hover:bg-red-900/20 hover:text-red-300 rounded-lg transition-all duration-200 group"
+                    >
+                      <LogOut size={18} className="group-hover:scale-110 transition-transform" />
+                      <span className="font-medium">Logout</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -175,14 +144,14 @@ export const MobileMenu = ({
               <div className="space-y-3 pt-4 border-t border-zinc-700">
                 <Link
                   href="/user/login"
-                  className="block w-full text-center py-2.5 text-gray-300 border border-zinc-700 rounded-lg font-medium hover:bg-zinc-800 transition-colors"
+                  className="block w-full text-center py-3 text-gray-300 border border-zinc-700 rounded-lg font-medium hover:bg-zinc-800 hover:border-purple-500 hover:text-purple-400 transition-all duration-200"
                   onClick={onClose}
                 >
                   Log in
                 </Link>
                 <Link
                   href="/user/signup"
-                  className="block w-full text-center py-2.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-600 transition-colors"
+                  className="block w-full text-center py-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-lg font-medium hover:from-purple-700 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-purple-500/25"
                   onClick={onClose}
                 >
                   Sign up

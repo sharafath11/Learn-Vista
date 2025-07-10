@@ -73,5 +73,5 @@ app.use((err: any, req: Request, res: Response, next: Function) => {
 const PORT = process.env.PORT || 4000;
 connectDb();
 httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(` Server running on port ${PORT}`);
 });

@@ -1,10 +1,8 @@
-
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect, useCallback } from "react"
-import { Search, Menu, X, Home, BookOpen, Video, Heart, Bell } from "lucide-react"
+import { Menu, X, Home, BookOpen, Video, Heart, Bell } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -16,7 +14,6 @@ import { showErrorToast } from "@/src/utils/Toast"
 import { NotificationCenter } from "./notification-center"
 import { UserDropdown } from "./user-dropdown"
 import { MobileMenu } from "./mobile-menu"
-
 
 interface NavItem {
   name: string
@@ -36,9 +33,10 @@ const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+  const [isMobileNotificationOpen, setIsMobileNotificationOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeLink, setActiveLink] = useState("/")
-  const{unreadCount,setUnreadCount}=useUserContext()
+  const { unreadCount, setUnreadCount } = useUserContext()
   const router = useRouter()
 
   const handleLogout = useCallback(async () => {
@@ -59,18 +57,18 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
   useEffect(() => {
     const handleClickOutside = () => {
       setIsDropdownOpen(false)
       setIsNotificationOpen(false)
+      setIsMobileNotificationOpen(false)
     }
-
-    if (isDropdownOpen || isNotificationOpen) {
+    if (isDropdownOpen || isNotificationOpen || isMobileNotificationOpen) {
       document.addEventListener("click", handleClickOutside)
     }
-
     return () => document.removeEventListener("click", handleClickOutside)
-  }, [isDropdownOpen, isNotificationOpen])
+  }, [isDropdownOpen, isNotificationOpen, isMobileNotificationOpen])
 
   return (
     <>
@@ -120,9 +118,6 @@ const Header = () => {
 
             {/* Desktop Right Section */}
             <div className="hidden md:flex items-center space-x-3">
-              {/* Search */}
-              
-
               {user ? (
                 <div className="flex items-center space-x-2">
                   {/* Notification Bell */}
@@ -142,7 +137,6 @@ const Header = () => {
                         </span>
                       )}
                     </button>
-
                     <NotificationCenter
                       isOpen={isNotificationOpen}
                       onClose={() => setIsNotificationOpen(false)}
@@ -177,16 +171,53 @@ const Header = () => {
               )}
             </div>
 
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-gray-300 hover:text-purple-400 hover:bg-zinc-800 transition-colors"
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+            {/* Mobile Right Section */}
+            <div className="md:hidden flex items-center space-x-2">
+              {/* Mobile Notification Bell - Outside Menu */}
+              {user && (
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setIsMobileNotificationOpen(!isMobileNotificationOpen)
+                      setIsMobileMenuOpen(false)
+                    }}
+                    className="relative p-2 text-gray-400 hover:text-purple-400 hover:bg-zinc-800 rounded-lg transition-colors"
+                  >
+                    <Bell size={20} />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 rounded-lg text-gray-300 hover:text-purple-400 hover:bg-zinc-800 transition-colors"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              >
+                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Mobile Notification Center - Positioned outside header */}
+        {user && isMobileNotificationOpen && (
+          <div className="md:hidden absolute top-full left-0 right-0 z-40">
+            <NotificationCenter
+              isOpen={isMobileNotificationOpen}
+              onClose={() => setIsMobileNotificationOpen(false)}
+              unreadCount={unreadCount}
+              setUnreadCount={setUnreadCount}
+              isMobile={true}
+            />
+          </div>
+        )}
       </header>
 
       {/* Mobile Menu */}
@@ -198,8 +229,6 @@ const Header = () => {
         handleLogout={handleLogout}
         setActiveLink={setActiveLink}
         navItems={NAV_ITEMS}
-        unreadCount={unreadCount}
-        setUnreadCount={setUnreadCount}
       />
 
       {/* Spacer */}

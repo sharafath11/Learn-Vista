@@ -24,7 +24,7 @@ export default function AdminNotificationDropdown() {
     adminNotifications,
     setAdminNotifications,
     adminUnreadNotification,
-    setAdminUnreadNotification
+    setAdminUnreadNotification,
   } = useAdminContext();
 
   const unreadNotifications = adminNotifications
@@ -37,7 +37,7 @@ export default function AdminNotificationDropdown() {
       setAdminNotifications((prev) =>
         prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
       );
-      setAdminUnreadNotification((prev:number) => prev - 1);
+      setAdminUnreadNotification((prev: number) => prev - 1);
     } else {
       showErrorToast(res.msg);
     }
@@ -91,7 +91,7 @@ export default function AdminNotificationDropdown() {
                   <div
                     key={notification.id}
                     onClick={() => markAsRead(notification.id)}
-                    className="p-4 border-b hover:bg-gray-50 cursor-pointer bg-red-50/30"
+                    className="p-4 border-b hover:bg-gray-50 cursor-pointer"
                   >
                     <div className="flex items-start gap-3">
                       <div>{getNotificationIcon(notification.type)}</div>

@@ -1,114 +1,138 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import { Calendar, Clock, Users, BookOpen } from "lucide-react" 
+import { useEffect, useState } from "react"
 import { useUserContext } from "@/src/context/userAuthContext"
-import { Card } from "@/components/ui/card" 
-import { Badge } from "@/components/ui/badge" 
-import { Button } from "@/components/ui/button" 
+import { Card } from "@/components/ui/card"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
+import { cn } from "@/src/utils/cn"
+import { EmptyState } from "./empty-state"
+import { SessionTableRow } from "./session-table-row"
+import { SessionCard } from "./session-card"
+
 
 export default function UpcomingSessions() {
-  const { allCourses,user } = useUserContext()
-  const route = useRouter()
+  const { allCourses, user } = useUserContext()
+  const router = useRouter()
   const [currentTime, setCurrentTime] = useState(new Date())
-  console.log(allCourses,user)
-  const courses = allCourses.filter(course =>
-  course.enrolledUsers?.some(userId => userId === user?.id)
-);
+  const [joiningSession, setJoiningSession] = useState<string | null>(null)
+  const [filter, setFilter] = useState<"active" | "expired">("active")
+
+  const courses = allCourses.filter((course) => course.enrolledUsers?.some((userId) => userId === user?.id))
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 60000)
-
+    const interval = setInterval(() => setCurrentTime(new Date()), 60000)
     return () => clearInterval(interval)
   }, [])
 
+  const isExpired = (endDate: string) => {
+    if (!endDate) return false
+    return new Date(endDate) < currentTime
+  }
+
   const handleJoinCall = async (courseId: string) => {
-    let liveId = ""
-    const res = await UserAPIMethods.getUserRoomId(courseId);
-    if (res.ok) {
-      liveId = res.data
-      showSuccessToast(res.msg);
-      route.push(`/user/live-classes/${liveId}`)
+    setJoiningSession(courseId)
+    try {
+      const res = await UserAPIMethods.getUserRoomId(courseId)
+      if (res.ok) {
+        showSuccessToast(res.msg)
+        router.push(`/user/live-classes/${res.data}`)
+      }
+    } catch (error) {
+      console.error("Error joining session:", error)
+    } finally {
+      setJoiningSession(null)
     }
-  };
-  console.log("alll courses",allCourses)
+  }
+
+  const handleViewContent = (courseId: string) => {
+    router.push(`/user/sessions/${courseId}`)
+  }
+
+  const activeCourses = courses.filter((course) => !isExpired(course.endDate))
+  const expiredCourses = courses.filter((course) => isExpired(course.endDate))
+  const filteredCourses = filter === "active" ? activeCourses : expiredCourses
+
   return (
-    <Card className="p-6 bg-white shadow-lg rounded-xl">
-      <h2 className="text-3xl font-bold text-gray-800 mb-8 border-b pb-4">Upcoming Sessions</h2>
-
-      <div className="overflow-hidden rounded-lg border border-gray-200">
-        <div className="bg-gray-100 px-6 py-4 grid grid-cols-12 gap-4 text-sm font-semibold text-gray-700 border-b border-gray-200">
-          <div className="col-span-4">Session Details</div>
-          <div className="col-span-2">Date</div>
-          <div className="col-span-2">Time</div>
-          <div className="col-span-2">Category</div>
-          <div className="col-span-2 text-center">Action</div>
-        </div>
-
-        <div className="divide-y divide-gray-100">
-          {courses.length > 0 ?  (
-            courses?.map((session) => (
-              <div 
-                key={session._id} 
-                className="px-6 py-5 grid grid-cols-12 gap-4 items-center bg-white hover:bg-gray-50 transition-colors duration-200"
-              >
-                <div className="col-span-4 flex flex-col">
-                  <h3 className="text-lg font-semibold text-gray-900 leading-snug">{session.title}</h3>
-                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">{session.description}</p>
-                  <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
-                    <Users className="w-3.5 h-3.5 text-gray-400" />
-                    <span>{session.sessions.length} session{session.sessions.length !== 1 ? "s" : ""}</span>
-                  </div>
-                </div>
-                <div className="col-span-2 flex items-center gap-2 text-sm text-gray-700">
-                  <Calendar className="w-4 h-4 text-gray-500" />
-                  {session.startDate ? new Date(session.startDate).toLocaleDateString('en-US', {
-                    day: 'numeric', month: 'short', year: 'numeric'
-                  }) : "N/A"}
-                </div>
-                <div className="col-span-2 flex items-center gap-2 text-sm text-gray-700">
-                  <Clock className="w-4 h-4 text-gray-500" />
-                  {session.startTime || "N/A"}
-                </div>
-                <div className="col-span-2">
-                  <Badge variant="outline" className="flex items-center gap-1 bg-blue-50 text-blue-700 border-blue-200 px-3 py-1 rounded-full text-xs font-medium">
-                    <BookOpen className="w-3.5 h-3.5" />
-                    {session.categoryId?.title || "General"}
-                  </Badge>
-                </div>
-                <div className="col-span-2 text-center">
-                {session.isStreaming? <Button
-                    onClick={() => handleJoinCall(session._id)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-                    
-                  >
-                    Join Session
-                  </Button> :
-                  <Button
-                   
-                    className="bg-green-400 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-                    
-                  >
-                   Session not start
-                  </Button>
-                  }
-                 
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="p-6 text-center text-gray-500">
-              <p className="text-lg">No upcoming sessions found.</p>
-              <p className="text-sm mt-2">Check back later or explore other courses!</p>
-            </div>
-          )}
-        </div>
+    <div className="w-full max-w-7xl mx-auto p-4 sm:p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">My Sessions</h2>
+        <p className="text-gray-600 text-sm sm:text-base">Manage your enrolled courses and track session status</p>
       </div>
-    </Card>
+
+      {/* Filter Tabs */}
+      {courses.length > 0 && (
+        <div className="mb-6">
+          <div className="flex gap-2 p-1 bg-gray-100 rounded-lg w-fit">
+            <button
+              onClick={() => setFilter("active")}
+              className={cn(
+                "px-4 py-2 text-sm font-medium rounded-md transition-all duration-200",
+                filter === "active" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900",
+              )}
+            >
+              Active ({activeCourses.length})
+            </button>
+            <button
+              onClick={() => setFilter("expired")}
+              className={cn(
+                "px-4 py-2 text-sm font-medium rounded-md transition-all duration-200",
+                filter === "expired" ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900",
+              )}
+            >
+              Expired ({expiredCourses.length})
+            </button>
+          </div>
+        </div>
+      )}
+
+      {filteredCourses.length === 0 ? (
+        <EmptyState filter={filter} onExplore={() => router.push("/user/courses")} />
+      ) : (
+        <>
+          {/* Desktop Table */}
+          <Card className="hidden lg:block overflow-hidden border-0 shadow-lg bg-white">
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4">
+              <div className="grid grid-cols-12 gap-4 text-sm font-semibold text-gray-700">
+                <div className="col-span-4">Session Details</div>
+                <div className="col-span-2">Start Date</div>
+                <div className="col-span-2">End Date</div>
+                <div className="col-span-2">Status</div>
+                <div className="col-span-2 text-center">Action</div>
+              </div>
+            </div>
+            <div className="divide-y divide-gray-100">
+              {filteredCourses.map((session, index) => (
+                <SessionTableRow
+                  key={session._id}
+                  session={session}
+                  index={index}
+                  isExpired={isExpired(session.endDate)}
+                  joiningSession={joiningSession}
+                  onJoinCall={handleJoinCall}
+                  onViewContent={handleViewContent}
+                />
+              ))}
+            </div>
+          </Card>
+
+          {/* Mobile Cards */}
+          <div className="lg:hidden space-y-4">
+            {filteredCourses.map((session) => (
+              <SessionCard
+                key={session._id}
+                session={session}
+                isExpired={isExpired(session.endDate)}
+                joiningSession={joiningSession}
+                onJoinCall={handleJoinCall}
+                onViewContent={handleViewContent}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   )
 }

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import SuccessView from "./SuccessView";
 import { UserAPIMethods } from "@/src/services/APImethods";
-import { IStripeSuccessSession } from "@/src/types/donationTyps";
+import { IDonation, IStripeSuccessSession } from "@/src/types/donationTyps";
 import { NotificationListener } from "@/src/components/NotificationListener";
 import { useUserContext } from "@/src/context/userAuthContext";
 
@@ -13,7 +13,7 @@ export default function SuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<IStripeSuccessSession>();
+  const [session, setSession] = useState<IDonation>();
   const { user } = useUserContext();
 
   useEffect(() => {
@@ -21,6 +21,7 @@ export default function SuccessPage() {
 
     const fetchSession = async () => {
       const res = await UserAPIMethods.getStripeCheckoutSession(sessionId);
+      console.log("session",res.data)
       if (res.ok) {
         setSession(res.data);
       } else {
@@ -54,7 +55,7 @@ export default function SuccessPage() {
 
   return (
     <>
-      {user?._id && <NotificationListener userId={user.id} />}
+      {user?._id && <NotificationListener userId={user.id} role={"user"} />}
       <SuccessView session={session} />
     </>
   );

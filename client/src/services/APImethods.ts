@@ -42,7 +42,8 @@ export const UserAPIMethods = {
   saveComment: (lessonId: string, comment: string) => post("/lesson/comment", { lessonId, comment }),
   createCheckoutSession: (amount: number, currency: string) => post("/create-checkout-session", { amount, currency }),
   getStripeCheckoutSession: (sessionId: string) => get(`/stripe/verify-session/${sessionId}`),
-  getUserProgress:()=>get("/course/progress")
+  getUserProgress: () => get("/course/progress"),
+  psc: (number: number) => get(`/let-fun/psc`, {number}),
 } as const;
 
 export const AdminAPIMethods = {

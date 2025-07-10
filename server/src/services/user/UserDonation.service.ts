@@ -22,70 +22,59 @@ export class UserDonationServices implements IUserDonationServices {
     private _notificationService: INotificationService
   ) {}
 
-  async verifyDonation(sessionId: string,io?:Server,userId?:string): Promise<IDonation> {
-    if (!sessionId) throwError(" Missing session_id");
+  async verifyDonation(sessionId: string, io?: Server, userId?: string): Promise<IDonation> {
+  if (!sessionId) throwError("Missing session_id");
 
-    console.log(" Verifying Stripe session ID:", sessionId);
-
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ["payment_intent", "payment_intent.latest_charge", "customer"],
-    });
-
-
-    const paymentIntent = session.payment_intent as Stripe.PaymentIntent;
-    const latestChargeRaw = paymentIntent.latest_charge;
-
-    const chargeId =
-      typeof latestChargeRaw === "string"
-        ? latestChargeRaw
-        : (latestChargeRaw as Stripe.Charge)?.id;
-
-    if (!chargeId) {
-      throwError("Could not determine charge ID");
-    }
-
-    const charge = await stripe.charges.retrieve(chargeId);
-
-    console.log("Charge retrieved:", {
-      id: charge.id,
-      status: charge.status,
-      receipt_url: charge.receipt_url,
-    });
-
-    const receiptUrl = charge.receipt_url || "";
-
-    const existing = await this._donationRepo.findByPaymentIntentId(paymentIntent.id);
-    if (existing) {
-      console.log(" Donation already recorded for this paymentIntent:", paymentIntent.id);
-      return existing;
-    }
-
-    const donation: CreateDonationInput = {
-      donorName: session.customer_details?.name || "Anonymous",
-      donorEmail: session.customer_details?.email || "unknown@example.com",
-      amount: (session.amount_total || 0) / 100,
-      currency: session.currency ?? "inr",
-      message: "",
-      status: charge.status as CreateDonationInput["status"],
-      paymentIntentId: paymentIntent.id,
-      stripeCustomerId: session.customer?.toString() || "",
-      receiptUrl,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    const ADMIN_ID=process.env.ADMIN_ID
-    if(!ADMIN_ID) throwError("somthing wront wrong")
-     if (userId) {
-  await notifyWithSocket({
-    notificationService: this._notificationService,
-    userIds: [userId,ADMIN_ID], 
-    roles: ["admin"],
-    title: " Donation Successful",
-    message: `User donated ₹${donation.amount}. Thank you!`,
-    type: "success",
+  const session = await stripe.checkout.sessions.retrieve(sessionId, {
+    expand: ["payment_intent", "payment_intent.latest_charge", "customer"],
   });
+
+  const paymentIntent = session.payment_intent as Stripe.PaymentIntent;
+  const latestChargeRaw = paymentIntent.latest_charge;
+
+  const chargeId =
+    typeof latestChargeRaw === "string"
+      ? latestChargeRaw
+      : (latestChargeRaw as Stripe.Charge)?.id;
+
+  if (!chargeId) throwError("Could not determine charge ID");
+
+  const charge = await stripe.charges.retrieve(chargeId);
+  const receiptUrl = charge.receipt_url || "";
+  const existing = await this._donationRepo.findByPaymentIntentId(paymentIntent.id);
+  if (existing) {
+    return existing;
+  }
+  const donation: CreateDonationInput = {
+    donorName: session.customer_details?.name || "Anonymous",
+    donorEmail: session.customer_details?.email || "unknown@example.com",
+    amount: (session.amount_total || 0) / 100,
+    currency: session.currency ?? "inr",
+    message: "",
+    status: charge.status as CreateDonationInput["status"],
+    paymentIntentId: paymentIntent.id,
+    stripeCustomerId: session.customer?.toString() || "",
+    receiptUrl,
+    transactionId: charge.id, 
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  const ADMIN_ID = process.env.ADMIN_ID;
+  if (!ADMIN_ID) throwError("ADMIN_ID not configured");
+
+  if (userId) {
+    await notifyWithSocket({
+      notificationService: this._notificationService,
+      userIds: [userId, ADMIN_ID],
+      roles: ["admin"],
+      title: "Donation Successful",
+      message: `User donated ₹${donation.amount}. Thank you!`,
+      type: "success",
+    });
+  }
+  const savedDonation = await this._donationRepo.create(donation);
+  return savedDonation;
 }
 
-    return await this._donationRepo.create(donation);
-  }
 }
