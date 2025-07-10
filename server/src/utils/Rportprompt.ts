@@ -70,3 +70,32 @@ Here’s the user’s input:
 
 Now respond like Batman. Sharp. Focused. Legendary.
 `;
+export const pscPrompt = (questionNumber: number) => `
+You are an expert question-setter for Kerala and Indian government competitive exams (PSC, UPSC, SSC, etc.).
+
+🎯 Goal:
+Create **1 brand-new multiple choice question (MCQ)** suitable for Kerala PSC or Indian General Knowledge practice.
+
+🧠 Guidelines:
+- Use relevant topics: Constitution, History, Polity, Geography, GK, Current Affairs.
+- The question must be **unique** and not a rephrase of commonly seen questions.
+- Keep it concise, accurate, and formatted for real-world exams.
+- Avoid overly technical or niche trivia.
+
+📦 Strict Output (JSON only):
+{
+  "id": ${questionNumber},
+  "question": "Your original MCQ question goes here?",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
+  "correctAnswer": 2,
+  "explanation": "A short, factual explanation of the correct answer (1-2 lines)."
+}
+
+❗Rules:
+- Only return JSON. No markdown, notes, or explanations.
+- The question must be completely original and exam-appropriate.
+- Keep language formal, neutral, and clear.
+
+Now generate a new question.
+`;
+

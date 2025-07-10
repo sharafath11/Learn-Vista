@@ -1,5 +1,5 @@
 import mongoose, { Schema, ObjectId } from 'mongoose';
-import { ISession } from '../../types/classTypes';
+import { ISession } from '../../../types/classTypes';
 
 const SessionSchema: Schema = new Schema(
   {

@@ -1,5 +1,5 @@
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
-import Comment from "../../models/class/comments";
+import Comment from "../../models/mentor/class/comments";
 import { IComment } from "../../types/lessons";
 import { BaseRepository } from "../BaseRepository";
 

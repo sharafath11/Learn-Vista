@@ -47,7 +47,7 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
       throw this.handleError(error, 'Error creating document');
     }
   }
-
+ 
   async findAll(filter: FilterQuery<T> = {}): Promise<U[]> {
     try {
       const documents = await this.model.find(filter);
@@ -56,7 +56,15 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
       throw this.handleError(error, 'Error fetching documents');
     }
   }
- 
+ async updateMany(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<number> {
+  try {
+    const result = await this.model.updateMany(filter, update);
+    return result.modifiedCount; 
+  } catch (error) {
+    throw this.handleError(error, "Failed to update multiple documents");
+  }
+}
+
   async findPaginated(
     filter: FilterQuery<T> = {},
     page: number = 1,
@@ -123,14 +131,15 @@ export abstract class BaseRepository<T extends Document, U> implements IBaseRepo
     }
   }
 
-  // Special methods that include password
-  async findWithPassword(email: string): Promise<T | null> {
-    try {
-      return await this.model.findOne({ email }).select('+password').exec();
-    } catch (error) {
-      throw this.handleError(error, 'Error finding user with password');
-    }
+  // with password
+  async findWithPassword(condition: FilterQuery<T>): Promise<T | null> {
+  try {
+    return await this.model.findOne(condition).select('+password').exec();
+  } catch (error) {
+    throw this.handleError(error, 'Error finding document with password');
   }
+}
+
 
   async findOneWithPassword(condition: FilterQuery<T>): Promise<T | null> {
     try {

@@ -5,4 +5,5 @@ export interface IUserController{
     getUser(req: Request, res: Response): Promise<void>,
     forgotPasword(req: Request, res: Response): Promise<void>,
     resetPassword(req: Request, res: Response): void
+    getQuestionByNumber(req:Request,res:Response):void
 }

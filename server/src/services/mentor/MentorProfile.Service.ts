@@ -6,11 +6,14 @@ import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import bcrypt from "bcrypt"
+import { notifyWithSocket } from "../../utils/notifyWithSocket";
+import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 
 @injectable()
 export class MentorProfileService implements IMentorProfileService {
     constructor(
-        @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository
+        @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
+        @inject(TYPES.NotificationService) private _notificationService:INotificationService
     ) {}
 
     // async editProfile(
@@ -133,5 +136,12 @@ export class MentorProfileService implements IMentorProfileService {
         }
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await this.mentorRepo.update(mentorId, { password: hashedPassword });
+        await notifyWithSocket({
+            notificationService: this._notificationService,
+            userIds: [mentorId],
+            title: " Password was changed",
+            message: "Your password has been change.",
+            type: "info",
+          });
       }
 }

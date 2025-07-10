@@ -5,11 +5,16 @@ import { IUser } from "../../types/userTypes";
 import { TYPES } from "../../core/types"; 
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { throwError } from "../../utils/ResANDError";
+import { notifyWithSocket } from "../../utils/notifyWithSocket";
+import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 
 @injectable()
 export class MentorStudentService implements IMentorStudentService {
   constructor(
-    @inject(TYPES.UserRepository) private _userRepo: IUserRepository
+    @inject(TYPES.UserRepository) private _userRepo: IUserRepository,
+    @inject(TYPES.NotificationService) private _notificationService: INotificationService,
+    @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository
   ) {}
    
 async getStudentDetilesService(
@@ -96,13 +101,26 @@ async studentStatusService(
         allowed: !status,
       };
     }
-
+    
     return course;
   });
 
-
+   
   const result = await this._userRepo.update(userId as string, {
     enrolledCourses: updatedCourses,
+  });
+    const course = await this._courseRepo.findById(courseId.toString());
+  if (!course) return;
+ 
+
+  const statusText = !status ? "blocked" : "unblocked";
+  
+  await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [userId.toString()],
+    title: `Course Access ${statusText}`,
+    message: `Your access to the course "${course.title}" has been ${statusText} by the mentor.`,
+    type: status ? "error" : "success",
   });
 
 }

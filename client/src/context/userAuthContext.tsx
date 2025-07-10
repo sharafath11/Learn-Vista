@@ -2,25 +2,26 @@
 
 import { createContext, useState, useContext, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { UserAPIMethods } from "../services/APImethods";
+import { NotificationAPIMethods, UserAPIMethods } from "../services/APImethods";
 import { 
   UserContextType, 
   UserProviderProps, 
   IUser 
 } from "../types/authTypes";
 import { IPopulatedCourse } from "../types/courseTypes";
-import { showErrorToast } from "../utils/Toast";
-import { ILessons } from "../types/lessons";
+import { showErrorToast, showInfoToast } from "../utils/Toast";
 import { IUserCourseProgress } from "../types/userProgressTypes";
+import { INotification } from "../types/notificationsTypes";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [allCourses, setAllCourses] = useState<IPopulatedCourse[]>([]);
-  const [lessons, setLessons] = useState<ILessons[]>([])
   const [curentUrl, setCurentUrl] = useState<string>("");
-const [progresses, setProgress] = useState<IUserCourseProgress[]>([])
+  const [progresses, setProgress] = useState<IUserCourseProgress[]>([]);
+  const [userNotifications, setUserNotifications] = useState<INotification[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   
   const router = useRouter();
 
@@ -43,7 +44,16 @@ const [progresses, setProgress] = useState<IUserCourseProgress[]>([])
     if (res.ok) setProgress(res.data);
     else showErrorToast("Somthing wrent wronghhh")
   }
-
+  const fetchNotifications = async () => {
+    const res = await NotificationAPIMethods.getMyNotifications();
+   
+    if (res.ok) {
+      setUserNotifications(res.data);
+      const unread = res.data.filter((n: INotification) => !n.isRead).length;
+      setUnreadCount(unread);
+    }
+    else showInfoToast(res.msg)
+  }
    
    const fetchLessons = async (courseId:string) => {
      const res = await UserAPIMethods.getLessons(courseId);
@@ -57,7 +67,8 @@ const [progresses, setProgress] = useState<IUserCourseProgress[]>([])
   useEffect(() => {
     fetchUserData();
     fetchCourses();
-    fetchProgress()
+    fetchProgress();
+    fetchNotifications()
   }, [fetchUserData]);
   const fetchCourses = async () => {
     const res = await UserAPIMethods.fetchAllCourse({});
@@ -74,7 +85,12 @@ const [progresses, setProgress] = useState<IUserCourseProgress[]>([])
     curentUrl,
     setCurentUrl,
     setProgress,
-    progresses
+    progresses,
+    setUserNotifications,
+    userNotifications,
+    unreadCount,
+    setUnreadCount,
+    refereshNotifcation:fetchNotifications
   };
 
   return (

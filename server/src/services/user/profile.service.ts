@@ -11,11 +11,14 @@ import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import bcrypt from "bcrypt"
+import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { notifyWithSocket } from "../../utils/notifyWithSocket";
 @injectable()
 export class ProfileService implements IProfileService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-    @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository
+    @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
+     @inject(TYPES.NotificationService) private _notificationService: INotificationService 
   ) {}
 
   private async uploadMentorResume(file: Express.Multer.File, username: string) {
@@ -79,7 +82,16 @@ export class ProfileService implements IProfileService {
     };
 
     const application = await this.userRepository.applyMentor(mentorData);
+    const ADMIN_ID = process.env.ADMIN_ID;
+    if (!ADMIN_ID) throwError("Admin ID not configured", StatusCode.INTERNAL_SERVER_ERROR);
 
+    await notifyWithSocket({
+      notificationService: this._notificationService,
+      userIds: [userId.toString(), ADMIN_ID],
+      title: " New Mentor Application",
+      message: `${username} has applied to become a mentor.`,
+      type: "info",
+    });
     return {
       success: true,
       application,
@@ -114,9 +126,8 @@ export class ProfileService implements IProfileService {
     };
   }
   async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userRepository.findWithPassword({id:userId});
     console.log(userId, currentPassword, newPassword);
-    
     if (!user) {
       throwError("User not found", StatusCode.NOT_FOUND);
     }
@@ -133,5 +144,13 @@ export class ProfileService implements IProfileService {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     console.log(hashedPassword)
     await this.userRepository.update(userId, { password: hashedPassword });
+    await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [userId],
+    roles: ["user"],
+    title: "🔐 Password Changed",
+    message: "Your password was changed successfully",
+    type: "info",
+  });
   }
 }

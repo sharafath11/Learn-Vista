@@ -13,7 +13,10 @@ export interface IDonation{
   updatedAt: Date;
 }
 export interface IStripeSuccessSession {
+  id?:string
   customer_email: string;
   amount_total: number;
   receipt_url: string;
+  payment_intent?: string
+  paymentIntentId:string
 }

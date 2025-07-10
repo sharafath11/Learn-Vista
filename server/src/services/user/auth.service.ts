@@ -23,7 +23,7 @@ export class AuthService implements IAuthService {
     const { username, email, password, role } = userData;
 
     validateUserSignupInput(username, email, password, role);
-    const existingUser = await this.userRepository.findOne({ email });
+    const existingUser = await this.userRepository.findWithPassword({ email });
     const existOtp = await this.otpRepository.findOne({ email });
 
     if (!existOtp) throwError("OTP Expired", StatusCode.BAD_REQUEST);
@@ -82,7 +82,7 @@ export class AuthService implements IAuthService {
       if (!user) throwError("Invalid credentials google Id", StatusCode.BAD_REQUEST);
     } else {
       if (!email || !password) throwError("Email and password are required", StatusCode.BAD_REQUEST);
-      user = await this.userRepository.findOne({ email });
+      user = await this.userRepository.findWithPassword({ email });
       if (!user) throwError("Invalid credentials ", StatusCode.BAD_REQUEST);
     }
 

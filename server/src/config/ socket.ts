@@ -1,23 +1,17 @@
 
 import { Server, Socket } from "socket.io";
-
 interface Participant {
   socketId: string; 
   role: 'mentor' | 'user';
-
 }
-
 interface Room {
   mentorSocketId: string | null;
   participants: Record<string, Participant>;
 }
-
 const rooms: Record<string, Room> = {};
-
 export function socketHandler(io: Server) {
   io.on('connection', (socket: Socket) => {
     console.log(`New connection: ${socket.id}`);
-
     socket.on('join-room', (roomId: string, clientProvidedId: string, role: 'mentor' | 'user') => {
       const currentSocketId = socket.id;
       for (const existingRoomId in rooms) {
@@ -79,12 +73,10 @@ export function socketHandler(io: Server) {
       console.log(`Relaying RTC offer from ${socket.id} to ${targetSocketId}`);
       io.to(targetSocketId).emit('rtc-offer', socket.id, offer);
     });
-
     socket.on('rtc-answer', (targetSocketId: string, answer: any) => {
       console.log(`Relaying RTC answer from ${socket.id} to ${targetSocketId}`);
       io.to(targetSocketId).emit('rtc-answer', socket.id, answer);
     });
-
     socket.on('ice-candidate', (targetSocketId: string, candidate: any) => {
       console.log(`Relaying ICE candidate from ${socket.id} to ${targetSocketId}`);
       if (socket.id === targetSocketId) { 
@@ -96,6 +88,24 @@ export function socketHandler(io: Server) {
     socket.on('send-comment', (roomId: string, message: string, sender: string) => {
       console.log(`Received comment in room ${roomId} from ${sender} (socket: ${socket.id}): "${message}"`);
       io.to(roomId).emit('receive-comment', message, sender);
+    });
+        socket.on("register-user", (userId: string) => {
+      if (userId) {
+        socket.join(userId);
+        console.log(`[Room Join] User ${userId} joined personal room via ${socket.id}`);
+      } else {
+        console.warn("[register-user] Missing userId");
+      }
+    });
+
+    // Join role-based room
+    socket.on("join-room", (room: string) => {
+      socket.join(room);
+      console.log(`[Room Join] Socket ${socket.id} joined room: ${room}`);
+    });
+
+    socket.on("disconnect", () => {
+      console.log(`[Socket Disconnected] ${socket.id}`);
     });
     socket.on("stream-ended", (roomId) => {
       io.to(roomId).emit("end-stream","Stream was ended")

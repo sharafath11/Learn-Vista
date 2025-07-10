@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IQuestions } from '../../types/lessons';
+import { IQuestions } from '../../../types/lessons';
 
 const LessonQuestionsSchema = new Schema<IQuestions>({
   lessonId: { type: String, required: true },

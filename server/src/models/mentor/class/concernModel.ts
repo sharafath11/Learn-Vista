@@ -1,5 +1,5 @@
 import mongoose, { Schema, model, Model } from "mongoose"
-import { IConcern } from "../../types/concernTypes"
+import { IConcern } from "../../../types/concernTypes"
 import { Type } from "@aws-sdk/client-s3"
 
 const concernSchema = new Schema<IConcern>({

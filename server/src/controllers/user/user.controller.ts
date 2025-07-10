@@ -6,6 +6,8 @@ import { Request, Response } from "express";
 import { decodeToken, verifyAccessToken } from "../../utils/JWTtoken";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { pscPrompt } from "../../utils/Rportprompt";
+import { getGemaniResponse } from "../../config/gemaniAi";
 
 export class UserController implements IUserController {
     constructor(
@@ -74,5 +76,23 @@ export class UserController implements IUserController {
             handleControllerError(res, error);
         }
     }
-     
+
+  async getQuestionByNumber(req: Request, res: Response): Promise<void> {
+    try {
+        const number = parseInt(req.query.number as string);
+        console.log(number,req.query)
+      if (isNaN(number)) {
+        res.status(400).json({ ok: false, msg: "Invalid question number" });
+        return;
+      }
+        const prompot=pscPrompt(number)
+        const answer = await getGemaniResponse(prompot);
+        console.log(answer)
+        sendResponse(res, StatusCode.OK, "", true, answer);
+    } catch (error) {
+     handleControllerError(res,error)
+  }
+  
+}
+
 }

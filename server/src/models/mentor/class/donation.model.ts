@@ -1,5 +1,5 @@
 import { Schema, model, Types } from "mongoose";
-import { IDonation } from "../../types/donationTypes";
+import { IDonation } from "../../../types/donationTypes";
 
 const DonationSchema = new Schema<IDonation>(
   {
@@ -15,6 +15,7 @@ const DonationSchema = new Schema<IDonation>(
     },
     paymentIntentId: { type: String, required: true, unique: true },
     stripeCustomerId: { type: String },
+    transactionId: { type: String },
     receiptUrl: { type: String },
     donorId: { type: Types.ObjectId, ref: "User" },
   },

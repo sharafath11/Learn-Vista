@@ -2,6 +2,7 @@ import React from "react";
 import { IPopulatedCourse } from "./courseTypes";
 import { ILessons } from "./lessons";
 import { IUserCourseProgress } from "./userProgressTypes";
+import { INotification } from "./notificationsTypes";
 
 export type UserRole = "user" | "mentor";
 
@@ -50,8 +51,13 @@ export interface UserContextType {
   fetchLessons: (courseId: string) => Promise<ILessons[]>;
   curentUrl:string,
   setCurentUrl: React.Dispatch<React.SetStateAction<string>>
-setProgress: React.Dispatch<React.SetStateAction<IUserCourseProgress[]>>;
-  progresses:IUserCourseProgress[]
+  setProgress: React.Dispatch<React.SetStateAction<IUserCourseProgress[]>>;
+  progresses: IUserCourseProgress[]
+  setUserNotifications:React.Dispatch<React.SetStateAction<INotification[]>>,
+  userNotifications: INotification[],
+  unreadCount: number,
+  setUnreadCount: React.Dispatch<React.SetStateAction<number>>
+  refereshNotifcation:()=>void
   
 }
 

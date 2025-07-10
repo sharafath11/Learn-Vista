@@ -6,6 +6,7 @@ import { IMentorSignupData } from "../types/mentorTypes";
 
 import { getRequest, patchRequest, postRequest } from "./api";
 import { baseURL } from "./AxiosInstance";
+import { INotificationPayload } from "../types/notificationsTypes";
 
 
 const get = getRequest;
@@ -41,7 +42,8 @@ export const UserAPIMethods = {
   saveComment: (lessonId: string, comment: string) => post("/lesson/comment", { lessonId, comment }),
   createCheckoutSession: (amount: number, currency: string) => post("/create-checkout-session", { amount, currency }),
   getStripeCheckoutSession: (sessionId: string) => get(`/stripe/verify-session/${sessionId}`),
-  getUserProgress:()=>get("/course/progress")
+  getUserProgress: () => get("/course/progress"),
+  psc: (number: number) => get(`/let-fun/psc`, {number}),
 } as const;
 
 export const AdminAPIMethods = {
@@ -182,3 +184,10 @@ export const batmanAi = {
     return response.data;
   },
 };
+export const NotificationAPIMethods = {
+  getMyNotifications: () => get("/shared/notifications"),
+  markAsRead: (id: string) => patch(`/shared/notifications/${id}/read`, {}),
+  markAllAsRead: () => patch("/shared/notifications/mark-all-read", {}),
+  createNotification: (data: INotificationPayload) => post("/shared/notifications", data),
+};
+

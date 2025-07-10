@@ -26,9 +26,11 @@ export class MentorService implements IMentorService {
 
     if (mentor.isBlock) {
       throwError("Your account was blocked. Please contact support", StatusCode.FORBIDDEN); 
-    }
+    } 
+    console.log("mentor in baceknd",mentor)
 
     return {
+      id:mentor.id,
       username: mentor.username,
       email: mentor.email,
       expertise: mentor.expertise,

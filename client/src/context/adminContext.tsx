@@ -6,7 +6,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { AdminAPIMethods } from "../services/APImethods";
+import { AdminAPIMethods, NotificationAPIMethods } from "../services/APImethods";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
 import { AdminContextType } from "../types/adminTypes";
 import { IMentor } from "../types/mentorTypes";
@@ -14,6 +14,7 @@ import { IPopulatedCourse } from "../types/courseTypes";
 import { ICategory } from "../types/categoryTypes";
 import { useUserPagination } from "../hooks/useUserPagination";
 import { IConcern } from "../types/concernTypes";
+import { INotification } from "../types/notificationsTypes";
 
 export const AdminContext = createContext<AdminContextType | null>(null);
 
@@ -25,7 +26,10 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [categories,setCategories]=useState<ICategory[]>([])
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
   const [concern, setConcerns] = useState<IConcern[]>([])
-  const [cMentors,setCMentors]=useState<IMentor[]>([])
+  const [cMentors, setCMentors] = useState<IMentor[]>([])
+  const [adminNotifications, setAdminNotifications] = useState<INotification[]>([]);
+const [adminUnreadNotification, setAdminUnreadNotification] = useState<number>(0);
+
   const [mentorPagination, setMentorPagination] = useState({
     page: 1,
     limit: 10,
@@ -49,6 +53,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     availvleMentorGet()
     fetchALlCategories()
     fetchConcernsData()
+    fetchAdminNotifications()
   }, []);
 
   async function getCategories(params?: {
@@ -63,6 +68,16 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     if (res.ok) setCat(res.data.data);
     else showInfoToast(res.msg);
   }
+  const fetchAdminNotifications = async () => {
+  const res = await NotificationAPIMethods.getMyNotifications();
+  if (res.ok) {
+    setAdminNotifications(res.data);
+    const unreadCount = res.data.filter((n: INotification) => !n.isRead).length;
+    setAdminUnreadNotification(unreadCount);
+  } else {
+    showInfoToast(res.msg);
+  }
+};
 
   async function getAllMentors(params?: {
     page?: number;
@@ -139,9 +154,7 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
     }
     else showErrorToast(res.msg)
   }
-  const fetchAllConernsWithPagenation = async () => {
-   
- }
+
   return (
     <AdminContext.Provider
       value={{
@@ -169,7 +182,11 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
         setConcerns,
         allConcerns,
         setAllConcerns,
-        cMentors
+        cMentors,
+        adminNotifications,
+    setAdminNotifications,
+    adminUnreadNotification,
+    setAdminUnreadNotification,
       }}
     >
       {children}

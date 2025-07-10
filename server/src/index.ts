@@ -15,12 +15,8 @@ import { getGemaniResponse } from "./config/gemaniAi";
 import { sendResponse } from "./utils/ResANDError";
 import { StatusCode } from "./enums/statusCode.enum";
 import { batmanPrompt } from "./utils/Rportprompt";
-import { UserDonationController } from "./controllers/user/UserDonation.Controller";
-import container from "./core/di/container";
-import { IUserDonationController } from "./core/interfaces/controllers/user/IUserDonationController";
-import { TYPES } from "./core/types";
-const userDonationController = container.get<IUserDonationController>(TYPES.UserDonationController);
-
+import { setIOInstance } from "./config/globalSocket";
+import sharedRoutes from "../src/routes/shared/shared.Routes"
 dotenv.config();
 
 const app = express();
@@ -33,18 +29,18 @@ const io = new Server(httpServer, {
   },
 });
 socketHandler(io);
+setIOInstance(io);
 app.use(express.json());
 app.use(cors({
   origin: "http://localhost:3000",
   credentials: true
 }));
 
-
 app.use(cookieParser());
 app.use("/", userRoutes);
 app.use("/mentor", mentorRoutes);
 app.use("/admin", adminRoutes);
-
+app.use("/shared",sharedRoutes)
 app.use("/refresh-token", (req: Request, res: Response) => {
   try {
     const tokens = refreshAccessToken(req.cookies.refreshToken);
@@ -68,6 +64,7 @@ app.use("/ai/doubt", async (req: Request, res: Response) => {
   console.log("batman:", answer);
   sendResponse(res, StatusCode.OK, "", true, answer);
 });
+
 app.use((err: any, req: Request, res: Response, next: Function) => {
   console.error(err.stack);
   res.status(500).json({ ok: false, msg: "Something went wrong!" });
@@ -76,5 +73,5 @@ app.use((err: any, req: Request, res: Response, next: Function) => {
 const PORT = process.env.PORT || 4000;
 connectDb();
 httpServer.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(` Server running on port ${PORT}`);
 });

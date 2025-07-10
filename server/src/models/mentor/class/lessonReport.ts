@@ -1,7 +1,7 @@
 // models/LessonReport.ts
 
 import { Schema, model, Types, Model } from 'mongoose';
-import { ILessonReport } from '../../types/lessons';
+import { ILessonReport } from '../../../types/lessons';
 
 const LessonReportSchema = new Schema(
   {

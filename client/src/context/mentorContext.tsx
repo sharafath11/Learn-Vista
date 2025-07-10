@@ -10,18 +10,20 @@ import {
 import { IMentor, IMentorContext, } from "../types/mentorTypes";
 
 import { useRouter } from "next/navigation";
-import { MentorAPIMethods } from "../services/APImethods";
+import { MentorAPIMethods, NotificationAPIMethods } from "../services/APImethods";
 import { IPopulatedCourse } from "../types/courseTypes";
 import { ILessons } from "../types/lessons";
-import { showErrorToast } from "../utils/Toast";
+import { showErrorToast, showInfoToast } from "../utils/Toast";
 import { IConcern } from "../types/concernTypes";
+import { INotification } from "../types/notificationsTypes";
 
 export const MentorContext = createContext<IMentorContext | null>(null);
 
 export const MentorsContextProvider = ({ children }: { children: ReactNode }) => {
   const [mentor, setMentor] = useState<IMentor | null>(null);
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
-  const [lessons, setLessons] = useState<ILessons[]>([])
+  const [mentorNotification, setMentorNotifications] = useState<INotification[]>([])
+  const [mentorUnreadNotification,setMentorUnreadNotification]=useState<number>(0)
   const [concerns,setConcerns]=useState<IConcern[]>([])
 
   const router = useRouter();
@@ -32,11 +34,21 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   
     if (res?.ok) {
       setMentor(res.data); 
+      
     } else {
       router.push("/mentor/login");
     }
   }, []);
-  
+   const fetchNotifications = async () => {
+      const res = await NotificationAPIMethods.getMyNotifications();
+     
+      if (res.ok) {
+        setMentorNotifications(res.data);
+        const unread = res.data.filter((n: INotification) => !n.isRead).length;
+        setMentorUnreadNotification(unread);
+      }
+      else showInfoToast(res.msg)
+    }
 
   const getCourses =async  () => {
     const res = await MentorAPIMethods.getCourses();
@@ -53,22 +65,28 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
     getCourses()
     getMentorDetils();
     fetchConcern()
+    fetchNotifications()
   }, [getMentorDetils]);
 
   useEffect(() => {
     getCourses();
   }, []);
  
+const contextValue: IMentorContext = {
+  mentor,
+  setMentor,
+  refreshMentor: getMentorDetils,
+  courses,
+  setCourses,
+  concerns,
+  setConcerns,
+  mentorNotification,
+  setMentorNotifications,
+  mentorUnreadNotification,
+  setMentorUnreadNotification, 
+  refreshMentorNotification:fetchNotifications
+};
 
-  const contextValue: IMentorContext = {
-    mentor,
-    setMentor,
-    refreshMentor: getMentorDetils,
-    courses,
-    setCourses,
-    concerns,
-    setConcerns
-  };
 
   return (
     <MentorContext.Provider value={contextValue}>

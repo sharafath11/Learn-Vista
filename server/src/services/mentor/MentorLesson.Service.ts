@@ -179,12 +179,11 @@ export class MentorLessonService implements IMentorLessonService {
 
   const prompt = buildMcqOptionsPrompt(question);
   const resultRaw = await getGemaniResponse(prompt);
-  console.log(resultRaw, "🔍 Raw Gemani Response");
+  console.log(resultRaw, " Gemani Response");
 
   let parsed: string[];
 
-  try {
-    // Try parsing if it's a JSON string
+  try {     
     parsed = typeof resultRaw === "string" ? JSON.parse(resultRaw) : resultRaw;
   } catch {
     throwError("Invalid format received. Please enter options manually.");
