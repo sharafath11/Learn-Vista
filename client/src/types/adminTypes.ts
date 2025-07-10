@@ -114,3 +114,18 @@ adminUnreadNotification: number;
 setAdminUnreadNotification: React.Dispatch<React.SetStateAction<number>>;
 
 }
+export interface FilterOptions {
+  dateRange: {
+    from: Date | null
+    to: Date | null
+  }
+  amountRange: {
+    min: number | null
+    max: number | null
+  }
+  status: string
+  sortBy: string
+  sortOrder: "asc" | "desc"
+  page: number
+  limit: number
+}
