@@ -192,13 +192,13 @@ export function EditLessonModal({
       tempVideo.addEventListener('error', handleVideoError);
 
       document.body.appendChild(tempVideo);
-      // --- End Video Duration Calculation Logic ---
+   
 
     } catch (error: any) {
       console.error("Video upload error:", error);
       showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
       form.setValue("videoUrl", "");
-      form.setValue("duration", ""); // Clear duration on upload failure
+      form.setValue("duration", "");
       setUploadedS3VideoUrl(null);
     } finally {
       setIsUploadingVideo(false);
@@ -210,9 +210,7 @@ export function EditLessonModal({
     if (!currentVideoUrl) return;
 
     try {
-      // Optional: If you want to delete from S3 only if it was a newly uploaded video
-      // and not the original one associated with selectedLesson.
-      // For simplicity, this example deletes any currently set videoUrl.
+    
       const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl);
       if (deleteResult.ok) {
         showSuccessToast("Video removed from S3.");

@@ -24,8 +24,9 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
   const [mentorNotification, setMentorNotifications] = useState<INotification[]>([])
   const [mentorUnreadNotification,setMentorUnreadNotification]=useState<number>(0)
-  const [concerns,setConcerns]=useState<IConcern[]>([])
-
+  const [concerns, setConcerns] = useState<IConcern[]>([])
+  localStorage.removeItem("role")
+  localStorage.setItem("role","mentor")
   const router = useRouter();
 
   const getMentorDetils = useCallback(async () => {

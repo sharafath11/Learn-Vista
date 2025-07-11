@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { throwError } from '../utils/ResANDError';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY!);
 
@@ -15,7 +16,6 @@ export async function getGemaniResponse(prompt: string): Promise<string> {
 
     return text;
   } catch (error) {
-    console.error("Error generating content:", error);
-    throw new Error("Gemini API failed");
+    throwError("AI is currently busy. Please try again later 😮‍💨");
   }
 }

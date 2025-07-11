@@ -29,7 +29,8 @@ const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [cMentors, setCMentors] = useState<IMentor[]>([])
   const [adminNotifications, setAdminNotifications] = useState<INotification[]>([]);
 const [adminUnreadNotification, setAdminUnreadNotification] = useState<number>(0);
-
+localStorage.removeItem("role")
+  localStorage.setItem("role","admin")
   const [mentorPagination, setMentorPagination] = useState({
     page: 1,
     limit: 10,

@@ -1,61 +1,95 @@
-"use client";
+"use client"
+import { useState, useEffect, useRef, useMemo } from "react"
+import type React from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { X, SendHorizonal } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Card, CardContent } from "@/components/ui/card"
+import Image from "next/image"
+import { batmanAi } from "@/src/services/APImethods"
 
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X, SendHorizonal } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
-import { batmanAi } from "@/src/services/APImethods";
+const CHAT_WINDOW_WIDTH = 350
+const CHAT_WINDOW_HEIGHT = 500
+const INITIAL_RIGHT_OFFSET = 24
+const INITIAL_BOTTOM_OFFSET = 6
 
 const BatmanAssistant = () => {
-  const [open, setOpen] = useState(false);
-  const [input, setInput] = useState("");
+  const [open, setOpen] = useState(false)
+  const [input, setInput] = useState("")
   const [messages, setMessages] = useState([
-    {
-      role: "batman",
-      content: "I am Batman. Tell me your doubt... justice will be served."
-    }
-  ]);
-  const [isLoading, setIsLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+    { role: "batman", content: "I am Batman. Tell me your doubt... justice will be served." },
+  ])
+  const [isLoading, setIsLoading] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    height: typeof window !== "undefined" ? window.innerHeight : 0,
+  })
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+    const handleResize = () => {
+      setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      })
+    }
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize)
+      return () => window.removeEventListener("resize", handleResize)
+    }
+  }, [])
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages, isLoading])
 
   const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
+    e.preventDefault()
+    if (!input.trim()) return
 
-    const userMessage = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setIsLoading(true);
+    const userMessage = { role: "user", content: input }
+    setMessages((prev) => [...prev, userMessage])
+    setInput("")
+    setIsLoading(true)
 
-    const res = await batmanAi.askDoubt(input);
-    setIsLoading(false);
+    try {
+      const res = await batmanAi.askDoubt(input)
+      setIsLoading(false)
 
-    if (res.ok) {
-      const aiMessage = {
-        role: "batman",
-        content:
-          res.data ||
-          "Justice is blind... and so is this AI. Try asking differently."
-      };
-      setMessages((prev) => [...prev, aiMessage]);
-    } else {
+      if (res.ok) {
+        const aiMessage = {
+          role: "batman",
+          content: res.data || "Justice is blind... and so is this AI. Try asking differently.",
+        }
+        setMessages((prev) => [...prev, aiMessage])
+      } else {
+        setMessages((prev) => [...prev, { role: "batman", content: "Something’s wrong in Gotham. Try again later." }])
+      }
+    } catch (error) {
+      console.error("Error sending message:", error)
+      setIsLoading(false)
       setMessages((prev) => [
         ...prev,
-        {
-          role: "batman",
-          content: "Something’s wrong in Gotham. Try again later."
-        }
-      ]);
+        { role: "batman", content: "An unexpected error occurred. The Joker must be involved." },
+      ])
     }
-  };
+  }
+
+  const dragConstraints = useMemo(() => {
+    const initialLeft = windowDimensions.width - CHAT_WINDOW_WIDTH - INITIAL_RIGHT_OFFSET
+    const initialTop = windowDimensions.height - CHAT_WINDOW_HEIGHT - INITIAL_BOTTOM_OFFSET
+
+    return {
+      left: -initialLeft,
+      right: windowDimensions.width - CHAT_WINDOW_WIDTH - initialLeft,
+      top: -initialTop,
+      bottom: windowDimensions.height - CHAT_WINDOW_HEIGHT - initialTop,
+    }
+  }, [windowDimensions])
 
   return (
     <>
@@ -75,28 +109,31 @@ const BatmanAssistant = () => {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-black text-white shadow-2xl z-[60] flex flex-col rounded-l-3xl overflow-hidden"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="fixed bottom-6 right-24 z-[60] w-[350px] h-[500px] bg-black text-white shadow-2xl flex flex-col rounded-xl overflow-hidden"
+            drag
+            dragConstraints={dragConstraints}
+            dragElastic={0.2}
+            dragMomentum={false}
           >
-            <div className="p-4 border-b border-gray-700 flex items-center justify-between bg-gray-900">
+            <div className="p-4 border-b border-gray-700 flex items-center justify-between bg-gray-900 cursor-grab">
               <h2 className="text-lg font-bold tracking-tight flex items-center gap-2">
-  <Image
-    src="/images/batman.png"
-    alt="Batman Logo"
-    width={24}
-    height={24}
-    className="rounded-full object-contain"
-  />
-  Batman Assistant
-</h2>
-
+                <Image
+                  src="/images/batman.png"
+                  alt="Batman Logo"
+                  width={24}
+                  height={24}
+                  className="rounded-full object-contain"
+                />
+                Batman Assistant
+              </h2>
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full text-white"
+                className="rounded-full text-white hover:bg-gray-700"
                 onClick={() => setOpen(false)}
               >
                 <X size={20} />
@@ -115,17 +152,10 @@ const BatmanAssistant = () => {
               </div>
               <div className="relative z-10 flex flex-col space-y-4">
                 {messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`flex ${
-                      msg.role === "user" ? "justify-end" : "justify-start"
-                    }`}
-                  >
+                  <div key={index} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                     <Card
                       className={`px-4 py-2 text-sm max-w-[80%] rounded-3xl shadow-md ${
-                        msg.role === "user"
-                          ? "bg-yellow-500 text-black"
-                          : "bg-gray-800 text-white"
+                        msg.role === "user" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white"
                       }`}
                     >
                       <CardContent className="p-0">{msg.content}</CardContent>
@@ -150,15 +180,12 @@ const BatmanAssistant = () => {
               </div>
             </ScrollArea>
 
-            <form
-              onSubmit={handleSend}
-              className="p-4 border-t border-gray-700 bg-gray-900 flex items-center gap-2"
-            >
+            <form onSubmit={handleSend} className="p-4 border-t border-gray-700 bg-gray-900 flex items-center gap-2">
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask like a hero..."
-                className="flex-1 rounded-full px-4 py-2 text-white"
+                className="flex-1 rounded-full px-4 py-2 text-white bg-gray-800 border-gray-700 focus:border-yellow-500"
                 disabled={isLoading}
               />
               <Button
@@ -174,7 +201,7 @@ const BatmanAssistant = () => {
         )}
       </AnimatePresence>
     </>
-  );
-};
+  )
+}
 
-export default BatmanAssistant;
+export default BatmanAssistant

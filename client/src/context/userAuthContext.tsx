@@ -22,7 +22,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [progresses, setProgress] = useState<IUserCourseProgress[]>([]);
   const [userNotifications, setUserNotifications] = useState<INotification[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
-  
+  localStorage.removeItem("role")
+  localStorage.setItem("role","user")
   const router = useRouter();
 
   const fetchUserData = useCallback(async () => {

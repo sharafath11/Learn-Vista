@@ -7,7 +7,11 @@ const NotificationSchema = new Schema<INotification>({
   message: { type: String },
   type: { type: String, enum: ["info", "success", "error", "warning"], default: "info" },
   isRead: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    index: { expires: 60 * 60 * 24 * 15 }
+  },
 })
 
 export const NotificationModel = model<INotification>("Notification", NotificationSchema)

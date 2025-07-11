@@ -12,7 +12,7 @@ import adminRoutes from "./routes/adminRoutes/admin.Routes";
 import { refreshAccessToken, setTokensInCookies } from "./utils/JWTtoken";
 import { socketHandler } from "./config/ socket";
 import { getGemaniResponse } from "./config/gemaniAi";
-import { sendResponse } from "./utils/ResANDError";
+import { handleControllerError, sendResponse } from "./utils/ResANDError";
 import { StatusCode } from "./enums/statusCode.enum";
 import { batmanPrompt } from "./utils/Rportprompt";
 import { setIOInstance } from "./config/globalSocket";
@@ -59,10 +59,14 @@ app.use("/refresh-token", (req: Request, res: Response) => {
   }
 });
 app.use("/ai/doubt", async (req: Request, res: Response) => {
-  const prompt=batmanPrompt(req.body.text)
+  try {
+    const prompt=batmanPrompt(req.body.text)
   const answer = await getGemaniResponse(prompt);
   console.log("batman:", answer);
   sendResponse(res, StatusCode.OK, "", true, answer);
+  } catch (error) {
+    handleControllerError(res,error)
+  }
 });
 
 app.use((err: any, req: Request, res: Response, next: Function) => {
