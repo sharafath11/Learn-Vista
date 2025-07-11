@@ -13,6 +13,16 @@ const commentSchema = new Schema<IComment>(
       ref: "User",
       required: false,
     },
+    courseId: {
+      type: Types.ObjectId,
+      ref: "course",
+      required: true,
+    },
+    mentorId: {
+      type: Types.ObjectId,
+      ref: "mentor",
+      required: false,
+    },
     userName: {
       type: String,
       required: true,

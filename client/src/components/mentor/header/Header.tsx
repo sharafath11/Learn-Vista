@@ -33,7 +33,7 @@ const navItems: NavItem[] = [
   { name: "Upcoming", path: "/mentor/upcoming", icon: <Calendar className="w-4 h-4" /> },
   { name: "Courses", path: "/mentor/courses", icon: <BookOpen className="w-4 h-4" /> },
   // { name: "Student", path: "/mentor/students", icon: <MessageSquare className="w-4 h-4" /> },
-  { name: "Reviews", path: "/reviews", icon: <Star className="w-4 h-4" /> },
+  { name: "Reviews", path: "/mentor/reviews", icon: <Star className="w-4 h-4" /> },
 ]
 
 export default function Header() {

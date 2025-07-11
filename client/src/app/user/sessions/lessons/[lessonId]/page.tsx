@@ -11,7 +11,7 @@ import { IQuestions, ILessons, AnswerWithType, IComment, EvaluatedAnswer } from 
 import VideoPlayer from "@/src/components/user/sessions/video-player";
 import TheoryQuestions from "@/src/components/user/sessions/theory-questions";
 import CodeChallenge from "@/src/components/user/sessions/CodeChallenge";
-import MCQQuestions from "@/src/components/user/sessions/MCQQuestions"; // Import the MCQQuestions component
+import MCQQuestions from "@/src/components/user/sessions/MCQQuestions"; 
 import { UserAPIMethods } from "@/src/services/APImethods";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import { Textarea } from "@/components/ui/textarea";

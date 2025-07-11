@@ -71,7 +71,7 @@ export default function TransactionDashboard() {
     setFilters((prev) => ({
       ...prev,
       ...newFilters,
-      page: newFilters.page !== undefined ? newFilters.page : 1, // Reset to page 1 when filters change
+      page: newFilters.page !== undefined ? newFilters.page : 1, 
     }))
   }
 

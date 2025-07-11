@@ -14,7 +14,6 @@ const SideBar: React.FC<SideBarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     { name: 'Courses', icon: <FiBook />, href: '/admin/dashboard/courses' },
     { name: 'Category', icon: <FiBook />, href: '/admin/dashboard/categories' },
     { name: 'Concern', icon: <FiAlertCircle />, href: '/admin/dashboard/concern' },
-    { name: 'Settings', icon: <FiSettings />, href: '/admin/settings' },
     
   ];
 

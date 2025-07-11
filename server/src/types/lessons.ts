@@ -68,6 +68,8 @@ export interface IComment extends Document {
   userId?: ObjectId | string;
   userName: string;
   comment: string;
+  mentorId:string|ObjectId
+  courseId:ObjectId | string;
   createdAt?: Date;
   updatedAt?: Date;
 }

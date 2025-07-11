@@ -28,6 +28,7 @@ import { AuthService } from '../../services/user/auth.service';
 import { ProfileService } from '../../services/user/profile.service';
 import { AdminMentorService } from '../../services/admin/adminMentor.service';
 
+
 // Repositories
 import { IMentorRepository } from '../interfaces/repositories/mentor/IMentorRepository';
 import { MentorRepository } from '../../repositories/mentor/MentorRepository';
@@ -126,6 +127,10 @@ import { INotificationService } from '../interfaces/services/notifications/INoti
 import { NotificationService } from '../../services/notifications/notifications.Service';
 import { INotificationController } from '../interfaces/controllers/notifications/INotifications.Controller';
 import { NotificationController } from '../../controllers/notifications/notifications.Controller';
+import { IMentorCommentsController } from '../interfaces/controllers/mentor/IMentorComments.controller';
+import { MentorCommentController } from '../../controllers/mentor/MentorCOmments.controller';
+import { IMentorCommentsService } from '../interfaces/services/mentor/IMentorComments.Service';
+import { MentorCommentsService } from '../../services/mentor/MentorComments.Service';
 
 const container = new Container();
 
@@ -149,8 +154,8 @@ container.bind<IMentorStudentsController>(TYPES.MentorStudentsController).to(Men
 container.bind<IMentorConcernController>(TYPES.mentorConcernController).to(MentorConcernController),
 container.bind<IUserDonationController>(TYPES.UserDonationController).to(UserDonationController),
 container.bind<IAdminDonationController>(TYPES.AdminDonationCOntroller).to(AdminDonationController),
-container.bind<INotificationController>(TYPES.NotificationController).to(NotificationController)    
-   
+container.bind<INotificationController>(TYPES.NotificationController).to(NotificationController),
+container.bind<IMentorCommentsController>(TYPES.MentorCommentController).to(MentorCommentController),    
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -171,7 +176,8 @@ container.bind<IMentorStudentService>(TYPES.MentorStudentsService).to(MentorStud
 container.bind<IMentorConcernService>(TYPES.mentorConcernService).to(MentorConcernService);
 container.bind<IUserDonationServices>(TYPES.UserDonationServices).to(UserDonationServices)
 container.bind<IAdminDonationServices>(TYPES.AdminDonationService).to(AdminDonationService);
-container.bind<INotificationService>(TYPES.NotificationService).to(NotificationService)
+container.bind<INotificationService>(TYPES.NotificationService).to(NotificationService),
+container.bind<IMentorCommentsService>(TYPES.MentorCommentsService).to(MentorCommentsService)
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);

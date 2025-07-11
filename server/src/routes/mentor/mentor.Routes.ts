@@ -12,6 +12,7 @@ import { IMentorStudentService } from '../../core/interfaces/services/mentor/IMe
 import { IMentorStudentsController } from '../../core/interfaces/controllers/mentor/ImentorStudent.controller';
 import { IMentorConcernController } from '../../core/interfaces/controllers/mentor/IMentorConcern.Controller';
 import { MarketplaceDeployment } from 'aws-sdk';
+import { IMentorCommentsController } from '../../core/interfaces/controllers/mentor/IMentorComments.controller';
 const router = express.Router();
 const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
 const mentorController = container.get<IMentorController>(TYPES.MentorController);
@@ -19,7 +20,8 @@ const mentorProfileController = container.get<IMentorProfileController>(TYPES.Me
 const mentorLessonController=container.get<IMentorLessonsController>(TYPES.MentorLessonsController)
 const mentorStreamController = container.get<IMentorStreamController>(TYPES.MentorStreamController)
 const mentorStudentsController = container.get<IMentorStudentsController>(TYPES.MentorStudentsController)
-const _mentorConcernControler=container.get<IMentorConcernController>(TYPES.mentorConcernController)
+const _mentorConcernControler = container.get<IMentorConcernController>(TYPES.mentorConcernController)
+const _mentorCommentController=container.get<IMentorCommentsController>(TYPES.MentorCommentController)
 router.post('/signup', (req, res) => mentorAuthController.signupController(req, res));
 router.post('/send-otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
 router.post('/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
@@ -67,5 +69,7 @@ router.post(
   _mentorConcernControler.addConcern.bind(_mentorConcernControler)
 );
 router.get("/concerns", verifyMentor, _mentorConcernControler.getConcern.bind(_mentorConcernControler))
-router.get("/pagenated/courses",verifyMentor,mentorController.coursePagenated.bind(mentorController))
+router.get("/pagenated/courses", verifyMentor, mentorController.coursePagenated.bind(mentorController));
+router.get("/comments", verifyMentor, _mentorCommentController.getAllComments.bind(_mentorCommentController));
+
 export default router;

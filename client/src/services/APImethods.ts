@@ -130,13 +130,13 @@ export const MentorAPIMethods = {
   addQustion: (data:Omit<IQuestions, "id" | "isCompleted">) => post("/mentor/lessons/add/questions", data),
   getQustion: (lessonId: string) => get(`/mentor/lesson/questions/${lessonId}`),
   editQustion: (qustionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/lesson/edit/question/${qustionId}`, data),
- getCourseStudents: (params: {
+  getCourseStudents: (params: {
   courseId: string;
   page?: number;
   limit?: number;
   search?: string;
   filters?: Record<string, any>;
-  sort?: Record<string, 1 | -1>;
+    sort?: Record<string, 1 | -1>;
 }) => {
   const { courseId, filters, sort, ...rest } = params;
   return get(`/mentor/course/students/${courseId}`, {
@@ -172,10 +172,15 @@ getCourseWithFilter: (params: {
   search?: string;
   filters?: Record<string, any>;
   sort?: Record<string, 1 | -1>;
-}) =>  get("/mentor/pagenated/courses", { params })
+}) =>  get("/mentor/pagenated/courses", { params }),
 
-
-
+getAllComments: (params: {
+  sortBy?: string
+  search?: string
+  courseId?: string
+  page?: number
+  limit?: number
+}) => get("/mentor/comments", { params }),
 
 } as const;
 

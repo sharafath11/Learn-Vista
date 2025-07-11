@@ -164,7 +164,9 @@ console.log('Value of lessonId.toString():', lessonId.toString());
 
   const savedComment = await this._commentsRepo.create({
     lessonId,
+    courseId:lesson.courseId as string,
     comment,
+    mentorId:course.mentorId,
     userId,
     userName: userData.username,
   });
