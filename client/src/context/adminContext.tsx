@@ -187,7 +187,8 @@ localStorage.removeItem("role")
         adminNotifications,
     setAdminNotifications,
     adminUnreadNotification,
-    setAdminUnreadNotification,
+        setAdminUnreadNotification,
+    refreshAdminNotification:fetchAdminNotifications
       }}
     >
       {children}

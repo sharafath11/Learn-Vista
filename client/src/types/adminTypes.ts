@@ -109,9 +109,10 @@ export interface AdminContextType {
   allConcerns: IConcern[]
   setAllConcerns: React.Dispatch<React.SetStateAction<IConcern[]>>;
   adminNotifications: INotification[];
-setAdminNotifications: React.Dispatch<React.SetStateAction<INotification[]>>;
-adminUnreadNotification: number;
-setAdminUnreadNotification: React.Dispatch<React.SetStateAction<number>>;
+  setAdminNotifications: React.Dispatch<React.SetStateAction<INotification[]>>;
+  adminUnreadNotification: number;
+  setAdminUnreadNotification: React.Dispatch<React.SetStateAction<number>>;
+  refreshAdminNotification:()=>void
 
 }
 export interface FilterOptions {

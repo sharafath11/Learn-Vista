@@ -1,5 +1,4 @@
 "use client"
-
 import type React from "react"
 import { useState, useEffect, useCallback } from "react"
 import { Menu, X, Home, BookOpen, Video, Heart, Bell } from "lucide-react"
@@ -11,23 +10,20 @@ import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { cn } from "@/src/utils/cn"
 import { showErrorToast } from "@/src/utils/Toast"
-import { NotificationCenter } from "./notification-center"
+import { NotificationCenter } from "../../notifications/notification-center" // This path should be correct
 import { UserDropdown } from "./user-dropdown"
 import { MobileMenu } from "./mobile-menu"
-
 interface NavItem {
   name: string
   path: string
   icon: React.ElementType
 }
-
 const NAV_ITEMS: NavItem[] = [
   { name: "Home", path: "/", icon: Home },
   { name: "Courses", path: "/user/courses", icon: BookOpen },
   { name: "Live Classes", path: "/user/live-classes", icon: Video },
   { name: "Donation", path: "/user/donation", icon: Heart },
 ]
-
 const Header = () => {
   const { user, setUser } = useUserContext()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -36,9 +32,8 @@ const Header = () => {
   const [isMobileNotificationOpen, setIsMobileNotificationOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeLink, setActiveLink] = useState("/")
-  const { unreadCount, setUnreadCount } = useUserContext()
+  const { unreadCount, setUnreadCount,userNotifications,setUserNotifications,refereshNotifcation} = useUserContext()
   const router = useRouter()
-
   const handleLogout = useCallback(async () => {
     try {
       await signOut({ redirect: false })
@@ -51,13 +46,11 @@ const Header = () => {
       showErrorToast(error.message)
     }
   }, [router, setUser])
-
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
-
   useEffect(() => {
     const handleClickOutside = () => {
       setIsDropdownOpen(false)
@@ -69,7 +62,6 @@ const Header = () => {
     }
     return () => document.removeEventListener("click", handleClickOutside)
   }, [isDropdownOpen, isNotificationOpen, isMobileNotificationOpen])
-
   return (
     <>
       <header
@@ -82,20 +74,19 @@ const Header = () => {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-2 group" onClick={() => setActiveLink("/")}>
-              <div className="relative w-8 h-8 overflow-hidden rounded-lg">
+              <div className="relative h-8 w-8 overflow-hidden rounded-lg">
                 <Image
                   src="/images/logo.png"
                   alt="Learn Vista"
                   fill
-                  className="object-contain group-hover:scale-110 transition-transform duration-300"
+                  className="object-contain transition-transform duration-300 group-hover:scale-110"
                   priority
                 />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
                 Learn Vista
               </span>
             </Link>
-
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-1">
               {NAV_ITEMS.map(({ name, path, icon: Icon }) => (
@@ -104,10 +95,10 @@ const Header = () => {
                   href={path}
                   onClick={() => setActiveLink(path)}
                   className={cn(
-                    "relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2",
+                    "relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200",
                     activeLink === path
-                      ? "text-purple-400 bg-purple-900/20"
-                      : "text-gray-300 hover:text-purple-400 hover:bg-zinc-800",
+                      ? "bg-purple-900/20 text-purple-400"
+                      : "text-gray-300 hover:bg-zinc-800 hover:text-purple-400",
                   )}
                 >
                   <Icon size={16} />
@@ -115,24 +106,22 @@ const Header = () => {
                 </Link>
               ))}
             </nav>
-
-            {/* Desktop Right Section */}
             <div className="hidden md:flex items-center space-x-3">
               {user ? (
                 <div className="flex items-center space-x-2">
-                  {/* Notification Bell */}
                   <div className="relative">
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
                         setIsNotificationOpen(!isNotificationOpen)
                         setIsDropdownOpen(false)
+                        refereshNotifcation()
                       }}
-                      className="relative p-2 text-gray-400 hover:text-purple-400 hover:bg-zinc-800 rounded-lg transition-colors"
+                      className="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-zinc-800 hover:text-purple-400"
                     >
                       <Bell size={20} />
                       {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                        <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
                           {unreadCount > 9 ? "9+" : unreadCount}
                         </span>
                       )}
@@ -142,10 +131,12 @@ const Header = () => {
                       onClose={() => setIsNotificationOpen(false)}
                       unreadCount={unreadCount}
                       setUnreadCount={setUnreadCount}
+                      setNotifications={setUserNotifications}
+                      notifications={userNotifications}
+                      onRefresh={refereshNotifcation}
                     />
                   </div>
 
-                  {/* User Dropdown */}
                   <UserDropdown
                     user={user}
                     isDropdownOpen={isDropdownOpen}
@@ -157,23 +148,20 @@ const Header = () => {
                 <div className="flex items-center space-x-3">
                   <Link
                     href="/user/login"
-                    className="text-gray-300 hover:text-purple-400 font-medium px-4 py-2 rounded-lg hover:bg-zinc-800 transition-colors"
+                    className="rounded-lg px-4 py-2 font-medium text-gray-300 transition-colors hover:bg-zinc-800 hover:text-purple-400"
                   >
                     Log in
                   </Link>
                   <Link
                     href="/user/signup"
-                    className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-sm"
+                    className="bg-gradient-to-r from-purple-600 to-purple-500 px-4 py-2 font-medium text-white shadow-sm transition-all duration-200 hover:from-purple-700 hover:to-purple-600"
                   >
                     Sign up
                   </Link>
                 </div>
               )}
             </div>
-
-            {/* Mobile Right Section */}
-            <div className="md:hidden flex items-center space-x-2">
-              {/* Mobile Notification Bell - Outside Menu */}
+            <div className="flex items-center space-x-2 md:hidden">
               {user && (
                 <div className="relative">
                   <button
@@ -182,22 +170,20 @@ const Header = () => {
                       setIsMobileNotificationOpen(!isMobileNotificationOpen)
                       setIsMobileMenuOpen(false)
                     }}
-                    className="relative p-2 text-gray-400 hover:text-purple-400 hover:bg-zinc-800 rounded-lg transition-colors"
+                    className="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-zinc-800 hover:text-purple-400"
                   >
                     <Bell size={20} />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                      <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
                         {unreadCount > 9 ? "9+" : unreadCount}
                       </span>
                     )}
                   </button>
                 </div>
               )}
-
-              {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-lg text-gray-300 hover:text-purple-400 hover:bg-zinc-800 transition-colors"
+                className="rounded-lg p-2 text-gray-300 transition-colors hover:bg-zinc-800 hover:text-purple-400"
                 aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -205,22 +191,21 @@ const Header = () => {
             </div>
           </div>
         </div>
-
-        {/* Mobile Notification Center - Positioned outside header */}
         {user && isMobileNotificationOpen && (
-          <div className="md:hidden absolute top-full left-0 right-0 z-40">
+          <div className="absolute left-0 right-0 top-full z-40 md:hidden">
             <NotificationCenter
               isOpen={isMobileNotificationOpen}
               onClose={() => setIsMobileNotificationOpen(false)}
               unreadCount={unreadCount}
               setUnreadCount={setUnreadCount}
               isMobile={true}
+              notifications={userNotifications}
+              setNotifications={setUserNotifications}
+              onRefresh={refereshNotifcation}
             />
           </div>
         )}
       </header>
-
-      {/* Mobile Menu */}
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
@@ -230,11 +215,9 @@ const Header = () => {
         setActiveLink={setActiveLink}
         navItems={NAV_ITEMS}
       />
-
       {/* Spacer */}
       <div className="h-16" />
     </>
   )
 }
-
 export default Header

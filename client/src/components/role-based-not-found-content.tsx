@@ -10,13 +10,13 @@ interface RoleBasedNotFoundContentProps {
 }
 
 export default function RoleBasedNotFoundContent({ randomImageUrl }: RoleBasedNotFoundContentProps) {
-  const [userRole, setUserRole] = useState<"admin" | "mentor" | "student" | "guest">("guest")
+  const [userRole, setUserRole] = useState<"admin" | "mentor" | "user" | "guest">("guest")
   const [isLoadingRole, setIsLoadingRole] = useState(true)
 
   useEffect(() => {
     const role = localStorage.getItem("role")
-    if (role && ["admin", "mentor", "student"].includes(role)) {
-      setUserRole(role as "admin" | "mentor" | "student")
+    if (role && ["admin", "mentor", "user"].includes(role)) {
+      setUserRole(role as "admin" | "mentor" | "user")
     }
     setIsLoadingRole(false)
   }, [])
@@ -40,15 +40,15 @@ export default function RoleBasedNotFoundContent({ randomImageUrl }: RoleBasedNo
         title = "Mentor Page Not Found"
         description = "This course material seems to be missing. Let's guide you back to your dashboard."
         icon = <BookOpen className="h-24 w-24 text-green-400 mx-auto mb-6 animate-bounce-slow" />
-        homepageLink = "/mentor/dashboard"
-        buttonText = "Go to Mentor Dashboard"
+        homepageLink = "/mentor/home"
+        buttonText = "Go to Home "
         break
-      case "student":
+      case "user":
         title = "Student Page Not Found"
         description = "The lesson you're looking for isn't here. Let's find your way back to your learning path."
         icon = <Users className="h-24 w-24 text-blue-400 mx-auto mb-6 animate-bounce-slow" />
-        homepageLink = "/student/dashboard"
-        buttonText = "Go to Student Dashboard"
+        homepageLink = "/"
+        buttonText = "Go to Home "
         break
     }
   }
