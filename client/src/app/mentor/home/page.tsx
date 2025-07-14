@@ -66,6 +66,8 @@ export default function MentorDashboard() {
               icon={GraduationCap}
               gradient="from-blue-500 to-cyan-500"
               bgGradient="from-blue-500/10 to-cyan-500/10"
+              href="/mentor/courses"
+              
             />
 
             {/* Active Courses */}
@@ -76,6 +78,7 @@ export default function MentorDashboard() {
               icon={BookOpen}
               gradient="from-green-500 to-emerald-500"
               bgGradient="from-green-500/10 to-emerald-500/10"
+              href="/mentor/courses"
             />
 
             {/* Total Lessons */}
@@ -86,6 +89,7 @@ export default function MentorDashboard() {
               icon={PlayCircle}
               gradient="from-purple-500 to-pink-500"
               bgGradient="from-purple-500/10 to-pink-500/10"
+              href="/mentor/courses"
             />
 
             {/* Completion Rate */}
@@ -203,13 +207,16 @@ interface MetricCardProps {
   icon: React.ElementType
   gradient: string
   bgGradient: string
+  href:string
 }
 
-function MetricCard({ title, value, subtitle, icon: Icon, gradient, bgGradient }: MetricCardProps) {
+function MetricCard({ title, value, subtitle, icon: Icon, gradient, bgGradient,href }: MetricCardProps) {
   return (
     <div
       className={`bg-gradient-to-br ${bgGradient} backdrop-blur-sm border border-white/10 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105`}
     >
+      <Link href={href}>
+    
       <div className="flex items-center justify-between mb-4">
         <div className={`p-3 rounded-xl bg-gradient-to-r ${gradient}`}>
           <Icon className="h-6 w-6 text-white" />
@@ -221,8 +228,10 @@ function MetricCard({ title, value, subtitle, icon: Icon, gradient, bgGradient }
       <div>
         <h3 className="font-semibold text-white text-lg">{title}</h3>
         <p className="text-sm text-slate-300">{subtitle}</p>
-      </div>
+        </div>
+        </Link>
     </div>
+      
   )
 }
 
@@ -335,8 +344,6 @@ function ActivityCard({ type, title, time, icon: Icon, color }: ActivityCardProp
     </div>
   )
 }
-
-// Button component
 function Button({ children, className = "", variant = "default", size = "default", onClick, ...props }: any) {
   const baseClasses =
     "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900"

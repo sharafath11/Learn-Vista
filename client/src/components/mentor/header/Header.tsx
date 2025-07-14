@@ -72,8 +72,11 @@ export default function MentorHeader() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
+          <Link href="/mentor/home">
+          
           Mentor Portal
-          <Image src="/placeholder.svg?height=30&width=30" alt="Logo" width={30} height={30} priority />
+          <Image src="/images/logo.png" alt="Logo" width={30} height={30} priority />
+          </Link>
         </motion.div>
 
         <div className="hidden md:flex items-center gap-2">
