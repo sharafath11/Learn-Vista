@@ -10,21 +10,24 @@ import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { cn } from "@/src/utils/cn"
 import { showErrorToast } from "@/src/utils/Toast"
-import { NotificationCenter } from "../../notifications/notification-center" // This path should be correct
+import { NotificationCenter } from "../../notifications/notification-center"
 import { UserDropdown } from "./user-dropdown"
 import { MobileMenu } from "./mobile-menu"
+
 interface NavItem {
   name: string
   path: string
   icon: React.ElementType
 }
+
 const NAV_ITEMS: NavItem[] = [
   { name: "Home", path: "/", icon: Home },
   { name: "Courses", path: "/user/courses", icon: BookOpen },
   { name: "Live Classes", path: "/user/live-classes", icon: Video },
   { name: "Donation", path: "/user/donation", icon: Heart },
 ]
-const Header = () => {
+
+export const Header = () => {
   const { user, setUser } = useUserContext()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -32,8 +35,9 @@ const Header = () => {
   const [isMobileNotificationOpen, setIsMobileNotificationOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeLink, setActiveLink] = useState("/")
-  const { unreadCount, setUnreadCount,userNotifications,setUserNotifications,refereshNotifcation} = useUserContext()
+  const { unreadCount, setUnreadCount, userNotifications, setUserNotifications, refereshNotifcation } = useUserContext()
   const router = useRouter()
+
   const handleLogout = useCallback(async () => {
     try {
       await signOut({ redirect: false })
@@ -46,11 +50,13 @@ const Header = () => {
       showErrorToast(error.message)
     }
   }, [router, setUser])
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
   useEffect(() => {
     const handleClickOutside = () => {
       setIsDropdownOpen(false)
@@ -62,6 +68,7 @@ const Header = () => {
     }
     return () => document.removeEventListener("click", handleClickOutside)
   }, [isDropdownOpen, isNotificationOpen, isMobileNotificationOpen])
+
   return (
     <>
       <header
@@ -126,17 +133,19 @@ const Header = () => {
                         </span>
                       )}
                     </button>
-                    <NotificationCenter
-                      isOpen={isNotificationOpen}
-                      onClose={() => setIsNotificationOpen(false)}
-                      unreadCount={unreadCount}
-                      setUnreadCount={setUnreadCount}
-                      setNotifications={setUserNotifications}
-                      notifications={userNotifications}
-                      onRefresh={refereshNotifcation}
-                    />
+                    {isNotificationOpen && (
+                      <NotificationCenter
+                        isOpen={isNotificationOpen}
+                        onClose={() => setIsNotificationOpen(false)}
+                        unreadCount={unreadCount}
+                        setUnreadCount={setUnreadCount}
+                        setNotifications={setUserNotifications}
+                        notifications={userNotifications}
+                        onRefresh={refereshNotifcation}
+                        variant="dark"
+                      />
+                    )}
                   </div>
-
                   <UserDropdown
                     user={user}
                     isDropdownOpen={isDropdownOpen}
@@ -202,6 +211,7 @@ const Header = () => {
               notifications={userNotifications}
               setNotifications={setUserNotifications}
               onRefresh={refereshNotifcation}
+              variant="dark"
             />
           </div>
         )}
@@ -220,4 +230,3 @@ const Header = () => {
     </>
   )
 }
-export default Header

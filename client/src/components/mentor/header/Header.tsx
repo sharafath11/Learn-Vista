@@ -3,9 +3,6 @@
 import { useCallback, useState, type JSX } from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
-import { useMentorContext } from "@/src/context/mentorContext"
-import { MentorAPIMethods } from "@/src/services/APImethods"
-import { showInfoToast } from "@/src/utils/Toast"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -20,7 +17,11 @@ import {
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { LayoutDashboard, Calendar, Star, User, LogOut, BookOpen, Menu } from "lucide-react"
-import MentorNotification from "./MentorNotification"
+
+import { useMentorContext } from "@/src/context/mentorContext" 
+import { MentorAPIMethods } from "@/src/services/APImethods" 
+import { showInfoToast } from "@/src/utils/Toast" 
+import { MentorNotification } from "./MentorNotification"
 
 interface NavItem {
   name: string
@@ -32,12 +33,19 @@ const navItems: NavItem[] = [
   { name: "Dashboard", path: "/mentor/home", icon: <LayoutDashboard className="w-4 h-4" /> },
   { name: "Upcoming", path: "/mentor/upcoming", icon: <Calendar className="w-4 h-4" /> },
   { name: "Courses", path: "/mentor/courses", icon: <BookOpen className="w-4 h-4" /> },
-  // { name: "Student", path: "/mentor/students", icon: <MessageSquare className="w-4 h-4" /> },
   { name: "Reviews", path: "/mentor/reviews", icon: <Star className="w-4 h-4" /> },
 ]
 
-export default function Header() {
-  const { mentor, setMentor } = useMentorContext()
+export default function MentorHeader() {
+  const {
+    mentor,
+    setMentor,
+    mentorNotification,
+    setMentorNotifications,
+    mentorUnreadNotification,
+    setMentorUnreadNotification,
+    refreshMentorNotification,
+  } = useMentorContext()
   const router = useRouter()
   const pathname = usePathname()
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -65,7 +73,7 @@ export default function Header() {
           transition={{ duration: 0.3 }}
         >
           Mentor Portal
-          <Image src="/images/logo.png" alt="Logo" width={30} height={30} priority />
+          <Image src="/placeholder.svg?height=30&width=30" alt="Logo" width={30} height={30} priority />
         </motion.div>
 
         <div className="hidden md:flex items-center gap-2">
@@ -85,7 +93,15 @@ export default function Header() {
           ))}
 
           {/* Notification Component */}
-          {mentor && <MentorNotification />}
+          {mentor && (
+            <MentorNotification
+              mentorNotification={mentorNotification}
+              setMentorNotifications={setMentorNotifications}
+              mentorUnreadNotification={mentorUnreadNotification}
+              setMentorUnreadNotification={setMentorUnreadNotification}
+              refreshMentorNotification={refreshMentorNotification}
+            />
+          )}
 
           {mentor && (
             <DropdownMenu>
@@ -119,8 +135,16 @@ export default function Header() {
         <div className="md:hidden">
           <div className="flex items-center gap-2">
             {/* Mobile Notification Component */}
-            {mentor && <MentorNotification />}
-
+            {mentor && (
+              <MentorNotification
+                mentorNotification={mentorNotification}
+                setMentorNotifications={setMentorNotifications}
+                mentorUnreadNotification={mentorUnreadNotification}
+                setMentorUnreadNotification={setMentorUnreadNotification}
+                refreshMentorNotification={refreshMentorNotification}
+                isMobile={true}
+              />
+            )}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="text-gray-600 hover:text-gray-900">

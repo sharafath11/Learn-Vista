@@ -1,80 +1,75 @@
 "use client"
-
-import { motion } from "framer-motion"
-import { Check, Trash2, User, Info, AlertCircle, Bell, X } from "lucide-react"
+import { formatDistanceToNow } from "date-fns"
+import { Trash2, Check } from "lucide-react" 
 import type { INotification } from "@/src/types/notificationsTypes"
+import { cn } from "@/lib/utils"
 
-interface Props {
+interface UnreadNotificationsProps {
   notifications: INotification[]
   markAsRead: (id: string) => void
   deleteNotification: (id: string) => void
+  variant?: "light" | "dark"
 }
 
-const getNotificationIcon = (type: INotification["type"]) => {
-  switch (type) {
-    case "info":
-      return <Info className="w-4 h-4" />
-    case "warning":
-      return <AlertCircle className="w-4 h-4" />
-    case "success":
-      return <Check className="w-4 h-4" />
-    
-    case "error":
-      return <X className="w-4 h-4" /> // Using X for error type
-    default:
-      return <Bell className="w-4 h-4" /> // Fallback icon
-  }
-}
+export const UnreadNotifications = ({
+  notifications,
+  markAsRead,
+  deleteNotification,
+  variant = "dark",
+}: UnreadNotificationsProps) => {
+  const unread = notifications.filter((n) => !n.isRead)
 
-const getNotificationTypeColor = (type: INotification["type"]) => {
-  switch (type) {
-    case "success":
-      return "text-green-400"
-    case "warning":
-      return "text-yellow-400"
-    case "error":
-      return "text-red-400"
-    case "info":
-      return "text-blue-400"
-    default:
-      return "text-gray-400"
-  }
-}
-
-export const UnreadNotifications = ({ notifications, markAsRead, deleteNotification }: Props) => {
-  const unread = notifications?.filter((n) => !n.isRead)
-
-  if (unread.length === 0) {
-    return <div className="text-gray-400 text-sm p-4 text-center">No unread notifications</div>
-  }
+  const itemBgClass = variant === "dark" ? "bg-zinc-700 hover:bg-zinc-600" : "bg-gray-100 hover:bg-gray-200"
+  const itemTextClass = variant === "dark" ? "text-white" : "text-gray-900"
+  const timeTextClass = variant === "dark" ? "text-gray-400" : "text-gray-500"
+  const deleteButtonClass =
+    variant === "dark"
+      ? "text-gray-400 hover:text-red-400 hover:bg-zinc-600"
+      : "text-gray-500 hover:text-red-600 hover:bg-gray-200"
+  const markAsReadButtonClass =
+    variant === "dark"
+      ? "text-gray-400 hover:text-emerald-400 hover:bg-zinc-600"
+      : "text-gray-500 hover:text-emerald-600 hover:bg-gray-200"
 
   return (
-    <div className="flex flex-col divide-y divide-zinc-700">
-      {unread.map((notification) => (
-        <motion.div
-          key={notification.id}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="p-3 group hover:bg-zinc-700/20 transition"
-        >
-          <div className="flex justify-between items-start gap-3">
-            <div className={getNotificationTypeColor(notification.type)}>{getNotificationIcon(notification.type)}</div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-white">{notification.title}</h4>
-              <p className="text-gray-300 text-sm">{notification.message}</p>
-              <p className="text-xs text-gray-500">{new Date(notification.createdAt).toLocaleString()}</p>
+    <div className="space-y-2">
+      {unread.length === 0 ? (
+        <p className={cn("text-sm text-center py-4", timeTextClass)}>No unread notifications.</p>
+      ) : (
+        unread.map((notification) => (
+          <div
+            key={notification.id}
+            className={cn(
+              "flex items-center justify-between p-3 rounded-lg transition-colors", // Removed cursor-pointer from here
+              itemBgClass,
+            )}
+          >
+            <div className="flex-1 cursor-pointer" onClick={() => markAsRead(notification.id)}>
+              {" "}
+              {/* Added cursor-pointer here */}
+              <p className={cn("text-sm font-medium", itemTextClass)}>{notification.message}</p>
+              <p className={cn("text-xs", timeTextClass)}>
+                {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+              </p>
             </div>
-            <div className="flex gap-1 opacity-0 group-hover:opacity-100">
-              <button onClick={() => markAsRead(notification.id)} className="p-1 text-green-400">
-                <Check size={14} />
+            <div className="flex items-center gap-1">
+              {" "}
+              {/* Group buttons */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  markAsRead(notification.id)
+                }}
+                className={cn("p-1 rounded-md", markAsReadButtonClass)}
+                title="Mark as read"
+              >
+                <Check size={16} />
               </button>
-              <button onClick={() => deleteNotification(notification.id)} className="p-1 text-red-400">
-                <Trash2 size={14} />
-              </button>
+             
             </div>
           </div>
-        </motion.div>
-      ))}
+        ))
+      )}
     </div>
   )
 }
