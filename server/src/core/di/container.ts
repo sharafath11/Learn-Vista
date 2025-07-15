@@ -131,6 +131,9 @@ import { IMentorCommentsController } from '../interfaces/controllers/mentor/IMen
 import { MentorCommentController } from '../../controllers/mentor/MentorCOmments.controller';
 import { IMentorCommentsService } from '../interfaces/services/mentor/IMentorComments.Service';
 import { MentorCommentsService } from '../../services/mentor/MentorComments.Service';
+import { IUserLessonProgress } from '../../types/userLessonProgress';
+import { IUserLessonProgressRepository } from '../interfaces/repositories/course/IUserLessonProgressRepo';
+import { UserLessonProgresssRepository } from '../../repositories/course/LessonProgressRepository';
 
 const container = new Container();
 
@@ -199,7 +202,8 @@ container.bind<ICategoriesRepository>(TYPES.CategoriesRepository).to(CategoriesR
 container.bind<IConcernRepository>(TYPES.ConcernRepository).to(ConcernRepository)
 container.bind<IDonationRepoitory>(TYPES.DonationRepository).to(DonationRepoitory)
 container.bind<IUserCourseProgressRepository>(TYPES.UserCourseProgressRepository).to(UserCourseProgressRepository)
-container.bind<INotificationRepository>(TYPES.NotificationRepository).to(NotificationRepository)
+container.bind<INotificationRepository>(TYPES.NotificationRepository).to(NotificationRepository);
+container.bind<IUserLessonProgressRepository>(TYPES.UserLessonProgressRepository).to(UserLessonProgresssRepository)
 
 
 export default container;

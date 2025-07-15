@@ -1,7 +1,7 @@
 import React from "react";
 import { IPopulatedCourse } from "./courseTypes";
 import { ILessons } from "./lessons";
-import { IUserCourseProgress } from "./userProgressTypes";
+import { IUserCourseProgress, IUserLessonProgress } from "./userProgressTypes";
 import { INotification } from "./notificationsTypes";
 
 export type UserRole = "user" | "mentor";
@@ -41,14 +41,17 @@ export interface IUser {
   createdAt?: string;
   updatedAt?: string;
 }
-
+export interface GetLessonsResponse {
+  lessons: ILessons[];
+  progress: IUserLessonProgress[];
+}
 
 
 export interface UserContextType {
   user: IUser | null;
   setUser: React.Dispatch<React.SetStateAction<IUser | null>>;
   allCourses: IPopulatedCourse[]
-  fetchLessons: (courseId: string) => Promise<ILessons[]>;
+  fetchLessons: (courseId: string) => Promise<GetLessonsResponse>;
   curentUrl:string,
   setCurentUrl: React.Dispatch<React.SetStateAction<string>>
   setProgress: React.Dispatch<React.SetStateAction<IUserCourseProgress[]>>;

@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
-import { IUserLessonsService } from "../../core/interfaces/services/user/IUserLessonsService";
-import { IComment, ILesson, ILessonReport, IQuestions, LessonQuestionInput } from "../../types/lessons";
+import { GetLessonsResponse, IUserLessonsService } from "../../core/interfaces/services/user/IUserLessonsService";
+import { IComment, ILesson, ILessonDetails, ILessonReport, IQuestions, LessonQuestionInput } from "../../types/lessons";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
@@ -21,6 +21,8 @@ import { toObjectId } from "../../utils/convertStringToObjectId";
 import { Types } from "mongoose";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
+import { IUserLessonProgressRepository } from "../../core/interfaces/repositories/course/IUserLessonProgressRepo";
+import { IUserLessonProgress } from "../../types/userLessonProgress";
 @injectable()
 export class UserLessonsService implements IUserLessonsService{
     constructor(
@@ -31,9 +33,10 @@ export class UserLessonsService implements IUserLessonsService{
         @inject(TYPES.CommentsRepository) private _commentsRepo: ICommentstRepository,
        @inject(TYPES.UserRepository) private _userRepo: IUserRepository,
       @inject(TYPES.UserCourseProgressRepository) private _userCourseProgresRepo: IUserCourseProgressRepository,
-       @inject(TYPES.NotificationService) private _notificationService:INotificationService
+      @inject(TYPES.NotificationService) private _notificationService: INotificationService,
+      @inject(TYPES.UserLessonProgressRepository) private _userLessonProgressRepo:IUserLessonProgressRepository
     ) { }
-    async getLessons(courseId: string | ObjectId, userId: string|ObjectId): Promise<ILesson[]> {
+   async getLessons(courseId: string | ObjectId, userId: string|ObjectId): Promise<GetLessonsResponse> {
   const user = await this._userRepo.findById(userId as string);
   if (!user) throwError("User not found", StatusCode.NOT_FOUND);
 
@@ -63,8 +66,9 @@ if (!userEnrolled) {
   if (!lessons || lessons.length === 0) {
     throwError("No lessons found for this course", StatusCode.NOT_FOUND);
   }
+  const lessonProgress=await this._userLessonProgressRepo.findAll({courseId,userId})
 
-  return lessons;
+  return {lessons:lessons,progress:lessonProgress};
 }
 
     async getQuestions(lessonId: string | ObjectId): Promise<IQuestions[]> {
@@ -73,7 +77,7 @@ if (!userEnrolled) {
         return qustions
     }
     // ee week passail progress video nte koode validation in user after see the previus lesson 
-    async getLessonDetils(lessonId: string | ObjectId,userId:string): Promise<{ questions: IQuestions[]; videoUrl: string; lesson: ILesson,comments:IComment[];report?:ILessonReport }> {
+    async getLessonDetils(lessonId: string | ObjectId,userId:string): Promise<ILessonDetails> {
         console.log('Type of lessonId:', typeof lessonId);
 console.log('Value of lessonId:', lessonId);
 console.log('Value of lessonId.toString():', lessonId.toString()); 
@@ -99,9 +103,10 @@ console.log('Value of lessonId.toString():', lessonId.toString());
         });
         const signedUrl = await getSignedUrl(s3, command, { expiresIn: 3600 });
         const comments = await this._commentsRepo.findAll({ lessonId });
-        const report = await this._lessonReportRepo.findOne({ lessonId, userId });
-        if(report)return {questions,videoUrl:signedUrl,lesson,comments,report}
-        return {questions,videoUrl:signedUrl,lesson,comments}
+      const report = await this._lessonReportRepo.findOne({ lessonId, userId });
+      const lessonProgress=await this._userLessonProgressRepo.findOne({userId,lessonId})
+        if(report)return {questions,videoUrl:signedUrl,lesson,comments,report,lessonProgress}
+        return {questions,videoUrl:signedUrl,lesson,comments,lessonProgress}
     }
     async lessonReport(userId: string|ObjectId, lessonId: string|ObjectId, data: LessonQuestionInput): Promise<ILessonReport> {
       const existingReport = await this._lessonReportRepo.findAll({ lessonId, userId });

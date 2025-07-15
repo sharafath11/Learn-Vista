@@ -67,17 +67,28 @@ export default function MentorHeader() {
     <header className="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-200">
       <div className="container mx-auto px-4 flex justify-between items-center h-16">
         <motion.div
-          className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Link href="/mentor/home">
-          
+      className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white shadow-sm"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Link
+        href="/mentor/home"
+        className="flex items-center gap-2 group"
+      >
+        <Image
+          src="/images/logo.png"
+          alt="Logo"
+          width={32}
+          height={32}
+          priority
+          className="transition-transform group-hover:scale-105"
+        />
+        <span className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent group-hover:opacity-90 transition-opacity">
           Mentor Portal
-          <Image src="/images/logo.png" alt="Logo" width={30} height={30} priority />
-          </Link>
-        </motion.div>
+        </span>
+      </Link>
+    </motion.div>
 
         <div className="hidden md:flex items-center gap-2">
           {navItems.map(({ name, path, icon }) => (

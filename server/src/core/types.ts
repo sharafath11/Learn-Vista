@@ -65,5 +65,6 @@ export const TYPES = {
   ConcernRepository: Symbol.for("ConcernRepository"),
   DonationRepository: Symbol.for("DonationRepository"),
   UserCourseProgressRepository: Symbol.for("UserCourseProgressRepository"),
-  NotificationRepository:Symbol.for("NotificationRepository")
+  NotificationRepository: Symbol.for("NotificationRepository"),
+  UserLessonProgressRepository:Symbol.for("UserLessonProgressReposiory")
 };

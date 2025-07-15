@@ -43,7 +43,19 @@ export const UserAPIMethods = {
   createCheckoutSession: (amount: number, currency: string) => post("/create-checkout-session", { amount, currency }),
   getStripeCheckoutSession: (sessionId: string) => get(`/stripe/verify-session/${sessionId}`),
   getUserProgress: () => get("/course/progress"),
-  psc: (number: number) => get(`/let-fun/psc`, {number}),
+  psc: (number: number) => get(`/let-fun/psc`, { number }),
+updateLessonProgress: (
+  lessonId: string,
+  update: {
+    videoWatchedDuration?: number;
+    videoTotalDuration?: number;
+    videoCompleted?: boolean;
+    theoryCompleted?: boolean;
+    practicalCompleted?: boolean;
+    mcqCompleted?: boolean;
+  }
+) => post("/lesson/update-progress", { lessonId, ...update })
+
 } as const;
 
 export const AdminAPIMethods = {

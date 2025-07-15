@@ -86,5 +86,57 @@ export class UserCourseController implements IUserCourseController {
       handleControllerError(res,error)
     }
   }
+   async updateLessonProgress(req: Request, res: Response): Promise<void> {
+    try {
+      const decoded = decodeToken(req.cookies.token);
+      if (!decoded?.id) {
+        return sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized", false);
+      }
+
+      // Destructure the new fields: videoWatchedDuration and videoTotalDuration
+      const { 
+        lessonId, 
+        videoWatchedDuration, 
+        videoTotalDuration, 
+        theoryCompleted, 
+        practicalCompleted, 
+        mcqCompleted 
+      } = req.body;
+
+      if (!lessonId) {
+        return sendResponse(res, StatusCode.BAD_REQUEST, "Lesson ID is required", false);
+      }
+
+      // Basic validation for video durations
+      if (videoWatchedDuration !== undefined && (typeof videoWatchedDuration !== 'number' || videoWatchedDuration < 0)) {
+        return sendResponse(res, StatusCode.BAD_REQUEST, "Invalid videoWatchedDuration", false);
+      }
+      if (videoTotalDuration !== undefined && (typeof videoTotalDuration !== 'number' || videoTotalDuration <= 0)) {
+        return sendResponse(res, StatusCode.BAD_REQUEST, "Invalid videoTotalDuration", false);
+      }
+      
+      // If video progress is being sent, ensure total duration is also sent
+      if (videoWatchedDuration !== undefined && videoTotalDuration === undefined) {
+          return sendResponse(res, StatusCode.BAD_REQUEST, "videoTotalDuration is required when updating video progress", false);
+      }
+
+
+      const progress = await this._userCourseService.updateLessonProgress(
+        decoded.id,
+        lessonId,
+        {
+          videoWatchedDuration, // Pass watched duration
+          videoTotalDuration,   // Pass total duration
+          theoryCompleted,
+          practicalCompleted,
+          mcqCompleted,
+        }
+      );
+
+      sendResponse(res, StatusCode.OK, "Lesson progress updated", true, progress);
+    } catch (error) {
+      handleControllerError(res, error);
+    }
+  }
 
 }

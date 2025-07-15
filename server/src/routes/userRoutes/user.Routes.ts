@@ -52,4 +52,7 @@ router.post("/create-checkout-session",userDonationController.createCheckoutSess
 router.get("/stripe/verify-session/:sessionId", userDonationController.verifySession.bind(userDonationController))
 router.get("/course/progress", authenticateToken, userCourseController.getProgressDetiles.bind(userCourseController))
 router.get("/let-fun/psc", userController.getQuestionByNumber.bind(userController));
+router.post("/lesson/update-progress",authenticateToken,userCourseController.updateLessonProgress.bind(userCourseController));
+
+
 export default router;

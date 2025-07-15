@@ -2,6 +2,7 @@
 import { Types } from "aws-sdk/clients/acm";
 import mongoose, { ObjectId } from "mongoose";
 import { Document } from "mongoose";
+import { IUserLessonProgress } from "./userLessonProgress";
 
 export interface ILesson extends Document {
     title: string;
@@ -72,4 +73,12 @@ export interface IComment extends Document {
   courseId:ObjectId | string;
   createdAt?: Date;
   updatedAt?: Date;
+}
+export interface ILessonDetails {
+  lesson: ILesson;
+  videoUrl: string;
+  lessonProgress: IUserLessonProgress | null;
+  report?: ILessonReport;
+  questions: IQuestions[];
+  comments: IComment[];
 }

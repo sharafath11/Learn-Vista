@@ -8,11 +8,23 @@ interface VideoPlayerProps {
   videoUrl: string
   title: string
   onComplete: () => void
+  onProgress: (currentTime: number, totalDuration: number) => void
   isCompleted: boolean
   thumbnail: string
+  startTime: number
+  totalLengthFromAPI?: number 
 }
 
-export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted, thumbnail }: VideoPlayerProps) {
+export default function VideoPlayer({
+  videoUrl,
+  title,
+  onComplete,
+  onProgress,
+  isCompleted,
+  thumbnail,
+  startTime ,
+  totalLengthFromAPI,
+}: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -23,7 +35,22 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted, 
   const [isMuted, setIsMuted] = useState(false)
   const [hasWatched, setHasWatched] = useState(isCompleted)
   const [isFullScreen, setIsFullScreen] = useState(false)
-  const [hasStarted, setHasStarted] = useState(false)
+  const [hasStartedPlaying, setHasStartedPlaying] = useState(false)
+
+  const lastReportedTimeRef = useRef(0);
+  const reportingInterval = 5;
+
+  useEffect(() => {
+    setHasWatched(isCompleted)
+  }, [isCompleted])
+//  alert(startTime)
+  useEffect(() => {
+    if (videoRef.current && startTime > 0 && videoRef.current.readyState >= 2) {
+        videoRef.current.currentTime = startTime;
+        setCurrentTime(startTime);
+        lastReportedTimeRef.current = startTime;
+    }
+  }, [startTime]);
 
   useEffect(() => {
     if (duration > 0) {
@@ -58,13 +85,34 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted, 
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime)
+      const current = videoRef.current.currentTime;
+      const total = videoRef.current.duration;
+
+      setCurrentTime(current);
+
+      if (total > 0 && current >= (lastReportedTimeRef.current + reportingInterval)) {
+          onProgress(current, total);
+          lastReportedTimeRef.current = current;
+      }
     }
   }
 
-  const handleLoadedMetadata = () => {
+ const handleLoadedMetadata = () => {
     if (videoRef.current) {
-      setDuration(videoRef.current.duration)
+      const videoActualDuration = videoRef.current.duration;
+      setDuration(videoActualDuration);
+
+      const totalToReport = (totalLengthFromAPI && !isNaN(totalLengthFromAPI) && totalLengthFromAPI > 0)
+                            ? totalLengthFromAPI
+                            : videoActualDuration;
+
+      if (startTime > 0 && startTime < totalToReport) {
+          onProgress(startTime, totalToReport);
+          lastReportedTimeRef.current = startTime;
+      } else if (totalToReport > 0 && startTime === 0) {
+          onProgress(0, totalToReport);
+          lastReportedTimeRef.current = 0;
+      }
     }
   }
 
@@ -74,7 +122,7 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted, 
         videoRef.current.pause()
       } else {
         videoRef.current.play()
-        setHasStarted(true)
+        setHasStartedPlaying(true)
       }
       setIsPlaying(!isPlaying)
     }
@@ -82,7 +130,7 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted, 
 
   const onPlayHandler = () => {
     setIsPlaying(true)
-    setHasStarted(true)
+    setHasStartedPlaying(true)
   }
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,6 +163,8 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted, 
 
       videoRef.current.currentTime = newTime
       setCurrentTime(newTime)
+      onProgress(newTime, duration);
+      lastReportedTimeRef.current = newTime;
     }
   }
 
@@ -145,6 +195,7 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted, 
   }
 
   const formatTime = (seconds: number) => {
+    if (isNaN(seconds) || seconds < 0) return "0:00";
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`
@@ -167,12 +218,15 @@ export default function VideoPlayer({ videoUrl, title, onComplete, isCompleted, 
             if (!hasWatched) {
               setHasWatched(true)
               onComplete()
+              if (videoRef.current) {
+                onProgress(videoRef.current.duration, videoRef.current.duration);
+              }
             }
           }}
         >
-          Your browser does not support the video tag.
+          Your browser does not support the video .
         </video>
-        {!hasStarted && (
+        {!hasStartedPlaying && !isCompleted && (
           <img
             src={thumbnail}
             alt={title}

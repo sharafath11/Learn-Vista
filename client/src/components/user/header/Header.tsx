@@ -1,18 +1,20 @@
 "use client"
+
 import type React from "react"
 import { useState, useEffect, useCallback } from "react"
-import { Menu, X, Home, BookOpen, Video, Heart, Bell } from "lucide-react"
+import { Menu, X, Home, BookOpen, Video, Heart, Bell } from "lucide-react" // Added LogOut icon
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { signOut } from "next-auth/react"
-import { useUserContext } from "@/src/context/userAuthContext"
-import { UserAPIMethods } from "@/src/services/APImethods"
-import { cn } from "@/src/utils/cn"
-import { showErrorToast } from "@/src/utils/Toast"
+import { useUserContext } from "@/src/context/userAuthContext" // Assuming this path is correct
+import { UserAPIMethods } from "@/src/services/APImethods" // Assuming this path is correct
+import { cn } from "@/src/utils/cn" // Assuming this path is correct
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast" // Assuming this path is correct
+import { UserDropdown } from "./user-dropdown" // Assuming this path is correct
+import { MobileMenu } from "./mobile-menu" // Assuming this path is correct
 import { NotificationCenter } from "../../notifications/notification-center"
-import { UserDropdown } from "./user-dropdown"
-import { MobileMenu } from "./mobile-menu"
+import { CustomAlertDialog } from "../../custom-alert-dialog"
 
 interface NavItem {
   name: string
@@ -38,18 +40,34 @@ export const Header = () => {
   const { unreadCount, setUnreadCount, userNotifications, setUserNotifications, refereshNotifcation } = useUserContext()
   const router = useRouter()
 
-  const handleLogout = useCallback(async () => {
+  // New state for logout confirmation dialog
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+
+  // Function to handle the actual logout process
+  const confirmLogout = useCallback(async () => {
     try {
       await signOut({ redirect: false })
       const res = await UserAPIMethods.logout()
       if (res.ok) {
         setUser(null)
+        showSuccessToast("Logged out successfully!") // Added success toast for logout
         router.push("/user/login")
+      } else {
+        showErrorToast(res.msg || "Logout failed. Please try again.")
       }
     } catch (error: any) {
-      showErrorToast(error.message)
+      showErrorToast(error.message || "An unexpected error occurred during logout.")
+    } finally {
+      setShowLogoutConfirm(false) // Close the dialog regardless of success/failure
     }
   }, [router, setUser])
+
+  // Modified handleLogout to just open the confirmation dialog
+  const handleLogout = useCallback(() => {
+    setShowLogoutConfirm(true)
+    setIsDropdownOpen(false) // Close dropdown when dialog opens
+    setIsMobileMenuOpen(false) // Close mobile menu when dialog opens
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10)
@@ -58,15 +76,42 @@ export const Header = () => {
   }, [])
 
   useEffect(() => {
-    const handleClickOutside = () => {
-      setIsDropdownOpen(false)
-      setIsNotificationOpen(false)
-      setIsMobileNotificationOpen(false)
+    const handleClickOutside = (event: MouseEvent) => {
+      // Check if the click is outside the dropdown and notification popovers
+      const target = event.target as HTMLElement
+
+      // Check if the click is outside the dropdown trigger and content
+      const dropdownTrigger = document.getElementById("user-dropdown-trigger") // Add ID to DropdownMenuTrigger
+      const dropdownContent = document.querySelector('[data-radix-popper-content][data-side="bottom"]') // Selector for DropdownMenuContent
+
+      if (
+        dropdownTrigger &&
+        !dropdownTrigger.contains(target) &&
+        dropdownContent &&
+        !dropdownContent.contains(target)
+      ) {
+        setIsDropdownOpen(false)
+      }
+
+      // Check if the click is outside the notification trigger and content
+      const notificationTrigger = document.getElementById("notification-trigger") // Add ID to Bell button
+      const notificationContent = document.querySelector('[data-radix-popper-content][data-side="end"]') // Selector for PopoverContent
+
+      if (
+        notificationTrigger &&
+        !notificationTrigger.contains(target) &&
+        notificationContent &&
+        !notificationContent.contains(target)
+      ) {
+        setIsNotificationOpen(false)
+        setIsMobileNotificationOpen(false)
+      }
     }
+
     if (isDropdownOpen || isNotificationOpen || isMobileNotificationOpen) {
-      document.addEventListener("click", handleClickOutside)
+      document.addEventListener("mousedown", handleClickOutside)
     }
-    return () => document.removeEventListener("click", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [isDropdownOpen, isNotificationOpen, isMobileNotificationOpen])
 
   return (
@@ -83,7 +128,7 @@ export const Header = () => {
             <Link href="/" className="flex items-center space-x-2 group" onClick={() => setActiveLink("/")}>
               <div className="relative h-8 w-8 overflow-hidden rounded-lg">
                 <Image
-                  src="/images/logo.png"
+                  src="/images/logo.png" 
                   alt="Learn Vista"
                   fill
                   className="object-contain transition-transform duration-300 group-hover:scale-110"
@@ -94,7 +139,6 @@ export const Header = () => {
                 Learn Vista
               </span>
             </Link>
-            {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-1">
               {NAV_ITEMS.map(({ name, path, icon: Icon }) => (
                 <Link
@@ -113,11 +157,13 @@ export const Header = () => {
                 </Link>
               ))}
             </nav>
+
             <div className="hidden md:flex items-center space-x-3">
               {user ? (
                 <div className="flex items-center space-x-2">
                   <div className="relative">
                     <button
+                      id="notification-trigger" 
                       onClick={(e) => {
                         e.stopPropagation()
                         setIsNotificationOpen(!isNotificationOpen)
@@ -170,6 +216,7 @@ export const Header = () => {
                 </div>
               )}
             </div>
+
             <div className="flex items-center space-x-2 md:hidden">
               {user && (
                 <div className="relative">
@@ -200,6 +247,7 @@ export const Header = () => {
             </div>
           </div>
         </div>
+
         {user && isMobileNotificationOpen && (
           <div className="absolute left-0 right-0 top-full z-40 md:hidden">
             <NotificationCenter
@@ -216,16 +264,28 @@ export const Header = () => {
           </div>
         )}
       </header>
+
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
         activeLink={activeLink}
         user={user}
-        handleLogout={handleLogout}
+        handleLogout={handleLogout} 
         setActiveLink={setActiveLink}
         navItems={NAV_ITEMS}
       />
-      {/* Spacer */}
+      <CustomAlertDialog
+        isOpen={showLogoutConfirm}
+        onClose={() => setShowLogoutConfirm(false)} 
+        title="Confirm Logout"
+        description="Are you sure you want to log out? You will need to sign in again to access your account."
+        confirmText="Log Out"
+        cancelText="Stay Logged In"
+        onConfirm={confirmLogout} 
+        onCancel={() => setShowLogoutConfirm(false)} 
+        icon="👋"
+        variant="info" 
+      />
       <div className="h-16" />
     </>
   )
