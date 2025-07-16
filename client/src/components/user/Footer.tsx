@@ -1,5 +1,14 @@
 import Link from "next/link"
-import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from "lucide-react"
+import { Linkedin, Instagram, Mail, Phone, MapPin, Github, X } from "lucide-react"
+import { Home, BookOpen, Video, Heart } from "lucide-react" // Assuming these are for NAV_ITEMS
+
+// User provided NAV_ITEMS
+const NAV_ITEMS = [
+  { name: "Home", path: "/", icon: Home },
+  { name: "Courses", path: "/user/courses", icon: BookOpen },
+  { name: "Live Classes", path: "/user/live-classes", icon: Video },
+  { name: "Donation", path: "/user/donation", icon: Heart },
+]
 
 export default function Footer() {
   return (
@@ -13,17 +22,33 @@ export default function Footer() {
               Transforming lives through quality education and accessible learning opportunities for everyone.
             </p>
             <div className="flex space-x-4">
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook className="h-5 w-5" />
+              <Link
+                href="https://www.linkedin.com/in/sharafath-abi/"
+                className="text-gray-400 hover:text-white transition-colors"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="h-5 w-5" />
+              <Link
+                href="https://github.com/sharafath11"
+                className="text-gray-400 hover:text-white transition-colors"
+                aria-label="GitHub"
+              >
+                <Github className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
+              <Link
+                href="https://www.instagram.com/__.st_____/?hl=en"
+                className="text-gray-400 hover:text-white transition-colors"
+                aria-label="Instagram"
+              >
                 <Instagram className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Linkedin className="h-5 w-5" />
+              <Link
+                href="https://x.com/home"
+                className="text-gray-400 hover:text-white transition-colors"
+                aria-label="X (Twitter)"
+              >
+                <X className="h-5 w-5" />
               </Link>
             </div>
           </div>
@@ -32,29 +57,40 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              {["Home", "About Us", "Courses", "Instructors", "Pricing", "Blog", "Contact"].map((item) => (
-                <li key={item}>
-                  <Link href="#" className="hover:text-white transition-colors">
-                    {item}
+              {NAV_ITEMS.map((item) => (
+                <li key={item.name}>
+                  <Link href={item.path} className="hover:text-white transition-colors">
+                    {item.name}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Categories */}
+          {/* My Links (replacing Categories) */}
           <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Top Categories</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">My Links</h3>
             <ul className="space-y-2">
-              {["Web Development", "Data Science", "Business", "Design", "Marketing", "Photography", "Music"].map(
-                (item) => (
-                  <li key={item}>
-                    <Link href="#" className="hover:text-white transition-colors">
-                      {item}
-                    </Link>
-                  </li>
-                ),
-              )}
+              <li>
+                <Link href="https://www.linkedin.com/in/sharafath-abi/" className="hover:text-white transition-colors">
+                  LinkedIn Profile
+                </Link>
+              </li>
+              <li>
+                <Link href="https://github.com/sharafath11" className="hover:text-white transition-colors">
+                  GitHub Profile
+                </Link>
+              </li>
+              <li>
+                <Link href="https://www.instagram.com/__.st_____/?hl=en" className="hover:text-white transition-colors">
+                  Instagram Profile
+                </Link>
+              </li>
+              <li>
+                <Link href="https://x.com/home" className="hover:text-white transition-colors">
+                  X (Twitter) Profile
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -64,15 +100,15 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 mr-3 mt-0.5 text-blue-400" />
-                <span>123 Education Street, Learning City, 10001</span>
+                <span>calicut kinfraconst</span>
               </li>
               <li className="flex items-center">
                 <Phone className="h-5 w-5 mr-3 text-blue-400" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 6282560928</span>
               </li>
               <li className="flex items-center">
                 <Mail className="h-5 w-5 mr-3 text-blue-400" />
-                <span>support@edulearn.com</span>
+                <span>abisharfathedulearn@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -80,7 +116,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p>© 2025 EduLearn. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} EduLearn. All rights reserved.</p>
             <div className="mt-4 md:mt-0">
               <ul className="flex space-x-6">
                 <li>
@@ -106,4 +142,3 @@ export default function Footer() {
     </footer>
   )
 }
-

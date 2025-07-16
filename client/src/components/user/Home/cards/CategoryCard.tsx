@@ -1,3 +1,5 @@
+"use client"
+import { useUserContext } from "@/src/context/userAuthContext";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { ReactNode } from "react";
@@ -9,6 +11,7 @@ interface CategoryCardProps {
 }
 
 export default function CategoryCard({ icon, title, courses }: CategoryCardProps) {
+  const {allCourses}=useUserContext()
   return (
     <motion.div
       whileHover={{ y: -8 }}

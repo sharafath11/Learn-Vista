@@ -39,18 +39,14 @@ export const Header = () => {
   const [activeLink, setActiveLink] = useState("/")
   const { unreadCount, setUnreadCount, userNotifications, setUserNotifications, refereshNotifcation } = useUserContext()
   const router = useRouter()
-
-  // New state for logout confirmation dialog
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
-
-  // Function to handle the actual logout process
   const confirmLogout = useCallback(async () => {
     try {
       await signOut({ redirect: false })
       const res = await UserAPIMethods.logout()
       if (res.ok) {
         setUser(null)
-        showSuccessToast("Logged out successfully!") // Added success toast for logout
+        showSuccessToast("Logged out successfully!") 
         router.push("/user/login")
       } else {
         showErrorToast(res.msg || "Logout failed. Please try again.")
@@ -58,15 +54,13 @@ export const Header = () => {
     } catch (error: any) {
       showErrorToast(error.message || "An unexpected error occurred during logout.")
     } finally {
-      setShowLogoutConfirm(false) // Close the dialog regardless of success/failure
+      setShowLogoutConfirm(false) 
     }
   }, [router, setUser])
-
-  // Modified handleLogout to just open the confirmation dialog
   const handleLogout = useCallback(() => {
     setShowLogoutConfirm(true)
-    setIsDropdownOpen(false) // Close dropdown when dialog opens
-    setIsMobileMenuOpen(false) // Close mobile menu when dialog opens
+    setIsDropdownOpen(false) 
+    setIsMobileMenuOpen(false) 
   }, [])
 
   useEffect(() => {

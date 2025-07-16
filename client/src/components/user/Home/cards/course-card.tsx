@@ -1,0 +1,49 @@
+"use client"
+
+import { motion } from "framer-motion"
+import Link from "next/link"
+import { BookOpen, DollarSign, ChevronRight } from "lucide-react"
+import { ICourse } from "@/src/types/courseTypes"
+
+interface CourseCardProps {
+  course: ICourse
+}
+
+export default function CourseCard({ course }: CourseCardProps) {
+  return (
+    <motion.div
+      whileHover={{ y: -8 }}
+      transition={{ duration: 0.3 }}
+      className="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow group flex flex-col h-full"
+    >
+      <Link href={`/user/sessions/${course.id || course._id}`} className="block h-full">
+        <div className="flex flex-col items-center text-center h-full">
+          {/* Placeholder for thumbnail or icon */}
+          <div className="p-4 bg-blue-900 rounded-full group-hover:bg-blue-700 transition-colors">
+            {course.thumbnail ? (
+              <img
+                src={course.thumbnail || "/placeholder.svg"}
+                alt={course.title}
+                className="h-12 w-12 object-cover rounded-full"
+              />
+            ) : (
+              <BookOpen className="h-8 w-8 text-blue-400" />
+            )}
+          </div>
+          <h3 className="mt-4 sm:mt-6 text-lg sm:text-xl font-semibold text-white line-clamp-2">{course.title}</h3>
+          <p className="mt-1 text-sm sm:text-base text-gray-300 flex-grow line-clamp-3">
+            {course.description || "No description available."}
+          </p>
+          
+          <button
+            className="mt-4 sm:mt-6 text-blue-400 font-medium hover:text-blue-300 flex items-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-label={`View ${course.title}`}
+          >
+            View Course
+            <ChevronRight className="ml-1 h-4 w-4" />
+          </button>
+        </div>
+      </Link>
+    </motion.div>
+  )
+}

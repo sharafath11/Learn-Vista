@@ -3,10 +3,15 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { BookOpen, Award, Users, Clock, Star, Play, CheckCircle } from "lucide-react"
 import VideoModal from "./VideoModal"
+import { UserContext, useUserContext } from "@/src/context/userAuthContext"
+import CourseCard from "@/src/components/user/Home/cards/course-card"
+import { ICourse } from "@/src/types/courseTypes"
 
 export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
+  const { allCourses, } = useUserContext()
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -15,32 +20,7 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
-  const categories = [
-    {
-      icon: <BookOpen className="h-12 w-12 text-[#8525FF]" />,
-      title: "Web Development",
-      courses: 420,
-      color: "from-blue-50 to-blue-100",
-    },
-    {
-      icon: <Award className="h-12 w-12 text-[#FF6B35]" />,
-      title: "Data Science",
-      courses: 310,
-      color: "from-orange-50 to-orange-100",
-    },
-    {
-      icon: <Users className="h-12 w-12 text-[#00D4AA]" />,
-      title: "Business",
-      courses: 280,
-      color: "from-teal-50 to-teal-100",
-    },
-    {
-      icon: <Clock className="h-12 w-12 text-[#FFB800]" />,
-      title: "Design",
-      courses: 340,
-      color: "from-yellow-50 to-yellow-100",
-    },
-  ]
+  
 
   const features = [
     {
@@ -98,7 +78,7 @@ export default function Home() {
   ]
 
   const stats = [
-    { value: "50,000+", label: "Premium Courses", icon: <BookOpen className="h-8 w-8 text-[#8525FF]" /> },
+    { value: allCourses.length, label: "Premium Courses", icon: <BookOpen className="h-8 w-8 text-[#8525FF]" /> },
     { value: "1,200+", label: "Expert Instructors", icon: <Users className="h-8 w-8 text-[#00D4AA]" /> },
     { value: "2.5M+", label: "Global Students", icon: <Award className="h-8 w-8 text-[#FF6B35]" /> },
     { value: "98%", label: "Success Rate", icon: <Star className="h-8 w-8 text-[#FFB800]" /> },
@@ -225,23 +205,21 @@ export default function Home() {
               Discover courses across diverse fields and find the perfect path to advance your career
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {categories.map((category, index) => (
-              <div key={index} className="group relative">
-                <div
-                  className={`bg-gradient-to-br ${category.color} rounded-3xl p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2`}
-                >
-                  <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white shadow-lg mb-6 group-hover:scale-110 transition-transform duration-300">
-                      {category.icon}
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{category.title}</h3>
-                    <p className="text-gray-600 font-medium">{category.courses} courses available</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Our Courses</h1>
+      {allCourses && allCourses.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {allCourses.map((course: ICourse) => (
+            <CourseCard key={course.id || course._id} course={course} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center text-gray-600 py-12">
+          <p className="text-lg">No courses available at the moment.</p>
+          <p className="mt-2">Please check back later!</p>
+        </div>
+      )}
+    </div>
         </div>
       </section>
       <section className="py-24 bg-white">

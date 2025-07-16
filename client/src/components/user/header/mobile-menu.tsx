@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, User, Settings, LogOut } from "lucide-react"
+import { Search, User, Settings, LogOut, Trophy } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/src/utils/cn"
@@ -114,14 +114,14 @@ export const MobileMenu = ({
                     <span className="font-medium">Settings</span>
                   </Link>
                   <Link
-                    href="/user/lv-code"
+                    href="/user/lets-fun-psc"
                     className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-purple-400 rounded-lg transition-all duration-200 group"
                     onClick={onClose}
                   >
-                    <div className="w-[18px] h-[18px] bg-gradient-to-r from-purple-500 to-purple-600 rounded text-white text-xs flex items-center justify-center font-bold group-hover:scale-110 transition-transform">
-                      LV
-                    </div>
-                    <span className="font-medium">LV CODE</span>
+                    <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-blue-500 rounded flex items-center justify-center">
+                  <Trophy size={10} className="text-white" />
+                </div>
+                <span className="text-sm font-medium">Lets Fun PSC</span>
                   </Link>
 
                   {/* Logout Button */}
