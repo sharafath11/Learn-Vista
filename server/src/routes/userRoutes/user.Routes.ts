@@ -11,6 +11,7 @@ import { IUserLiveController } from "../../core/interfaces/controllers/user/IUse
 import { IUserLessonsController } from "../../core/interfaces/controllers/user/IUserLessonsContoller";
 import { IUserDonationController } from "../../core/interfaces/controllers/user/IUserDonationController";
 import { INotificationController } from "../../core/interfaces/controllers/notifications/INotifications.Controller";
+import { UserLessonsController } from "../../controllers/user/userLessons.controller";
 
 
 const router = express.Router();
@@ -52,7 +53,7 @@ router.post("/create-checkout-session",userDonationController.createCheckoutSess
 router.get("/stripe/verify-session/:sessionId", userDonationController.verifySession.bind(userDonationController))
 router.get("/course/progress", authenticateToken, userCourseController.getProgressDetiles.bind(userCourseController))
 router.get("/let-fun/psc", userController.getQuestionByNumber.bind(userController));
-router.post("/lesson/update-progress",authenticateToken,userCourseController.updateLessonProgress.bind(userCourseController));
+router.post("/lesson/update-progress",authenticateToken,userLessonsController.updateLessonProgress.bind(UserLessonsController));
 
 
 export default router;

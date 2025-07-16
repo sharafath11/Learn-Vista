@@ -6,4 +6,5 @@ export interface IUserLessonsController {
     getAllDetilsInLesson(req: Request, res: Response): Promise<void>
     getLessonReport(req: Request, res: Response): Promise<void>
     saveComments(req:Request,res:Response):Promise<void>
+    updateLessonProgress(req:Request,res:Response):Promise<void>
 } 

@@ -66,4 +66,54 @@ export class UserLessonsController implements IUserLessonsController{
             handleControllerError(res,error)
         }
     }
+    updateLessonProgress = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const decoded = decodeToken(req.cookies.token);
+            if (!decoded?.id) {
+                return sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized", false);
+            }
+
+            const {
+                lessonId,
+                videoWatchedDuration,
+                videoTotalDuration,
+                theoryCompleted,
+                practicalCompleted,
+                mcqCompleted,
+                videoCompleted
+            } = req.body;
+
+            if (!lessonId) {
+                return sendResponse(res, StatusCode.BAD_REQUEST, "Lesson ID is required", false);
+            }
+            if (videoWatchedDuration !== undefined && (typeof videoWatchedDuration !== 'number' || videoWatchedDuration < 0)) {
+                return sendResponse(res, StatusCode.BAD_REQUEST, "Invalid videoWatchedDuration", false);
+            }
+            if (videoTotalDuration !== undefined && (typeof videoTotalDuration !== 'number' || videoTotalDuration <= 0)) {
+                return sendResponse(res, StatusCode.BAD_REQUEST, "Invalid videoTotalDuration", false);
+            }
+            if (videoWatchedDuration !== undefined && videoTotalDuration === undefined) {
+                return sendResponse(res, StatusCode.BAD_REQUEST, "videoTotalDuration is required when updating video progress", false);
+            }
+            // Add validation for other boolean fields if necessary
+            // e.g., if (theoryCompleted !== undefined && typeof theoryCompleted !== 'boolean') { ... }
+
+            const progress = await this._userLessonsService.updateLessonProgress(
+                decoded.id,
+                lessonId,
+                {
+                    videoWatchedDuration,
+                    videoTotalDuration,
+                    theoryCompleted,
+                    practicalCompleted,
+                    mcqCompleted,
+                    videoCompleted
+                }
+            );
+
+            sendResponse(res, StatusCode.OK, "Lesson progress updated", true, progress);
+        } catch (error) {
+            handleControllerError(res, error);
+        }
+    };
 }

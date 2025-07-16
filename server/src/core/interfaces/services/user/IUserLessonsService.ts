@@ -10,5 +10,17 @@ export interface IUserLessonsService {
     getQuestions(lessonId: string | ObjectId): Promise<IQuestions[]>
     getLessonDetils(lessonId:string|ObjectId,userId:string|ObjectId):Promise<ILessonDetails>
     lessonReport(userId: string | ObjectId, lessonId: string, data: LessonQuestionInput): Promise<ILessonReport>
-    saveComments(userId:string,lessonId:string|ObjectId,commant:string):Promise<IComment>
+  saveComments(userId: string, lessonId: string | ObjectId, commant: string): Promise<IComment>
+updateLessonProgress(
+        userId: string,
+        lessonId: string,
+        update: {
+            videoWatchedDuration?: number;
+            videoTotalDuration?: number;
+            theoryCompleted?: boolean;
+            practicalCompleted?: boolean;
+            mcqCompleted?: boolean;
+            videoCompleted?:boolean
+        }
+    ): Promise<IUserLessonProgress | null>;
 }

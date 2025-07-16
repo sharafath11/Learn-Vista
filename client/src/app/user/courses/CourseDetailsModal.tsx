@@ -197,30 +197,7 @@ const CourseDetailsModal = ({
                     </div>
                     
                     <div className="space-y-4">
-                      {isEnrolled ? (
-                        <>
-                          <div className="mb-2">
-                            <div className="flex justify-between text-xs text-gray-500 mb-1">
-                              <span>Your progress</span>
-                              <span>25%</span>
-                            </div>
-                            <Progress value={25} className="h-2" />
-                          </div>
-                          <Button
-                            className="w-full bg-blue-600 hover:bg-blue-700"
-                             onClick={() => route.push(`/user/sessions/${course._id}`)}
-                          >
-                            Continue Learning
-                          </Button>
-                        </>
-                      ) : (
-                        <Button 
-                          onClick={onEnroll}
-                          className="w-full bg-blue-600 hover:bg-blue-700"
-                        >
-                          Enroll Now
-                        </Button>
-                      )}
+                      
                       
                       <div className="text-sm text-gray-600 space-y-2">
                         <div className="flex items-center">

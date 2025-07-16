@@ -1,4 +1,4 @@
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { GetLessonsResponse, IUserLessonsService } from "../../core/interfaces/services/user/IUserLessonsService";
 import { IComment, ILesson, ILessonDetails, ILessonReport, IQuestions, LessonQuestionInput } from "../../types/lessons";
 import { inject, injectable } from "inversify";
@@ -23,6 +23,25 @@ import { INotificationService } from "../../core/interfaces/services/notificatio
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { IUserLessonProgressRepository } from "../../core/interfaces/repositories/course/IUserLessonProgressRepo";
 import { IUserLessonProgress } from "../../types/userLessonProgress";
+const SECTION_WEIGHTS = {
+  video: 0.40,
+  theory: 0.20,
+  practical: 0.20,
+  mcq: 0.20,
+};
+
+const TOTAL_SECTION_WEIGHT =
+  SECTION_WEIGHTS.video +
+  SECTION_WEIGHTS.theory +
+  SECTION_WEIGHTS.practical +
+  SECTION_WEIGHTS.mcq;
+
+if (TOTAL_SECTION_WEIGHT !== 1) {
+  console.warn(
+    "Warning: Section weights in UserCourseService.ts do not sum to 1. Overall lesson progress calculation might be off."
+  );
+}
+
 @injectable()
 export class UserLessonsService implements IUserLessonsService{
     constructor(
@@ -34,7 +53,8 @@ export class UserLessonsService implements IUserLessonsService{
        @inject(TYPES.UserRepository) private _userRepo: IUserRepository,
       @inject(TYPES.UserCourseProgressRepository) private _userCourseProgresRepo: IUserCourseProgressRepository,
       @inject(TYPES.NotificationService) private _notificationService: INotificationService,
-      @inject(TYPES.UserLessonProgressRepository) private _userLessonProgressRepo:IUserLessonProgressRepository
+    @inject(TYPES.UserLessonProgressRepository) private _userLessonProgressRepo: IUserLessonProgressRepository,
+    @inject(TYPES.LessonsRepository) private _lessonRepo: ILessonsRepository
     ) { }
    async getLessons(courseId: string | ObjectId, userId: string|ObjectId): Promise<GetLessonsResponse> {
   const user = await this._userRepo.findById(userId as string);
@@ -108,46 +128,57 @@ console.log('Value of lessonId.toString():', lessonId.toString());
         if(report)return {questions,videoUrl:signedUrl,lesson,comments,report,lessonProgress}
         return {questions,videoUrl:signedUrl,lesson,comments,lessonProgress}
     }
-    async lessonReport(userId: string|ObjectId, lessonId: string|ObjectId, data: LessonQuestionInput): Promise<ILessonReport> {
-      const existingReport = await this._lessonReportRepo.findAll({ lessonId, userId });
-      if(!userId) throwError("user not identify")
-       if(!existingReport)throwError("You already get the report please check in report session")
-       const lesson = await this._lessonRepository.findById(lessonId as string);
-       if (!lesson) throwError("invalid lessons");
-       const course = await this._courseRepository.findById(lesson.courseId as string);
-       if (!course) throwError("Invalid course");
-       const prompt = buildPrompt(data);
-       const geminiRpoert = await getGemaniResponse(prompt);
-       if (!geminiRpoert) throwError("Server bcy");
-      const report = await this._lessonReportRepo.create({
-        userId: userId,
-        lessonId: lessonId,
-        courseId: course.id,
-        mentorId: course.mentorId,
-        report: geminiRpoert
-      });
-       const totalLessons = course.sessions.length;
+  async lessonReport(userId: string|ObjectId, lessonId: string|ObjectId, data: LessonQuestionInput): Promise<ILessonReport> {
+        if (!userId) throwError("User not identified", StatusCode.BAD_REQUEST);
+        const existingReport = await this._lessonReportRepo.findOne({ lessonId, userId });
+        if (existingReport) {
+            throwError("You already have a report for this lesson. Please check the report session.", StatusCode.BAD_REQUEST);
+        }
 
-  let userProgress = await this._userCourseProgresRepo.findOne({ userId, courseId: course.id });
-  const convertedLessonId=toObjectId(lessonId as string)
-  if (!userProgress) {
-    userProgress = await this._userCourseProgresRepo.create({
-      userId:toObjectId(userId as string),
-      courseId: course.id,
-      completedLessons: [convertedLessonId],
-      totalLessons,
-      overallProgressPercent: Math.round((1 / totalLessons) * 100),
-    });
-  } else {
-    if (!userProgress.completedLessons.includes(convertedLessonId)) {
-      userProgress.completedLessons.push(convertedLessonId);
-      userProgress.overallProgressPercent = Math.round(
-        (userProgress.completedLessons.length / totalLessons) * 100
-      );
-      await userProgress.save();
-    }
-  }
-       return report
+        const lesson = await this._lessonRepository.findById(lessonId as string);
+        if (!lesson) throwError("Invalid lesson", StatusCode.NOT_FOUND);
+        const course = await this._courseRepository.findById(lesson.courseId as string);
+        if (!course) throwError("Invalid course", StatusCode.NOT_FOUND);
+
+        const prompt = buildPrompt(data);
+        const geminiReport = await getGemaniResponse(prompt);
+        if (!geminiReport) throwError("Failed to generate report from AI service. Please try again.", StatusCode.INTERNAL_SERVER_ERROR);
+
+        const report = await this._lessonReportRepo.create({
+            userId: userId,
+            lessonId: lessonId,
+            courseId: course.id,
+            mentorId: course.mentorId,
+            report: geminiReport
+        });
+
+        const totalLessons = course.sessions.length;
+
+        let userCourseProgress = await this._userCourseProgresRepo.findOne({ userId, courseId: course.id });
+        const convertedLessonId = toObjectId(lessonId as string);
+
+        if (!userCourseProgress) {
+            userCourseProgress = await this._userCourseProgresRepo.create({
+                userId: toObjectId(userId as string),
+                courseId: course.id,
+                completedLessons: [convertedLessonId],
+                totalLessons,
+                overallProgressPercent: Math.round((1 / totalLessons) * 100),
+            });
+        } else {
+            if (!userCourseProgress.completedLessons.some(id => id.equals(convertedLessonId))) {
+                const updatedCompletedLessons = [...userCourseProgress.completedLessons, convertedLessonId];
+                const newOverallProgressPercent = Math.round(
+                    (updatedCompletedLessons.length / totalLessons) * 100
+                );
+
+                await this._userCourseProgresRepo.update(userCourseProgress.id, {
+                    completedLessons: updatedCompletedLessons,
+                    overallProgressPercent: newOverallProgressPercent,
+                });
+            }
+        }
+        return report;
     }
     async saveComments(
   userId: string,
@@ -185,6 +216,192 @@ console.log('Value of lessonId.toString():', lessonId.toString());
   });
 
   return savedComment;
-}
+    }
+  
+  
+  
+  
+    private calculateOverallLessonProgress(
+    lessonProgress: IUserLessonProgress
+  ): number {
+    let completedWeight = 0;
+
+    if (lessonProgress.videoTotalDuration > 0) {
+      const videoCompletionRatio = Math.min(1, lessonProgress.videoWatchedDuration / lessonProgress.videoTotalDuration);
+      completedWeight += videoCompletionRatio * SECTION_WEIGHTS.video;
+    }
+
+    if (lessonProgress.theoryCompleted) {
+      completedWeight += SECTION_WEIGHTS.theory;
+    }
+    if (lessonProgress.practicalCompleted) {
+      completedWeight += SECTION_WEIGHTS.practical;
+    }
+    if (lessonProgress.mcqCompleted) {
+      completedWeight += SECTION_WEIGHTS.mcq;
+    }
+
+    return Math.min(100, Math.max(0, completedWeight * 100));
+  }
+
+  private async updateUserCourseOverallProgress(
+    userId: string,
+    courseId: string
+  ): Promise<void> {
+    const allLessonProgresses = await this._userLessonProgressRepo.findAll({
+      userId,
+      courseId,
+    });
+
+    const totalLessonsInCourse = await this._lessonRepo.count({ courseId: new mongoose.Types.ObjectId(courseId) });
+
+    if (totalLessonsInCourse === 0) {
+      let courseProgress = await this._userCourseProgresRepo.findOne({ userId, courseId });
+      if (courseProgress) {
+        await this._userCourseProgresRepo.update(courseProgress.id, {
+          overallProgressPercent: 0,
+          completedLessons: [],
+          totalLessons: 0,
+        });
+      } else {
+        await this._userCourseProgresRepo.create({
+          userId: new mongoose.Types.ObjectId(userId),
+          courseId: new mongoose.Types.ObjectId(courseId),
+          overallProgressPercent: 0,
+          completedLessons: [],
+          totalLessons: 0,
+        });
+      }
+      return;
+    }
+
+    let totalWeightedLessonProgressSum = 0;
+    const completedLessonIds: mongoose.Types.ObjectId[] = [];
+
+    allLessonProgresses.forEach((lp) => {
+      totalWeightedLessonProgressSum += lp.overallProgressPercent;
+      if (lp.overallProgressPercent >= 100) {
+        completedLessonIds.push(new mongoose.Types.ObjectId(lp.lessonId));
+      }
+    });
+
+    const overallCourseProgress = totalWeightedLessonProgressSum / totalLessonsInCourse;
+
+    let courseProgress = await this._userCourseProgresRepo.findOne({ userId, courseId });
+
+    if (courseProgress) {
+      await this._userCourseProgresRepo.update(courseProgress.id, {
+        overallProgressPercent: Math.min(100, Math.max(0, overallCourseProgress)),
+        completedLessons: completedLessonIds,
+        totalLessons: totalLessonsInCourse,
+      });
+    } else {
+      await this._userCourseProgresRepo.create({
+        userId: new mongoose.Types.ObjectId(userId),
+        courseId: new mongoose.Types.ObjectId(courseId),
+        overallProgressPercent: Math.min(100, Math.max(0, overallCourseProgress)),
+        completedLessons: completedLessonIds,
+        totalLessons: totalLessonsInCourse,
+      });
+    }
+  }
+
+  async updateLessonProgress(
+    userId: string,
+    lessonId: string,
+    update: {
+      videoWatchedDuration?: number;
+      videoTotalDuration?: number;
+      theoryCompleted?: boolean;
+      practicalCompleted?: boolean;
+      mcqCompleted?: boolean;
+      videoCompleted?: boolean
+    }
+  ): Promise<IUserLessonProgress> {
+    const lesson = await this._lessonRepo.findById(lessonId);
+    if (!lesson) throwError("Lesson not found", StatusCode.NOT_FOUND);
+   
+    const courseId = lesson.courseId.toString();
+
+    let userLessonProgress = await this._userLessonProgressRepo.findOne({ userId, lessonId });
+
+    let currentVideoWatchedDuration = userLessonProgress?.videoWatchedDuration ?? 0;
+    let currentVideoTotalDuration = userLessonProgress?.videoTotalDuration ?? 0;
+    let currentTheoryCompleted = userLessonProgress?.theoryCompleted ?? false;
+    let currentPracticalCompleted = userLessonProgress?.practicalCompleted ?? false;
+    let currentMcqCompleted = userLessonProgress?.mcqCompleted ?? false;
+
+    if (update.videoWatchedDuration !== undefined) {
+      currentVideoWatchedDuration = Math.max(currentVideoWatchedDuration, update.videoWatchedDuration);
+    }
+    if (update.videoTotalDuration !== undefined) {
+      if (update.videoTotalDuration > 0) {
+        currentVideoTotalDuration = update.videoTotalDuration;
+      } else if (currentVideoTotalDuration === 0) {
+        console.warn(`Video total duration is 0 for lesson ${lessonId}. Cannot calculate video progress accurately.`);
+      }
+    }
+    if (update.theoryCompleted !== undefined) {
+      currentTheoryCompleted = update.theoryCompleted;
+    }
+    if (update.practicalCompleted !== undefined) {
+      currentPracticalCompleted = update.practicalCompleted;
+    }
+    if (update.mcqCompleted !== undefined) {
+      currentMcqCompleted = update.mcqCompleted;
+    }
+
+    currentVideoWatchedDuration = Math.min(currentVideoWatchedDuration, currentVideoTotalDuration);
+
+    const videoProgressPercent =
+      currentVideoTotalDuration > 0
+        ? Math.min(100, (currentVideoWatchedDuration / currentVideoTotalDuration) * 100)
+        : 0;
+
+    let progressDoc: IUserLessonProgress;
+
+    if (userLessonProgress) {
+      const updatedData = {
+        videoWatchedDuration: currentVideoWatchedDuration,
+        videoTotalDuration: currentVideoTotalDuration,
+        videoProgressPercent: videoProgressPercent,
+        theoryCompleted: currentTheoryCompleted,
+        practicalCompleted: currentPracticalCompleted,
+        mcqCompleted: currentMcqCompleted,
+        videoCompleted:update.videoCompleted
+      };
+      const result = await this._userLessonProgressRepo.update(userLessonProgress.id, updatedData);
+      if (!result) throwError("Failed to update lesson progress", StatusCode.INTERNAL_SERVER_ERROR);
+      progressDoc = result;
+    } else {
+      const newProgressData = {
+        userId: new mongoose.Types.ObjectId(userId),
+        courseId: new mongoose.Types.ObjectId(courseId),
+        lessonId: new mongoose.Types.ObjectId(lessonId),
+        videoWatchedDuration: currentVideoWatchedDuration,
+        videoTotalDuration: currentVideoTotalDuration,
+        videoProgressPercent: videoProgressPercent,
+        theoryCompleted: currentTheoryCompleted,
+        practicalCompleted: currentPracticalCompleted,
+        mcqCompleted: currentMcqCompleted,
+        overallProgressPercent: 0,
+        videoCompleted:false
+      };
+      const result = await this._userLessonProgressRepo.create(newProgressData);
+      if (!result) throwError("Failed to create lesson progress", StatusCode.INTERNAL_SERVER_ERROR);
+      progressDoc = result;
+    }
+    const newOverallProgressPercent = this.calculateOverallLessonProgress(progressDoc);
+    const finalProgressDoc = await this._userLessonProgressRepo.update(progressDoc.id, {
+        overallProgressPercent: newOverallProgressPercent
+    });
+    if (!finalProgressDoc) throwError("Failed to finalize lesson progress update", StatusCode.INTERNAL_SERVER_ERROR);
+
+
+    await this.updateUserCourseOverallProgress(userId, courseId);
+
+    return finalProgressDoc;
+  }
+  
 
 }

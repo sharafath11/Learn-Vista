@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Clock, Code, FileText, Play } from "lucide-react"
+import { Clock, Code, FileText, Info, Play } from "lucide-react"
 import { showErrorToast } from "@/src/utils/Toast"
 import { ILessons } from "@/src/types/lessons"
 import { useUserContext } from "@/src/context/userAuthContext"
@@ -21,17 +21,13 @@ export default function LessonList({ courseId }: { courseId: string }) {
   setLoading(true)
   setError(null)
   try {
-    const data = await fetchLessons(currentCourseId)
+    const data = await fetchLessons(currentCourseId);
     setLessons(data.lessons || [])
     const progressMap = new Map<string, IUserLessonProgress>();
     (data.progress || []).forEach(p => {
       progressMap.set(p.lessonId.toString(), p)
     })
-    setLessonProgressMap(progressMap)
-  } catch (err) {
-    console.error("Failed to fetch lessons or progress:", err)
-    showErrorToast("Failed to load lessons. Please try again.")
-    setError("Failed to load lessons.")
+    setLessonProgressMap(progressMap)   
   } finally {
     setLoading(false)
   }
@@ -53,21 +49,19 @@ useEffect(() => {
     )
   }
 
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-48 text-red-500">
-        <p>{error}</p>
-      </div>
-    )
-  }
+ 
 
-  if (lessons.length === 0) {
-    return (
-      <div className="flex justify-center items-center h-48 text-gray-500">
-        <p>No lessons found for this course.</p>
-      </div>
-    )
-  }
+ if (lessons.length === 0) {
+  return (
+    <div className="flex flex-col justify-center items-center h-60 text-gray-500 space-y-2 text-center px-4">
+      <Info className="w-8 h-8 text-blue-500" />
+      <p className="text-lg font-semibold">No lessons available yet</p>
+      <p className="text-sm text-gray-400">
+        Lessons for this course are not uploaded yet. Please check back later — new content is added regularly.
+      </p>
+    </div>
+  )
+}
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">

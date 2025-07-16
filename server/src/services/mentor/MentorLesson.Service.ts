@@ -12,6 +12,7 @@ import { ICourseRepository } from "../../core/interfaces/repositories/course/ICo
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
 import { getGemaniResponse } from "../../config/gemaniAi";
 import { buildMcqOptionsPrompt } from "../../utils/Rportprompt";
+import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
 
 
 @injectable()
@@ -20,7 +21,8 @@ export class MentorLessonService implements IMentorLessonService {
         @inject(TYPES.LessonsRepository) private _lessonRepo: ILessonsRepository,
         @inject(TYPES.QuestionsRepository) private _questionRepository: IQuestionsRepository,
         @inject(TYPES.CourseRepository) private _courseRepo: ICourseRepository,
-        @inject(TYPES.CommentsRepository) private _commentRepo:ICommentstRepository
+        @inject(TYPES.CommentsRepository) private _commentRepo: ICommentstRepository,
+        @inject(TYPES.UserCourseProgressRepository) private _userCourseProgress:IUserCourseProgressRepository
     ) {}
 
     async getLessons(courseId: string | ObjectId,mentorId:string|ObjectId): Promise<ILesson[]> {
@@ -77,7 +79,12 @@ export class MentorLessonService implements IMentorLessonService {
         if (!createdLesson) {
             throwError("Failed to create lesson", StatusCode.INTERNAL_SERVER_ERROR);
         }
-        await this._courseRepo.update(data.courseId as string ,{$addToSet:{sessions:createdLesson.id}})
+        await this._courseRepo.update(data.courseId as string, { $addToSet: { sessions: createdLesson.id } })
+        await this._userCourseProgress.findAll({ courseId: data.courseId });
+        await this._userCourseProgress.updateMany(
+  { courseId: data.courseId },
+  { $inc: { totalLessons: 1 } } 
+);
         return createdLesson;
     }
 

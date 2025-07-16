@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { ICategory, ICourse, IPopulatedCourse } from "../../../../types/classTypes";
 import { IUserCourseProgress } from "../../../../types/userCourseProgress";
 import { IUserLessonProgress } from "../../../../types/userLessonProgress";
@@ -7,21 +8,13 @@ export interface IUserCourseService {
         limit?: number,
         search?: string,
         filters?: Record<string, any>,
-        sort?: Record<string, 1 | -1>) => Promise<{ data: IPopulatedCourse[]; total: number; totalPages?: number }>
+        sort?: Record<string, 1 | -1>,
+        userId?:string|ObjectId
+    ) => Promise<{ data: IPopulatedCourse[]; total: number; totalPages?: number }>
     updateUserCourse: (courseId: string, userId: string) => Promise<void>,
     getCategries(): Promise<ICategory[]>
     getProgress(userId: string): Promise<IUserCourseProgress[]>
-    updateLessonProgress(
-        userId: string,
-        lessonId: string,
-        update: {
-            videoWatchedDuration?: number; 
-            videoTotalDuration?: number;  
-            theoryCompleted?: boolean;
-            practicalCompleted?: boolean;
-            mcqCompleted?: boolean;
-        }
-    ): Promise<IUserLessonProgress | null>;
+    
 
 
 }

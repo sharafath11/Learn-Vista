@@ -11,7 +11,7 @@ import { CustomAlertDialog } from "@/src/components/custom-alert-dialog"
 import ReportModal from "./ReportModal"
 import LessonHeader from "./LessonHeader"
 import LessonProgressBar from "./LessonProgressBar"
-import LessonContent from "./LessonContent" // This import remains the same
+import LessonContent from "./LessonContent"
 import LessonDiscussion from "./LessonDiscussion"
 
 export default function LessonPage() {
@@ -28,7 +28,6 @@ export default function LessonPage() {
   const [videoTotalDuration, setVideoTotalDuration] = useState<number>(0)
   const [initialVideoStartTime, setInitialVideoStartTime] = useState<number>(0)
 
-  // Use separate state for completion to manage user interaction more fluidly
   const [videoCompleted, setVideoCompleted] = useState(false)
   const [theoryCompleted, setTheoryCompleted] = useState(false)
   const [practicalCompleted, setPracticalCompleted] = useState(false)
@@ -47,7 +46,6 @@ export default function LessonPage() {
   const videoProgressDebounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const minProgressSaveInterval = 10000;
 
-  // Derive hasUnsavedChanges more accurately
   const hasUnsavedChanges =
     (videoWatchedDuration > 0 && !videoCompleted) ||
     !videoCompleted ||
@@ -62,65 +60,46 @@ export default function LessonPage() {
 
   const fetchDetails = useCallback(async () => {
     if (!lessonId) return;
-    try {
-      const res = await UserAPIMethods.getLessonDetils(lessonId);
-      if (res.ok && res.data) {
-        setLesson(res.data.lesson);
-        setVideoUrl(res.data.videoUrl);
-        setQuestions(res.data.questions || []);
+    const res = await UserAPIMethods.getLessonDetils(lessonId);
+    if (res.ok && res.data) {
+      setLesson(res.data.lesson);
+      setVideoUrl(res.data.videoUrl);
+      setQuestions(res.data.questions || []);
 
-        if (res.data.comments) {
-          setComments(res.data.comments);
-        }
+      if (res.data.comments) {
+        setComments(res.data.comments);
+      }
 
-        console.log("--- Initial Data Fetch ---");
-        console.log("Fetched lessonProgress:", res.data.lessonProgress);
-        console.log("Fetched report:", res.data.report);
+      if (res.data.lessonProgress) {
+          const fetchedProgress = res.data.lessonProgress
+          setLessonProgress(fetchedProgress);
 
-        if (res.data.lessonProgress) {
-            const fetchedProgress = res.data.lessonProgress
-            setLessonProgress(fetchedProgress);
+          setVideoCompleted(fetchedProgress.videoCompleted || false);
+          setTheoryCompleted(fetchedProgress.theoryCompleted || false);
+          setPracticalCompleted(fetchedProgress.practicalCompleted || false);
+          setMcqCompleted(fetchedProgress.mcqCompleted || false);
+          setInitialVideoStartTime(fetchedProgress.videoWatchedDuration || 0);
 
-            // Set individual completion states based on fetched progress
-            setVideoCompleted(fetchedProgress.videoCompleted || false);
-            setTheoryCompleted(fetchedProgress.theoryCompleted || false);
-            setPracticalCompleted(fetchedProgress.practicalCompleted || false);
-            setMcqCompleted(fetchedProgress.mcqCompleted || false);
-            setInitialVideoStartTime(fetchedProgress.videoWatchedDuration || 0);
+          if (res.data.report) {
+            setReport(res.data.report as EvaluatedAnswer);
 
-            // Set report if available from API
-            if (res.data.report) {
-                 setReport(res.data.report as EvaluatedAnswer);
-            } else {
-                 setReport(null);
-            }
-
-            console.log("Initial state after fetching progress:");
-            console.log("videoCompleted:", fetchedProgress.videoCompleted);
-            console.log("theoryCompleted:", fetchedProgress.theoryCompleted);
-            console.log("practicalCompleted:", fetchedProgress.practicalCompleted);
-            console.log("mcqCompleted:", fetchedProgress.mcqCompleted);
-            console.log("Report available:", !!res.data.report);
-
-        } else {
-            // Reset all states if no lesson progress is found
-            setLessonProgress(null);
-            setVideoWatchedDuration(0);
-            setInitialVideoStartTime(0);
-            setVideoCompleted(false);
-            setTheoryCompleted(false);
-            setPracticalCompleted(false);
-            setMcqCompleted(false);
-            setReport(null);
-            console.log("No lesson progress found. All completion states reset to false.");
-        }
+          } else {
+               setReport(null);
+          }
 
       } else {
-        showErrorToast(res.msg || "Failed to fetch lesson details.");
+          setLessonProgress(null);
+          setVideoWatchedDuration(0);
+          setInitialVideoStartTime(0);
+          setVideoCompleted(false);
+          setTheoryCompleted(false);
+          setPracticalCompleted(false);
+          setMcqCompleted(false);
+          setReport(null);
       }
-    } catch (error) {
-      console.error("Failed to fetch lesson details:", error);
-      showErrorToast("Failed to load lesson details.");
+
+    } else {
+      showErrorToast(res.msg || "Failed to fetch lesson details.");
     }
   }, [lessonId]);
 
@@ -128,36 +107,27 @@ export default function LessonPage() {
     fetchDetails();
   }, [fetchDetails]);
 
-  const updateLessonProgressInDB = useCallback(async (updateData: Partial<IUserLessonProgress>) => {
+  // MODIFIED: updateLessonProgressInDB now returns a boolean to indicate success
+  const updateLessonProgressInDB = useCallback(async (updateData: Partial<IUserLessonProgress>): Promise<boolean> => {
     if (!lessonId) {
-      console.warn("Skipped updating lesson progress: lessonId is missing.");
-      return;
+      return false; // Return false if lessonId is missing
     }
-    try {
-      const res = await UserAPIMethods.updateLessonProgress(lessonId, updateData);
-      if (res.ok && res.data) {
-        setLessonProgress(res.data);
-        console.log("Lesson progress updated in DB:", updateData);
-        console.log("New lessonProgress state:", res.data);
-      } else {
-        showErrorToast(res.msg || "Failed to save progress.");
-        console.error("Failed to update lesson progress in DB:", res.msg);
-      }
-    } catch (error) {
-      console.error("Failed to save progress:", error);
-      showErrorToast("An error occurred while saving progress.");
+    const res = await UserAPIMethods.updateLessonProgress(lessonId, updateData);
+    if (res.ok && res.data) {
+      setLessonProgress(res.data);
+      return true; // Indicate success
+    } else {
+      showErrorToast(res.msg || "Failed to save progress.");
+      return false; // Indicate failure
     }
   }, [lessonId]);
 
   const saveVideoProgress = useCallback(async (currentTime: number, totalDuration: number) => {
     if (lessonId && currentTime > 0 && totalDuration > 0 && !isNaN(totalDuration) && !isNaN(currentTime)) {
-      updateLessonProgressInDB({
+      await updateLessonProgressInDB({
         videoWatchedDuration: currentTime,
         videoTotalDuration: totalDuration,
       });
-      console.log(`Video progress saved: ${currentTime}/${totalDuration}`);
-    } else {
-      console.warn("Skipped saving video progress due to invalid values or lessonId:", { lessonId, currentTime, totalDuration });
     }
   }, [lessonId, updateLessonProgressInDB]);
 
@@ -174,70 +144,75 @@ export default function LessonPage() {
     }, minProgressSaveInterval);
   }, [saveVideoProgress]);
 
-  const handleVideoComplete = useCallback(() => {
+  const handleVideoComplete = useCallback(async () => {
     setVideoCompleted(true);
-    console.log("Video marked as completed locally.");
 
     const finalVideoTotalDuration = videoTotalDuration > 0 ? videoTotalDuration : (lesson?.duration && !isNaN(parseFloat(lesson.duration.toString())) ? parseFloat(lesson.duration.toString()) : 0);
 
-    // Save final state
-    updateLessonProgressInDB({
+    // MODIFIED: Check the boolean result of updateLessonProgressInDB
+    const success = await updateLessonProgressInDB({
         videoWatchedDuration: finalVideoTotalDuration,
         videoTotalDuration: finalVideoTotalDuration,
         videoCompleted: true
-    }).then(() => showSuccessToast("Video completed!"))
-      .catch(err => showErrorToast("Failed to mark video completed."));
-  }, [lessonId, videoTotalDuration, lesson?.duration, updateLessonProgressInDB]);
+    });
+    if(success) { // Now 'success' is a boolean
+        showSuccessToast("Video completed!");
+    } else {
+        showErrorToast("Failed to mark video completed.");
+    }
+  }, [lesson?.duration, updateLessonProgressInDB, videoTotalDuration]); // Removed lessonId from dependencies as it's not directly used here
 
   const handleTheoryComplete = useCallback(async (answers: { question: string; answer: string }[]) => {
     setTheoryAnswers(answers.map((a) => ({ ...a, type: "theory" as const })));
     setTheoryCompleted(true);
-    console.log("Theory section marked as completed locally.");
-    updateLessonProgressInDB({ theoryCompleted: true })
-      .then(() => showSuccessToast("Theory section completed!"))
-      .catch(() => showErrorToast("Failed to update theory progress."));
+    // MODIFIED: Check the boolean result
+    const success = await updateLessonProgressInDB({ theoryCompleted: true });
+    if(success) {
+        showSuccessToast("Theory section completed!");
+    } else {
+        showErrorToast("Failed to update theory progress.");
+    }
   }, [updateLessonProgressInDB]);
 
   const handlePracticalComplete = useCallback(async (answers: { question: string; answer: string }[]) => {
     setPracticalAnswers(answers.map((a) => ({ ...a, type: "practical" as const })));
     setPracticalCompleted(true);
-    console.log("Practical section marked as completed locally.");
-    updateLessonProgressInDB({ practicalCompleted: true })
-      .then(() => showSuccessToast("Coding Challenge completed!"))
-      .catch(() => showErrorToast("Failed to update practical progress."));
+    // MODIFIED: Check the boolean result
+    const success = await updateLessonProgressInDB({ practicalCompleted: true });
+    if(success) {
+        showSuccessToast("Coding Challenge completed!");
+    } else {
+        showErrorToast("Failed to update practical progress.");
+    }
   }, [updateLessonProgressInDB]);
 
   const handleMCQComplete = useCallback(async (answers: { question: string; answer: string }[]) => {
     setMcqAnswers(answers.map((a) => ({ ...a, type: "mcq" as const })));
     setMcqCompleted(true);
-    console.log("MCQ section marked as completed locally.");
-    updateLessonProgressInDB({ mcqCompleted: true })
-      .then(() => showSuccessToast("MCQ section completed!"))
-      .catch(() => showErrorToast("Failed to update MCQ progress."));
+    // MODIFIED: Check the boolean result
+    const success = await updateLessonProgressInDB({ mcqCompleted: true });
+    if(success) {
+        showSuccessToast("MCQ section completed!");
+    } else {
+        showErrorToast("Failed to update MCQ progress.");
+    }
   }, [updateLessonProgressInDB]);
 
   const handleAddComment = useCallback(async (commentText: string) => {
     if (commentText.trim() && lessonId) {
-      try {
-        const res = await UserAPIMethods.saveComment(lessonId, commentText);
-        if (res.ok && res.data) {
-          const newComment: IComment = {
-            id: res.data.id,
-            lessonId: lessonId,
-            userName: res.data.userName,
-            comment: commentText,
-            createdAt: new Date(res.data.createdAt),
-          };
-          setComments((prevComments) => [...prevComments, newComment]);
-          showSuccessToast(res.msg || "Comment posted successfully!");
-          console.log("Comment added:", newComment);
-        } else {
-          showErrorToast(res.msg || "Failed to post comment.");
-          console.error("Failed to add comment:", res.msg);
-        }
-      } catch (error) {
-        console.error("Failed to add comment:", error);
-        showErrorToast("An error occurred while posting comment.");
+      const res = await UserAPIMethods.saveComment(lessonId, commentText);
+      if (res.ok && res.data) {
+        const newComment: IComment = {
+          id: res.data.id,
+          lessonId: lessonId,
+          userName: res.data.userName,
+          comment: commentText,
+          createdAt: new Date(res.data.createdAt),
+        };
+        setComments((prevComments) => [...prevComments, newComment]);
+        showSuccessToast(res.msg || "Comment posted successfully!");
+      } else {
+        showErrorToast(res.msg || "Failed to post comment.");
       }
     }
   }, [lessonId]);
@@ -245,47 +220,24 @@ export default function LessonPage() {
   const submitLessonReport = useCallback(async () => {
     const combinedAnswers: AnswerWithType[] = [...theoryAnswers, ...practicalAnswers, ...mcqAnswers];
     if (combinedAnswers.length === 0) {
-        console.warn("No answers to submit for report.");
         return;
     }
-    console.log("Attempting to submit lesson report with answers:", combinedAnswers);
-    try {
-      const res = await UserAPIMethods.getReport(lessonId, combinedAnswers);
-      if (res.ok && res.data?.report) {
-        setReport(res.data.report as EvaluatedAnswer);
-        showSuccessToast(res.msg || "Lesson report submitted successfully!");
-        console.log("Lesson report received and set:", res.data.report);
-        fetchDetails(); // Re-fetch to update overall progress and potentially report status
-      } else {
-        showErrorToast(res.msg || "Failed to submit lesson report or report data is missing.");
-        console.error("Failed to submit lesson report:", res.msg);
-      }
-    } catch (error) {
-      console.error("Failed to submit lesson report:", error);
-      showErrorToast("An error occurred while submitting the report.");
+    const res = await UserAPIMethods.getReport(lessonId, combinedAnswers);
+    if (res.ok ) {
+      setReport(res.data.report as EvaluatedAnswer);
+      showSuccessToast(res.msg || "Lesson report submitted successfully!");
+      fetchDetails();
+    } else {
+      showErrorToast(res.msg || "Failed to submit lesson report or report data is missing.");
     }
   }, [lessonId, theoryAnswers, practicalAnswers, mcqAnswers, fetchDetails]);
 
 
-  // This useEffect triggers report submission when all sections are completed
   useEffect(() => {
-    console.log("--- Completion Check Triggered ---");
-    console.log("videoCompleted:", videoCompleted, "theoryCompleted:", theoryCompleted, "practicalCompleted:", practicalCompleted, "mcqCompleted:", mcqCompleted);
-    console.log("Current report state:", report);
-    console.log("Lesson has questions:", questions.some(q => ["theory", "practical", "mcq"].includes(q.type)));
-
     if (lesson && videoCompleted && theoryCompleted && practicalCompleted && mcqCompleted && !report) {
-      // Only submit report if the lesson actually has questions/challenges
       const hasQuestions = questions.some(q => ["theory", "practical", "mcq"].includes(q.type));
       if (hasQuestions) {
-        console.log("All sections completed and no report yet. Submitting report...");
         submitLessonReport();
-      } else if (!hasQuestions && !report) {
-        console.log("No questions in lesson and no report. Marking overall completion (implicitly).");
-        // If a lesson is only video-based, its "completion" might just be videoCompleted: true.
-        // You might need a separate mechanism to mark overall lesson completion if there are no questions.
-        // For lessons with no questions, ensure lessonProgress.overallProgressPercent becomes 100 somehow.
-        // For now, this case will simply not trigger report submission, which is correct.
       }
     }
   }, [videoCompleted, theoryCompleted, practicalCompleted, mcqCompleted, report, lesson, submitLessonReport, questions]);
@@ -307,7 +259,6 @@ export default function LessonPage() {
         completedWeight += videoCompletionRatio * SECTION_WEIGHTS.video;
     }
 
-    // Other sections
     if (theoryCompleted) {
         completedWeight += SECTION_WEIGHTS.theory;
     }
@@ -318,7 +269,6 @@ export default function LessonPage() {
         completedWeight += SECTION_WEIGHTS.mcq;
     }
 
-    // Ensure it doesn't exceed 100%
     return Math.min(100, Math.max(0, completedWeight * 100));
   }, [videoWatchedDuration, videoTotalDuration, videoCompleted, theoryCompleted, practicalCompleted, mcqCompleted]);
 
@@ -375,12 +325,6 @@ export default function LessonPage() {
 
   const allSectionsCompleted = videoCompleted && theoryCompleted && practicalCompleted && mcqCompleted;
 
-  console.log("--- Render Cycle Update ---");
-  console.log("Current lessonProgress:", lessonProgress);
-  console.log("Current report:", report);
-  console.log("Current Completion States - Video:", videoCompleted, "Theory:", theoryCompleted, "Practical:", practicalCompleted, "MCQ:", mcqCompleted);
-  console.log("All Sections Completed:", allSectionsCompleted);
-
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-6">
@@ -388,25 +332,23 @@ export default function LessonPage() {
         <LessonHeader
           lesson={lesson}
           report={report}
-          allSectionsCompleted={allSectionsCompleted} // This accurately reflects overall completion
+          allSectionsCompleted={allSectionsCompleted}
           onBack={handleBackToLessons}
           onViewReport={() => setIsReportModalOpen(true)}
         />
-
-        <LessonProgressBar progress={calculateOverallProgress()} />
 
         <LessonContent
           videoUrl={videoUrl}
           lessonTitle={lesson.title}
           lessonThumbnail={lesson.thumbnail || ""}
-          initialVideoStartTime={initialVideoStartTime} // Use the state variable
+          initialVideoStartTime={initialVideoStartTime}
           lessonDuration={Number(lesson.duration) || 0}
           questions={questions}
-          videoCompleted={videoCompleted}     // Use the state variable directly
-          theoryCompleted={theoryCompleted}   // Use the state variable directly
-          practicalCompleted={practicalCompleted} // Use the state variable directly
-          mcqCompleted={mcqCompleted}         // Use the state variable directly
-          report={report} // Pass the report state to LessonContent
+          videoCompleted={videoCompleted}
+          theoryCompleted={theoryCompleted}
+          practicalCompleted={practicalCompleted}
+          mcqCompleted={mcqCompleted}
+          report={report||null}
           onVideoComplete={handleVideoComplete}
           onVideoProgress={handleVideoProgress}
           onTheoryComplete={handleTheoryComplete}
@@ -431,7 +373,7 @@ export default function LessonPage() {
         isOpen={showLeaveConfirm}
         onClose={() => setShowLeaveConfirm(false)}
         title="Unsaved Progress"
-        description="You have not completed all sections or your recent video progress might not be fully saved. Do you want to save your progress before leaving?"
+        description="Your answer will not be saved. Please complete all answers. You have not completed all sections or your recent video progress might not be fully saved. Do you want to save your progress before leaving?"
         confirmText="Save & Leave"
         cancelText="Cancel"
         onConfirm={async () => {

@@ -5,5 +5,6 @@ export const getCourseProgress = (
   progresses: IUserCourseProgress[]
 ): number => {
   const progress = progresses.find((p) => p.courseId === courseId);
-  return progress?.overallProgressPercent ?? 0;
+  const overallProgress = progress?.overallProgressPercent ?? 0;
+  return Math.round(overallProgress);
 };
