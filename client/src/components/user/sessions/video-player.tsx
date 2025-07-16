@@ -12,7 +12,7 @@ interface VideoPlayerProps {
   isCompleted: boolean
   thumbnail: string
   startTime: number
-  totalLengthFromAPI?: number 
+  totalLengthFromAPI?: number
 }
 
 export default function VideoPlayer({
@@ -22,9 +22,11 @@ export default function VideoPlayer({
   onProgress,
   isCompleted,
   thumbnail,
-  startTime ,
+  startTime =0,
   totalLengthFromAPI,
 }: VideoPlayerProps) {
+  console.log("video resume time",startTime)
+
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -36,6 +38,7 @@ export default function VideoPlayer({
   const [hasWatched, setHasWatched] = useState(isCompleted)
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [hasStartedPlaying, setHasStartedPlaying] = useState(false)
+  const [hasAttemptedSeek, setHasAttemptedSeek] = useState(false); 
 
   const lastReportedTimeRef = useRef(0);
   const reportingInterval = 5;
@@ -43,15 +46,6 @@ export default function VideoPlayer({
   useEffect(() => {
     setHasWatched(isCompleted)
   }, [isCompleted])
-//  alert(startTime)
-  useEffect(() => {
-    if (videoRef.current && startTime > 0 && videoRef.current.readyState >= 2) {
-        videoRef.current.currentTime = startTime;
-        setCurrentTime(startTime);
-        lastReportedTimeRef.current = startTime;
-    }
-  }, [startTime]);
-
   useEffect(() => {
     if (duration > 0) {
       setProgress((currentTime / duration) * 100)
@@ -106,12 +100,16 @@ export default function VideoPlayer({
                             ? totalLengthFromAPI
                             : videoActualDuration;
 
-      if (startTime > 0 && startTime < totalToReport) {
-          onProgress(startTime, totalToReport);
+      if (startTime > 0 && startTime < videoActualDuration && !hasAttemptedSeek) {
+          videoRef.current.currentTime = startTime;
+          setCurrentTime(startTime);
           lastReportedTimeRef.current = startTime;
-      } else if (totalToReport > 0 && startTime === 0) {
+          onProgress(startTime, totalToReport); 
+          setHasAttemptedSeek(true); 
+      } else if (startTime === 0 && !hasAttemptedSeek) { 
           onProgress(0, totalToReport);
           lastReportedTimeRef.current = 0;
+          setHasAttemptedSeek(true);
       }
     }
   }

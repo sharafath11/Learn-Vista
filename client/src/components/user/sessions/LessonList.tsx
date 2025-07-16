@@ -94,19 +94,7 @@ useEffect(() => {
                   </div>
                 </div>
               </div>
-              {progressPercentage > 0 && progressPercentage < 100 && (
-                <div className="absolute bottom-0 left-0 right-0 h-2 bg-gray-300 dark:bg-gray-600">
-                  <div
-                    className="h-full bg-blue-500 transition-all duration-300"
-                    style={{ width: `${progressPercentage}%` }}
-                  ></div>
-                </div>
-              )}
-              {progressPercentage === 100 && (
-                <div className="absolute bottom-0 left-0 right-0 text-center bg-green-500 text-white text-xs py-1">
-                  COMPLETED!
-                </div>
-              )}
+              
             </div>
 
             <CardHeader>
