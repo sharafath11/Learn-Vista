@@ -26,7 +26,7 @@ export const uploadImage = multer({
   
   ...commonConfig,
   fileFilter: (req, file, cb) => {
-    console.log("gbnjkgn")
+   
     if (IMAGE_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {

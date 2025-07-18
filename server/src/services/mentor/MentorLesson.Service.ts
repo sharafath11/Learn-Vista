@@ -51,7 +51,7 @@ export class MentorLessonService implements IMentorLessonService {
         if (data.thumbnail) {
             try {
                 imageUrl = await uploadToCloudinary(data.thumbnail as Buffer, 'lesson_thumbnails'); 
-                console.log("Uploaded thumbnail to Cloudinary:", imageUrl);
+              
             } catch (error) {
                 console.error("Cloudinary upload failed:", error);
                 throwError("Failed to upload thumbnail to Cloudinary", StatusCode.INTERNAL_SERVER_ERROR);
@@ -98,15 +98,15 @@ export class MentorLessonService implements IMentorLessonService {
         if (typeof existingLesson.thumbnail === 'string') {
             newThumbnailUrlForDb = existingLesson.thumbnail;
         }
-           console.log(updateData)
+     
         if (updateData.thumbnailFileBuffer) {
             try {
                 newThumbnailUrlForDb = await uploadToCloudinary(updateData.thumbnailFileBuffer, 'lesson_thumbnails');
-                console.log("Uploaded new thumbnail to Cloudinary:", newThumbnailUrlForDb);
+               
 
                 if (typeof existingLesson.thumbnail === 'string' && existingLesson.thumbnail.includes('res.cloudinary.com')) {
                     await deleteFromCloudinary(existingLesson.thumbnail);
-                    console.log("Deleted old thumbnail from Cloudinary:", existingLesson.thumbnail);
+                   
                 }
             } catch (error) {
                 console.error("Thumbnail update failed:", error);
@@ -115,14 +115,14 @@ export class MentorLessonService implements IMentorLessonService {
         } else if (updateData.clearThumbnail === true) {
             if (typeof existingLesson.thumbnail === 'string' && existingLesson.thumbnail.includes('res.cloudinary.com')) {
                 await deleteFromCloudinary(existingLesson.thumbnail);
-                console.log("Cleared and deleted old thumbnail from Cloudinary:", existingLesson.thumbnail);
+              
             }
             newThumbnailUrlForDb = undefined;
         } else if (updateData.thumbnail !== undefined) {
             if (typeof updateData.thumbnail === 'string' && updateData.thumbnail !== newThumbnailUrlForDb &&
                 typeof existingLesson.thumbnail === 'string' && existingLesson.thumbnail.includes('res.cloudinary.com')) {
                  await deleteFromCloudinary(existingLesson.thumbnail);
-                 console.log("Deleted old thumbnail (replaced by URL) from Cloudinary:", existingLesson.thumbnail);
+              
             }
             newThumbnailUrlForDb = typeof updateData.thumbnail === 'string' ? updateData.thumbnail : undefined;
         }
@@ -175,7 +175,7 @@ export class MentorLessonService implements IMentorLessonService {
     }
     async getComments(lessonId: string | ObjectId): Promise<IComment[]> {
         const result = await this._commentRepo.findAll({ lessonId: lessonId });
-        console.log(result)
+      
         if(!result) throwError("comments denot found ")
         return result
     }
@@ -186,7 +186,7 @@ export class MentorLessonService implements IMentorLessonService {
 
   const prompt = buildMcqOptionsPrompt(question);
   const resultRaw = await getGemaniResponse(prompt);
-  console.log(resultRaw, " Gemani Response");
+  
 
   let parsed: string[];
 

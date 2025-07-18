@@ -139,7 +139,6 @@ export function AddLessonModal({
     tempVideo.preload = "metadata";
 
     const handleMetadataLoaded = () => {
-      console.log("Video metadata loaded successfully. Duration:", tempVideo.duration);
       const durationInSeconds = tempVideo.duration;
       const formattedDuration = formatDuration(durationInSeconds);
       form.setValue("duration", formattedDuration, { shouldValidate: true });

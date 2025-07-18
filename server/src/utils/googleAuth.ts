@@ -23,7 +23,7 @@
 //   payload: GoogleSignupPayload
 // ): Promise<GoogleSignupResult> => {
 //   const { username, email, image, googleId, role } = payload;
-//  console.log(payload)
+
 //   if (!email || !googleId || !username || !role) {
 //     throw new Error("Missing required fields");
 //   }

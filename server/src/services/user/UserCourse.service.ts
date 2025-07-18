@@ -33,7 +33,7 @@ export class UserCourseService implements IUserCourseService {
       sort: Record<string, 1 | -1> = { createdAt: -1 },
       userId?:string|ObjectId
   ):Promise<{ data: IPopulatedCourse[]; total: number; totalPages?: number }> {
-     console.log("filter (received param):", filters,"sort (received param):", sort)
+  
 
     const queryParams = {
           page,
@@ -43,7 +43,7 @@ export class UserCourseService implements IUserCourseService {
           sort: sort
         };
 
-     console.log("queryParams for repo:", queryParams)
+   
 
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(
          queryParams
@@ -63,7 +63,6 @@ export class UserCourseService implements IUserCourseService {
    const res= await this._baseCourseRepo.update(courseId, {
       $addToSet: { enrolledUsers: userObjectId }
     });
-  console.log("cc",courseObjectId)
   await this._baseUserRepo.update(userId, {
   $addToSet: {
     enrolledCourses: {

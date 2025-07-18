@@ -46,7 +46,6 @@ export const validateMentorProfile = (profileData: {
   image?: File | null;
 }): boolean => {
   const { username, bio, image } = profileData;
-  console.log("validation",username,"sample",username)
   if (!username.trim()) {
     showInfoToast("Username is required");
     return false;
@@ -68,13 +67,12 @@ export const validateMentorProfile = (profileData: {
   }
 
   if (bio.length <50) {
-    console.log(bio)
     showInfoToast("Bio Minimum 50 characters");
     return false;
   }
   if (image) {
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024; 
     
     if (!validTypes.includes(image.type)) {
       showInfoToast("Only JPEG, PNG, WEBP, or GIF images are allowed");

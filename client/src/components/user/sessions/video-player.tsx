@@ -25,7 +25,6 @@ export default function VideoPlayer({
   startTime =0,
   totalLengthFromAPI,
 }: VideoPlayerProps) {
-  console.log("video resume time",startTime)
 
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)

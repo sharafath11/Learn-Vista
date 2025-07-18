@@ -41,7 +41,6 @@ class AdminCourseController implements IAdminCourseController {
          const limit = Math.min(Math.max(Number(queryParams.limit) || 10, 1), 100);
          const search = queryParams.search?.toString() || '';
          const sort: Record<string, 1 | -1> = {};
-         console.log("queryParams.sort", queryParams);
      
          if (queryParams.sort) {
            for (const key in queryParams.sort) {
@@ -55,10 +54,8 @@ class AdminCourseController implements IAdminCourseController {
                sort[key] = -1;
              }
            }
-           console.log("Sort:", sort);
          } else {
            sort.createdAt = -1;
-           console.log(" Default Sort: createdAt DESC");
          }
      
       const data = await this.adminCourseServices.getCategory( page,
@@ -83,7 +80,6 @@ class AdminCourseController implements IAdminCourseController {
   }
   async editCategories(req: Request, res: Response): Promise<void> {
     try {
-      console.log("req.body",req.body)
       const { id, title, discription } = req.body;
       const validationError = validateCategory(title, discription);
 
@@ -118,12 +114,10 @@ async editCourse(req: Request, res: Response): Promise<void> {
     const courseId = data.courseId;
     const thumbnailBuffer = req.file?.buffer; 
     delete data.thumbnail;
-    console.log("req.file",req.file)
     if (!courseId) {
       sendResponse(res, StatusCode.BAD_REQUEST, "Missing courseId", false);
       return;
     }
-    console.log("buffer",thumbnailBuffer)
     const result = await this.adminCourseServices.editCourseService(
       courseId,
       data,
@@ -160,7 +154,6 @@ async editCourse(req: Request, res: Response): Promise<void> {
       const limit = Math.min(Math.max(Number(queryParams.limit) || 10, 1), 100);
       const search = queryParams.search?.toString() || '';
       const sort: Record<string, 1 | -1> = {};
-      console.log("queryParams.sort",queryParams);
   
       if (queryParams.sort) {
         for (const key in queryParams.sort) {
@@ -174,12 +167,12 @@ async editCourse(req: Request, res: Response): Promise<void> {
             sort[key] = -1;
           }
         }
-        console.log("Sort:", sort);
+       
       } else {
         sort.createdAt = 1;
-        console.log(" Default Sort: createdAt DESC");
+     
       }
-      console.log(" Default Sort: createdAt DESC",queryParams.filters);
+     
       let sendFilter: any = {};
 
 if (queryParams.filters?.isBlocked !== undefined) {
@@ -230,7 +223,7 @@ if (queryParams.filters?.isBlocked !== undefined) {
   try {
     const concernId = req.params.id;
     const { status, resolution } = req.body;
-    console.log("hyyyy",req.params,req.query)
+   
     if (!["resolved", "in-progress"].includes(status)) {
       return sendResponse(res, StatusCode.BAD_REQUEST, "Invalid status", false);
     }

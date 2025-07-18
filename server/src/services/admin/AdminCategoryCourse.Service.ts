@@ -252,7 +252,6 @@ async editCategories(categoryId: string, title: string, description: string): Pr
   if (!updated.mentorId) {
     throwError("No mentor associated with this course", StatusCode.NOT_FOUND);
   }
-  console.log("nb",updated.enrolledUsers)
   await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [
@@ -277,10 +276,9 @@ async editCategories(categoryId: string, title: string, description: string): Pr
   status: 'resolved' | 'in-progress',
   resolution: string
  ): Promise<void> {
-   console.log("1")
+
   const concern = await this._concernRepo.findById(concernId);
   if (!concern) throwError("Concern not found");
-  console.log("concernId" ,concernId)
   const updated = await this._concernRepo.update(concernId, {
     status,
     resolution,
@@ -302,7 +300,7 @@ async editCategories(categoryId: string, title: string, description: string): Pr
 async updateConcern(concernId: string, updateData: Partial<IConcern>): Promise<void> {
   const concern = await this._concernRepo.findById(concernId);
   if (!concern) throwError("Concern not found");
-  console.log("2")
+
   const updated = await this._concernRepo.update(concernId, {
     ...updateData,
     updatedAt: new Date()

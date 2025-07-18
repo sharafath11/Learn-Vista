@@ -93,10 +93,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
     if (thumbnailFile) {
       data.append('thumbnail', thumbnailFile)
     }
-    console.log('FormData contents:');
-    for (let [key, value] of data.entries()) {
-      console.log(key, value);
-    }
+ 
     const res = await AdminAPIMethods.editCourse( data);
     if (res.ok) {
       setCourses(prev => prev.map(c =>

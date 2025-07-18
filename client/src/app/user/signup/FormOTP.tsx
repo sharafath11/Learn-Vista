@@ -57,7 +57,6 @@ export const FormOTP = ({ label, onChange, onVerified, onResend,email }: FormOTP
     if (otp.join("").length !== 6) return;
     
     const sendOtp = otp.join("");
-    console.log(sendOtp);
 
     setIsVerifying(true);
 

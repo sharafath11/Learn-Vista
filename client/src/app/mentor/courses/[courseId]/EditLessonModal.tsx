@@ -152,15 +152,12 @@ export function EditLessonModal({
         const errorText = await uploadResponse.text();
         throw new Error(`Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`);
       }
-
-      // --- Video Duration Calculation Logic (copied from AddLessonModal) ---
       const tempVideo = document.createElement("video");
       tempVideo.src = signedViewUrl;
       tempVideo.preload = "metadata";
-      tempVideo.style.display = "none"; // Hide the video element
+      tempVideo.style.display = "none"; 
 
       const handleMetadataLoaded = () => {
-        console.log("Video metadata loaded successfully. Duration:", tempVideo.duration);
         const durationInSeconds = tempVideo.duration;
         const formattedDuration = formatDuration(durationInSeconds);
         form.setValue("duration", formattedDuration, { shouldValidate: true });

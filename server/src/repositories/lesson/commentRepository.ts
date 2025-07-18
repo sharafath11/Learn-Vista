@@ -27,11 +27,7 @@ export class CommentsRepository
       limit: number,
     mentorId:string|ObjectId
   ): Promise<IComment[]> {
-    console.log("🔍 findWithPagination called with:");
-    console.log("➡️ Filter:", JSON.stringify(filter, null, 2));
-    console.log("➡️ Sort:", sort);
-    console.log("➡️ Page:", page);
-    console.log("➡️ Limit:", limit);
+   
     
 
 if (mentorId) {
@@ -44,15 +40,11 @@ const results = await Comment.find(filter)
   .limit(limit)
   .lean();
 
-
-    console.log("✅ Comments fetched:", results.length);
     return results;
   }
 
   async countDocuments(filter: FilterQuery<IComment>): Promise<number> {
-    console.log("🔢 countDocuments called with filter:", JSON.stringify(filter, null, 2));
     const count = await Comment.countDocuments(filter);
-    console.log("📊 Total matching comments:", count);
     return count;
   }
 }

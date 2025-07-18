@@ -49,12 +49,9 @@ export const useUserPagination = (): UseUserPaginationReturn => {
         filters: params.filters ?? pagination.filters,
         sort: params.sort ?? pagination.sort
       };
-        console.log(queryParams.sort)
       const res = await AdminAPIMethods.fetchUsers(queryParams);
-      console.log(res)
       if (res.ok) {
         setUsers(res.data.data);
-        console.log("res",res)
         setPagination(prev => ({
           ...prev,
           ...queryParams,

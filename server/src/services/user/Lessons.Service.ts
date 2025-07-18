@@ -98,9 +98,7 @@ if (!userEnrolled) {
     }
     // ee week passail progress video nte koode validation in user after see the previus lesson 
     async getLessonDetils(lessonId: string | ObjectId,userId:string): Promise<ILessonDetails> {
-        console.log('Type of lessonId:', typeof lessonId);
-console.log('Value of lessonId:', lessonId);
-console.log('Value of lessonId.toString():', lessonId.toString()); 
+   
         const lesson = await this._lessonRepository.findById(lessonId.toString());
         const questions = await this._qustionRepository.findAll({ lessonId });
         if(!lesson)throwError("Lesson desnot find")

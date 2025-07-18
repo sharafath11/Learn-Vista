@@ -31,7 +31,7 @@ class AdminMentorController implements IAdminMentorController {
          const limit = Math.min(Math.max(Number(queryParams.limit) || 10, 1), 100);
          const search = queryParams.search?.toString() || '';
          const sort: Record<string, 1 | -1> = {};
-         console.log("queryParams.sort", queryParams.sort);
+       
      
          if (queryParams.sort) {
            for (const key in queryParams.sort) {
@@ -45,10 +45,10 @@ class AdminMentorController implements IAdminMentorController {
                sort[key] = -1;
              }
            }
-           console.log("Sort:", sort);
+        
          } else {
            sort.createdAt = -1;
-           console.log(" Default Sort: createdAt DESC");
+           
          }
      
        
@@ -60,7 +60,7 @@ class AdminMentorController implements IAdminMentorController {
            queryParams.filters,
            sort
          );
-         console.log(result.data)
+      
      
          sendResponse(res, StatusCode.OK, "Mentor fetched successfully", true, {
            data: result.data,

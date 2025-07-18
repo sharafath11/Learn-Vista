@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendEmailOtp(email: string, otp: string) {
-  console.log("opt",otp)
+
   const mailOptions = {
     from: `"Learn Vista" <${process.env.EMAIL_USER}>`,
     to: email,
@@ -25,7 +25,7 @@ export async function sendEmailOtp(email: string, otp: string) {
   await transporter.sendMail(mailOptions);
 }
 export async function sendMentorStatusChangeEmail(email: string, status: string) {
-  console.log("ssss");
+  
   const mailOptions = {
     from: `"Learn Vista" <${process.env.EMAIL_USER}>`,
     to: email,

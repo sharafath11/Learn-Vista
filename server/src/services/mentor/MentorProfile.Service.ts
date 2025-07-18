@@ -26,7 +26,7 @@ export class MentorProfileService implements IMentorProfileService {
     //     const mentor = await this.mentorRepo.findById(id);
     //     if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
     //     if (mentor.isBlock) throwError("This mentor is blocked", StatusCode.FORBIDDEN);
-    //     console.log("expertise",expertise)
+    //   
     //     const updatedUsername = username !== mentor.username ? username : mentor.username;
     //     const updatedBio = bio !== mentor.bio ? bio : mentor.bio;
     //     const imageUrl = imageBuffer ? await uploadToCloudinary(imageBuffer) : mentor.profilePicture;

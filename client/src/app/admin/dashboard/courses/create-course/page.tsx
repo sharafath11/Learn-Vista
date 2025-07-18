@@ -37,7 +37,6 @@ export default function CreateCoursePage() {
     else showErrorToast(res.msg)
   }
   const languages = ["English", "Malayalam"]
-console.log(cat)
   const handleSubmit = async (formData: any) => {
     const { isValid, message } = validateCourseForm(formData);
     if (!isValid) {
@@ -57,10 +56,7 @@ console.log(cat)
     payload.append('endDate', formData.endDate);
     payload.append('startTime', formData.startTime);
     payload.append('categoryName', formData.categoryName);
-   
-    for (let pair of payload.entries()) {
-      console.log(pair[0]+ ': ' + pair[1]);
-    }
+  
     
    
     if (formData.thumbnail) {

@@ -25,7 +25,7 @@ export class UserController implements IUserController {
             if (!user) {
                 throwError("User not found", StatusCode.NOT_FOUND);
             }
-            console.log("user id",user.id)
+         
             sendResponse(res, StatusCode.OK, "User retrieved successfully", true, user);
         } catch (error) {
             handleControllerError(res, error);
@@ -80,14 +80,14 @@ export class UserController implements IUserController {
   async getQuestionByNumber(req: Request, res: Response): Promise<void> {
     try {
         const number = parseInt(req.query.number as string);
-        console.log(number,req.query)
+     
       if (isNaN(number)) {
         res.status(400).json({ ok: false, msg: "Invalid question number" });
         return;
       }
         const prompot=pscPrompt(number)
         const answer = await getGemaniResponse(prompot);
-        console.log(answer)
+      
         sendResponse(res, StatusCode.OK, "", true, answer);
     } catch (error) {
      handleControllerError(res,error)

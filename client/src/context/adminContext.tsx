@@ -65,7 +65,6 @@ localStorage.removeItem("role")
     filters?: Record<string, any>;
   }) {
     const res = await AdminAPIMethods.getGetegories( params|| {});
-    console.log("categ",res)
     if (res.ok) setCat(res.data.data);
     else showInfoToast(res.msg);
   }
@@ -88,7 +87,6 @@ localStorage.removeItem("role")
     filters?: Record<string, any>;
   }) {
     const res = await AdminAPIMethods.fetchMentor(params || {});
-    console.log("angi inki ponki", res)
     
     if (res.ok) {
       setMentors(res.data.data);
@@ -114,14 +112,11 @@ localStorage.removeItem("role")
     }
   const availvleMentorGet = async () => {
     const res = await AdminAPIMethods.fetchMentor({});
-    console.log("acdgreghregre",res)
     if (res.ok) {
        setCMentors(res.data.data)
        const mentor = res.data.data.filter((i: IMentor) => {
-        console.log("abcd",i)
         return i.isVerified && !i.isBlock && i.status == "approved"
       });
-      console.log("adfff",mentor)
      setAvilbleMentors(mentor)
     }
   }
@@ -134,7 +129,6 @@ localStorage.removeItem("role")
     filters?: Record<string, any>;
   }) {
     const res = await AdminAPIMethods.getCourses(params || {});
-    console.log("course",res)
     if (res.ok) setCourses(res.data.data);
     else showInfoToast(res.msg);
   }

@@ -47,7 +47,6 @@ export const validateMentorApplyForm = (
           isValid = false;
         }
       } catch (e) {
-        console.log(e)
         newErrors.socialLink = "Please enter a valid URL";
         isValid = false;
       }

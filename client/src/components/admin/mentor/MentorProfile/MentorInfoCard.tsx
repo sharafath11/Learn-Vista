@@ -21,7 +21,6 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
       setIsLoading(false);
     }
   }, [mentor]); 
-   console.log(mentor)
   const handleStatusChange = async (status: string) => {
     setIsUpdating(true);
     try {
@@ -30,7 +29,6 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
         status ?? "", 
         mentor.email
       );
-      console.log(res)
       if (res.ok) {
         adminContext?.refreshMentors();
         setCurrentStatus(status);

@@ -23,7 +23,6 @@ export class MentorConcernService implements IMentorConcernService {
     const existingConcern = await this._concernRepo.findAll({ courseId: data.courseId ,mentorId:data.mentorId})
     const ex=existingConcern.some((c) => c.status !== "resolved")
     if(ex) throwError(`after complete  first concern then you can rise concern`)
-    console.log(data)
     const concern = await this._concernRepo.create(data);
     const course=await this._courseRepo.findById(concern.courseId as string)
     const ADMIN_ID=process.env.ADMIN_ID

@@ -78,7 +78,7 @@ export class AuthService implements IAuthService {
     
     if (googleId) {
       user = await this.userRepository.findOne({ googleId });
-      console.log("hgbjiok",googleId)
+   
       if (!user) throwError("Invalid credentials google Id", StatusCode.BAD_REQUEST);
     } else {
       if (!email || !password) throwError("Email and password are required", StatusCode.BAD_REQUEST);
@@ -93,7 +93,7 @@ export class AuthService implements IAuthService {
     } else {
       if (!user.password) throwError("Password not set for this account", StatusCode.BAD_REQUEST);
       const isPasswordValid = await bcrypt.compare(password, user.password);
-      console.log(password,user.password)
+      
       if (!isPasswordValid) throwError("Invalid credentials", StatusCode.BAD_REQUEST);
     }
 

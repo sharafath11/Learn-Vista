@@ -32,7 +32,7 @@ class AdminUserController implements IAdminUserController {
   
       
       const sort: Record<string, 1 | -1> = {};
-      console.log("queryParams.sort", queryParams.sort);
+    
   
       if (queryParams.sort) {
         for (const key in queryParams.sort) {
@@ -51,7 +51,7 @@ class AdminUserController implements IAdminUserController {
         sort.createdAt = -1;
       }
   
-      console.log("sort in controller", sort);
+   
   
       const result = await this.adminUserService.getAllUsers(
         page,

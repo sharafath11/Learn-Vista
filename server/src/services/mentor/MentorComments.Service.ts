@@ -43,9 +43,6 @@ export class MentorCommentsService implements IMentorCommentsService {
       this._commentRepo.findWithPagination(filter, sort, page, limit,mentorId),
       this._commentRepo.countDocuments(filter),
     ]);
-      // const sendComments = comments.filter((i) => i.mentorId?.toString() === mentorId)
-
-      // console.log("adiopli",sendComments)
     return {
       comments,
       pagination: {

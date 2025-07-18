@@ -31,7 +31,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
   useEffect(() => {
     const init = async () => {
       try {
-        console.log("MentorStream: Requesting local media...")
+     
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         localStreamRef.current = stream
         if (localVideoRef.current) {
@@ -39,16 +39,13 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           localVideoRef.current.play().catch(e => console.error("Mentor: Error playing local video:", e)); // Ensure mentor's local video plays
         }
 
-        console.log("MentorStream: Connecting to socket server...")
+      
         const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000")
         socketRef.current = socket
         socket.on('connect', () => {
-          console.log(`MentorStream: Socket connected with ID: ${socket.id}`);
           socket.emit("join-room", roomId, socket.id, "mentor") 
-          console.log("MentorStream: Mentor joined room:", roomId, "with ID:", socket.id)
         });
         socket.on("user-joined", (socketId: string, userId: string) => {
-          console.log(`MentorStream: User (socket: ${socketId}, userId: ${userId}) joined.`);
           userIdToSocketIdMap.current[userId] = socketId; 
           setParticipants(prev => {
             if (!prev.includes(userId)) {
@@ -71,12 +68,10 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           });
 
           peer.on("signal", signal => {
-            console.log(`MentorStream: Sending offer signal to user ${userId} (socket: ${socketId})`);
             socket.emit("rtc-offer", socketId, signal);
           });
 
           peer.on("connect", () => {
-            console.log(`MentorStream: Peer connection established with user (socket: ${socketId})`);
           });
 
           peer.on("error", err => {
@@ -86,7 +81,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           });
 
           peer.on('close', () => {
-              console.log(`MentorStream: Peer connection with user (socket: ${socketId}) closed.`);
               removePeer(socketId);
               toast.info(`Viewer ${userId.slice(0,5)} disconnected.`);
           });
@@ -95,21 +89,18 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         });
 
         socket.on("rtc-answer", (fromSocketId: string, answer: any) => {
-          console.log(`MentorStream: Received answer from user (socket: ${fromSocketId})`);
           if (peersRef.current[fromSocketId]) {
             peersRef.current[fromSocketId].signal(answer);
           }
         });
 
         socket.on("ice-candidate", (fromSocketId: string, candidate: any) => {
-          console.log(`MentorStream: Received ICE candidate from ${fromSocketId}`);
           if (peersRef.current[fromSocketId]) {
             peersRef.current[fromSocketId].signal(candidate);
           }
         });
 
         socket.on("user-left", (socketId: string) => {
-          console.log(`MentorStream: User (socket: ${socketId}) left.`);
           const leavingUserId = Object.keys(userIdToSocketIdMap.current).find(key => userIdToSocketIdMap.current[key] === socketId);
           if (leavingUserId) {
             setParticipants(prev => prev.filter(id => id !== leavingUserId));
@@ -119,7 +110,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         });
 
         socket.on("receive-comment", (message: string, sender: string) => {
-          console.log("MentorStream: Received comment:", message, "from", sender);
           setComments(prev => [...prev, { text: message, sender }]);
         });
         socket.on("end-stream", (msg:string) => {
@@ -139,7 +129,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
     init();
 
     return () => {
-      console.log("MentorStream: Cleaning up...");
 
       if (socketRef.current) {
         socketRef.current.off('connect'); 
@@ -158,7 +147,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
   const toggleScreenShare = async () => {
     try {
       if (isScreenSharing) {
-        console.log("MentorStream: Stopping screen share");
         screenStreamRef.current?.getTracks().forEach(track => track.stop());
         screenStreamRef.current = null;
         Object.values(peersRef.current).forEach(peer => {
@@ -174,7 +162,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         setIsScreenSharing(false);
         toast.success("Screen sharing stopped");
       } else {
-        console.log("MentorStream: Starting screen share");
         const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
         screenStreamRef.current = screenStream;
 
@@ -196,7 +183,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           localVideoRef.current.srcObject = combinedStreamForPeers;
         }
         screenStream.getVideoTracks()[0].onended = () => {
-          console.log("MentorStream: Screen share ended by user interaction.");
           if (isScreenSharing) { 
             toggleScreenShare(); 
           }
@@ -213,7 +199,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
 
   const submitComment = () => {
     if (newComment.trim()) {
-      console.log("MentorStream: Sending comment:", newComment);
       socketRef.current?.emit("send-comment", roomId, newComment, "Mentor");
       setNewComment("");
     }
@@ -223,7 +208,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
     if (peersRef.current[socketId]) {
       peersRef.current[socketId].destroy();
       delete peersRef.current[socketId];
-      console.log(`MentorStream: Peer connection with ${socketId} destroyed.`);
     }
   };
   const handleEndCall = async () => {
@@ -261,7 +245,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
               if (audioTrack) {
                 audioTrack.enabled = !isMuted;
                 setIsMuted(!isMuted);
-                console.log("MentorStream: Microphone toggled, muted:", !isMuted);
               } else {
                 toast.warning("No microphone audio track found to toggle.");
               }
@@ -276,7 +259,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
               if (videoTrack) {
                 videoTrack.enabled = !isVideoOff;
                 setIsVideoOff(!isVideoOff);
-                console.log("MentorStream: Video toggled, off:", !isVideoOff);
               } else {
                 toast.warning("No video track found to toggle.");
               }

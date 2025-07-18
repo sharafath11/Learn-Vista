@@ -33,7 +33,6 @@ export const postRequest = async <T = any>(
     if (!(body instanceof FormData)) {
       headers["Content-Type"] = "application/json";
     }
-    console.log("dfgdfgdfgdfg",body)
     const res = await axiosInstance.post(url, body, { headers });
     
     if (!res.data.ok) {

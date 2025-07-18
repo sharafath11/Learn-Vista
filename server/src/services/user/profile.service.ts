@@ -127,7 +127,7 @@ export class ProfileService implements IProfileService {
   }
   async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
     const user = await this.userRepository.findWithPassword({id:userId});
-    console.log(userId, currentPassword, newPassword);
+  
     if (!user) {
       throwError("User not found", StatusCode.NOT_FOUND);
     }
@@ -142,7 +142,6 @@ export class ProfileService implements IProfileService {
       throwError("Invalid current password", StatusCode.BAD_REQUEST);
     }
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    console.log(hashedPassword)
     await this.userRepository.update(userId, { password: hashedPassword });
     await notifyWithSocket({
     notificationService: this._notificationService,

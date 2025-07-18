@@ -52,15 +52,12 @@ export class LiveUserService implements IUserLiveService {
 //     id.toString()
 //   );
 
-//   console.log(" Enrolled User IDs:", enrolledUserIds);
-//   console.log("User ID:", userId);
 
 //   if (!enrolledUserIds.includes(userId)) {
 //     console.error(" User not enrolled in this course.");
 //     throwError("User not enrolled in this course");
 //   }
 
-//   console.log(" User is enrolled in this course.");
 // }
 
   private async validateLiveSession(courseId: string) {

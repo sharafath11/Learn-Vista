@@ -73,7 +73,6 @@ export default function DonationComponent() {
    
     const res = await UserAPIMethods.createCheckoutSession(finalAmount, "inr")
     localStorage.setItem("url",currentUrl)
-      console.log("createCheckoutSession : ",res)
       if (!res.ok) {
         showErrorToast(res.msg)
       }

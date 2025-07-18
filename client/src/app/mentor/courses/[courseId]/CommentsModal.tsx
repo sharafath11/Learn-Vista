@@ -38,7 +38,6 @@ export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
     try {
      
         const res = await MentorAPIMethods.getCommentsByLessonId(lessonId);
-        console.log("res comment ",res)
       if (res.ok) {
         setComments(res.data);
       } else {

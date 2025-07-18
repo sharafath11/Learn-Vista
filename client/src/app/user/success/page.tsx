@@ -21,11 +21,10 @@ export default function SuccessPage() {
 
     const fetchSession = async () => {
       const res = await UserAPIMethods.getStripeCheckoutSession(sessionId);
-      console.log("session",res.data)
       if (res.ok) {
         setSession(res.data);
       } else {
-        console.error("❌ Failed to fetch donation session");
+        console.error("Failed to fetch donation session");
       }
       setLoading(false);
     };

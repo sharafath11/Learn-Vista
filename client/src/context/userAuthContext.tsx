@@ -29,7 +29,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const fetchUserData = useCallback(async () => {
     try {
       const res = await UserAPIMethods.fetchUser();
-      console.log(res.data)
       if (res.ok) {
         setUser(res.data);
       } else {
@@ -58,7 +57,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
    
    const fetchLessons = async (courseId:string) => {
      const res = await UserAPIMethods.getLessons(courseId);
-     console.log("res",res)
      if (res.ok) {
        return res.data
      }
@@ -73,7 +71,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   }, [fetchUserData]);
   const fetchCourses = async () => {
     const res = await UserAPIMethods.fetchAllCourse({});
-    console.log("contecxt",res)
     if (res.ok) setAllCourses(res.data.data);
     else showErrorToast(res.msg)
   }

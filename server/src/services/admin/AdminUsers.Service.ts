@@ -26,7 +26,7 @@ export class AdminUsersServices implements IAdminUserServices {
     filters: FilterQuery<IUser> = {},
     sort: Record<string, 1 | -1> = { username: -1 }
   ): Promise<{ data: IUser[]; total: number; totalPages?: number }> {
-    console.log("sort service ",sort)
+
       const { data, total, totalPages } = await this._userRepo.findPaginated(
         filters,
         page,

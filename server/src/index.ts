@@ -62,7 +62,6 @@ app.use("/ai/doubt", async (req: Request, res: Response) => {
   try {
     const prompt=batmanPrompt(req.body.text)
   const answer = await getGemaniResponse(prompt);
-  console.log("batman:", answer);
   sendResponse(res, StatusCode.OK, "", true, answer);
   } catch (error) {
     handleControllerError(res,error)

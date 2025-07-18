@@ -19,7 +19,7 @@ export class MentorCommentController implements IMentorCommentsController {
     try {
       const rawParams = req.query.params as any;
 
-      console.log("🔍 Raw req.query:", req.query);
+ 
 
       const page = parseInt(rawParams?.page) || 1;
       const limit = parseInt(rawParams?.limit) || 10;

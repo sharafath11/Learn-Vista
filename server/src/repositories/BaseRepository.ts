@@ -91,7 +91,7 @@
             { title: { $regex: searchRegex } }
           ];
         }
-      console.log("basefilter",filter)
+   
         const [documents, total] = await Promise.all([
           this.model.find(filter)
             .sort(sort)

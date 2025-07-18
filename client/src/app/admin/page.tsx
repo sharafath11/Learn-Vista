@@ -33,7 +33,6 @@ const AdminLogin = () => {
   }
     async function handleSubmit() {
         const res = await postRequest("/admin/login", data);
-        console.log(res)
         if (res.ok) {
           showSuccessToast(res.msg);
           admin?.setAdmin(true);

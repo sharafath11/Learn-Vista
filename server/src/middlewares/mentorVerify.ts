@@ -9,14 +9,14 @@ export const verifyMentor = (
   next: NextFunction
 ): void => {
   const accessToken = req.cookies?.token;
-   console.log(1,accessToken)
+
    if (!accessToken) {
-     console.log(2)
+   
        sendResponse(res,401,"",false)
         return
    }
    const decoded = verifyAccessToken(accessToken);
-   console.log(decoded)
+   
    if (decoded?.id && decoded.role === "mentor") {
      
      next();

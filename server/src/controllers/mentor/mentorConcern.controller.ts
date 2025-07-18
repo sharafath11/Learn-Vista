@@ -35,7 +35,7 @@ export class MentorConcernController implements IMentorConcernController {
           });
         }
       }
-        console.log(courseId)
+    
       if(!decoded?.id) throwError("Unauthrized",StatusCode.UNAUTHORIZED)
       const concern = await this._mentorConcernService.addConcern({
         title,
@@ -54,10 +54,10 @@ export class MentorConcernController implements IMentorConcernController {
   try {
     const decoded = decodeToken(req.cookies.token);
 
-    console.log("Decoded Token:", decoded);
+ 
 
     if (!decoded?.id) {
-      console.log("Unauthorized: No decoded ID found.");
+     
       throwError("Unauthorized", StatusCode.UNAUTHORIZED);
     }
     const queryParams = (req.query.params || {}) as Record<string, string>;
@@ -71,18 +71,13 @@ export class MentorConcernController implements IMentorConcernController {
       sortBy = "createdAt",
       sortOrder = "desc"
     } = queryParams; 
-    console.log("Raw Query Parameters (from req.query):", req.query);
-    console.log("Extracted Query Parameters (from req.query.params):", queryParams);
-    console.log("Search Term Extracted:", search); // Confirm the search term is picked up
-  console.log("Extracted courseId:", courseId);
+   
     const limit = parseInt(pageSize);
     const skip = (parseInt(page) - 1) * limit;
     const sort: Record<string, 1 | -1> = {
       [sortBy]: sortOrder === "asc" ? 1 : -1
     };
-    console.log("Parsed Pagination (skip, limit):", { skip, limit });
-    console.log("Parsed Sort:", sort);
-
+  
 
     const filters: Record<string, any> = { mentorId: decoded.id };
     if (status) filters.status = status;
@@ -95,12 +90,8 @@ export class MentorConcernController implements IMentorConcernController {
     }
 
 
-    console.log("Constructed Filters:", filters);
+   
     const { data, total } = await this._mentorConcernService.getConcerns(filters, sort, skip, limit);
-    console.log("Data from _mentorConcernService.getConcerns (first 5 items):", data.slice(0, 5));
-    console.log("Total count from service:", total);
-
-
     sendResponse(res, StatusCode.OK, "Fetched concerns successfully", true, {
       data,
       total,

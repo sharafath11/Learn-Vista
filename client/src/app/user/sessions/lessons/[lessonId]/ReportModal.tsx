@@ -33,7 +33,6 @@ export default function ReportModal({ report, isOpen, onClose }: ReportModalProp
     parsedReport = JSON.parse(cleanedTruncated);
   } catch (err) {
     console.error("Failed to parse report JSON:", err);
-    console.log("Cleaned report ends with:", JSON.stringify(cleaned.slice(-50)));
     return <p>Failed to load report.</p>;
   }
 
@@ -53,7 +52,6 @@ export default function ReportModal({ report, isOpen, onClose }: ReportModalProp
   const overallPercentage = totalMarksPossible > 0 ? (totalMarksObtained / totalMarksPossible) * 100 : 0;
   const correctAnswersCount = processedReport.filter(qa => qa.isCorrect).length;
 
-  console.log("report data:", processedReport);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

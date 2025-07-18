@@ -60,7 +60,6 @@ export default function CourseLessonsPage() {
 
   const handlePlayVideo = async (lessonId: string, videoUrl: string) => {
     const res = await MentorAPIMethods.getSignedVideoUrl(lessonId as string, videoUrl);
-    console.log("checking purpose", res.data.signedUrl);
     if (res.ok) {
       setVideoToPlay(res.data.signedUrl);
       setShowVideoPlayerModal(true);

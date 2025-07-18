@@ -54,11 +54,9 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   const getCourses =async  () => {
     const res = await MentorAPIMethods.getCourses();
     if (res.ok) setCourses(res.data);
-    console.log("mentor side", res);
   }
   const fetchConcern = async () => {
     const res = await MentorAPIMethods.getConcern({});
-    console.log("concernsss in context",res.data.data)
     if (res.ok) setConcerns(res.data.data);
     else showErrorToast(res.msg)
   }

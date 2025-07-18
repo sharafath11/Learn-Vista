@@ -24,7 +24,6 @@ export const CourseFilters = ({ categories, onChange }: CourseFiltersProps) => {
   const [search, setSearch] = useState("")
   const [sort, setSort] = useState<"latest" | "oldest">("latest")
   const [category, setCategory] = useState("all")
-  // console.log("categ",categories)
 
   useEffect(() => {
     onChange({

@@ -31,8 +31,7 @@ export class UserDonationController implements IUserDonationController {
             }
             const successUrl = `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`;
             const cancelUrl = `${process.env.FRONTEND_URL}/cancel`;
-            console.log('DEBUG: Success URL:', successUrl);
-            console.log('DEBUG: Cancel URL:', cancelUrl);
+           
 
             const session = await stripe.checkout.sessions.create({
                 payment_method_types: ['card'],

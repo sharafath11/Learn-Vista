@@ -68,9 +68,9 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
     if (search) {
       query.title = { $regex: search, $options: 'i' };
     }
-    console.log(filters?.categoryId)
+  
     if (filters?.categoryId && filters.categoryId !== 'All') {
-      console.log("abcd");
+   
       
       const categoryDoc = await this._catRepo.findById(filters.categoryId);
      
@@ -187,8 +187,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       ]);
   //all limit change to 2
       const totalPages = Math.ceil(total / limit);
-      console.log("Limit:", limit, "Skip:", skip);
-     console.log("Documents length:", documents.length);
+    
   
       return {
         data: documents,

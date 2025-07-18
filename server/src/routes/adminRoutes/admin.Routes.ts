@@ -8,7 +8,6 @@ import { IAdminMentorController } from "../../core/interfaces/controllers/admin/
 import { IAdminCourseController } from "../../core/interfaces/controllers/admin/IAdminCourse.Controller";
 import { uploadImage } from "../../middlewares/upload";
 import { IAdminDonationController } from "../../core/interfaces/controllers/admin/IAdminDonation.Controller";
-import router from "../userRoutes/user.Routes";
 const route = express.Router();
 
 const adminMentorController = container.get<IAdminMentorController>(TYPES.AdminMentorController);

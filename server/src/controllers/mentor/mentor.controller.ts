@@ -62,13 +62,8 @@ export class MentorController implements IMentorController {
   }
  async coursePagenated(req: Request, res: Response): Promise<void> {
   try {
-    console.log("🔍 Incoming request for mentor paginated courses");
-
     const decoded = decodeToken(req.cookies.token);
-    console.log("🪪 Decoded Token:", decoded);
-
     const query = (req.query as any).params || {};
-    console.log("📥 Full query:", query);
 
     if (!decoded?.id) {
       return throwError("Unauthorized", StatusCode.UNAUTHORIZED);
@@ -90,13 +85,7 @@ export class MentorController implements IMentorController {
 
     const filters = query.filters;
 
-    console.log(" Final Query Params:", {
-      page,
-      limit,
-      search,
-      filters,
-      sort,
-    });
+   
 
     const { data, total ,categories} = await this.mentorService.courseWithPagenated({
       mentorId,

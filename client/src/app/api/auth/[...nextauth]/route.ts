@@ -56,7 +56,6 @@ const handler = NextAuth({
         );
         
 
-        console.log("Backend response:", response.data);
 
         if (response.status >= 400) {
           console.error("Backend API error:", response.data);

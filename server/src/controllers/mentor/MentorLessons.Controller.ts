@@ -23,11 +23,7 @@ const S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME;
 const CLOUDFRONT_PRIVATE_KEY = process.env.CLOUDFRONT_PRIVATE_KEY
 const CLOUDFRONT_KEY_PAIR_ID = process.env.CLOUDFRONT_KEY_PAIR_ID
 const CLOUDFRONT_DOMAIN=process.env.CLOUDFRONT_DOMAIN
-console.log('[INIT] Using AWS S3 Configuration:');
-console.log('[INIT] AWS Region:', AWS_REGION);
-console.log('[INIT] S3 Bucket Name:', S3_BUCKET_NAME);
-console.log('[INIT] AWS Access Key ID:', AWS_ACCESS_KEY_ID ? '[REDACTED]' : 'Missing');
-console.log('[INIT] AWS Secret Access Key:', AWS_SECRET_ACCESS_KEY ? '[REDACTED]' : 'Missing');
+
 
 @injectable()
 export class MentorLessonsController implements IMentorLessonsController {
@@ -264,7 +260,7 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
     }
     async addQuestions(req: Request, res: Response): Promise<void> {
         try {
-            console.log("body show",req.body)
+          
             
             const result = await this._mentorLessonsSerive.addQuestionService(req.body.lessonId,req.body);
             if (!result) throwError("Somthing wront wrong");
@@ -276,7 +272,7 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
     async editQuestions(req: Request, res: Response): Promise<void> {
         try {
             const questionId = req.params.questionId;
-            console.log(questionId,req.body)
+
             await this._mentorLessonsSerive.editQuestionService(questionId, req.body);
             sendResponse(res,StatusCode.OK,"Question Edited Succesfully",true)
         } catch (error) {

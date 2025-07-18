@@ -21,7 +21,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
   const peerRef = useRef<Peer.Instance | null>(null)
   const mentorSocketIdRef = useRef<string | null>(null);
   const exitSession = () => {
-    console.log("User: Exiting session...");
     if (socketRef.current) {
       socketRef.current.disconnect();
     }
@@ -43,19 +42,15 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
         const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000")
         socketRef.current = socket
         socket.on('connect', () => {
-          console.log(`UserLiveSession: Socket connected with ID: ${socket.id}`);
           socket.emit("join-room", roomId, socket.id, "user") 
-          console.log(`User ${socket.id} joined room ${roomId}`);
         });
 
         socket.on("mentor-available", (mentorSocketId: string) => {
-          console.log(`User: Mentor ${mentorSocketId} is available. Preparing for connection...`);
           setIsMentorConnected(true);
           mentorSocketIdRef.current = mentorSocketId;
         });
 
         socket.on("mentor-disconnected", () => {
-            console.log("User: Mentor disconnected.");
             setIsMentorConnected(false);
             setMentorStream(null);
             setIsPlaying(false); 
@@ -68,7 +63,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
         });
 
         socket.on("rtc-offer", async (mentorSocketId: string, offer: any) => {
-          console.log(`User: Received RTC offer from mentor ${mentorSocketId}`);
 
           if (mentorSocketIdRef.current !== mentorSocketId) {
               console.warn("User: Received offer from unexpected mentor. Updating mentorSocketIdRef.");
@@ -82,7 +76,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           }
 
           if (peerRef.current && peerRef.current.connected) {
-              console.log("User: Already connected to mentor, ignoring duplicate offer.");
               return;
           }
 
@@ -98,22 +91,16 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           });
 
           peer.on("signal", (data) => {
-            console.log(`User: Sending RTC answer signal to mentor ${mentorSocketId}`);
             socket.emit("rtc-answer", mentorSocketId, data);
           });
 
           peer.on("stream", (stream) => {
-            console.log("User: Received mentor's stream.");
             setMentorStream(stream);
           
             if (stream) {
-              console.log("User: Stream received. Number of video tracks:", stream.getVideoTracks().length);
-              console.log("User: Stream received. Number of audio tracks:", stream.getAudioTracks().length);
               stream.getVideoTracks().forEach(track => {
-                console.log(`User: Video track - id: ${track.id}, kind: ${track.kind}, enabled: ${track.enabled}, readyState: ${track.readyState}`);
               });
               stream.getAudioTracks().forEach(track => {
-                console.log(`User: Audio track - id: ${track.id}, kind: ${track.kind}, enabled: ${track.enabled}, readyState: ${track.readyState}`);
               });
             } else {
               console.warn("User: Received an empty or null stream!");
@@ -121,7 +108,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           });
 
           peer.on("connect", () => {
-            console.log("User: Peer connection established with mentor.");
           });
 
           peer.on("error", (err) => {
@@ -134,7 +120,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           });
 
           peer.on('close', () => {
-              console.log("User: Peer connection closed.");
               peerRef.current = null;
               setMentorStream(null);
               setIsPlaying(false);
@@ -147,14 +132,12 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
         });
 
         socket.on("ice-candidate", (fromSocketId: string, candidate: any) => {
-          console.log(`User: Received ICE candidate from ${fromSocketId}`);
           if (peerRef.current && mentorSocketIdRef.current === fromSocketId) {
             peerRef.current.signal(candidate);
           }
         });
 
         socket.on("receive-comment", (message: string, sender: string) => {
-          console.log(`User: Received comment: "${message}" from ${sender}`);
           setComments(prev => [...prev, { text: message, sender }]);
         });
         socket.on("end-stream", (msg:string) => {
@@ -176,7 +159,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
     init();
 
     return () => {
-      console.log("User: Cleaning up...");
       if (socketRef.current) {
         socketRef.current.off('connect');
         socketRef.current.disconnect();
@@ -193,19 +175,16 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
 
   useEffect(() => {
     if (mentorStream && videoRef.current) {
-      console.log("User: Assigning mentorStream to videoRef.current.srcObject.");
       videoRef.current.srcObject = mentorStream;
       setIsPlaying(false); 
     } else if (!mentorStream && videoRef.current) {
         videoRef.current.srcObject = null;
-        console.log("User: Cleared videoRef.current.srcObject as mentorStream is null.");
         setIsPlaying(false); 
     }
   }, [mentorStream]); 
   const handlePlayVideo = () => {
     if (videoRef.current && mentorStream) {
       videoRef.current.play().then(() => {
-          console.log("User: Video playback initiated successfully by user interaction.");
           setIsPlaying(true); 
       }).catch(e => {
           console.error("User: Error playing video after user interaction:", e);
@@ -217,7 +196,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
 
   const submitComment = () => {
     if (newComment.trim()) {
-      console.log("User: Sending comment:", newComment);
       socketRef.current?.emit("send-comment", roomId, newComment, "Viewer");
       setNewComment("");
     }

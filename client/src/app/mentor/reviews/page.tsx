@@ -64,7 +64,6 @@ export default function ReviewsComponent() {
           limit: LIMIT,
           courseId: filterByCourse !== "all" ? filterByCourse : undefined,
         })
-        console.log(res.data)
         setComments(res.data.comments)
         setTotalPages(res.data.pagination.totalPages)
       } catch (err) {

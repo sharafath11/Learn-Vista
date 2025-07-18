@@ -42,13 +42,10 @@ export function CourseForm({ courseId }: CourseFormProps) {
     },
   })
 
-  // Fetch course data for editing
   useEffect(() => {
     if (courseId) {
       setIsLoading(true)
-      // Mock API call to fetch course data
       setTimeout(() => {
-        // Mock course data
         const courseData = {
           id: courseId,
           title: "Advanced React Development",
@@ -77,10 +74,8 @@ export function CourseForm({ courseId }: CourseFormProps) {
           startTime: courseData.startTime,
         })
 
-        // Set tags
         setTags(courseData.tags)
 
-        // Set thumbnail preview
         setThumbnailPreview(courseData.thumbnailUrl)
 
         setIsLoading(false)
@@ -88,27 +83,22 @@ export function CourseForm({ courseId }: CourseFormProps) {
     }
   }, [courseId, form])
 
-  // Handle form submission
   const onSubmit = (data: CourseFormValues) => {
     setIsLoading(true)
 
-    // Prepare the complete form data including tags and thumbnail
     const formData = {
       ...data,
       tags,
       thumbnail,
     }
 
-    console.log("Form submitted:", formData)
 
-    // Mock API call to save course data
     setTimeout(() => {
       setIsLoading(false)
       router.push("/courses")
     }, 1000)
   }
 
-  // Handle tag input
   const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && tagInput.trim() !== "") {
       e.preventDefault()
