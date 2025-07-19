@@ -1,5 +1,4 @@
 import multer from "multer";
-import { throwError } from "../utils/ResANDError";
 
 const storage = multer.memoryStorage();
 

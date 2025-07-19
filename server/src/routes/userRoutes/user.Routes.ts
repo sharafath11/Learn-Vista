@@ -10,7 +10,6 @@ import { IUserCourseController } from "../../core/interfaces/controllers/user/IU
 import { IUserLiveController } from "../../core/interfaces/controllers/user/IUserLiveVideoController";
 import { IUserLessonsController } from "../../core/interfaces/controllers/user/IUserLessonsContoller";
 import { IUserDonationController } from "../../core/interfaces/controllers/user/IUserDonationController";
-import { INotificationController } from "../../core/interfaces/controllers/notifications/INotifications.Controller";
 import { UserLessonsController } from "../../controllers/user/userLessons.controller";
 
 

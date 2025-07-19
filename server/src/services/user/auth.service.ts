@@ -70,7 +70,7 @@ export class AuthService implements IAuthService {
   ): Promise<{
     token: string;
     refreshToken: string;
-    user: any;
+    user:  Partial<IUser>;
   }> {
   
 
@@ -115,7 +115,7 @@ export class AuthService implements IAuthService {
   async googleAuth(profile: GooglePayload): Promise<{
     token: string;
     refreshToken: string;
-    user: any;
+    user:  Partial<IUser>;
   }> {
     if (!profile.email || !profile.googleId) {
       throwError("Invalid Google profile data", StatusCode.BAD_REQUEST);

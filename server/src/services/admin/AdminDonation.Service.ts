@@ -12,7 +12,7 @@ export class AdminDonationService implements IAdminDonationServices{
         return await this._donationRepo.findAll()
     }
     async getFilteredDonations(
-  filters: Record<string, any>,
+  filters: Record<string, unknown>,
   sort: Record<string, 1 | -1>,
   skip: number,
   limit: number
@@ -20,7 +20,7 @@ export class AdminDonationService implements IAdminDonationServices{
    return this._donationRepo.findManyWithFilter(filters, sort, skip, limit);
 }
 
-async countFilteredDonations(filters: Record<string, any>): Promise<number> {
+async countFilteredDonations(filters: Record<string, unknown>): Promise<number> {
   return this._donationRepo.countFiltered(filters);
 }
 }

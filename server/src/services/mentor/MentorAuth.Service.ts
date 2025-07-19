@@ -25,7 +25,7 @@ export class MentorAuthService implements IMentorAuthService {
   async loginMentor(
     email: string,
     password: string,
-  ): Promise<{ mentor: any; token: string; refreshToken: string }> {
+  ): Promise<{ mentor: Partial<IMentor>; token: string; refreshToken: string }> {
     const mentor = await this.mentorRepo.findWithPassword({ email });
     if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
     if (mentor.isBlock) throwError("This account is blocked", StatusCode.FORBIDDEN);

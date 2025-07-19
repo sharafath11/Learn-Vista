@@ -1,4 +1,4 @@
-import { FilterQuery, ObjectId, Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import { IMentorStudentService } from "../../core/interfaces/services/mentor/IMentorStudent.Service";
 import { inject, injectable } from "inversify";
 import { IUser } from "../../types/userTypes";
@@ -41,7 +41,7 @@ async getStudentDetilesService(
     },
   };
 
-  let finalFilter: any = baseFilter;
+  let finalFilter: Record<string, unknown> = baseFilter;
 
   if (search?.trim()) {
     const regex = new RegExp(search, 'i');
@@ -92,7 +92,7 @@ async studentStatusService(
     throwError("User not found");
   }
 
-  const updatedCourses = user.enrolledCourses.map((course, index) => {
+  const updatedCourses = user.enrolledCourses.map((course) => {
     const courseIdStr = course.courseId?.toString();
     const match = courseIdStr === courseId.toString();
     if (match) {
@@ -106,7 +106,7 @@ async studentStatusService(
   });
 
    
-  const result = await this._userRepo.update(userId as string, {
+   await this._userRepo.update(userId as string, {
     enrolledCourses: updatedCourses,
   });
     const course = await this._courseRepo.findById(courseId.toString());

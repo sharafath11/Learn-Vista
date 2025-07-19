@@ -1,4 +1,4 @@
-import mongoose, { Document, ObjectId, Types } from "mongoose";
+import  { Document, Types } from "mongoose";
 import { Request } from "express";
 
 type UserRole = "user" | "mentor"
@@ -53,19 +53,16 @@ export interface IDcoded{
 }
 
 
-// src/types/userTypes.ts
 declare global {
   namespace Express {
     interface Request {
       user?: {
         id: string;
         role?: string;
-     
       };
     }
   }
 }
-
 export interface AuthenticatedRequest extends Request {
   user: {
     id: string;

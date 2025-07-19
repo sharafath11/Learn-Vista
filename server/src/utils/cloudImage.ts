@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { promisify } from 'util';
 import stream from 'stream';
 
 cloudinary.config({

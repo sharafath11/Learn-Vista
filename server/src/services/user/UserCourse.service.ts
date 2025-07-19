@@ -1,16 +1,15 @@
 import { inject, injectable } from "inversify";
-import mongoose, { FilterQuery, ObjectId } from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController";
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import { ICategory, ICourse, IPopulatedCourse } from "../../types/classTypes";
+import { ICategory,IPopulatedCourse } from "../../types/classTypes";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
 import { IUserCourseProgress } from "../../types/userCourseProgress";
 import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
-import { IUserLessonProgressRepository } from "../../core/interfaces/repositories/course/IUserLessonProgressRepo";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
 
 
@@ -21,7 +20,6 @@ export class UserCourseService implements IUserCourseService {
     @inject(TYPES.UserRepository) private _baseUserRepo: IUserRepository,
     @inject(TYPES.CategoriesRepository) private _categoriesRepo: ICategoriesRepository,
     @inject(TYPES.UserCourseProgressRepository) private _userCourseProgressRepo: IUserCourseProgressRepository,
-    @inject(TYPES.UserLessonProgressRepository) private _userLessonProgressRepo: IUserLessonProgressRepository,
     @inject(TYPES.LessonsRepository) private _lessonRepo: ILessonsRepository
   ) {}
 
@@ -31,7 +29,7 @@ export class UserCourseService implements IUserCourseService {
       search?: string,
       filters: FilterQuery<IPopulatedCourse> = {},
       sort: Record<string, 1 | -1> = { createdAt: -1 },
-      userId?:string|ObjectId
+      
   ):Promise<{ data: IPopulatedCourse[]; total: number; totalPages?: number }> {
   
 
@@ -60,7 +58,7 @@ export class UserCourseService implements IUserCourseService {
     if (!course) {
       throwError("Course not found.", StatusCode.BAD_REQUEST);
     }
-   const res= await this._baseCourseRepo.update(courseId, {
+    await this._baseCourseRepo.update(courseId, {
       $addToSet: { enrolledUsers: userObjectId }
     });
   await this._baseUserRepo.update(userId, {

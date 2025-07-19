@@ -5,7 +5,6 @@ import { Types } from "mongoose";
 import { IMentorStreamService } from "../../core/interfaces/services/mentor/ImentorStream.service";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
-import { throwError } from "../../utils/ResANDError";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 @injectable()

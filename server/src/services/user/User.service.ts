@@ -1,7 +1,7 @@
 import { inject } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import { ISafeUser, IUser } from "../../types/userTypes";
+import {  IUser } from "../../types/userTypes";
 import { IUserService } from "../../core/interfaces/services/user/IUserService";
 import { sendPasswordResetEmail } from "../../utils/emailService";
 import { generateAccessToken } from "../../utils/JWTtoken";

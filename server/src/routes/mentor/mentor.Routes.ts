@@ -5,13 +5,11 @@ import { IMentorController } from '../../core/interfaces/controllers/mentor/IMen
 import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
 import container from '../../core/di/container';
 import { IMentorProfileController } from '../../core/interfaces/controllers/mentor/IMentorProfile.controller';
-import upload, { uploadConcernFiles, uploadImage } from '../../middlewares/upload';
+import  { uploadConcernFiles, uploadImage } from '../../middlewares/upload';
 import {  IMentorStreamController } from '../../core/interfaces/controllers/mentor/IMentorStream.controller';
 import { IMentorLessonsController } from '../../core/interfaces/controllers/mentor/IMentorLesson.Controller';
-import { IMentorStudentService } from '../../core/interfaces/services/mentor/IMentorStudent.Service';
 import { IMentorStudentsController } from '../../core/interfaces/controllers/mentor/ImentorStudent.controller';
 import { IMentorConcernController } from '../../core/interfaces/controllers/mentor/IMentorConcern.Controller';
-import { MarketplaceDeployment } from 'aws-sdk';
 import { IMentorCommentsController } from '../../core/interfaces/controllers/mentor/IMentorComments.controller';
 const router = express.Router();
 const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
@@ -39,7 +37,7 @@ router.get("/live-session/start/:courseId", verifyMentor, mentorStreamController
 router.get("/end/stream/:liveId",verifyMentor,mentorStreamController.endStreamController.bind(mentorStreamController))
 router.post("/change/password",verifyMentor,mentorProfileController.changePassword.bind(mentorProfileController))
 router.get("/courses/lessons/:courseId", verifyMentor, mentorLessonController.getLessons.bind(mentorLessonController));
-router.post("/generate-s3-upload-url", verifyMentor, mentorLessonController.S3Upload.bind(mentorLessonController)),
+router.post("/generate-s3-upload-url", verifyMentor, mentorLessonController.S3Upload.bind(mentorLessonController));
 router.post(
     "/add-lessons",
     verifyMentor,

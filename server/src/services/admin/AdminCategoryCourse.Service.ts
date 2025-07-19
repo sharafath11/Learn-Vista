@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { IAdminCourseServices } from "../../core/interfaces/services/admin/IAdminCourseService";
-import { ICategory, ICourse, IPopulatedCourse } from "../../types/classTypes";
+import { ICategory, ICourse } from "../../types/classTypes";
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { throwError } from "../../utils/ResANDError";

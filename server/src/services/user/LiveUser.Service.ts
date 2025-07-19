@@ -74,7 +74,7 @@ export class LiveUserService implements IUserLiveService {
   }
 
   private async addParticipant(liveId: Types.ObjectId, userId: string): Promise<void> {
-      const live=  await this.liveRepo.update(
+      await this.liveRepo.update(
         liveId.toString(),
         { $addToSet: { participants: new Types.ObjectId(userId) } }
       );

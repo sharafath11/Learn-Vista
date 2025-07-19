@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { clearTokens, decodeToken, verifyAccessToken } from "../utils/JWTtoken";
+import { clearTokens,  verifyAccessToken } from "../utils/JWTtoken";
 import { sendResponse } from "../utils/ResANDError";
 
 type Role = "admin" | "user" | "mentor";
@@ -10,11 +9,9 @@ interface DecodedToken {
   role: Role;
 }
 
-declare global {
-  namespace Express {
-    interface Request {
-      admin?: DecodedToken;
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    admin?: DecodedToken;
   }
 }
 

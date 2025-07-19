@@ -102,7 +102,7 @@ export class MentorService implements IMentorService {
   page: number;
   limit: number;
   search?: string;
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
   sort?: Record<string, 1 | -1>;
     }): Promise<{ data: IPopulatedCourse[]; total: number; categories:ICategory[] }> {
   const { data, total } = await this.courseRepo.fetchMentorCoursesWithFilters({

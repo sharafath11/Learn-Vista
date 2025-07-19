@@ -37,7 +37,7 @@ export class MentorConcernService implements IMentorConcernService {
     return concern;
   }
   async getConcerns(
-    filters: Record<string, any>,
+    filters: Record<string,unknown>,
     sort: Record<string, 1 | -1>,
     skip: number,
     limit: number

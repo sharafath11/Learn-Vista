@@ -1,6 +1,7 @@
 
 import { Server, Socket } from "socket.io";
 import { Room } from "../types/scoket";
+import { logger } from "../utils/logger";
 const rooms: Record<string, Room> = {};
 export function socketHandler(io: Server) {
   io.on('connection', (socket: Socket) => {
@@ -72,7 +73,7 @@ export function socketHandler(io: Server) {
       if (userId) {
         socket.join(userId);
       } else {
-        console.warn("[register-user] Missing userId");
+        logger.warn("[register-user] Missing userId");
       }
     });
 

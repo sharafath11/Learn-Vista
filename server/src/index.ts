@@ -1,4 +1,4 @@
-import express, { Request, response, Response } from "express";
+import express, { NextFunction, Request,  Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -12,13 +12,14 @@ import adminRoutes from "./routes/adminRoutes/admin.Routes";
 import { refreshAccessToken, setTokensInCookies } from "./utils/JWTtoken";
 import { socketHandler } from "./config/ socket";
 import { getGemaniResponse } from "./config/gemaniAi";
-import { handleControllerError, sendResponse } from "./utils/ResANDError";
+import { handleControllerError, sendResponse, throwError } from "./utils/ResANDError";
 import { StatusCode } from "./enums/statusCode.enum";
 import { batmanPrompt } from "./utils/Rportprompt";
 import { setIOInstance } from "./config/globalSocket";
 import sharedRoutes from "../src/routes/shared/shared.Routes"
 import { requestLogger } from "./middlewares/requestLogger";
 import { logger } from "./utils/logger";
+import { CustomError } from "./types/errorTypes";
 dotenv.config();
 
 const app = express();
@@ -48,8 +49,8 @@ app.use("/refresh-token", (req: Request, res: Response) => {
     const tokens = refreshAccessToken(req.cookies.refreshToken);
 
     if (!tokens) {
-      res.status(401).json({ message: "Invalid refresh token" });
-      return
+      throwError("Invalid refresh tocken")
+     
     }
 
     setTokensInCookies(res, tokens.accessToken, tokens.refreshToken);
@@ -70,7 +71,7 @@ app.use("/ai/doubt", async (req: Request, res: Response) => {
   }
 });
 app.use(requestLogger);
-app.use((err: any, req: Request, res: Response, next: Function) => {
+app.use((err: CustomError, req: Request, res: Response, _next: NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ ok: false, msg: "Something went wrong!" });
 });

@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Document } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import { ILesson } from "../../../types/lessons";
 
 

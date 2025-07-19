@@ -1,4 +1,4 @@
-import { Document, Schema, Types } from 'mongoose';
+import { Document,  Types } from 'mongoose';
 
 export interface IUserCourseProgress extends Document {
   userId: Types.ObjectId;

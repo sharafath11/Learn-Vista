@@ -9,7 +9,7 @@ export class ConcernRepository extends BaseRepository<IConcern, IConcern> implem
         super(ConcernModel)
     }
     async findMany(
-    filters: Record<string, any>,
+    filters: Record<string, unknown>,
     sort: Record<string, 1 | -1> = { createdAt: -1 },
     skip = 0,
     limit = 2

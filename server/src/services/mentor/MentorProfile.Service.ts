@@ -8,6 +8,7 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import bcrypt from "bcrypt"
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { logger } from "../../utils/logger";
 
 @injectable()
 export class MentorProfileService implements IMentorProfileService {
@@ -74,6 +75,7 @@ export class MentorProfileService implements IMentorProfileService {
                     parsedExpertise = [];
                 }
             } catch (err) {
+                logger.warn(err)
                 parsedExpertise = [];
             }
         } else if (Array.isArray(expertise)) {

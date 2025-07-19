@@ -1,5 +1,3 @@
-// src/types/lessons.ts
-import { Types } from "aws-sdk/clients/acm";
 import mongoose, { ObjectId } from "mongoose";
 import { Document } from "mongoose";
 import { IUserLessonProgress } from "./userLessonProgress";

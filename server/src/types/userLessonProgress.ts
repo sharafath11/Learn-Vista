@@ -1,5 +1,5 @@
 
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 export interface IUserLessonProgress extends Document {
   userId: mongoose.Types.ObjectId;
   courseId: mongoose.Types.ObjectId;

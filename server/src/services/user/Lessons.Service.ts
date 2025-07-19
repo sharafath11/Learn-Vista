@@ -1,6 +1,6 @@
 import mongoose, { ObjectId } from "mongoose";
 import { GetLessonsResponse, IUserLessonsService } from "../../core/interfaces/services/user/IUserLessonsService";
-import { IComment, ILesson, ILessonDetails, ILessonReport, IQuestions, LessonQuestionInput } from "../../types/lessons";
+import { IComment,ILessonDetails, ILessonReport, IQuestions, LessonQuestionInput } from "../../types/lessons";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
@@ -254,7 +254,7 @@ if (!userEnrolled) {
     const totalLessonsInCourse = await this._lessonRepo.count({ courseId: new mongoose.Types.ObjectId(courseId) });
 
     if (totalLessonsInCourse === 0) {
-      let courseProgress = await this._userCourseProgresRepo.findOne({ userId, courseId });
+      const courseProgress = await this._userCourseProgresRepo.findOne({ userId, courseId });
       if (courseProgress) {
         await this._userCourseProgresRepo.update(courseProgress.id, {
           overallProgressPercent: 0,
@@ -285,7 +285,7 @@ if (!userEnrolled) {
 
     const overallCourseProgress = totalWeightedLessonProgressSum / totalLessonsInCourse;
 
-    let courseProgress = await this._userCourseProgresRepo.findOne({ userId, courseId });
+    const courseProgress = await this._userCourseProgresRepo.findOne({ userId, courseId });
 
     if (courseProgress) {
       await this._userCourseProgresRepo.update(courseProgress.id, {
@@ -321,7 +321,7 @@ if (!userEnrolled) {
    
     const courseId = lesson.courseId.toString();
 
-    let userLessonProgress = await this._userLessonProgressRepo.findOne({ userId, lessonId });
+    const userLessonProgress = await this._userLessonProgressRepo.findOne({ userId, lessonId });
 
     let currentVideoWatchedDuration = userLessonProgress?.videoWatchedDuration ?? 0;
     let currentVideoTotalDuration = userLessonProgress?.videoTotalDuration ?? 0;

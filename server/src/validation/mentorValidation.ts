@@ -89,8 +89,7 @@ export const validateMentorProfile = (profileData: {
     return false;
   }
   if (image) {
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    const maxSize = 5 * 1024 * 1024; 
+   
     
     if (image) {
       const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];

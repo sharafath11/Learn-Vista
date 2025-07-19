@@ -3,9 +3,7 @@ import container from "../../core/di/container";
 import { TYPES } from "../../core/types";
 import { INotificationController } from "../../core/interfaces/controllers/notifications/INotifications.Controller";
 
-
 const router = express.Router();
-
 const notificationController = container.get<INotificationController>(TYPES.NotificationController);
 
 router.get(
