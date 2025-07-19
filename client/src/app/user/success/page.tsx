@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import SuccessView from "./SuccessView";
 import { UserAPIMethods } from "@/src/services/APImethods";
-import { IDonation, IStripeSuccessSession } from "@/src/types/donationTyps";
+import { IDonation } from "@/src/types/donationTyps";
 import { NotificationListener } from "@/src/components/NotificationListener";
 import { useUserContext } from "@/src/context/userAuthContext";
 

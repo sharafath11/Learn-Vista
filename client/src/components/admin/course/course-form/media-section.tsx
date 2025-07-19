@@ -1,10 +1,10 @@
 "use client"
 
 import type React from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
+import { Input } from "@/src/components/shared/components/ui/input"
+import { Label } from "@/src/components/shared/components/ui/label"
+import { Button } from "@/src/components/shared/components/ui/button"
 import { X } from "lucide-react"
 
 interface MediaSectionProps {

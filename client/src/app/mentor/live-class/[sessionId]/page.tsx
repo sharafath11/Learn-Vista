@@ -2,15 +2,15 @@
 
 import { useState, useRef, useEffect } from "react";
 import Webcam from "react-webcam";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/shared/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+} from "@/src/components/shared/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card";
 import { Mic, Video, Radio } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { MentorAPIMethods } from "@/src/services/APImethods";

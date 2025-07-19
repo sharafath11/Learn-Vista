@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Clock, BookOpen, ChevronRight, ChevronDown } from "lucide-react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import type { ICourse } from "@/src/types/courseTypes"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/src/components/shared/components/ui/button"
 import { useRouter } from "next/navigation"
 import { getCourseProgress } from "@/src/utils/getProgress"
 

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import Image from "next/image"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/shared/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -13,9 +13,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
+} from "@/src/components/shared/components/ui/dropdown-menu"
+import { Sheet, SheetTrigger, SheetContent } from "@/src/components/shared/components/ui/sheet"
+import { Button } from "@/src/components/shared/components/ui/button"
 import { LayoutDashboard, Calendar, Star, User, LogOut, BookOpen, Menu } from "lucide-react"
 
 import { useMentorContext } from "@/src/context/mentorContext" 

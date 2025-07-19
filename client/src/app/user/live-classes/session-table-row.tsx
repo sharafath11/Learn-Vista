@@ -1,8 +1,8 @@
 "use client"
 
 import { Calendar, Users, BookOpen, Play, Pause, AlertCircle, CheckCircle } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/src/components/shared/components/ui/badge"
+import { Button } from "@/src/components/shared/components/ui/button"
 import { cn } from "@/src/utils/cn"
 
 interface SessionTableRowProps {

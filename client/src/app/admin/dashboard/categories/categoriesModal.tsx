@@ -1,13 +1,14 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
+
 import { useAdminContext } from "@/src/context/adminContext"
 import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/shared/components/ui/dialog"
+import { Input } from "@/src/components/shared/components/ui/input"
+import { Textarea } from "@/src/components/shared/components/ui/textarea"
+import { Button } from "@/src/components/shared/components/ui/button"
 
 interface CategoryFormProps {
   isOpen: boolean

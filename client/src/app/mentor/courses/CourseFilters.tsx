@@ -1,13 +1,13 @@
 "use client"
 
-import { Input } from "@/components/ui/input"
+import { Input } from "@/src/components/shared/components/ui/input"
 import {
   Select,
   SelectTrigger,
   SelectItem,
   SelectContent,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/src/components/shared/components/ui/select"
 import { ICategory } from "@/src/types/categoryTypes"
 import { useEffect, useState } from "react"
 

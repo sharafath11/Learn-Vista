@@ -242,7 +242,7 @@ class AdminCourseController implements IAdminCourseController {
         sort.createdAt = 1;
       }
 
-      let sendFilter: any = {};
+      const sendFilter: any = {};
       if (queryParams.filters?.isBlocked !== undefined) {
         if (queryParams.filters.isBlocked === "false") {
           sendFilter.isBlock = false;

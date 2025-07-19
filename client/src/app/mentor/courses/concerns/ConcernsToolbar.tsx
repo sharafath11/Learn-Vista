@@ -1,7 +1,7 @@
 // components/ConcernsToolbar.tsx
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Input } from "@/src/components/shared/components/ui/input"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/src/components/shared/components/ui/dropdown-menu"
 import { Search, Filter, ChevronDown, ArrowUpDown, Clock, CheckCircle, Eye } from 'lucide-react'
 import React from "react"
 import { ICourse } from "@/src/types/courseTypes"
@@ -21,11 +21,7 @@ interface FilterOption<T = string> {
   icon?: React.ReactNode
 }
 
-// Define a type for the course, assuming it has an 'id' and 'title'
-interface Course {
-  id: string;
-  title: string;
-}
+
 
 interface ConcernsToolbarProps {
   searchTerm: string;
@@ -38,7 +34,7 @@ interface ConcernsToolbarProps {
   setSortBy: (sortBy: string) => void;
   sortOrder: "asc" | "desc";
   setSortOrder: (order: "asc" | "desc") => void;
-  courses: ICourse[]; // Pass courses for the course filter dropdown
+  courses: ICourse[]; 
   statusCounts: {
     all: number;
     open: number;

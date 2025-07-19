@@ -12,7 +12,7 @@ import adminRoutes from "./routes/adminRoutes/admin.Routes";
 import { refreshAccessToken, setTokensInCookies } from "./utils/JWTtoken";
 import { socketHandler } from "./config/ socket";
 import { getGemaniResponse } from "./config/gemaniAi";
-import { handleControllerError, sendResponse, throwError } from "./utils/ResANDError";
+import { handleControllerError, sendResponse } from "./utils/ResANDError";
 import { StatusCode } from "./enums/statusCode.enum";
 import { batmanPrompt } from "./utils/Rportprompt";
 import { setIOInstance } from "./config/globalSocket";
@@ -49,7 +49,8 @@ app.use("/refresh-token", (req: Request, res: Response) => {
     const tokens = refreshAccessToken(req.cookies.refreshToken);
 
     if (!tokens) {
-      throwError("Invalid refresh tocken")
+       res.status(401).json({ message: "Invalid refresh token" });
+      return
      
     }
 
@@ -57,7 +58,7 @@ app.use("/refresh-token", (req: Request, res: Response) => {
     res.status(200).json({ ok: true, msg: "Tokens refreshed successfully" });
     return
   } catch (error: any) {
-    res.status(500).json({ ok: false, msg: "Failed to refresh token", error: error.message });
+    res.status(StatusCode.UNAUTHORIZED).json({ ok: false, msg: "Failed to refresh token", error: error.message });
     return
   }
 });

@@ -3,7 +3,6 @@ import { FC, useContext } from 'react';
 import { motion } from 'framer-motion';
 import { FiUser,FiEye,FiLock,FiUnlock } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
-import { patchRequest } from '@/src/services/api';
 import { showInfoToast, showSuccessToast } from '@/src/utils/Toast';
 import { AdminContext } from '@/src/context/adminContext';
 import { AdminAPIMethods } from '@/src/services/APImethods';

@@ -1,6 +1,6 @@
 // components/user/sessions/LessonProgressBar.tsx
 import React from 'react';
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/src/components/shared/components/ui/progress";
 
 interface LessonProgressBarProps {
   progress: number;

@@ -1,18 +1,18 @@
 "use client"
 import { useAdminContext } from "@/src/context/adminContext"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
+import { Input } from "@/src/components/shared/components/ui/input"
+import { Label } from "@/src/components/shared/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/src/components/shared/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
+import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { useEffect, useState } from "react"
 import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"

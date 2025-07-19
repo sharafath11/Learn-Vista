@@ -10,7 +10,6 @@ import { CustomAlertDialog } from "@/src/components/custom-alert-dialog"
 
 import ReportModal from "./ReportModal"
 import LessonHeader from "./LessonHeader"
-import LessonProgressBar from "./LessonProgressBar"
 import LessonContent from "./LessonContent"
 import LessonDiscussion from "./LessonDiscussion"
 

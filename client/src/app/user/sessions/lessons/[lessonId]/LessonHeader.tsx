@@ -1,6 +1,6 @@
 // components/user/sessions/LessonHeader.tsx
 import React from 'react';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/shared/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import DonationComponent from "@/src/components/user/Donation";
 import { ILessons } from "@/src/types/lessons";

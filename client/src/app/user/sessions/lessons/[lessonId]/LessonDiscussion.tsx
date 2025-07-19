@@ -1,9 +1,9 @@
 // components/user/sessions/LessonDiscussion.tsx
 import React, { useState, useRef, useEffect } from 'react';
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Textarea } from "@/src/components/shared/components/ui/textarea";
+import { Button } from "@/src/components/shared/components/ui/button";
 import { format } from "date-fns";
-import { IComment } from "@/src/types/lessons"; // Assuming IComment is defined here
+import { IComment } from "@/src/types/lessons"; 
 
 interface LessonDiscussionProps {
   comments: IComment[];

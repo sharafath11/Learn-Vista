@@ -1,16 +1,16 @@
 "use client"
 
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import { Card, CardHeader, CardTitle, CardContent } from "@/src/components/shared/components/ui/card"
+import { Input } from "@/src/components/shared/components/ui/input"
+import { Textarea } from "@/src/components/shared/components/ui/textarea"
+import { Label } from "@/src/components/shared/components/ui/label"
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select"
+} from "@/src/components/shared/components/ui/select"
 
 interface CourseBasicInfoProps {
   formData: {

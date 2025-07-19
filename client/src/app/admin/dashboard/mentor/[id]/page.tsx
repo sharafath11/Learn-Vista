@@ -1,8 +1,8 @@
 "use client";
 import MentorInfoCard from "@/src/components/admin/mentor/MentorProfile/MentorInfoCard";
-import { AdminContext, useAdminContext } from "@/src/context/adminContext";
+import { AdminContext } from "@/src/context/adminContext";
 import { useParams } from "next/navigation";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
 const MentorProfile = () => {
   const params = useParams();

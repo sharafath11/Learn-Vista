@@ -6,9 +6,9 @@ import { Mic, MicOff, Video, VideoOff, Phone, Monitor, MessageSquare, Badge } fr
 import { toast } from "sonner"
 import io, { Socket } from "socket.io-client"
 import Peer from "simple-peer"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Card } from "@/src/components/shared/components/ui/card"
+import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { MentorAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast"
 

@@ -5,7 +5,7 @@ import { useState } from "react"
 import type { IDonation, IStripeSuccessSession } from "@/src/types/donationTyps"
 import { CheckCircle2, Heart, Mail, ArrowLeft, Download, Loader2 } from "lucide-react"
 import { useUserContext } from "@/src/context/userAuthContext"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/src/components/shared/components/ui/button"
 import { generateReceiptPDF } from "@/src/utils/receiptGenerator"
 
 type Props = {
@@ -20,7 +20,7 @@ export default function SuccessView({ session }: Props) {
   const handleBack = () => {
     const url = localStorage.getItem("url")
     if (url) router.push(url)
-    else router.push("/")
+    else router.push("/user")
     localStorage.removeItem("url")
   }
 

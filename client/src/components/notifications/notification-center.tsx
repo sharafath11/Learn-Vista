@@ -7,7 +7,7 @@ import { NotificationAPIMethods } from "@/src/services/APImethods"
 import type { INotification } from "@/src/types/notificationsTypes"
 import { UnreadNotifications } from "./unread-notifications"
 import { AllNotifications } from "./all-notifications"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/src/components/shared/components/ui/button"
 
 interface NotificationCenterProps {
   isOpen: boolean

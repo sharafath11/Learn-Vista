@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
 import { Clock, Code, FileText, Info, Play } from "lucide-react"
 import { showErrorToast } from "@/src/utils/Toast"
 import { ILessons } from "@/src/types/lessons"

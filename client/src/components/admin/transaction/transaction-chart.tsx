@@ -1,7 +1,7 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 import {
   BarChart,
   Bar,
@@ -16,7 +16,7 @@ import {
   LineChart,
   Line,
 } from "recharts"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/src/components/shared/components/ui/skeleton"
 import type { IDonation } from "@/src/types/donationTyps"
 import { FilterOptions } from "@/src/types/adminTypes"
 

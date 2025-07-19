@@ -4,7 +4,7 @@ import VideoPlayer from "@/src/components/user/sessions/video-player";
 import TheoryQuestions from "@/src/components/user/sessions/theory-questions";
 import CodeChallenge from "@/src/components/user/sessions/CodeChallenge";
 import MCQQuestions from "@/src/components/user/sessions/MCQQuestions";
-import { IQuestions, AnswerWithType, EvaluatedAnswer } from '@/src/types/lessons'; // Assuming these types are here
+import { IQuestions,EvaluatedAnswer } from '@/src/types/lessons';
 
 interface LessonContentProps {
   videoUrl: string;

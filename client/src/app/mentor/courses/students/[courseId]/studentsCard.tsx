@@ -1,9 +1,9 @@
 "use client"
 
 import { Calendar, Mail, User, Eye, Shield, ShieldOff } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Card, CardContent, CardFooter, CardHeader } from "@/src/components/shared/components/ui/card"
+import { Badge } from "@/src/components/shared/components/ui/badge"
 import { IUser } from "@/src/types/userTypes"
 
 interface StudentCardProps {

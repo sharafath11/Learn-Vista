@@ -9,10 +9,10 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+} from "@/src/components/shared/components/ui/card";
+import { Button } from "@/src/components/shared/components/ui/button";
+import { Badge } from "@/src/components/shared/components/ui/badge";
+import { Progress } from "@/src/components/shared/components/ui/progress";
 
 const Courses = () => {
   const { allCourses } = useUserContext();

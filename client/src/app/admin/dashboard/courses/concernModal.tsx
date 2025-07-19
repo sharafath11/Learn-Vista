@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/src/components/shared/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/src/components/shared/components/ui/dialog"
 import {
   AlertCircle,
   CheckCircle,
@@ -17,9 +17,9 @@ import {
   Music,
   FileText
 } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Textarea } from "@/components/ui/textarea"
+import { Badge } from "@/src/components/shared/components/ui/badge"
+import { Separator } from "@/src/components/shared/components/ui/separator"
+import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { AdminAPIMethods, MentorAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast"
 import { IConcern } from "@/src/types/concernTypes"

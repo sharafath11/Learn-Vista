@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { CheckCircle, XCircle, RefreshCw, Trophy, Clock, Target, Loader2, AlertTriangle } from "lucide-react"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Card } from "@/src/components/shared/components/ui/card"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Badge } from "@/src/components/shared/components/ui/badge"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast } from "@/src/utils/Toast"
 

@@ -9,11 +9,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
+} from "@/src/components/shared/components/ui/dialog"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Avatar, AvatarImage, AvatarFallback } from "@/src/components/shared/components/ui/avatar"
+import { Badge } from "@/src/components/shared/components/ui/badge"
+import { ScrollArea } from "@/src/components/shared/components/ui/scroll-area"
 import { useMentorContext } from "@/src/context/mentorContext"
 
 interface StudentDetailsModalProps {

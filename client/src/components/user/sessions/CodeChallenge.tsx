@@ -2,8 +2,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Alert, AlertDescription } from "@/src/components/shared/components/ui/alert"
 import { CheckCircle2 } from "lucide-react"
 import { IQuestions } from "@/src/types/lessons"
 

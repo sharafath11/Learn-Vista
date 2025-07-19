@@ -9,7 +9,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/src/components/shared/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 
 interface CustomAlertDialogProps {

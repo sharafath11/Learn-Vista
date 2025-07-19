@@ -34,7 +34,7 @@ const MobileHeader = ({ user, handleLogout }: MobileHeaderProps) => {
 
   return (
     <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white shadow-md p-3 flex justify-between items-center">
-      <Link href="/" className="flex items-center">
+      <Link href="/user" className="flex items-center">
         <Image src="/images/logo.png" alt="Logo" width={32} height={32} />
         <span className="ml-2 text-lg font-bold text-purple-900">Learn Vista</span>
       </Link>

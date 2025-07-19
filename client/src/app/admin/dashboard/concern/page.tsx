@@ -2,24 +2,20 @@
 
 import { useEffect, useState } from "react"
 import { AdminAPIMethods } from "@/src/services/APImethods"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+
 import { Calendar, AlertCircle, Search, ChevronDown, Layers } from "lucide-react"
 import { ConcernModal } from "../courses/concernModal"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem
-} from "@/components/ui/dropdown-menu"
+
 import { cn } from "@/lib/utils"
 import { ICourse } from "@/src/types/courseTypes"
 import { IConcern } from "@/src/types/concernTypes"
-import { useAdminContext } from "@/src/context/adminContext"
 import { showErrorToast } from "@/src/utils/Toast"
 import { IMentor } from "@/src/types/mentorTypes"
+import { Input } from "@/src/components/shared/components/ui/input"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/src/components/shared/components/ui/dropdown-menu"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Card } from "@/src/components/shared/components/ui/card"
+import { Badge } from "@/src/components/shared/components/ui/badge"
 
 export default function ConcernsPage() {
   const [concerns, setConcerns] = useState<IConcern[]>([])

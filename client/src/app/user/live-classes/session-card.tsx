@@ -1,9 +1,9 @@
 "use client"
 
 import { Calendar, Users, BookOpen, Play, Pause, ChevronRight, AlertCircle, CheckCircle } from "lucide-react"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Card } from "@/src/components/shared/components/ui/card"
+import { Badge } from "@/src/components/shared/components/ui/badge"
+import { Button } from "@/src/components/shared/components/ui/button"
 import { cn } from "@/src/utils/cn"
 
 interface SessionCardProps {

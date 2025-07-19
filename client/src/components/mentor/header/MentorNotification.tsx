@@ -2,9 +2,9 @@
 
 import { useState } from "react"
 import { Bell } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Badge } from "@/src/components/shared/components/ui/badge"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/shared/components/ui/popover"
 import { NotificationCenter } from "../../notifications/notification-center"
 import { INotification } from "@/src/types/notificationsTypes"
 interface MentorNotificationProps {

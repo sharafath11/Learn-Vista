@@ -1,13 +1,13 @@
 import { SearchAndFilterProps } from "@/src/types/adminTypes";
 import React from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/src/components/shared/components/ui/input";
+import { Button } from "@/src/components/shared/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/src/components/shared/components/ui/dropdown-menu";
 import { ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 

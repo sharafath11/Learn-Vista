@@ -7,12 +7,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+} from "@/src/components/shared/components/ui/dialog";
+import { Label } from "@/src/components/shared/components/ui/label";
+import { Textarea } from "@/src/components/shared/components/ui/textarea";
+import { Input } from "@/src/components/shared/components/ui/input";
 import { BookOpen, Code, ListChecks } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/shared/components/ui/button";
 import { useEffect, useState } from "react";
 import { IQuestions, QuestionType } from "@/src/types/lessons";
 import { showInfoToast } from "@/src/utils/Toast";

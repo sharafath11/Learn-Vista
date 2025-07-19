@@ -1,6 +1,6 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/src/components/shared/components/ui/dialog";
+import { Button } from "@/src/components/shared/components/ui/button";
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { EvaluatedAnswer } from '@/src/types/lessons';
 

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Pencil, PlusCircle, PlayCircle, MessageSquare } from "lucide-react"; // Import MessageSquare
+import { Button } from "@/src/components/shared/components/ui/button";
+import { Card } from "@/src/components/shared/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/shared/components/ui/dialog";
+import { ArrowLeft, Pencil, PlusCircle, PlayCircle, MessageSquare } from "lucide-react"; 
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import Image from "next/image";

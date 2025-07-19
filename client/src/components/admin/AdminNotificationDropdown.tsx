@@ -1,9 +1,9 @@
 "use client"
 import { useState } from "react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/shared/components/ui/popover"
 import { Bell } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/src/components/shared/components/ui/badge"
+import { Button } from "@/src/components/shared/components/ui/button"
 import { useAdminContext } from "@/src/context/adminContext"
 import { NotificationCenter } from "../notifications/notification-center"
 

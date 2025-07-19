@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Card } from "@/src/components/shared/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -11,10 +11,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/src/components/shared/components/ui/dialog"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/src/components/shared/components/ui/form"
+import { Input } from "@/src/components/shared/components/ui/input"
+import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { showErrorToast, showSuccessToast, showInfoToast } from "@/src/utils/Toast" 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"

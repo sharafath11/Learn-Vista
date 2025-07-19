@@ -2,12 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/src/components/shared/components/ui/dialog";
+import { showErrorToast } from "@/src/utils/Toast";
 import { MentorAPIMethods } from "@/src/services/APImethods";
-import { formatDistanceToNow } from 'date-fns'; // Used for friendly date formatting like "2 hours ago"
+import { formatDistanceToNow } from 'date-fns'; 
 import { IComment } from "@/src/types/lessons";
 
 

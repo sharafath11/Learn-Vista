@@ -5,18 +5,13 @@ import Link from "next/link"
 import { useMentorContext } from "@/src/context/mentorContext"
 import {
   BookOpen,
-  Calendar,
-  FileText,
-  Search,
   Settings,
   Users,
   Film,
   GraduationCap,
   PlusCircle,
   PlayCircle,
-  Clock,
   TrendingUp,
-  Award,
 } from "lucide-react"
 
 export default function MentorDashboard() {

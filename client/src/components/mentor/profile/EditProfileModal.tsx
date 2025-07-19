@@ -8,11 +8,11 @@ import { MentorAPIMethods } from "@/src/services/APImethods";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 import { useMentorContext } from "@/src/context/mentorContext";
 import { validateMentorProfile } from "@/src/validations/mentorValidation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/src/components/shared/components/ui/button";
+import { Input } from "@/src/components/shared/components/ui/input";
+import { Textarea } from "@/src/components/shared/components/ui/textarea";
+import { Card, CardHeader, CardContent } from "@/src/components/shared/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/src/components/shared/components/ui/avatar";
 import { cn } from "@/lib/utils"; //Added
 
 type View = "profile" | "forgotPassword" | "resetSent";

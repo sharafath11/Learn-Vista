@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useUserContext } from "@/src/context/userAuthContext"
-import { Card } from "@/components/ui/card"
+import { Card } from "@/src/components/shared/components/ui/card"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"

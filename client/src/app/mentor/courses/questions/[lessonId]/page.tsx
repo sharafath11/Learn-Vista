@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/src/components/shared/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs";
 import { Plus, Edit, BookOpen, Code, GraduationCap, Info, List, CheckCircle } from "lucide-react";
 import { QuestionModal } from "../QuestionModal";
 import { IQuestions, QuestionType } from "@/src/types/lessons";

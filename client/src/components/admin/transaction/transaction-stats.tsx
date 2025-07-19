@@ -1,8 +1,8 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
 import { IndianRupee, TrendingUp, Target, Calendar } from "lucide-react"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/src/components/shared/components/ui/skeleton"
 import type { IDonation } from "@/src/types/donationTyps"
 
 interface TransactionStatsProps {

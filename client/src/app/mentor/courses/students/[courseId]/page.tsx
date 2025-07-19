@@ -7,14 +7,14 @@ import { useParams } from "next/navigation"
 import { IUser } from "@/src/types/userTypes"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import StudentDetailsModal from "./StudentDetailsModal"
-import { Input } from "@/components/ui/input"
+import { Input } from "@/src/components/shared/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/src/components/shared/components/ui/select"
 import {
   Pagination,
   PaginationContent,
@@ -22,7 +22,7 @@ import {
   PaginationPrevious,
   PaginationNext,
   PaginationLink,
-} from "@/components/ui/pagination"
+} from "@/src/components/shared/components/ui/pagination"
 
 interface FetchParams {
   page?: number
@@ -198,13 +198,10 @@ export default function Page() {
                         if (fetchParams.page && fetchParams.page > 1) {
                           handlePageChange(fetchParams.page - 1)
                         }
-                      }}
-                      className={
-                        fetchParams.page === 1
-                          ? "pointer-events-none opacity-50"
-                          : ""
-                      }
-                    />
+                      } }
+                      className={fetchParams.page === 1
+                        ? "pointer-events-none opacity-50"
+                        : ""} size={undefined}                    />
                   </PaginationItem>
 
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
@@ -215,14 +212,11 @@ export default function Page() {
                           onClick={(e) => {
                             e.preventDefault()
                             handlePageChange(number)
-                          }}
+                          } }
                           isActive={number === fetchParams.page}
-                          className={`${
-                            number === fetchParams.page
+                          className={`${number === fetchParams.page
                               ? "bg-white text-black font-semibold"
-                              : "bg-gray-800 text-white hover:bg-gray-700"
-                          } px-4 py-2 rounded-md transition`}
-                        >
+                              : "bg-gray-800 text-white hover:bg-gray-700"} px-4 py-2 rounded-md transition`} size={undefined}                        >
                           {number}
                         </PaginationLink>
                       </PaginationItem>
@@ -234,19 +228,14 @@ export default function Page() {
                       href="#"
                       onClick={(e) => {
                         e.preventDefault()
-                        if (
-                          fetchParams.page &&
-                          fetchParams.page < totalPages
-                        ) {
+                        if (fetchParams.page &&
+                          fetchParams.page < totalPages) {
                           handlePageChange(fetchParams.page + 1)
                         }
-                      }}
-                      className={
-                        fetchParams.page === totalPages
-                          ? "pointer-events-none opacity-50"
-                          : ""
-                      }
-                    />
+                      } }
+                      className={fetchParams.page === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : ""} size={undefined}                    />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>

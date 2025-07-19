@@ -2,9 +2,9 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { Input } from "@/components/ui/input"
+import { Input } from "@/src/components/shared/components/ui/input"
 import { Search, Filter, SortAsc } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/shared/components/ui/select"
 import useDebounce from "@/src/hooks/useDebouncing"
 import type { ICategory } from "@/src/types/categoryTypes"
 

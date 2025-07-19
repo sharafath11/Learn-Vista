@@ -3,7 +3,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/shared/components/ui/button";
 import { Heart, X } from "lucide-react"; 
 import { loadStripe } from '@stripe/stripe-js';
 import { showErrorToast } from "@/src/utils/Toast"; 
@@ -16,10 +16,10 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+} from "@/src/components/shared/components/ui/dialog";
+import { Input } from "@/src/components/shared/components/ui/input";
+import { Label } from "@/src/components/shared/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/src/components/shared/components/ui/radio-group";
 import { UserAPIMethods } from "@/src/services/APImethods";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useUserContext } from "@/src/context/userAuthContext";

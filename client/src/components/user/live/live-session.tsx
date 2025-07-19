@@ -5,8 +5,8 @@ import { MessageSquare, LogOut } from "lucide-react"
 import { toast } from "sonner"
 import io from "socket.io-client"
 import Peer from "simple-peer"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
+import { Textarea } from "@/src/components/shared/components/ui/textarea"
+import { Button } from "@/src/components/shared/components/ui/button"
 import { showInfoToast } from "@/src/utils/Toast"
 
 export default function UserLiveSession({ roomId }: { roomId: string }) {

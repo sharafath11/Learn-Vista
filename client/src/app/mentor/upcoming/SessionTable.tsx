@@ -2,8 +2,8 @@
 
 import { format, parseISO } from "date-fns"
 import { Calendar, Clock, Users, Play, Radio, CheckCircle, Archive } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Badge } from "@/src/components/shared/components/ui/badge"
 
 interface SessionTableProps {
   sessions: any[]

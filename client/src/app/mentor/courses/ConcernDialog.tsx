@@ -8,10 +8,10 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
+} from "@/src/components/shared/components/ui/dialog"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Textarea } from "@/src/components/shared/components/ui/textarea"
+import { Input } from "@/src/components/shared/components/ui/input"
 import { useState, useRef, type ChangeEvent } from "react"
 import { MessageCircleWarning, Upload, X, ImageIcon, Mic, Loader2 } from "lucide-react"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"

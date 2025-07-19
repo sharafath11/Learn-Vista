@@ -2,11 +2,11 @@
 
 import type React from "react"
 import type { UseFormReturn } from "react-hook-form"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
+import { Input } from "@/src/components/shared/components/ui/input"
+import { Label } from "@/src/components/shared/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/shared/components/ui/select"
+import { Badge } from "@/src/components/shared/components/ui/badge"
 import { X } from "lucide-react"
 import { type CourseFormValues, languages } from "./schema"
 

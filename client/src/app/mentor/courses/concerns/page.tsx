@@ -2,14 +2,15 @@
 
 import { useState, useEffect } from "react"
 import { AlertCircle } from 'lucide-react'
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/src/components/shared/components/ui/badge"
+import { Card, CardContent } from "@/src/components/shared/components/ui/card"
+import { Button } from "@/src/components/shared/components/ui/button"
 import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useMentorContext } from "@/src/context/mentorContext"
 import { IConcern } from "@/src/types/concernTypes"
 import ConcernsToolbar from "./ConcernsToolbar"
 import ConcernCard from "./ConcernCard"
+import useDebounce from "@/src/hooks/useDebouncing"
 
 type ConcernStatus = 'open' | 'in-progress' | 'resolved'
 
@@ -17,6 +18,7 @@ export default function ConcernsPage() {
   const { courses } = useMentorContext()
   const [concerns, setConcerns] = useState<IConcern[]>([])
   const [searchTerm, setSearchTerm] = useState("")
+  const debouncedSearchTerm = useDebounce(searchTerm, 500)
   const [statusFilter, setStatusFilter] = useState<ConcernStatus | "all">("all")
   const [courseFilter, setCourseFilter] = useState<string>("all")
   const [sortBy, setSortBy] = useState<string>("createdAt")
@@ -32,7 +34,7 @@ export default function ConcernsPage() {
     setIsLoading(true)
     try {
       const params = {
-        search: searchTerm,
+        search: debouncedSearchTerm,
         status: statusFilter !== "all" ? statusFilter : undefined,
         courseId: courseFilter !== "all" ? courseFilter : undefined,
         sortBy,
@@ -60,7 +62,7 @@ export default function ConcernsPage() {
   }, [searchTerm, statusFilter, courseFilter, sortBy, sortOrder])
   useEffect(() => {
     fetchConcernsData()
-  }, [pagination.page, searchTerm, statusFilter, courseFilter, sortBy, sortOrder])
+  }, [pagination.page, debouncedSearchTerm, statusFilter, courseFilter, sortBy, sortOrder])
 
   const statusCounts = {
     all: pagination.total,

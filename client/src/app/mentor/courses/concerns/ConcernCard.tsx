@@ -7,11 +7,11 @@ import {
   Card,
   CardContent,
   CardHeader
-} from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { Dialog, DialogContent } from "@/components/ui/dialog"
+} from "@/src/components/shared/components/ui/card"
+import { Badge } from "@/src/components/shared/components/ui/badge"
+import { Button } from "@/src/components/shared/components/ui/button"
+import { Separator } from "@/src/components/shared/components/ui/separator"
+import { Dialog, DialogContent } from "@/src/components/shared/components/ui/dialog"
 import {
   CheckCircle,
   Clock,

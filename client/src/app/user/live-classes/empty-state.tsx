@@ -1,8 +1,8 @@
 "use client"
 
 import { BookOpen } from "lucide-react"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card } from "@/src/components/shared/components/ui/card"
+import { Button } from "@/src/components/shared/components/ui/button"
 
 interface EmptyStateProps {
   filter: "active" | "expired"
