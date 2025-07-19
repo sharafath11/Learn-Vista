@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-// import { I_mentorRepository } from "../../core/interfaces/repositories/admin/I_mentorRepository";
 import { TYPES } from "../../core/types";
 import { sendMentorStatusChangeEmail } from "../../utils/emailService";
 import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";

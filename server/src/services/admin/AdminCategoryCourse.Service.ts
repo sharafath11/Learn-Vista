@@ -2,22 +2,16 @@ import { inject, injectable } from "inversify";
 import { IAdminCourseServices } from "../../core/interfaces/services/admin/IAdminCourseService";
 import { ICategory, ICourse, IPopulatedCourse } from "../../types/classTypes";
 import { TYPES } from "../../core/types";
-// import { IAdminCategoriesRepostory } from "../../core/interfaces/repositories/admin/IAdminCategoryRepository";
-// import { IAdminMentorRepository } from "../../core/interfaces/repositories/admin/IAdminMentorRepository";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { throwError } from "../../utils/ResANDError";
 import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
 import { validateCoursePayload } from "../../validation/adminValidation";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
-import { CourseRepository } from "../../repositories/course/CourseRepository";
-// import { IAdminCourserRepository } from "../../core/interfaces/repositories/admin/IAdminCourseRepository";
 import { IConcern } from "../../types/concernTypes";
 import { IConcernRepository } from "../../core/interfaces/repositories/concern/IConcernRepository";
 import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
-import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
-import { INotificationRepository } from "../../core/interfaces/repositories/notifications/INotificationsRepository";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 
 @injectable()
@@ -25,11 +19,7 @@ class AdminCourseServices implements IAdminCourseServices {
   constructor(
     @inject(TYPES.CategoriesRepository)
     private categoryRepo: ICategoriesRepository,
-
-    @inject(TYPES.MentorRepository)
-    private mentorRepo: IMentorRepository,
     @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository,
-
     @inject(TYPES.CourseRepository)
     private baseCourseRepo: ICourseRepository,
     @inject(TYPES.ConcernRepository) private _concernRepo: IConcernRepository,
@@ -47,7 +37,6 @@ class AdminCourseServices implements IAdminCourseServices {
     const newData = await this.categoryRepo.create({ title, description });
     return newData;
   }
-
   async getCategory(
     page: number = 1,
     limit: number = 10,
@@ -107,12 +96,12 @@ class AdminCourseServices implements IAdminCourseServices {
     const createdCourse = await this.baseCourseRepo.create(courseData);
     if (!createdCourse) throwError("Failed to create course", StatusCode.INTERNAL_SERVER_ERROR);
       await notifyWithSocket({
-     notificationService: this._notificationService,
-        userIds: [createdCourse.mentorId.toString()],
-     roles:["user"],
-     title: "Course Updated",
-     message: `New course "${createdCourse.title}" has been Started.`,
-    type: "info",
+      notificationService: this._notificationService,
+      userIds: [createdCourse.mentorId.toString()],
+      roles:["user"],
+      title: "Course Updated",
+      message: `New course "${createdCourse.title}" has been Started.`,
+      type: "info",
     });
     return createdCourse;
   }
@@ -137,16 +126,12 @@ class AdminCourseServices implements IAdminCourseServices {
       const startDate = data.startDate ?? currentCourse.startDate;
       const endDate = data.endDate ?? currentCourse.endDate;
       const startTime = data.startTime ?? currentCourse.startTime;
-  
       if (!startDate || !endDate || !startTime) {
         throwError("Incomplete scheduling data", StatusCode.BAD_REQUEST);
       }
-  
       const existingCourses = await this.baseCourseRepo.findAll({ mentorId: newMentorId });
-  
       const newStart = new Date(startDate);
       const newEnd = new Date(endDate);
-  
       const hasConflict = existingCourses.some(course => {
         if (course.id === courseId) return false;
         if (!course.startDate || !course.endDate || !course.startTime) return false;
@@ -183,13 +168,13 @@ class AdminCourseServices implements IAdminCourseServices {
     if (!updatedCourse) {
       throwError("Failed to update course", StatusCode.INTERNAL_SERVER_ERROR);
     }
-   await notifyWithSocket({
-  notificationService: this._notificationService,
-  userIds: [updatedCourse.mentorId.toString()],
-  title: "Course Updated",
-  message: `Your course "${updatedCourse.title}" has been updated by the admin.`,
-  type: "info",
-});
+    await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [updatedCourse.mentorId.toString()],
+    title: "Course Updated",
+    message: `Your course "${updatedCourse.title}" has been updated by the admin.`,
+    type: "info",
+   });
   
     return updatedCourse;
   }
@@ -240,13 +225,10 @@ async editCategories(categoryId: string, title: string, description: string): Pr
   if (!id || id.length !== 24) {
     throwError("Invalid course ID", StatusCode.BAD_REQUEST);
   }
-
   const updated = await this.baseCourseRepo.update(id, { isBlock });
-
   if (!updated) {
     throwError("Failed to update course status", StatusCode.INTERNAL_SERVER_ERROR);
   }
-
   const statusText = isBlock ? "blocked" : "unblocked";
 
   if (!updated.mentorId) {
@@ -356,9 +338,6 @@ async getAllConcerns(
 
   return this._concernRepo.count(query);
 }
-
-
-
 }
 
 export default AdminCourseServices;

@@ -4,9 +4,9 @@ import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Se
 import { TYPES } from '../../core/types';
 import { IMentor } from '../../types/mentorTypes';
 import { throwError } from '../../utils/ResANDError'; 
-import { ICategory, ICourse, IPopulatedCourse } from '../../types/classTypes';
+import { ICategory,IPopulatedCourse } from '../../types/classTypes';
 import { ICourseRepository } from '../../core/interfaces/repositories/course/ICourseRepository';
-import { StatusCode } from '../../enums/statusCode.enum'; // Consistent StatusCode Enum
+import { StatusCode } from '../../enums/statusCode.enum'; 
 import { ICategoriesRepository } from '../../core/interfaces/repositories/course/ICategoriesRepository';
 
 @injectable()

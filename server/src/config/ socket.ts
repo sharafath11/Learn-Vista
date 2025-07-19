@@ -1,13 +1,6 @@
 
 import { Server, Socket } from "socket.io";
-interface Participant {
-  socketId: string; 
-  role: 'mentor' | 'user';
-}
-interface Room {
-  mentorSocketId: string | null;
-  participants: Record<string, Participant>;
-}
+import { Room } from "../types/scoket";
 const rooms: Record<string, Room> = {};
 export function socketHandler(io: Server) {
   io.on('connection', (socket: Socket) => {

@@ -118,7 +118,7 @@ import { DonationRepoitory } from '../../repositories/user/DonationRepository';
 import { IAdminDonationServices } from '../interfaces/services/admin/IAdminDonationService';
 import { AdminDonationService } from '../../services/admin/AdminDonation.Service';
 import { IAdminDonationController } from '../interfaces/controllers/admin/IAdminDonation.Controller';
-import { AdminDonationController } from '../../controllers/admin/adminDonation.Controller';
+import { AdminDonationController } from '../../controllers/admin/AdminDonation.Controller';
 import { IUserCourseProgressRepository } from '../interfaces/repositories/user/IUserCourseProgressRepository';
 import { UserCourseProgressRepository } from '../../repositories/user/UserCourseProgressRepository';
 import { INotificationRepository } from '../interfaces/repositories/notifications/INotificationsRepository';

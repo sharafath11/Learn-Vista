@@ -78,6 +78,7 @@
     "undefsafe": "^2.0.5",
     "undici-types": "^6.20.0",
     "v8-compile-cache-lib": "^3.0.1",
+    "winston": "^3.17.0",
     "yn": "^3.1.1"
   },
   "scripts": {

@@ -17,13 +17,15 @@ import { StatusCode } from "./enums/statusCode.enum";
 import { batmanPrompt } from "./utils/Rportprompt";
 import { setIOInstance } from "./config/globalSocket";
 import sharedRoutes from "../src/routes/shared/shared.Routes"
+import { requestLogger } from "./middlewares/requestLogger";
+import { logger } from "./utils/logger";
 dotenv.config();
 
 const app = express();
 const httpServer = createServer(app); 
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     credentials: true,
     methods: ["GET", "POST"],
   },
@@ -32,7 +34,7 @@ socketHandler(io);
 setIOInstance(io);
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: process.env.CLIENT_URL,
   credentials: true
 }));
 
@@ -67,7 +69,7 @@ app.use("/ai/doubt", async (req: Request, res: Response) => {
     handleControllerError(res,error)
   }
 });
-
+app.use(requestLogger);
 app.use((err: any, req: Request, res: Response, next: Function) => {
   console.error(err.stack);
   res.status(500).json({ ok: false, msg: "Something went wrong!" });
@@ -76,5 +78,5 @@ app.use((err: any, req: Request, res: Response, next: Function) => {
 const PORT = process.env.PORT || 4000;
 connectDb();
 httpServer.listen(PORT, () => {
-  console.log(` Server running on port ${PORT}`);
+  logger.info(` Server running on port ${PORT}`);
 });

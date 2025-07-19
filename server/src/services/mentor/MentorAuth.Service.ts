@@ -1,15 +1,12 @@
 import { inject, injectable } from 'inversify';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { Response } from 'express';
 import { TYPES } from '../../core/types';
 import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMentorAuth.Service';
 import { IMentorRepository } from '../../core/interfaces/repositories/mentor/IMentorRepository';
 import { IMentorOtpRepository } from '../../core/interfaces/repositories/mentor/IMentorOtpRepository';
-
 import { generateOtp } from '../../utils/otpGenerator';
 import { sendEmailOtp, sendPasswordResetEmail } from '../../utils/emailService';
-import { IMentor, SafeMentor } from '../../types/mentorTypes';
+import { IMentor } from '../../types/mentorTypes';
 import { generateAccessToken, generateRefreshToken } from '../../utils/JWTtoken';
 import { throwError } from '../../utils/ResANDError';
 import { validateMentorSignupInput } from '../../validation/mentorValidation';
