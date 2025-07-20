@@ -1,17 +1,16 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { Loader2 } from "lucide-react"
+import { Download, Loader2 } from "lucide-react"
 import DonationComponent from "@/src/components/user/donation/Donation"
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/src/components/shared/components/ui/table"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { Dialog, DialogContent } from "@/src/components/shared/components/ui/dialog"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { IDonation } from "@/src/types/donationTyps"
-import SuccessView from "../success/SuccessView"
+import { generateReceiptPDF } from "@/src/utils/receiptGenerator"
 
 export default function DonationHistoryPage() {
   const { user } = useUserContext()
@@ -19,16 +18,16 @@ export default function DonationHistoryPage() {
   const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
+  const [downloadingPDFId, setDownloadingPDFId] = useState<string | null>(null)
   const [totalDonationsAmount, setTotalDonationsAmount] = useState(0)
-  const [selectedDonation, setSelectedDonation] = useState<IDonation | null>(null)
   const observerTarget = useRef<HTMLDivElement>(null)
 
-  const fetchDonations = useCallback(
-    async (currentPage: number) => {
-      if (!user || loading || !hasMore) return
-      setLoading(true)
+  const fetchDonations = useCallback(async (currentPage: number) => {
+    if (!user || loading || !hasMore) return
+    setLoading(true)
+    try {
       const res = await UserAPIMethods.getMyDonations(currentPage)
-      setDonations((prev) => {
+      setDonations(prev => {
         const newDonations = res.data.data.filter(
           (d: IDonation) => !prev.find((p) => p.id === d.id)
         )
@@ -38,37 +37,70 @@ export default function DonationHistoryPage() {
       })
       setHasMore(res.data.hasMore)
       setPage(currentPage + 1)
+    } catch (err) {
+      console.error("Failed to fetch donations:", err)
+    } finally {
       setLoading(false)
-    },
-    [user, loading, hasMore]
-  )
+    }
+  }, [user, loading, hasMore])
 
   useEffect(() => {
     if (user) fetchDonations(1)
   }, [user, fetchDonations])
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading) {
-          fetchDonations(page)
-        }
-      },
-      { threshold: 1 }
-    )
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore && !loading) {
+        fetchDonations(page)
+      }
+    }, { threshold: 1 })
 
     const target = observerTarget.current
     if (target) observer.observe(target)
     return () => {
-      if (target) observer.unobserve(target)
-    }
+  if (target) observer.unobserve(target)
+}
+
   }, [hasMore, loading, page, fetchDonations])
+
+  const handleDownloadCustomReceipt = async (donation: IDonation) => {
+    if (!user) return
+    setDownloadingPDFId(donation.paymentIntentId)
+    try {
+      const receiptData = {
+        organizationName: "Learn Vista Foundation",
+        organizationAddress: "Calicut, Kerala, India 673019",
+        organizationEmail: "donations@learnvista.org",
+        organizationPhone: "+91 6282560928",
+        taxId: "TAX-ID-123456789",
+        transactionId: donation.paymentIntentId,
+        receiptNumber: `LV-${Date.now()}`,
+        donationDate: new Date(donation.createdAt).toLocaleDateString(),
+        donationTime: new Date(donation.createdAt).toLocaleTimeString(),
+        donorName: donation.donorName || "Anonymous Donor",
+        donorEmail: donation.donorEmail || user.email,
+        amount: donation.amount,
+        currency: donation.currency || "INR",
+        paymentMethod: "Credit/Debit Card",
+        purpose: "Educational Support & Development",
+        isRecurring: false,
+        notes: "Thank you for supporting education and making a difference in students' lives."
+      }
+      await generateReceiptPDF(receiptData)
+    } catch (error) {
+      console.error("Error generating PDF:", error)
+    } finally {
+      setDownloadingPDFId(null)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold text-purple-700 mb-4">Your Donation History 💖</h1>
-        <p className="text-gray-600 text-lg md:text-xl mb-6">Thank you for your generosity! Here's a record of your past contributions.</p>
+        <p className="text-gray-600 text-lg md:text-xl mb-6">
+          Thank you for your generosity! Here's a record of your past contributions.
+        </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
           <div className="text-2xl font-semibold text-gray-800">
             Total Donations: <span className="text-purple-600">₹{totalDonationsAmount.toFixed(2)}</span>
@@ -90,7 +122,6 @@ export default function DonationHistoryPage() {
                 <TableHead>Amount</TableHead>
                 <TableHead className="hidden md:table-cell">Date</TableHead>
                 <TableHead className="hidden sm:table-cell">Status</TableHead>
-                <TableHead className="hidden lg:table-cell">Message</TableHead>
                 <TableHead className="text-right">Receipt</TableHead>
               </TableRow>
             </TableHeader>
@@ -98,7 +129,7 @@ export default function DonationHistoryPage() {
               {donations.map((donation) => (
                 <TableRow key={donation.paymentIntentId}>
                   <TableCell className="font-medium">{donation.donorName || "Anonymous"}</TableCell>
-                  <TableCell>{donation.amount} {donation.currency}</TableCell>
+                  <TableCell>{donation.amount} INR</TableCell>
                   <TableCell className="hidden md:table-cell">
                     {new Date(donation.createdAt).toLocaleDateString()}
                   </TableCell>
@@ -118,15 +149,18 @@ export default function DonationHistoryPage() {
                       {donation.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-sm text-gray-600">
-                    {donation.message || "-"}
-                  </TableCell>
                   <TableCell className="text-right">
                     <button
-                      className="text-blue-500 hover:underline"
-                      onClick={() => setSelectedDonation(donation)}
+                      className="flex items-center gap-1 text-purple-600 hover:underline"
+                      onClick={() => handleDownloadCustomReceipt(donation)}
+                      disabled={downloadingPDFId === donation.paymentIntentId}
                     >
-                      View
+                      {downloadingPDFId === donation.paymentIntentId ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Download className="w-4 h-4" />
+                      )}
+                      Receipt
                     </button>
                   </TableCell>
                 </TableRow>
@@ -150,15 +184,6 @@ export default function DonationHistoryPage() {
       <footer className="mt-16 text-center text-sm text-gray-400">
         💡 For any discrepancies or questions, please contact support.
       </footer>
-
-      {/* SuccessView modal */}
-      {selectedDonation && (
-        <Dialog open={!!selectedDonation} onOpenChange={() => setSelectedDonation(null)}>
-          <DialogContent className="max-w-3xl p-0 overflow-hidden">
-            <SuccessView session={selectedDonation} />
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   )
 }
