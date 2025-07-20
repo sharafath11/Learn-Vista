@@ -40,11 +40,11 @@ app.use(cors({
 }));
 
 app.use(cookieParser());
-app.use("/", userRoutes);
-app.use("/mentor", mentorRoutes);
-app.use("/admin", adminRoutes);
-app.use("/shared",sharedRoutes)
-app.use("/refresh-token", (req: Request, res: Response) => {
+app.use("/api", userRoutes);
+app.use("/api/mentor", mentorRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/shared",sharedRoutes)
+app.use("/api/refresh-token", (req: Request, res: Response) => {
   try {
     const tokens = refreshAccessToken(req.cookies.refreshToken);
 
@@ -62,7 +62,7 @@ app.use("/refresh-token", (req: Request, res: Response) => {
     return
   }
 });
-app.use("/ai/doubt", async (req: Request, res: Response) => {
+app.use("/api/ai/doubt", async (req: Request, res: Response) => {
   try {
     const prompt=batmanPrompt(req.body.text)
   const answer = await getGemaniResponse(prompt);

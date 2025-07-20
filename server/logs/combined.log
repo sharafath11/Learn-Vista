@@ -34,3 +34,53 @@
 [2025-07-19 19:52:07] INFO:  Server running on port 4000
 [2025-07-19 19:53:15] INFO:  Server running on port 4000
 [2025-07-19 19:53:47] INFO:  Server running on port 4000
+[2025-07-19 19:55:09] INFO:  Server running on port 4000
+[2025-07-19 19:55:42] INFO:  Server running on port 4000
+[2025-07-19 19:56:14] INFO:  Server running on port 4000
+[2025-07-19 19:56:30] INFO: GET /a/user
+[2025-07-19 19:56:31] INFO: GET /a/courses
+[2025-07-19 19:56:31] INFO: GET /a/course/progress
+[2025-07-19 19:56:31] INFO: GET /a/shared/notifications
+[2025-07-20 13:17:33] INFO:  Server running on port 4000
+[2025-07-20 13:24:33] INFO:  Server running on port 4000
+[2025-07-20 13:25:38] INFO:  Server running on port 4000
+[2025-07-20 13:27:10] INFO:  Server running on port 4000
+[2025-07-20 13:28:33] INFO:  Server running on port 4000
+[2025-07-20 19:25:40] INFO:  Server running on port 4000
+[2025-07-20 19:39:48] INFO: GET /api/donations/1
+[2025-07-20 19:39:48] INFO: GET /api/donations/1
+[2025-07-20 19:42:15] INFO:  Server running on port 4000
+[2025-07-20 19:49:21] INFO:  Server running on port 4000
+[2025-07-20 19:51:51] INFO:  Server running on port 4000
+[2025-07-20 19:55:20] INFO:  Server running on port 4000
+[2025-07-20 19:55:40] INFO: donaton
+[2025-07-20 19:55:40] INFO: donaton
+[2025-07-20 19:56:48] INFO:  Server running on port 4000
+[2025-07-20 19:59:22] INFO:  Server running on port 4000
+[2025-07-20 20:01:49] INFO:  Server running on port 4000
+[2025-07-20 20:02:17] WARN: dfgiljnshbkjsdfnbkjnabkjn
+[2025-07-20 20:02:17] INFO: donaton
+[2025-07-20 20:02:17] WARN: dfgiljnshbkjsdfnbkjnabkjn
+[2025-07-20 20:02:17] INFO: donaton
+[2025-07-20 20:03:18] INFO:  Server running on port 4000
+[2025-07-20 20:03:36] WARN: dfgiljnshbkjsdfnbkjnabkjn
+[2025-07-20 20:03:37] INFO: donaton
+[2025-07-20 20:03:37] WARN: dfgiljnshbkjsdfnbkjnabkjn
+[2025-07-20 20:03:37] INFO: donaton
+[2025-07-20 20:04:52] INFO:  Server running on port 4000
+[2025-07-20 20:05:16] WARN: dfgiljnshbkjsdfnbkjnabkjn
+[2025-07-20 20:05:16] INFO: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+[2025-07-20 20:05:16] WARN: dfgiljnshbkjsdfnbkjnabkjn
+[2025-07-20 20:05:16] INFO: [object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]
+[2025-07-20 20:06:05] INFO:  Server running on port 4000
+[2025-07-20 20:06:27] WARN: dfgiljnshbkjsdfnbkjnabkjn
+[2025-07-20 20:06:28] WARN: dfgiljnshbkjsdfnbkjnabkjn
+[2025-07-20 20:11:28] INFO:  Server running on port 4000
+[2025-07-20 20:35:35] INFO:  Server running on port 4000
+[2025-07-20 20:46:39] INFO:  Server running on port 4000
+[2025-07-20 20:47:09] INFO:  Server running on port 4000
+[2025-07-20 20:50:46] INFO:  Server running on port 4000
+[2025-07-20 20:51:26] INFO:  Server running on port 4000
+[2025-07-20 20:53:26] INFO:  Server running on port 4000
+[2025-07-20 20:54:37] INFO:  Server running on port 4000
+[2025-07-20 21:01:29] INFO:  Server running on port 4000

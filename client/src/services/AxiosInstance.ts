@@ -2,7 +2,7 @@ import axios from "axios";
 import { showInfoToast } from "../utils/Toast";
 import { useLoading } from "../hooks/useLoading";
 
-export const baseURL = "http://localhost:4000";
+export const baseURL = "http://localhost:4000/api";
 
 const axiosInstance = axios.create({
   baseURL,

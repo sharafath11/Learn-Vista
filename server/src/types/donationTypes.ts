@@ -11,8 +11,15 @@ export interface IDonation extends Document {
   stripeCustomerId?: string;
   transactionId?: string
   receiptUrl?: string;
-  donorId?: Types.ObjectId;
+  donorId?: string|Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 export type CreateDonationInput = Omit<IDonation, keyof Document | "_id">;
+export interface DonationDTO {
+  id: string;
+  amount: number;
+  donorName: string;
+  paymentIntentId: string;
+  createdAt: Date;
+}

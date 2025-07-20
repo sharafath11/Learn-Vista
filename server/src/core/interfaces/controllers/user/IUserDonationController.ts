@@ -3,6 +3,6 @@ import { Request, Response } from "express";
 
 export interface IUserDonationController{
    createCheckoutSession(req: Request, res: Response): Promise<void>
-   // handleWebhook(req: Request, res: Response): Promise<void>;
-   verifySession(req:Request,res:Response):Promise<void>
+   verifySession(req: Request, res: Response): Promise<void>
+   getPaginatedDonations(req: Request, res: Response): Promise<void>
 }

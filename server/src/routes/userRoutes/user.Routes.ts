@@ -53,6 +53,6 @@ router.get("/stripe/verify-session/:sessionId", userDonationController.verifySes
 router.get("/course/progress", authenticateToken, userCourseController.getProgressDetiles.bind(userCourseController))
 router.get("/let-fun/psc", userController.getQuestionByNumber.bind(userController));
 router.post("/lesson/update-progress",authenticateToken,userLessonsController.updateLessonProgress.bind(UserLessonsController));
-
+router.get("/donations/:page", authenticateToken, userDonationController.getPaginatedDonations.bind(userDonationController));
 
 export default router;

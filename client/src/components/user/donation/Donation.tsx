@@ -149,7 +149,7 @@ export default function DonationComponent() {
               <Input
                 id="custom-amount"
                 type="number"
-                placeholder="Enter custom amount (INR)" // Updated placeholder
+                placeholder="Enter custom amount (INR)" 
                 value={customAmount}
                 onChange={handleCustomAmountChange}
                 className="col-span-3 bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"

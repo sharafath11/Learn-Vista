@@ -9,6 +9,7 @@ import { INotificationService } from "../../core/interfaces/services/notificatio
 import { Server } from "socket.io";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import dotenv from "dotenv"
+import { logger } from "../../utils/logger";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-05-28.basil",
 });
@@ -55,6 +56,7 @@ export class UserDonationServices implements IUserDonationServices {
     paymentIntentId: paymentIntent.id,
     stripeCustomerId: session.customer?.toString() || "",
     receiptUrl,
+    donorId:userId?userId:"unknown",
     transactionId: charge.id, 
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -75,6 +77,27 @@ export class UserDonationServices implements IUserDonationServices {
   }
   const savedDonation = await this._donationRepo.create(donation);
   return savedDonation;
+  }
+async getPaginatedDonations(userId: string, page: number): Promise<{
+  data: IDonation[];
+  total: number;
+  hasMore: boolean;
+}> {
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  const filters = { donorId: userId };
+  const sort: Record<string, 1 | -1> = { createdAt: -1 };
+
+  const data = await this._donationRepo.findManyWithFilter(filters, sort, skip, limit);
+  const total = await this._donationRepo.count(filters);
+  const hasMore = skip + data.length < total;
+
+  return { data, total, hasMore };
 }
+
+
+
+
 
 }

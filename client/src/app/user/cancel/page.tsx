@@ -1,6 +1,6 @@
 "use client"
 
-import DonationComponent from "@/src/components/user/Donation"
+import DonationComponent from "@/src/components/user/donation/Donation"
 import { XCircle } from "lucide-react"
 
 export default function DonationFailedPage() {

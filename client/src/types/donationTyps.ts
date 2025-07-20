@@ -1,4 +1,5 @@
 export interface IDonation{
+  id:string
   donorName: string;
   donorEmail: string;
   amount: number;

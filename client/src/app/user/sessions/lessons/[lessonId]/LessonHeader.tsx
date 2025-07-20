@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from "@/src/components/shared/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import DonationComponent from "@/src/components/user/Donation";
+import DonationComponent from "@/src/components/user/donation/Donation";
 import { ILessons } from "@/src/types/lessons";
 import { EvaluatedAnswer } from '@/src/types/lessons'; 
 

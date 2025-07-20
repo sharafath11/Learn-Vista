@@ -54,7 +54,8 @@ updateLessonProgress: (
     practicalCompleted?: boolean;
     mcqCompleted?: boolean;
   }
-) => post("/lesson/update-progress", { lessonId, ...update })
+  ) => post("/lesson/update-progress", { lessonId, ...update }),
+  getMyDonations:(limit:number)=>get(`/donations/${limit}`)
 
 } as const;
 
