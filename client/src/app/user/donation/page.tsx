@@ -58,9 +58,8 @@ export default function DonationHistoryPage() {
     const target = observerTarget.current
     if (target) observer.observe(target)
     return () => {
-  if (target) observer.unobserve(target)
-}
-
+      if (target) observer.unobserve(target)
+    }
   }, [hasMore, loading, page, fetchDonations])
 
   const handleDownloadCustomReceipt = async (donation: IDonation) => {
@@ -101,7 +100,7 @@ export default function DonationHistoryPage() {
         <p className="text-gray-600 text-lg md:text-xl mb-6">
           Thank you for your generosity! Here's a record of your past contributions.
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
           <div className="text-2xl font-semibold text-gray-800">
             Total Donations: <span className="text-purple-600">₹{totalDonationsAmount.toFixed(2)}</span>
           </div>
@@ -109,7 +108,7 @@ export default function DonationHistoryPage() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-xl overflow-hidden">
+      <div className="max-w-6xl mx-auto bg-white shadow-md rounded-xl overflow-hidden">
         {!loading && donations.length === 0 && (
           <div className="text-center text-gray-500 text-xl py-10">No donations found.</div>
         )}
@@ -118,16 +117,16 @@ export default function DonationHistoryPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[150px]">Donor</TableHead>
+                <TableHead className="w-[160px]">Donor</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead className="hidden md:table-cell">Date</TableHead>
                 <TableHead className="hidden sm:table-cell">Status</TableHead>
-                <TableHead className="text-right">Receipt</TableHead>
+                <TableHead className="text-right w-[120px]">Receipt</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {donations.map((donation) => (
-                <TableRow key={donation.paymentIntentId}>
+                <TableRow key={donation.paymentIntentId} className="align-middle">
                   <TableCell className="font-medium">{donation.donorName || "Anonymous"}</TableCell>
                   <TableCell>{donation.amount} INR</TableCell>
                   <TableCell className="hidden md:table-cell">
@@ -136,7 +135,7 @@ export default function DonationHistoryPage() {
                   <TableCell className="hidden sm:table-cell">
                     <Badge
                       variant="outline"
-                      className={
+                      className={`capitalize px-2 py-1 rounded-md ${
                         donation.status === "succeeded"
                           ? "bg-green-100 text-green-700"
                           : donation.status === "failed"
@@ -144,16 +143,18 @@ export default function DonationHistoryPage() {
                           : donation.status === "processing"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-gray-100 text-gray-700"
-                      }
+                      }`}
                     >
                       {donation.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <button
-                      className="flex items-center gap-1 text-purple-600 hover:underline"
                       onClick={() => handleDownloadCustomReceipt(donation)}
                       disabled={downloadingPDFId === donation.paymentIntentId}
+                      className={`inline-flex items-center gap-1 text-purple-600 hover:underline text-sm ${
+                        downloadingPDFId === donation.paymentIntentId ? "cursor-not-allowed opacity-70" : ""
+                      }`}
                     >
                       {downloadingPDFId === donation.paymentIntentId ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -169,7 +170,7 @@ export default function DonationHistoryPage() {
           </Table>
         )}
 
-        <div ref={observerTarget} className="py-4 text-center">
+        <div ref={observerTarget} className="py-6 text-center">
           {loading && (
             <div className="flex items-center justify-center gap-2 text-gray-500">
               <Loader2 className="h-5 w-5 animate-spin" /> Loading more donations...
