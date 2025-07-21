@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { BaseRepository } from '../BaseRepository';
 import { ICourseRepository } from '../../core/interfaces/repositories/course/ICourseRepository';
 import { ICategory, ICourse, IPopulatedCourse } from '../../types/classTypes';
-import CourseModel from '../../models/mentor/class/courseModel';
+import CourseModel from '../../models/class/courseModel';
 import { IMentor } from '../../types/mentorTypes';
 // import { IAdminCategoriesRepostory } from '../../core/interfaces/repositories/admin/IAdminCategoryRepository';
 import { TYPES } from '../../core/types';

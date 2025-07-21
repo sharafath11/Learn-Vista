@@ -76,7 +76,7 @@ export interface ILessonDetails {
   lesson: ILesson;
   videoUrl: string;
   lessonProgress: IUserLessonProgress | null;
-  report?: ILessonReport;
+  report?: ILessonReport| null;
   questions: IQuestions[];
   comments: IComment[];
 }

@@ -34,10 +34,6 @@ import { IMentorRepository } from '../interfaces/repositories/mentor/IMentorRepo
 import { MentorRepository } from '../../repositories/mentor/MentorRepository';
 import { IMentorOtpRepository } from '../interfaces/repositories/mentor/IMentorOtpRepository';
 import { MentorOtpRepository } from '../../repositories/mentor/otpRepo';
-// import { IAdminMentorRepository } from '../interfaces/repositories/admin/IAdminMentorRepository';
-// import { AdminMentorRepository } from '../../repositories/admin/AdminMentorRepo';
-// import { IAdminUsersRepository } from '../interfaces/repositories/admin/IAdminUsersRepository';
-// import { AdminUsersRepo } from '../../repositories/admin/AdminUsersRepo';
 import { IUserRepository } from '../interfaces/repositories/user/IUserRepository';
 import { UserRepository } from '../../repositories/user/userRepository';
 import { IOtpRepository } from '../interfaces/repositories/user/IOtpRepository';
@@ -59,10 +55,6 @@ import AdminCourseController from '../../controllers/admin/AdminCategoryCourse.C
 import { IAdminCourseController } from '../interfaces/controllers/admin/IAdminCourse.Controller';
 import { IAdminCourseServices } from '../interfaces/services/admin/IAdminCourseService';
 import AdminCourseServices from '../../services/admin/AdminCategoryCourse.Service';
-// import { IAdminCourserRepository } from '../interfaces/repositories/admin/IAdminCourseRepository';
-// import { IAdminCategoriesRepostory } from '../interfaces/repositories/admin/IAdminCategoryRepository';
-// import { AdminCourseRepository } from '../../repositories/admin/AdminCourseRepo';
-// import { AdminCategoriesRepo } from '../../repositories/admin/AdminCategoriesRepo';
 import { ICourseRepository } from '../interfaces/repositories/course/ICourseRepository';
 import { CourseRepository } from '../../repositories/course/CourseRepository';
 import { ILiveRepository } from '../interfaces/repositories/course/ILiveRepository';
@@ -131,9 +123,12 @@ import { IMentorCommentsController } from '../interfaces/controllers/mentor/IMen
 import { MentorCommentController } from '../../controllers/mentor/MentorCOmments.controller';
 import { IMentorCommentsService } from '../interfaces/services/mentor/IMentorComments.Service';
 import { MentorCommentsService } from '../../services/mentor/MentorComments.Service';
-import { IUserLessonProgress } from '../../types/userLessonProgress';
 import { IUserLessonProgressRepository } from '../interfaces/repositories/course/IUserLessonProgressRepo';
 import { UserLessonProgresssRepository } from '../../repositories/course/LessonProgressRepository';
+import { ICertificateRepository } from '../interfaces/repositories/course/ICertificateRepository';
+import { CertificateRepository } from '../../repositories/course/CertificateRepository';
+import { IUserCertificateService } from '../interfaces/services/user/IUserCertificateService';
+import { UserCertificateService } from '../../services/user/userCertificate.service';
 
 const container = new Container();
 
@@ -180,18 +175,14 @@ container.bind<IMentorConcernService>(TYPES.mentorConcernService).to(MentorConce
 container.bind<IUserDonationServices>(TYPES.UserDonationServices).to(UserDonationServices)
 container.bind<IAdminDonationServices>(TYPES.AdminDonationService).to(AdminDonationService);
 container.bind<INotificationService>(TYPES.NotificationService).to(NotificationService),
-container.bind<IMentorCommentsService>(TYPES.MentorCommentsService).to(MentorCommentsService)
+container.bind<IMentorCommentsService>(TYPES.MentorCommentsService).to(MentorCommentsService),
+container.bind<IUserCertificateService>(TYPES.UserCertificateService).to(UserCertificateService),    
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);
-// container.bind<IAdminMentorRepository>(TYPES.AdminMentorRepository).to(AdminMentorRepository);
-// container.bind<IAdminUsersRepository>(TYPES.AdminUsersRepository).to(AdminUsersRepo);
 container.bind<IUserRepository>(TYPES.UserRepository).to(UserRepository);
 container.bind<IOtpRepository>(TYPES.OtpRepository).to(OtpRepository);
-// container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository);
 container.bind<ICourseRepository>(TYPES.CourseRepository).to(CourseRepository)
-// container.bind<IAdminCourserRepository>(TYPES.AdminCourseRepository).to(AdminCourseRepository);
-// container.bind<IAdminCategoriesRepostory>(TYPES.AdminCategoriesRepository).to(AdminCategoriesRepo);
 container.bind<ILiveRepository>(TYPES.LiveRepository).to(LiveRepository);
 container.bind<ISessionRepository>(TYPES.SessionRepository).to(SessionRepository);
 container.bind<ILessonsRepository>(TYPES.LessonsRepository).to(LessonsRepository)
@@ -204,6 +195,6 @@ container.bind<IDonationRepoitory>(TYPES.DonationRepository).to(DonationRepoitor
 container.bind<IUserCourseProgressRepository>(TYPES.UserCourseProgressRepository).to(UserCourseProgressRepository)
 container.bind<INotificationRepository>(TYPES.NotificationRepository).to(NotificationRepository);
 container.bind<IUserLessonProgressRepository>(TYPES.UserLessonProgressRepository).to(UserLessonProgresssRepository)
-
+container.bind<ICertificateRepository>(TYPES.CertificateRepository).to(CertificateRepository)
 
 export default container;

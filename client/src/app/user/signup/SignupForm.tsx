@@ -1,29 +1,37 @@
-"use client"
+// SignupForm.tsx
 
-import type React from "react"
+"use client";
+import type React from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
+import { signIn, useSession } from "next-auth/react";
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { FcGoogle } from "react-icons/fc"
-import { signIn, useSession } from "next-auth/react"
-
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import type { ILogin, IUserRegistration } from "@/src/types/authTypes"
-import { FormOTP } from "./FormOTP"
-import { UserAPIMethods } from "@/src/services/APImethods"
-import { validateSignup } from "@/src/validations/validation"
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
+import type { ILogin, IUserRegistration } from "@/src/types/authTypes";
+import { FormOTP } from "./FormOTP";
+import { UserAPIMethods } from "@/src/services/APImethods";
+import { validateSignup } from "@/src/validations/validation";
 
 interface FormInputProps {
-  label: string
-  type: string
-  id: keyof IUserRegistration
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  placeholder?: string
+  label: string;
+  type: string;
+  id: keyof IUserRegistration;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
-const FormInput = ({ label, type, id, onChange, placeholder }: FormInputProps) => (
+const FormInput = ({
+  label,
+  type,
+  id,
+  onChange,
+  placeholder,
+  disabled = false,
+}: FormInputProps) => (
   <div className="space-y-1">
     <label htmlFor={id} className="block text-sm font-medium text-gray-700">
       {label}
@@ -33,15 +41,16 @@ const FormInput = ({ label, type, id, onChange, placeholder }: FormInputProps) =
       type={type}
       onChange={onChange}
       placeholder={placeholder}
-      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition-all"
+      disabled={disabled}
+      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition-all disabled:bg-gray-100"
       required
     />
   </div>
-)
+);
 
 export default function SignupForm() {
-  const router = useRouter()
-  const { data: session } = useSession()
+  const router = useRouter();
+  const { data: session } = useSession();
 
   const [userData, setUserData] = useState<IUserRegistration>({
     username: "",
@@ -51,27 +60,94 @@ export default function SignupForm() {
     isVerified: false,
     role: "user",
     otp: "",
-  })
+  });
 
-  const [loginData, setLoginData] = useState<ILogin>()
-  const [otpVerified, setOtpVerified] = useState(false)
-  const [otpSent, setOtpSent] = useState(false)
-  const [autoSubmit, setAutoSubmit] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loginData, setLoginData] = useState<ILogin>();
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [autoSubmit, setAutoSubmit] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target
-    setUserData((prev) => ({ ...prev, [id]: value }))
-  }
+    const { id, value } = e.target;
+    setUserData((prev) => ({ ...prev, [id]: value }));
+  };
 
   const handleOtpChange = (e: { target: { id: string; value: string } }) => {
-    setUserData((prev) => ({ ...prev, [e.target.id]: e.target.value }))
-  }
+    setUserData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
 
   const handleOtpVerified = () => {
-    setUserData((prev) => ({ ...prev, isVerified: true }))
-    setOtpVerified(true)
-  }
+    setUserData((prev) => ({ ...prev, isVerified: true }));
+    setOtpVerified(true);
+  };
+
+  const handleOtpResend = () => {
+    setUserData((prev) => ({ ...prev, isVerified: false }));
+    setOtpVerified(false);
+    handleSendOtp();
+  };
+
+  const handleSendOtp = async () => {
+    if (!userData.email) {
+      showErrorToast("Please enter your email address");
+      return;
+    }
+
+    try {
+      const res = await UserAPIMethods.sendOtp(userData.email);
+      if (res?.ok || (typeof res === "string" && res.includes("OTP already send it"))) {
+        setOtpSent(true);
+        showSuccessToast("OTP sent to your email");
+      }
+    } catch (error) {
+      console.error("Send OTP error:", error);
+      showErrorToast("Failed to send OTP");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const validation = validateSignup(userData);
+    if (!validation.isValid) {
+      showErrorToast(validation.message);
+      return;
+    }
+
+    if (!otpVerified) {
+      showSuccessToast("Please verify your OTP first");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const res = await UserAPIMethods.signUp(userData);
+      if (res?.ok) {
+        showSuccessToast("Signup successful");
+        router.push("/user/login");
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      showErrorToast("Signup failed. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const googleSignup = async () => {
+    try {
+      const res = await signIn("google", { callbackUrl: "/user" });
+      if (res) {
+        showSuccessToast("Login Success");
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Google signup error:", error);
+      showErrorToast("Signup failed, please try again.");
+    }
+  };
 
   useEffect(() => {
     if (session?.user?.email && session?.user?.id && !userData.isVerified) {
@@ -79,91 +155,28 @@ export default function SignupForm() {
         email: session.user.email,
         googleId: session.user.id,
         password: "",
-      })
-      setAutoSubmit(true)
+      });
+      setAutoSubmit(true);
     }
-  }, [session, userData.isVerified])
+  }, [session, userData.isVerified]);
 
   useEffect(() => {
     const autoLogin = async () => {
       if (autoSubmit && loginData) {
         try {
-          const res = await UserAPIMethods.loginUser(loginData)
+          const res = await UserAPIMethods.loginUser(loginData);
           if (res.ok) {
-            showSuccessToast(res.msg)
-            router.push("/")
+            showSuccessToast(res.msg);
+            router.push("/");
           }
         } catch (error) {
-          console.error("Auto login error:", error)
+          console.error("Auto login error:", error);
         }
       }
-    }
+    };
 
-    autoLogin()
-  }, [autoSubmit, router, loginData])
-
-  const googleSignup = async () => {
-    try {
-      const res = await signIn("google", { callbackUrl: "/user" })
-      if (res) {
-        showSuccessToast("Login Success")
-        router.push("/")
-      }
-    } catch (error) {
-      console.error("Google signup error:", error)
-      showErrorToast("Signup failed, please try again.")
-    }
-  }
-
-  const handleSendOtp = async () => {
-    if (!userData.email) {
-      showErrorToast("Please enter your email address")
-      return
-    }
-
-    try {
-      const res = await UserAPIMethods.sendOtp(userData.email)
-      if (res && res.ok) {
-        setOtpSent(true)
-        showSuccessToast("OTP sent to your email")
-      } else if (res && typeof res === "string" && res.includes("OTP already send it")) {
-        setOtpSent(true)
-      }
-    } catch (error) {
-      console.error("Send OTP error:", error)
-      showErrorToast("Failed to send OTP")
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    const validation = validateSignup(userData)
-    if (!validation.isValid) {
-      showErrorToast(validation.message)
-      return
-    }
-
-    if (!otpVerified) {
-      showSuccessToast("Please verify your OTP first")
-      return
-    }
-
-    setIsSubmitting(true)
-
-    try {
-      const res = await UserAPIMethods.signUp(userData)
-      if (res?.ok) {
-        showSuccessToast("Signup successful")
-        router.push("/user/login")
-      }
-    } catch (error) {
-      console.error("Signup error:", error)
-      showErrorToast("Signup failed. Please try again.")
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
+    autoLogin();
+  }, [autoSubmit, router, loginData]);
 
   return (
     <div className="flex w-full max-w-6xl overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg">
@@ -185,8 +198,15 @@ export default function SignupForm() {
               id="email"
               onChange={handleChange}
               placeholder="you@example.com"
+              disabled={otpVerified}
             />
-            <FormInput label="Password" type="password" id="password" onChange={handleChange} placeholder="••••••••" />
+            <FormInput
+              label="Password"
+              type="password"
+              id="password"
+              onChange={handleChange}
+              placeholder="••••••••"
+            />
             <FormInput
               label="Confirm Password"
               type="password"
@@ -210,7 +230,7 @@ export default function SignupForm() {
                 label="Verification Code"
                 onChange={handleOtpChange}
                 onVerified={handleOtpVerified}
-                onResend={handleSendOtp}
+                onResend={handleOtpResend}
                 email={userData.email}
               />
             )}
@@ -250,6 +270,7 @@ export default function SignupForm() {
           </p>
         </div>
       </div>
+
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-50 to-purple-100 justify-center items-center p-8">
         <div className="max-w-md">
           <Image
@@ -263,5 +284,5 @@ export default function SignupForm() {
         </div>
       </div>
     </div>
-  )
+  );
 }

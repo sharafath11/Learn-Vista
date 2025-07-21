@@ -1,5 +1,5 @@
 import  { Schema, model, Model } from "mongoose"
-import { IConcern } from "../../../types/concernTypes"
+import { IConcern } from "../../types/concernTypes"
 
 const concernSchema = new Schema<IConcern>({
   title:{type:String,required:true},
