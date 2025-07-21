@@ -14,7 +14,7 @@ interface ICourseFormData {
   mentorId: string
   categoryId: string
   categoryName?: string
-  // price: string
+  price: number
   language: string
   tags: string[]
   currentTag: string
@@ -39,7 +39,7 @@ const initialFormData: ICourseFormData = {
   mentorId: "",
   categoryId: "",
   categoryName: "",
-  // price: "",
+  price: 0,
   language: "",
   tags: [],
   currentTag: "",
@@ -63,27 +63,32 @@ export default function CourseForm({
   })
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+) => {
+  const { name, value } = e.target
 
-    if (name === "mentorName") {
-      setFormData((prev) => ({ ...prev, mentorId: value }))
-      return
-    }
-
-    if (name === "category") {
-      const selectedCategory = categories.find((c) => c.id === value)
-      setFormData((prev) => ({
-        ...prev,
-        categoryId: value,
-        categoryName: prev?.title || "",
-      }))
-      return
-    }
-
-    setFormData((prev) => ({ ...prev, [name]: value }))
+  if (name === "mentorName") {
+    setFormData((prev) => ({ ...prev, mentorId: value }))
+    return
   }
+
+  if (name === "category") {
+    const selectedCategory = categories.find((c) => c.id === value)
+    setFormData((prev) => ({
+      ...prev,
+      categoryId: value,
+      categoryName: selectedCategory?.title || "",
+    }))
+    return
+  }
+  if (name === "price") {
+    setFormData((prev) => ({ ...prev, price: Number(value) }))
+    return
+  }
+
+  setFormData((prev) => ({ ...prev, [name]: value }))
+}
+
   const handleSelectChange = (name: string, value: string) => {
     if (name === "mentorId") {
       setFormData((prev) => ({ ...prev, mentorId: value }))
