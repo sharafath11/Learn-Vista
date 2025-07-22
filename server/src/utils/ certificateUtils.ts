@@ -6,7 +6,7 @@ export function generateCertificateId(): string {
 }
 
 export async function generateQRCode(data: string): Promise<string> {
-  const certificateURL = `${process.env.CLIENT_URL}/certificate/${data}`
+  const certificateURL = `${process.env.CLIENT_URL}/user/certificate/${data}`
   const qrCodeDataURL = await QRCode.toDataURL(certificateURL)
   return qrCodeDataURL
 }
