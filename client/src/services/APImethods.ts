@@ -55,7 +55,18 @@ updateLessonProgress: (
     mcqCompleted?: boolean;
   }
   ) => post("/lesson/update-progress", { lessonId, ...update }),
-  getMyDonations:(limit:number)=>get(`/donations/${limit}`)
+  getMyDonations: (limit: number) => get(`/donations/${limit}`),
+ getCertificates: (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sort?: Record<string, 1 | -1>;
+  filters?: {
+    courseTitle?: string;
+    isRevoked?: boolean;
+  };
+}) => get("/certificates", { params }),
+  getCertificate:(certificateId:string)=>get(`/certificate/${certificateId}`)
 
 } as const;
 

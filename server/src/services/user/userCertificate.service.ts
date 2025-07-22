@@ -32,4 +32,26 @@ export class UserCertificateService implements IUserCertificateService {
 
     return await this._certificateRepo.create(newCertificate as ICertificate)
   }
+   async getCertificates(filters: {
+    search?: string;
+    sort?: "latest" | "oldest";
+    page: number;
+    limit: number;
+    isRevoked?: boolean;
+  }): Promise<{ data: ICertificate[]; total: number }> {
+    // Directly call the repository method.
+    // The repository is now responsible for applying all filters (search, sort, isRevoked)
+    // and for returning both the paginated data and the total count.
+    const { data, total } = await this._certificateRepo.findCertificatesWithFilter(filters);
+
+    // Removed the redundant query construction and count operation from the service.
+    // This ensures that the 'total' count accurately reflects the filters applied to 'data'.
+
+    return { data, total };
+  }
+
+  async getCertificateById(id: string): Promise<ICertificate | null> {
+    return await this._certificateRepo.findOne({certificateId:id})
+  }
+
 }

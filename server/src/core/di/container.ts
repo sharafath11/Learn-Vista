@@ -129,6 +129,8 @@ import { ICertificateRepository } from '../interfaces/repositories/course/ICerti
 import { CertificateRepository } from '../../repositories/course/CertificateRepository';
 import { IUserCertificateService } from '../interfaces/services/user/IUserCertificateService';
 import { UserCertificateService } from '../../services/user/userCertificate.service';
+import { IUserCertificateController } from '../interfaces/controllers/user/IUserCertificateController';
+import { UserCertificateController } from '../../controllers/user/userCertificate.controller';
 
 const container = new Container();
 
@@ -154,6 +156,7 @@ container.bind<IUserDonationController>(TYPES.UserDonationController).to(UserDon
 container.bind<IAdminDonationController>(TYPES.AdminDonationCOntroller).to(AdminDonationController),
 container.bind<INotificationController>(TYPES.NotificationController).to(NotificationController),
 container.bind<IMentorCommentsController>(TYPES.MentorCommentController).to(MentorCommentController),    
+container.bind<IUserCertificateController>(TYPES.UserCertificateController).to(UserCertificateController)    
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);

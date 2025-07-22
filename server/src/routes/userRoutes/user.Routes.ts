@@ -11,6 +11,7 @@ import { IUserLiveController } from "../../core/interfaces/controllers/user/IUse
 import { IUserLessonsController } from "../../core/interfaces/controllers/user/IUserLessonsContoller";
 import { IUserDonationController } from "../../core/interfaces/controllers/user/IUserDonationController";
 import { UserLessonsController } from "../../controllers/user/userLessons.controller";
+import { IUserCertificateController } from "../../core/interfaces/controllers/user/IUserCertificateController";
 
 
 const router = express.Router();
@@ -22,6 +23,7 @@ const userCourseController = container.get<IUserCourseController>(TYPES.UserCour
 const userLiveController = container.get<IUserLiveController>(TYPES.UserLiveCOntroller)
 const userLessonsController = container.get<IUserLessonsController>(TYPES.UserLessonsController)
 const userDonationController = container.get<IUserDonationController>(TYPES.UserDonationController);
+const userCertificateController=container.get<IUserCertificateController>(TYPES.UserCertificateController)
 
 router.post("/signup", authController.signup.bind(authController));
 router.post("/google/signup", authController.googleAuth.bind(authController));
@@ -54,5 +56,7 @@ router.get("/course/progress", authenticateToken, userCourseController.getProgre
 router.get("/let-fun/psc", userController.getQuestionByNumber.bind(userController));
 router.post("/lesson/update-progress",authenticateToken,userLessonsController.updateLessonProgress.bind(UserLessonsController));
 router.get("/donations/:page", authenticateToken, userDonationController.getPaginatedDonations.bind(userDonationController));
+router.get("/certificates", authenticateToken, userCertificateController.getCertificates.bind(userCertificateController))
+router.get("/certificate/:certificateId",authenticateToken,userCertificateController.getCertificate.bind(userCertificateController))
 
 export default router;

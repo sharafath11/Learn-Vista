@@ -19,3 +19,11 @@ export interface CreateCertificateInput {
   courseId: string|ObjectId
   courseTitle: string
 }
+
+export interface CertificateQueryParams {
+  search?: string;
+  sort?: "latest" | "oldest";
+  page?: string;
+  limit?: string;
+  status?: "all" | "revoked" | "valid";
+}

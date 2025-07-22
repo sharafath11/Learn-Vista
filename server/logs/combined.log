@@ -123,3 +123,76 @@
 [2025-07-21 20:01:54] INFO:  Server running on port 4000
 [2025-07-21 21:18:40] INFO:  Server running on port 4000
 [2025-07-21 21:19:18] INFO: 653753
+[2025-07-22 12:14:18] INFO:  Server running on port 4000
+[2025-07-22 14:59:47] INFO:  Server running on port 4000
+[2025-07-22 15:03:18] INFO:  Server running on port 4000
+[2025-07-22 15:20:59] INFO:  Server running on port 4000
+[2025-07-22 15:21:18] INFO:  Server running on port 4000
+[2025-07-22 15:21:52] INFO:  Server running on port 4000
+[2025-07-22 16:20:42] INFO:  Server running on port 4000
+[2025-07-22 16:32:01] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:32:01] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:32:07] INFO: GET /api/certificates?params[search]=&params[sort]=courseTitle&params[order]=desc
+[2025-07-22 16:35:04] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:35:04] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:05] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:05] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:24] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:24] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:37] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:37] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:42] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:42] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:47] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:47] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:53] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:36:53] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:38:17] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:38:17] INFO: GET /api/certificates?params[search]=&params[sort]=issuedAt&params[order]=desc
+[2025-07-22 16:44:33] INFO:  Server running on port 4000
+[2025-07-22 16:46:40] INFO:  Server running on port 4000
+[2025-07-22 16:47:04] INFO:  Server running on port 4000
+[2025-07-22 17:54:17] INFO:  Server running on port 4000
+[2025-07-22 17:54:37] INFO:  Server running on port 4000
+[2025-07-22 17:55:22] INFO:  Server running on port 4000
+[2025-07-22 17:59:20] INFO: GET /api/certificates?params[sort][issuedAt]=1
+[2025-07-22 17:59:21] INFO: GET /api/certificates?params[sort][issuedAt]=-1
+[2025-07-22 18:01:10] INFO:  Server running on port 4000
+[2025-07-22 18:02:25] INFO:  Server running on port 4000
+[2025-07-22 18:03:25] INFO:  Server running on port 4000
+[2025-07-22 18:17:38] INFO:  Server running on port 4000
+[2025-07-22 18:18:43] INFO:  Server running on port 4000
+[2025-07-22 18:29:30] INFO:  Server running on port 4000
+[2025-07-22 18:38:37] INFO:  Server running on port 4000
+[2025-07-22 18:39:09] INFO:  Server running on port 4000
+[2025-07-22 18:39:28] INFO:  Server running on port 4000
+[2025-07-22 18:41:03] INFO:  Server running on port 4000
+[2025-07-22 18:42:42] INFO:  Server running on port 4000
+[2025-07-22 18:43:26] INFO:  Server running on port 4000
+[2025-07-22 18:45:20] INFO:  Server running on port 4000
+[2025-07-22 18:45:37] INFO:  Server running on port 4000
+[2025-07-22 18:51:50] INFO: GET /api/certificate/
+[2025-07-22 18:53:02] INFO:  Server running on port 4000
+[2025-07-22 18:54:49] INFO:  Server running on port 4000
+[2025-07-22 18:55:31] INFO:  Server running on port 4000
+[2025-07-22 18:59:17] INFO:  Server running on port 4000
+[2025-07-22 19:04:28] INFO:  Server running on port 4000
+[2025-07-22 19:15:09] INFO:  Server running on port 4000
+[2025-07-22 19:17:27] INFO:  Server running on port 4000
+[2025-07-22 19:17:40] INFO:  Server running on port 4000
+[2025-07-22 19:18:13] INFO:  Server running on port 4000
+[2025-07-22 19:20:45] INFO:  Server running on port 4000
+[2025-07-22 19:25:04] INFO:  Server running on port 4000
+[2025-07-22 19:26:40] INFO:  Server running on port 4000
+[2025-07-22 19:29:00] INFO:  Server running on port 4000
+[2025-07-22 19:30:37] INFO:  Server running on port 4000
+[2025-07-22 19:31:07] INFO:  Server running on port 4000
+[2025-07-22 19:31:31] INFO:  Server running on port 4000
+[2025-07-22 19:34:55] INFO:  Server running on port 4000
+[2025-07-22 19:35:42] INFO:  Server running on port 4000
+[2025-07-22 19:39:10] INFO:  Server running on port 4000
+[2025-07-22 20:01:32] INFO:  Server running on port 4000
+[2025-07-22 20:12:33] INFO:  Server running on port 4000
+[2025-07-22 20:19:54] INFO:  Server running on port 4000
+[2025-07-22 20:20:35] INFO:  Server running on port 4000
+[2025-07-22 20:22:00] INFO:  Server running on port 4000

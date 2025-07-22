@@ -119,7 +119,7 @@ export class UserCourseService implements IUserCourseService {
     const overallProgress = this.calculateOverallProgress(allProgress, totalLessons);
 
     await this.upsertCourseProgress(userId, courseId, overallProgress, completedLessons, totalLessons);
-
+    console.log("overall progress",overallProgress)
     if (Math.round(overallProgress) === 100) {
       await this.issueCertificateIfNotExists(userId, courseId);
     }
@@ -174,7 +174,7 @@ export class UserCourseService implements IUserCourseService {
     });
     await notifyWithSocket({
       notificationService: this._notificationService,
-      userIds: [userId],
+      userIds: [userId as string],
       roles: ["admin"],
       title: "Course Completed!",
       message: `User ${user.username} has completed the course "${course.title}" and received a certificate.`,
