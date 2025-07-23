@@ -74,7 +74,28 @@ class AdminUserController implements IAdminUserController {
     }
   }
   
-  
+  async getCertificate(req: Request, res: Response): Promise<void> {
+   try {
+     const userId = req.params.userId
+     console.log(req.params)
+      if(!userId) throwError("Somting wrong",StatusCode.BAD_REQUEST)
+     const result = await this.adminUserService.getCertifcate(userId);
+     sendResponse(res,StatusCode.OK,"fetched certificate",true,result)
+   } catch (error) {
+    handleControllerError(res,error)
+   }    
+  }
+  async revokCertificate(req: Request, res: Response): Promise<void> {
+    try {
+      const { certificateId, isRevoked } = req.body;
+      console.log(req.body);
+      if(!certificateId||!isRevoked) throwError("Somting wrong",StatusCode.BAD_REQUEST)
+      await this.adminUserService.revokCertificate(certificateId, isRevoked);
+      sendResponse(res,StatusCode.OK,`${isRevoked?"Revocked":"Remove Revocked"}`,true)
+    } catch (error) {
+      handleControllerError(res,error)
+    }
+  }
   async userBlock(req: Request, res: Response): Promise<void> {
     try {
       const { id, status } = req.body;

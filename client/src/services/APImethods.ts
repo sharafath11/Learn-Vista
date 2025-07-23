@@ -126,7 +126,9 @@ export const AdminAPIMethods = {
    updateConcernStatus: (concernId: string, status: "resolved" | "in-progress", resolution: string) => 
     patch(`/admin/concern/${concernId}/status`, { status, resolution }),
   getDonation: () => get("/admin/donations"),
-   getFilteredDonations:(query:string)=>get(`/admin/donations/filter?${query}`)
+  getFilteredDonations: (query: string) => get(`/admin/donations/filter?${query}`),
+  getCertificate: (userId: string) => get(`/admin/user/certificates/${userId}`),
+  revokedCertificate:(certificateId:string,isRevoked:boolean)=>patch(`/admin/user/certificate/isRevocked`,{certificateId,isRevoked})
 } as const;
 
 export const MentorAPIMethods = {
