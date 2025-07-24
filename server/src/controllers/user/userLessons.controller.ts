@@ -95,9 +95,7 @@ export class UserLessonsController implements IUserLessonsController{
             if (videoWatchedDuration !== undefined && videoTotalDuration === undefined) {
                 return sendResponse(res, StatusCode.BAD_REQUEST, "videoTotalDuration is required when updating video progress", false);
             }
-            // Add validation for other boolean fields if necessary
-            // e.g., if (theoryCompleted !== undefined && typeof theoryCompleted !== 'boolean') { ... }
-
+            
             const progress = await this._userLessonsService.updateLessonProgress(
                 decoded.id,
                 lessonId,
