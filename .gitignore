@@ -69,3 +69,6 @@ jest-report.json
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
+# Logs (added for LearnVista project)
+server/logs/

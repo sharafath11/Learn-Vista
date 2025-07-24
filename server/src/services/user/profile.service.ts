@@ -13,6 +13,7 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import bcrypt from "bcrypt"
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
+import { deleteFromS3, getSignedS3Url, uploadBufferToS3 } from "../../utils/s3Uploader";
 @injectable()
 export class ProfileService implements IProfileService {
   constructor(
@@ -99,32 +100,52 @@ export class ProfileService implements IProfileService {
     };
   }
 
-  async editProfileService(username: string, imageBuffer: Buffer | undefined, id: string) {
-    const user = await this.userRepository.findById(id);
-    if (!user) return throwError("User not found", StatusCode.NOT_FOUND);
-    if (user.isBlocked) throwError("This user was Blocked", StatusCode.FORBIDDEN);
+ async editProfileService(username: string, imageBuffer: Buffer | undefined, id: string) {
+  const user = await this.userRepository.findById(id);
+  if (!user) return throwError("User not found", StatusCode.NOT_FOUND);
+  if (user.isBlocked) throwError("This user was Blocked", StatusCode.FORBIDDEN);
 
-    const updatedUsername = username !== user.username ? username : user.username;
-    const imageUrl = imageBuffer ? await uploadToCloudinary(imageBuffer) : user.profilePicture;
+  const updatedUsername = username !== user.username ? username : user.username;
+  let imageS3Key: string | null = user.profilePicture || null;
 
-    if (imageBuffer && user.profilePicture?.includes("cloudinary")) {
-      await deleteFromCloudinary(user.profilePicture).catch((err) =>
+  if (imageBuffer) {
+    const newImageKey = await uploadBufferToS3(imageBuffer, 'image/png', 'profile_pictures');
+
+    if (user.profilePicture && user.profilePicture.includes("s3.amazonaws.com")) {
+      const oldImageKey = decodeURIComponent(new URL(user.profilePicture).pathname.substring(1));
+      await deleteFromS3(oldImageKey).catch((err) =>
+        console.error("Failed to delete old profile picture:", err)
+      );
+    } else if (user.profilePicture) {
+      await deleteFromS3(user.profilePicture).catch((err) =>
         console.error("Failed to delete old profile picture:", err)
       );
     }
 
-    const safeImageUrl = imageUrl || "";
-
-    await this.userRepository.update(id, {
-      username: updatedUsername,
-      profilePicture: safeImageUrl,
-    });
-
-    return {
-      username: updatedUsername,
-      image: safeImageUrl,
-    };
+    imageS3Key = newImageKey;
   }
+
+  await this.userRepository.update(id, {
+    username: updatedUsername,
+    profilePicture: imageS3Key || "",
+  });
+
+  let finalImageUrl: string = "";
+  if (imageS3Key) {
+    try {
+      finalImageUrl = await getSignedS3Url(imageS3Key);
+    } catch (error) {
+      console.error("Failed to generate signed URL for profile picture:", error);
+      finalImageUrl = "";
+    }
+  }
+
+  return {
+    username: updatedUsername,
+    image: finalImageUrl,
+  };
+}
+
   async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
     const user = await this.userRepository.findWithPassword({id:userId});
   
