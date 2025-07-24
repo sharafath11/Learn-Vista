@@ -1,5 +1,5 @@
 import { ILessonReportRepository } from "../../core/interfaces/repositories/lessons/ILessonReportRepository";
-import { LessonReport } from "../../models/mentor/class/lessonReport";
+import { LessonReport } from "../../models/class/lessonReport";
 import { ILessonReport } from "../../types/lessons";
 import { BaseRepository } from "../BaseRepository";
 

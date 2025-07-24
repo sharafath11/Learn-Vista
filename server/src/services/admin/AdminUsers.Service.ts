@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import { ObjectId } from "mongoose";
-// import { I_userRepository } from "../../core/interfaces/repositories/admin/I_userRepository";
 import { TYPES } from "../../core/types";
 import { IUser } from "../../types/userTypes";
 import { throwError } from "../../utils/ResANDError";
@@ -10,13 +9,16 @@ import { FilterQuery } from "mongoose";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
+import { ICertificateRepository } from "../../core/interfaces/repositories/course/ICertificateRepository";
+import { ICertificate } from "../../types/certificateTypes";
 
 @injectable()
 export class AdminUsersServices implements IAdminUserServices {
   constructor(
     @inject(TYPES.UserRepository)
     private _userRepo: IUserRepository,
-    @inject(TYPES.NotificationService) private _notificationService:INotificationService
+    @inject(TYPES.NotificationService) private _notificationService: INotificationService,
+    @inject(TYPES.CertificateRepository) private _certificateRepo:ICertificateRepository
   ) {}
 
   async getAllUsers(
@@ -66,6 +68,12 @@ export class AdminUsersServices implements IAdminUserServices {
       msg: `User ${status ? "Blocked" : "Unblocked"} successfully`
     };
 
+  }
+  async revokCertificate(certificateId: string | ObjectId, isRevocked: boolean): Promise<void> {
+    await this._certificateRepo.update(certificateId as string,{isRevoked:isRevocked})
+  }
+  async getCertifcate(userId: string | ObjectId): Promise<ICertificate[]> {
+    return await this._certificateRepo.findAll({userId})
   }
 }
 

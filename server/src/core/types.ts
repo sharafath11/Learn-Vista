@@ -21,7 +21,8 @@ export const TYPES = {
   UserDonationController: Symbol.for("UserDonationController"),
   AdminDonationCOntroller: Symbol.for("AdminDonationController"),
   NotificationController: Symbol.for("NotificationController"),
-  MentorCommentController:Symbol.for("MentorCommentController"),
+  MentorCommentController: Symbol.for("MentorCommentController"),
+  UserCertificateController:Symbol.for("UserCertificateController"),
   // Services
   MentorAuthService: Symbol.for('MentorAuthService'),
   MentorService: Symbol.for('MentorService'),
@@ -43,11 +44,11 @@ export const TYPES = {
   UserDonationServices: Symbol.for("UserDonationServices"),
   AdminDonationService: Symbol.for("AdminDonationService"),
   NotificationService: Symbol.for("NotificationService"),
-  MentorCommentsService:Symbol.for("MentorCommentsService"),
+  UserCertificateService:Symbol.for("UserCertificateService"),
+  MentorCommentsService: Symbol.for("MentorCommentsService"),
   // Repositories
   MentorRepository: Symbol.for('MentorRepository'),
   MentorOtpRepository: Symbol.for('MentorOtpRepository'),
-  // AdminMentorRepository: Symbol.for('AdminMentorRepository'),
   AdminUsersRepository: Symbol.for('AdminUsersRepository'),
   UserRepository: Symbol.for('UserRepository'),
   OtpRepository: Symbol.for('OtpRepository'),
@@ -66,5 +67,6 @@ export const TYPES = {
   DonationRepository: Symbol.for("DonationRepository"),
   UserCourseProgressRepository: Symbol.for("UserCourseProgressRepository"),
   NotificationRepository: Symbol.for("NotificationRepository"),
-  UserLessonProgressRepository:Symbol.for("UserLessonProgressReposiory")
+  UserLessonProgressRepository: Symbol.for("UserLessonProgressReposiory"),
+  CertificateRepository:Symbol.for("CertificateRepository")
 };

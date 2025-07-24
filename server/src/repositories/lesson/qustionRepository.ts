@@ -1,5 +1,5 @@
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
-import questionModel from "../../models/mentor/class/questions";
+import questionModel from "../../models/class/questions";
 import { IQuestions } from "../../types/lessons";
 import { BaseRepository } from "../BaseRepository";
 

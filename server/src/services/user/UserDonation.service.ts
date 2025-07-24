@@ -9,7 +9,6 @@ import { INotificationService } from "../../core/interfaces/services/notificatio
 import { Server } from "socket.io";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import dotenv from "dotenv"
-import { logger } from "../../utils/logger";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-05-28.basil",
 });
@@ -17,10 +16,8 @@ dotenv.config()
 @injectable()
 export class UserDonationServices implements IUserDonationServices {
   constructor(
-    @inject(TYPES.DonationRepository)
-    private _donationRepo: IDonationRepoitory,
-    @inject(TYPES.NotificationService)
-    private _notificationService: INotificationService
+    @inject(TYPES.DonationRepository) private _donationRepo: IDonationRepoitory,
+    @inject(TYPES.NotificationService) private _notificationService: INotificationService
   ) {}
 
   async verifyDonation(sessionId: string, io?: Server, userId?: string): Promise<IDonation> {

@@ -18,7 +18,7 @@ interface CourseBasicInfoProps {
     description: string
     mentorId: string
     categoryId: string
-    price:number
+   
   }
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   handleSelectChange: (name: string, value: string) => void
@@ -103,22 +103,7 @@ export default function CourseBasicInfo({
             </SelectContent>
           </Select>
         </div>        
-        <div>
-  <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-    Price (in INR)
-  </label>
-  <input
-    type="number"
-    id="price"
-    name="price"
-    value={formData.price}
-    onChange={handleChange}
-    placeholder="Enter course price"
-    className="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-200 focus:border-sky-400 focus:outline-none transition"
-    required
-    min="0"
-  />
-</div>
+       
 
       </CardContent>
     </Card>

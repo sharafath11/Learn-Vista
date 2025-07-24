@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect, useCallback } from "react"
-import { Menu, X, Home, BookOpen, Video, Heart, Bell } from "lucide-react" // Added LogOut icon
+import { Menu, X, Home, BookOpen, Video, Heart, Bell, BadgeCheck } from "lucide-react" // Added LogOut icon
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -27,6 +27,7 @@ const NAV_ITEMS: NavItem[] = [
   { name: "Courses", path: "/user/courses", icon: BookOpen },
   { name: "Live Classes", path: "/user/live-classes", icon: Video },
   { name: "Donation", path: "/user/donation", icon: Heart },
+  { name: "Certificate", path: "/user/certificate", icon: BadgeCheck },
 ]
 
 export const Header = () => {

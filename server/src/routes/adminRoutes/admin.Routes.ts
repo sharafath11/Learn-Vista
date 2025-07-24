@@ -37,6 +37,7 @@ route.get("/concers", verifyAdmin, adminCourseController.getConcernController.bi
 route.patch("/concern/:id/status",verifyAdmin,adminCourseController.updateConcernStatus.bind(adminCourseController) );
 route.get("/all/concerns",verifyAdmin,adminCourseController.getAllConcerns.bind(adminCourseController))
 route.get("/donations", verifyAdmin, adminDonationController.getDonations.bind(adminDonationController));
-route.get("/donations/filter",verifyAdmin,adminDonationController.getFilteredDonations.bind(adminDonationController))
-
+route.get("/donations/filter", verifyAdmin, adminDonationController.getFilteredDonations.bind(adminDonationController));
+route.get("/user/certificates/:userId",verifyAdmin,adminUsersController.getCertificate.bind(adminUsersController))
+route.patch("/user/certificate/isRevocked",verifyAdmin,adminUsersController.revokCertificate.bind(adminUsersController))
 export default route;

@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { logger } from "./logger";
 dotenv.config();
 
 
@@ -14,7 +15,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendEmailOtp(email: string, otp: string) {
-
+logger.info(otp)
   const mailOptions = {
     from: `"Learn Vista" <${process.env.EMAIL_USER}>`,
     to: email,

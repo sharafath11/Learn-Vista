@@ -1,6 +1,6 @@
 
 import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
-import CategoryModel from "../../models/mentor/class/categoriesModel";
+import CategoryModel from "../../models/class/categoriesModel";
 import { ICategory } from "../../types/classTypes";
 import { BaseRepository } from "../BaseRepository";
 
