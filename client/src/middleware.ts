@@ -16,7 +16,8 @@ export async function middleware(req: NextRequest) {
     "/user/signup",
     "/user/forgot-password",
     "/user/reset-password",
-    "/api/auth"
+    "/api/auth",
+    "/user/certificate/:certificateId"
   ];
   if (publicRoutes.some(route => path.startsWith(route))) {
     return NextResponse.next();
