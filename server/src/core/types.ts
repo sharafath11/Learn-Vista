@@ -22,7 +22,8 @@ export const TYPES = {
   AdminDonationCOntroller: Symbol.for("AdminDonationController"),
   NotificationController: Symbol.for("NotificationController"),
   MentorCommentController: Symbol.for("MentorCommentController"),
-  UserCertificateController:Symbol.for("UserCertificateController"),
+  UserCertificateController: Symbol.for("UserCertificateController"),
+  SharedController:Symbol.for("SharedController"),
   // Services
   MentorAuthService: Symbol.for('MentorAuthService'),
   MentorService: Symbol.for('MentorService'),

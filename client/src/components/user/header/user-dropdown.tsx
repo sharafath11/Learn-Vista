@@ -19,7 +19,7 @@ interface UserDropdownProps {
 export const UserDropdown = ({ user, isDropdownOpen, setIsDropdownOpen, handleLogout }: UserDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
-
+  console.log("user profile picture",user?.profilePicture)
   const handleProfileClick = () => {
     router.push("/user/profile")
     setIsDropdownOpen(false)
@@ -40,13 +40,16 @@ export const UserDropdown = ({ user, isDropdownOpen, setIsDropdownOpen, handleLo
         className="flex items-center gap-2 p-1 rounded-lg hover:bg-zinc-800 transition-colors group"
       >
         <div className="relative">
-          <Image
-            src={user?.profilePicture || "/images/ai.png"}
-            alt="Profile"
-            width={32}
-            height={32}
-            className="rounded-full object-cover border-2 border-purple-400/50 group-hover:border-purple-400 transition-colors"
-          />
+     <Image
+  src={user?.profilePicture || "/images/ai.png"}
+  alt="Profile"
+  width={48}
+  height={48}
+  className="rounded-full border-2 border-purple-400/50 shadow-lg"
+  unoptimized // 💥 This disables Next.js's internal proxying
+/>
+
+
         </div>
         <ChevronDown
           size={16}
@@ -75,6 +78,7 @@ export const UserDropdown = ({ user, isDropdownOpen, setIsDropdownOpen, handleLo
                   width={40}
                   height={40}
                   className="rounded-full object-cover border-2 border-purple-400/50"
+                  unoptimized
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-white truncate hover:text-purple-400 transition-colors">

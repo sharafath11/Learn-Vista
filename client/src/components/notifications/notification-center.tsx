@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { motion } from "framer-motion"
 import { Bell, X } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { NotificationAPIMethods } from "@/src/services/APImethods"
+import { SharedAPIMethods } from "@/src/services/APImethods"
 import type { INotification } from "@/src/types/notificationsTypes"
 import { UnreadNotifications } from "./unread-notifications"
 import { AllNotifications } from "./all-notifications"
@@ -39,7 +39,7 @@ export const NotificationCenter = ({
   }, [isOpen])
 
   const markAsRead = async (id: string) => {
-    const res = await NotificationAPIMethods.markAsRead(id)
+    const res = await SharedAPIMethods.markAsRead(id)
     if (res.ok) {
       const updated = notifications.map((n) => (n.id === id ? { ...n, isRead: true } : n))
       setNotifications(updated)
@@ -48,7 +48,7 @@ export const NotificationCenter = ({
   }
 
   const markAllAsRead = async () => {
-    const res = await NotificationAPIMethods.markAllAsRead()
+    const res = await SharedAPIMethods.markAllAsRead()
     if (res.ok) {
       const updated = notifications.map((n) => ({ ...n, isRead: true }))
       setNotifications(updated)

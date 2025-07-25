@@ -4,14 +4,20 @@
 import Image from "next/image";
 import { Settings } from "lucide-react";
 import { useUserContext } from "@/src/context/userAuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Keep useEffect if you decide to use it, but for direct prop it's not strictly needed for the image src
 import EditProfileModal from "./EditProfileModal";
 import ChangePasswordModal from "../../ChangePasswordModal";
 
 export default function ProfileCard() {
   const { user } = useUserContext();
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
-  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false); 
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+
+  // --- ADDED CONSOLE LOGS ---
+  console.debug("[ProfileCard] Component rendering.");
+  console.debug("[ProfileCard] User object from context:", user);
+  console.debug("[ProfileCard] Raw user?.profilePicture value:", user?.profilePicture);
+
   const formattedDate = user?.createdAt
     ? new Date(user.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
@@ -20,6 +26,10 @@ export default function ProfileCard() {
       })
     : "";
 
+  // Determine the final image source here and log it
+  const finalProfileImageSrc = user?.profilePicture || "/default-avatar.png";
+  console.debug("[ProfileCard] Final Image src for <Image> component:", finalProfileImageSrc);
+
   return (
     <>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden transition-all hover:shadow-md">
@@ -27,11 +37,13 @@ export default function ProfileCard() {
           <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
             <div className="relative h-32 w-32 rounded-full border-4 border-white shadow-lg">
               <Image
-                src={user?.profilePicture || "/default-avatar.png"}
+                // --- Using the determined finalProfileImageSrc ---
+                src={finalProfileImageSrc}
                 alt="User Avatar"
                 width={128}
                 height={128}
                 className="object-cover rounded-full"
+                unoptimized // --- RE-ADDED THIS CRITICAL PROP ---
               />
               <div className="absolute bottom-0 right-0 bg-green-500 rounded-full p-1 border-2 border-white">
                 <div className="h-4 w-4" />
@@ -48,7 +60,7 @@ export default function ProfileCard() {
             <div className="text-center">
               <p className="text-lg font-bold text-gray-900">Email</p>
               <p className="text-xs text-gray-500">
-                {user?.email ?? "No course"}
+                {user?.email ?? "N/A"} {/* Changed from "No course" as it's an email field */}
               </p>
             </div>
             <div className="text-center">

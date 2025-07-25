@@ -216,10 +216,15 @@ export const batmanAi = {
     return response.data;
   },
 };
-export const NotificationAPIMethods = {
+
+
+
+export const SharedAPIMethods = {
   getMyNotifications: () => get("/shared/notifications"),
   markAsRead: (id: string) => patch(`/shared/notifications/${id}/read`, {}),
   markAllAsRead: () => patch("/shared/notifications/mark-all-read", {}),
   createNotification: (data: INotificationPayload) => post("/shared/notifications", data),
+   getSignedS3Url: (key: string) => post("/shared/s3/signed-url", { key })
+  
 };
 

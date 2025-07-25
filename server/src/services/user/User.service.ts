@@ -11,6 +11,7 @@ import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { getSignedS3Url } from "../../utils/s3Utilits";
 dotenv.config();
 
 export class UserService implements IUserService {
@@ -31,7 +32,18 @@ export class UserService implements IUserService {
       throwError("User was blocked", StatusCode.FORBIDDEN);
     }
 
-    return user
+    if (user.profilePicture && !user.profilePicture.startsWith('http')) {
+        try {
+            user.profilePicture = await getSignedS3Url(user.profilePicture);
+        } catch (error) {
+            console.error(`Failed to sign profile picture URL for user ${id}:`, error);
+            user.profilePicture = null;
+        }
+    } else if (user.profilePicture === undefined || user.profilePicture === null || user.profilePicture === "") {
+        user.profilePicture = "/default-avatar.png";
+    }
+
+    return user;
   }
 
   async forgetPassword(email: string): Promise<void> {

@@ -13,7 +13,7 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import bcrypt from "bcrypt"
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
-import { deleteFromS3, getSignedS3Url, uploadBufferToS3 } from "../../utils/s3Uploader";
+import { deleteFromS3, getSignedS3Url, uploadBufferToS3 } from "../../utils/s3Utilits";
 @injectable()
 export class ProfileService implements IProfileService {
   constructor(

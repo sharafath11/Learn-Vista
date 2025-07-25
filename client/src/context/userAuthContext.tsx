@@ -2,7 +2,7 @@
 
 import { createContext, useState, useContext, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { NotificationAPIMethods, UserAPIMethods } from "../services/APImethods";
+import { SharedAPIMethods, UserAPIMethods } from "../services/APImethods";
 import { 
   UserContextType, 
   UserProviderProps, 
@@ -31,6 +31,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       const res = await UserAPIMethods.fetchUser();
       if (res.ok) {
         setUser(res.data);
+        console.log("user with singend url",res.data)
       } else {
         router.push("/user/login");
       }
@@ -45,7 +46,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     else showErrorToast("Somthing wrent wronghhh")
   }
   const fetchNotifications = async () => {
-    const res = await NotificationAPIMethods.getMyNotifications();
+    const res = await SharedAPIMethods.getMyNotifications();
    
     if (res.ok) {
       setUserNotifications(res.data);
