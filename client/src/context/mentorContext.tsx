@@ -10,7 +10,7 @@ import {
 import { IMentor, IMentorContext, } from "../types/mentorTypes";
 
 import { useRouter } from "next/navigation";
-import { MentorAPIMethods, NotificationAPIMethods } from "../services/APImethods";
+import { MentorAPIMethods, SharedAPIMethods } from "../services/APImethods";
 import { IPopulatedCourse } from "../types/courseTypes";
 import { ILessons } from "../types/lessons";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
@@ -41,7 +41,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
     }
   }, []);
    const fetchNotifications = async () => {
-      const res = await NotificationAPIMethods.getMyNotifications();
+      const res = await SharedAPIMethods.getMyNotifications();
      
       if (res.ok) {
         setMentorNotifications(res.data);

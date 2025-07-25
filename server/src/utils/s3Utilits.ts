@@ -88,3 +88,10 @@ export async function uploadPdf(
   }
   return uploadBufferToS3(buffer, mimetype, "pdfs");
 }
+export async function uploadConcernAttachment(
+  buffer: Buffer,
+  mimetype: string
+): Promise<string> {
+  const folder = mimetype.startsWith("image") ? "mentor_concerns/images" : "mentor_concerns/audio";
+  return uploadBufferToS3(buffer, mimetype, folder);
+}
