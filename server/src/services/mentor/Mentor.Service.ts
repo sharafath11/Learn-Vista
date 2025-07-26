@@ -8,6 +8,7 @@ import { ICategory,IPopulatedCourse } from '../../types/classTypes';
 import { ICourseRepository } from '../../core/interfaces/repositories/course/ICourseRepository';
 import { StatusCode } from '../../enums/statusCode.enum'; 
 import { ICategoriesRepository } from '../../core/interfaces/repositories/course/ICategoriesRepository';
+import { getSignedS3Url } from '../../utils/s3Utilits';
 
 @injectable()
 export class MentorService implements IMentorService {
@@ -27,8 +28,11 @@ export class MentorService implements IMentorService {
     if (mentor.isBlock) {
       throwError("Your account was blocked. Please contact support", StatusCode.FORBIDDEN); 
     } 
-
-
+    let signedUrl=""
+    if (mentor.profilePicture) {
+       signedUrl=await getSignedS3Url(mentor.profilePicture as string)
+    }
+    
     return {
       id:mentor.id,
       username: mentor.username,
@@ -38,7 +42,7 @@ export class MentorService implements IMentorService {
       bio: mentor.bio,
       applicationDate: mentor.applicationDate,
       phoneNumber: mentor.phoneNumber || "",
-      profilePicture: mentor.profilePicture,
+      profilePicture: signedUrl?signedUrl:mentor.profilePicture,
       socialLinks: mentor.socialLinks,
       liveClasses: mentor.liveClasses,
       coursesCreated: mentor.coursesCreated,

@@ -2,6 +2,7 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } fro
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuidv4 } from "uuid";
 import { s3 } from "../config/AWS";
+import { fileTypeFromBuffer } from "file-type";
 
 const S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!;
 const AWS_REGION = process.env.AWS_REGION || 'ap-south-1';
@@ -13,14 +14,12 @@ export async function uploadBufferToS3(
 ): Promise<string> {
   const ext = mimetype.split("/")[1] || "bin";
   const key = `${folder}/${uuidv4()}.${ext}`;
-
   const command = new PutObjectCommand({
     Bucket: S3_BUCKET_NAME,
     Key: key,
     Body: buffer,
     ContentType: mimetype,
   });
-
   try {
     await s3.send(command);
     return key;
@@ -30,19 +29,16 @@ export async function uploadBufferToS3(
   }
 }
 
-export async function deleteFromS3(fileUrl: string): Promise<void> {
+export async function deleteFromS3(s3Key: string): Promise<void> {
   try {
-    const key = decodeURIComponent(new URL(fileUrl).pathname.substring(1));
-
     const command = new DeleteObjectCommand({
       Bucket: S3_BUCKET_NAME,
-      Key: key,
+      Key: s3Key,
     });
-
     await s3.send(command);
-    console.log(`Successfully deleted ${fileUrl} from S3.`);
+    console.log(`Successfully deleted ${s3Key} from S3.`);
   } catch (error) {
-    console.error(`Error deleting file from S3: ${fileUrl}`, error);
+    console.error(`Error deleting file from S3: ${s3Key}`, error);
     throw new Error(`Failed to delete file from S3: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
@@ -55,7 +51,6 @@ export async function getSignedS3Url(
     Bucket: S3_BUCKET_NAME,
     Key: key,
   });
-
   try {
     const signedUrl = await getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
     return signedUrl;
@@ -72,11 +67,12 @@ export async function uploadProfilePicture(
   return uploadBufferToS3(buffer, mimetype, "profile_pictures");
 }
 
-export async function uploadThumbnail(
-  buffer: Buffer,
-  mimetype: string
-): Promise<string> {
-  return uploadBufferToS3(buffer, mimetype, "thumbnails");
+export async function uploadThumbnail(buffer: Buffer): Promise<string> {
+  const fileType = await fileTypeFromBuffer(buffer);
+  if (!fileType || !fileType.mime.startsWith("image/")) {
+    throw new Error("Invalid image file");
+  }
+  return uploadBufferToS3(buffer, fileType.mime, "thumbnails");
 }
 
 export async function uploadPdf(
@@ -88,6 +84,7 @@ export async function uploadPdf(
   }
   return uploadBufferToS3(buffer, mimetype, "pdfs");
 }
+
 export async function uploadConcernAttachment(
   buffer: Buffer,
   mimetype: string
@@ -95,3 +92,57 @@ export async function uploadConcernAttachment(
   const folder = mimetype.startsWith("image") ? "mentor_concerns/images" : "mentor_concerns/audio";
   return uploadBufferToS3(buffer, mimetype, folder);
 }
+
+export const convertSignedUrlInArray = async <T extends Record<string, any>>(
+  items: T[],
+  keysToSign: (keyof T)[]
+): Promise<T[]> => {
+  const updatedItems = await Promise.all(
+    items.map(async (item) => {
+      const updatedItem = { ...item };
+      for (const key of keysToSign) {
+        const value = item[key];
+        if (
+          typeof value === "string" &&
+          !value.startsWith("http://") && 
+          !value.startsWith("https://") && 
+          (value.includes("/") || value.includes(".")) 
+        ) {
+          try {
+            const signedUrl = await getSignedS3Url(value);
+            updatedItem[key] = signedUrl as T[keyof T];
+          } catch (error) {
+            console.warn(`Could not generate signed URL for key: ${value}. Error: ${error}`);
+          }
+        }
+      }
+      return updatedItem;
+    })
+  );
+  return updatedItems;
+};
+
+
+export const convertSignedUrlInObject = async <T extends Record<string, any>>(
+  item: T,
+  keysToSign: (keyof T)[]
+): Promise<T> => {
+  const updatedItem = { ...item };
+  for (const key of keysToSign) {
+    const value = updatedItem[key];
+    if (
+      typeof value === "string" &&
+      !value.startsWith("http://") &&
+      !value.startsWith("https://") &&
+      (value.includes("/") || value.includes("."))
+    ) {
+      try {
+        const signedUrl = await getSignedS3Url(value);
+        updatedItem[key] = signedUrl as T[keyof T];
+      } catch (error) {
+        console.warn(`Could not generate signed URL for key: ${value}. Error: ${error}`);
+      }
+    }
+  }
+  return updatedItem;
+};

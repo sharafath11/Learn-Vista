@@ -18,54 +18,31 @@ export class MentorConcernController implements IMentorConcernController {
   ) {}
 
    async addConcern(req: Request, res: Response): Promise<void> {
-     try {
-       const { message, courseId, title } = req.body;
-       const decoded = decodeToken(req.cookies.token);
-       const attachments: IAttachment[] = [];
-       if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-         for (const file of req.files) {
-           let s3Key: string;
-           try {
-             s3Key = await uploadConcernAttachment(file.buffer, file.mimetype);
-           } catch (uploadError: any) { 
-             throwError(`Failed to upload attachment ${file.originalname}: ${uploadError.message || 'Unknown error'}`, StatusCode.INTERNAL_SERVER_ERROR);
-           }
+  try {
+    const { message, courseId, title } = req.body;
+    const decoded = decodeToken(req.cookies.token);
 
-           attachments.push({
-             url: s3Key,
-             filename: file.originalname,
-             size: file.size,
-             type: file.mimetype.startsWith("image") ? "image" : "audio",
-           });
-         }
-       } 
-      
-       if (!decoded?.id) {
-        throwError("Unauthorized", StatusCode.UNAUTHORIZED);
-       }
-       const concern = await this._mentorConcernService.addConcern({
-         title,
-         message,
-         courseId,
-         mentorId: decoded.id,
-         attachments,
-       });
-       if (concern.attachments && concern.attachments.length > 0) {
-         console.log("Generating signed URLs for response attachments...");
-         for (const attachment of concern.attachments) {
-           try {
-             attachment.url = await getSignedS3Url(attachment.url);
-           } catch (error) {
-             attachment.url = ""; 
-           }
-         }
-       } 
-       sendResponse(res, StatusCode.OK, "Concern raised successfully", true, concern);
-     } catch (error) {
-       console.error("Error in addConcern Controller:", error);
-       handleControllerError(res, error);
-     }
+    if (!decoded?.id) {
+      throwError("Unauthorized", StatusCode.UNAUTHORIZED);
+    }
+
+    const files = req.files && Array.isArray(req.files) ? req.files : [];
+   console.log(req.file,req.files)
+    const concern = await this._mentorConcernService.addConcern({
+      title,
+      message,
+      courseId,
+      mentorId: decoded.id,
+     
+    }, files, );
+
+    sendResponse(res, StatusCode.OK, "Concern raised successfully", true, concern);
+  } catch (error) {
+    console.error("Error in addConcern Controller:", error);
+    handleControllerError(res, error);
   }
+}
+
 
   async getConcern(req: Request, res: Response): Promise<void> {
     try {
@@ -105,25 +82,14 @@ export class MentorConcernController implements IMentorConcernController {
 
       const { data, total } = await this._mentorConcernService.getConcerns(filters, sort, skip, limit);
 
-      for (const concern of data) {
-        if (concern.attachments && Array.isArray(concern.attachments)) {
-          for (const attachment of concern.attachments) {
-            try {
-              attachment.url = await getSignedS3Url(attachment.url);
-            } catch (error) {
-              attachment.url = "";
-            }
-          }
-        }
-      }
+sendResponse(res, StatusCode.OK, "Fetched concerns successfully", true, {
+  data,
+  total,
+  page: parseInt(page),
+  pageSize: limit,
+  totalPages: Math.ceil(total / limit)
+});
 
-      sendResponse(res, StatusCode.OK, "Fetched concerns successfully", true, {
-        data,
-        total,
-        page: parseInt(page),
-        pageSize: limit,
-        totalPages: Math.ceil(total / limit)
-      });
     } catch (error) {
       handleControllerError(res, error);
     }

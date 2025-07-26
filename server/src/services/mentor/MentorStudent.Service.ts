@@ -8,6 +8,7 @@ import { throwError } from "../../utils/ResANDError";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
+import { getSignedS3Url } from "../../utils/s3Utilits";
 
 @injectable()
 export class MentorStudentService implements IMentorStudentService {
@@ -66,6 +67,15 @@ async getStudentDetilesService(
     undefined,
     sort 
   );
+  for (const user of data) {
+  if (user.profilePicture) {
+    try {
+      user.profilePicture = await getSignedS3Url(user.profilePicture);
+    } catch {
+      user.profilePicture =user.profilePicture; 
+    }
+  }
+}
 
   return {
     students: data,

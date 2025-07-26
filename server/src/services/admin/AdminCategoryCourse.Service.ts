@@ -4,7 +4,7 @@ import { ICategory, ICourse } from "../../types/classTypes";
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { throwError } from "../../utils/ResANDError";
-import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
+import { uploadThumbnail, deleteFromS3 } from "../../utils/s3Utilits";
 import { validateCoursePayload } from "../../validation/adminValidation";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
@@ -45,19 +45,16 @@ class AdminCourseServices implements IAdminCourseServices {
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: ICategory[]; total: number; totalPages?: number }>{
     const { data, total, totalPages } = await this.categoryRepo.findPaginated(
-      filters,   
-      page,     
-      limit,   
-      search,   
-      
-      sort      
+      filters,
+      page,
+      limit,
+      search,
+      sort
     );
     if (!data) throwError("Failed to fetch categories", StatusCode.INTERNAL_SERVER_ERROR);
 
     return {data,total,totalPages};
   }
-
-
 
   async blockCategory(id: string, status: boolean): Promise<void> {
     const updated = await this.categoryRepo.update(id, { isBlock: status });
@@ -68,7 +65,7 @@ class AdminCourseServices implements IAdminCourseServices {
     validateCoursePayload(data, thumbnail);
 
     if (!data.mentorId) throwError("Mentor ID is required", StatusCode.BAD_REQUEST);
-  
+
     const courses = await this.baseCourseRepo.findAll({ mentorId: data.mentorId });
     const hasOverlap = courses.some(course =>
       course.startDate &&
@@ -83,7 +80,7 @@ class AdminCourseServices implements IAdminCourseServices {
       throwError("This mentor already has a class at the same date.", StatusCode.BAD_REQUEST);
     }
 
-    const imageUrl = await uploadToCloudinary(thumbnail, "thumbnail");
+    const imageUrl = await uploadThumbnail(thumbnail);
 
     const courseData: Partial<ICourse> = {
       ...data,
@@ -111,14 +108,14 @@ class AdminCourseServices implements IAdminCourseServices {
     if (!currentCourse) {
       throwError("Course not found", StatusCode.NOT_FOUND);
     }
-  
+
     const updateData: Partial<ICourse> = { ...data };
-  
+
     const newMentorId = data.mentorId || currentCourse.mentorId;
     const isMentorChanged = !!data.mentorId && data.mentorId !== currentCourse.mentorId;
-  
+
     const isTimeChanged = (!!data.startTime && data.startTime !== currentCourse.startTime);
-  
+
     if (isMentorChanged || isTimeChanged) {
       const startDate = data.startDate ?? currentCourse.startDate;
       const endDate = data.endDate ?? currentCourse.endDate;
@@ -132,33 +129,30 @@ class AdminCourseServices implements IAdminCourseServices {
       const hasConflict = existingCourses.some(course => {
         if (course.id === courseId) return false;
         if (!course.startDate || !course.endDate || !course.startTime) return false;
-  
+
         const courseStart = new Date(course.startDate);
         const courseEnd = new Date(course.endDate);
-  
+
         const isDateOverlap = newStart <= courseEnd && newEnd >= courseStart;
         const isTimeOverlap = course.startTime === startTime;
-  
+
         return isDateOverlap && isTimeOverlap;
       });
-  
+
       if (hasConflict) {
         throwError("Mentor already has a course at this time", StatusCode.CONFLICT);
       }
-  
-      
     }
-  
+
     if (thumbnail) {
-      updateData.thumbnail = await uploadToCloudinary(thumbnail, "thumbnail");
-  
       if (currentCourse.thumbnail) {
-        await deleteFromCloudinary(currentCourse.thumbnail).catch(err =>
+        await deleteFromS3(currentCourse.thumbnail).catch(err =>
           console.error("Failed to delete old thumbnail:", err)
         );
       }
+      updateData.thumbnail = await uploadThumbnail(thumbnail);
     }
-  
+
     const updatedCourse = await this.baseCourseRepo.update(courseId, updateData);
     if (!updatedCourse) {
       throwError("Failed to update course", StatusCode.INTERNAL_SERVER_ERROR);
@@ -170,10 +164,10 @@ class AdminCourseServices implements IAdminCourseServices {
     message: `Your course "${updatedCourse.title}" has been updated by the admin.`,
     type: "info",
    });
-  
+
     return updatedCourse;
   }
-   
+
   async getAllCategory(): Promise<ICategory[]> {
     const result = await this.categoryRepo.findAll()
     return result
@@ -181,14 +175,14 @@ class AdminCourseServices implements IAdminCourseServices {
 
 async editCategories(categoryId: string, title: string, description: string): Promise<ICategory> {
     if (!categoryId || !title.trim() || !description.trim()) throwError("Invalid input parameters");
-    
+
     const updateData = { title, description, updatedAt: new Date() };
     const existingCategory = await this.categoryRepo.findById(categoryId);
     if (!existingCategory) throwError("Category not found");
-    
+
     const updatedCategory = await this.categoryRepo.update(categoryId, updateData);
     if (!updatedCategory) throwError("Failed to update category");
-    
+
     return updatedCategory;
 }
   async getClass(
@@ -198,24 +192,24 @@ async editCategories(categoryId: string, title: string, description: string): Pr
     filters: FilterQuery<ICourse> = {},
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: ICourse[]; total: number; totalPages?: number }> {
-   
+
     const { data, total, totalPages } = await this._courseRepo.AdmingetClassRepo(
-      page,     
-      limit,   
-      search,   
-      filters,   
-      sort      
+      page,
+      limit,
+      search,
+      filters,
+      sort
     );
-  
+
     if (!data) throwError("Failed to fetch courses", StatusCode.INTERNAL_SERVER_ERROR);
-  
+
     return {
       data,
       total,
       ...(totalPages !== undefined && { totalPages })
     };
   }
-  
+
   async blockCourse(id: string, isBlock: boolean): Promise<void> {
   if (!id || id.length !== 24) {
     throwError("Invalid course ID", StatusCode.BAD_REQUEST);

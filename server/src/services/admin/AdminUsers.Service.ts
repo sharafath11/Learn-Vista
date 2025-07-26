@@ -11,6 +11,7 @@ import { INotificationService } from "../../core/interfaces/services/notificatio
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { ICertificateRepository } from "../../core/interfaces/repositories/course/ICertificateRepository";
 import { ICertificate } from "../../types/certificateTypes";
+import { convertSignedUrlInArray } from "../../utils/s3Utilits";
 
 @injectable()
 export class AdminUsersServices implements IAdminUserServices {
@@ -40,16 +41,15 @@ export class AdminUsersServices implements IAdminUserServices {
       if (!data) {
         throwError("Error fetching users", StatusCode.INTERNAL_SERVER_ERROR);
       }
-      
+      const userData=await convertSignedUrlInArray(data,["profilePicture"])
       return { 
-        data, 
+        data:userData, 
         total,
         ...(totalPages !== undefined && { totalPages }) 
       };
    
   }
   
-
   async blockUserServices(id: ObjectId, status: boolean): Promise<{ ok: boolean; msg: string; data?: IUser }> {
     const updatedUser = await this._userRepo.update(id.toString(), { isBlocked: status });
     if (!updatedUser) {

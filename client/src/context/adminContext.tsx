@@ -6,7 +6,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { AdminAPIMethods, NotificationAPIMethods } from "../services/APImethods";
+import { AdminAPIMethods, SharedAPIMethods } from "../services/APImethods";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
 import { AdminContextType } from "../types/adminTypes";
 import { IMentor } from "../types/mentorTypes";
@@ -69,7 +69,7 @@ localStorage.removeItem("role")
     else showInfoToast(res.msg);
   }
   const fetchAdminNotifications = async () => {
-  const res = await NotificationAPIMethods.getMyNotifications();
+  const res = await SharedAPIMethods.getMyNotifications();
   if (res.ok) {
     setAdminNotifications(res.data);
     const unreadCount = res.data.filter((n: INotification) => !n.isRead).length;
