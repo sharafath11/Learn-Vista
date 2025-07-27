@@ -33,7 +33,7 @@ export default function CourseLessonsPage() {
   const params = useParams();
   const courseId = params.courseId as string;
 
-  const course: ICourse | undefined = courses.find((c) => c._id === courseId);
+  const course: ICourse | undefined = courses.find((c) => c.id === courseId);
   const nextLessonOrder = lessons.length > 0 ? Math.max(...lessons.map((l) => l.order || 0)) + 1 : 1;
 
   useEffect(() => {
@@ -68,7 +68,6 @@ export default function CourseLessonsPage() {
     }
   };
 
-  // New handler for showing comments
   const handleShowComments = (lessonId: string) => {
     setLessonIdForComments(lessonId);
     setShowCommentsModal(true);
@@ -242,9 +241,7 @@ export default function CourseLessonsPage() {
           )}
         </DialogContent>
       </Dialog>
-
-      {/* Comments Modal */}
-      {lessonIdForComments && ( // Only render if a lesson ID is set for comments
+      {lessonIdForComments && ( 
         <CommentsModal
           open={showCommentsModal}
           setOpen={setShowCommentsModal}

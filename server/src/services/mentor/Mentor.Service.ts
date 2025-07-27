@@ -54,7 +54,7 @@ export class MentorService implements IMentorService {
    
     const courses = await this.courseRepo.findWithMenorIdgetAllWithPopulatedFields(id);
     if (!courses) throwError("You don't have any courses", StatusCode.NOT_FOUND); 
-      const sendCourses=await convertSignedUrlInArray(courses,["thumbnail"])
+    const sendCourses = await convertSignedUrlInArray(courses, ["thumbnail"])
     return sendCourses;
   }
 

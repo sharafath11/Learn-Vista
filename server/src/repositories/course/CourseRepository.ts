@@ -32,8 +32,8 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       .populate('mentorId')
       .populate('categoryId')
       .lean<IPopulatedCourse[]>();
-
-    return courses.map(course => ({
+    const toDtoData=toDTOArray<IPopulatedCourse>(courses)
+    return toDtoData.map(course => ({
       ...course,
       mentorId: course.mentorId as IMentor,
       categoryId: course.categoryId as ICategory,
@@ -45,8 +45,9 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       .populate('mentorId')
       .populate('categoryId')
       .lean<IPopulatedCourse[]>();
+        const toDtoData=toDTOArray<IPopulatedCourse>(courses)
 
-    return courses.map(course => ({
+    return toDtoData.map(course => ({
       ...course,
       mentorId: course.mentorId as IMentor,
       categoryId: course.categoryId as ICategory,
@@ -95,8 +96,8 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
     const total = filteredCourses.length;
     const totalPages = Math.ceil(total / limit);
     const paginatedCourses = filteredCourses.slice((page - 1) * limit, page * limit);
-
-    return { data: paginatedCourses, total, totalPages };
+       const toDtoData=toDTOArray<IPopulatedCourse>(paginatedCourses)
+    return { data: toDtoData , total, totalPages };
   }
 
   async fetchMentorCoursesWithFilters({
