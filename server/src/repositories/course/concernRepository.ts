@@ -3,6 +3,7 @@ import { IConcernRepository } from "../../core/interfaces/repositories/concern/I
 import ConcernModel from "../../models/class/concernModel";
 import { IConcern } from "../../types/concernTypes";
 import { BaseRepository } from "../BaseRepository";
+import { toDTOArray } from "../../utils/toDTO";
 
 export class ConcernRepository extends BaseRepository<IConcern, IConcern> implements IConcernRepository{
     constructor() {
@@ -22,7 +23,8 @@ export class ConcernRepository extends BaseRepository<IConcern, IConcern> implem
         .lean(),
       ConcernModel.countDocuments(filters)
     ]);
-    return { data, total };
+     const dtoData = toDTOArray<IConcern>(data);
+    return { data:dtoData, total };
     }
   async findWithPagination(
   filter: FilterQuery<IConcern>,
@@ -30,12 +32,13 @@ export class ConcernRepository extends BaseRepository<IConcern, IConcern> implem
   skip: number,
   sort: Record<string, 1 | -1>
 ): Promise<IConcern[]> {
-  return this.model
+  const results= await this.model
     .find(filter)
     .sort(sort)
     .skip(skip)
     .limit(limit)
     .lean();
+   return toDTOArray<IConcern>(results);
 }
 
 async count(filter: FilterQuery<IConcern>): Promise<number> {

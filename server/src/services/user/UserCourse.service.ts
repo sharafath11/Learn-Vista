@@ -16,6 +16,7 @@ import { ICertificateRepository } from "../../core/interfaces/repositories/cours
 import { IUserCertificateService } from "../../core/interfaces/services/user/IUserCertificateService"; 
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { convertSignedUrlInArray } from "../../utils/s3Utilits";
 
 @injectable()
 export class UserCourseService implements IUserCourseService {
@@ -46,7 +47,8 @@ export class UserCourseService implements IUserCourseService {
     };
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(queryParams);
     if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
-    return { data, total, totalPages };
+    const sendData=await convertSignedUrlInArray(data,["thumbnail"])
+    return {data:sendData, total, totalPages };
   }
 
   async updateUserCourse(courseId: string, userId: string): Promise<void> {

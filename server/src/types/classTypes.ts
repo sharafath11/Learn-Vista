@@ -13,7 +13,6 @@ export interface ICourse extends Document {
   sessions: ObjectId[];
   categoryId: ObjectId;
   mentor: IMentor;
-  price?: number;
   students: number;
   categoryName: string;
   courseLanguage?: string;
@@ -21,6 +20,7 @@ export interface ICourse extends Document {
   tags?: string[];
   enrolledUsers: string[];
   // mentorApproved: boolean
+  isActive:boolean
   isStreaming?: boolean;
   lessons: ObjectId[] | string[];
   category: ICategory;

@@ -8,7 +8,7 @@ import { ICategory,IPopulatedCourse } from '../../types/classTypes';
 import { ICourseRepository } from '../../core/interfaces/repositories/course/ICourseRepository';
 import { StatusCode } from '../../enums/statusCode.enum'; 
 import { ICategoriesRepository } from '../../core/interfaces/repositories/course/ICategoriesRepository';
-import { getSignedS3Url } from '../../utils/s3Utilits';
+import { convertSignedUrlInArray, getSignedS3Url } from '../../utils/s3Utilits';
 
 @injectable()
 export class MentorService implements IMentorService {
@@ -54,7 +54,8 @@ export class MentorService implements IMentorService {
    
     const courses = await this.courseRepo.findWithMenorIdgetAllWithPopulatedFields(id);
     if (!courses) throwError("You don't have any courses", StatusCode.NOT_FOUND); 
-    return courses;
+      const sendCourses=await convertSignedUrlInArray(courses,["thumbnail"])
+    return sendCourses;
   }
 
   async courseApproveOrReject(
@@ -117,8 +118,10 @@ export class MentorService implements IMentorService {
     filters,
     sort: sort || { createdAt: -1 },
   });
-  const categories=await this.catRepo.findAll()
-  return { data, total,categories };
+    const categories = await this.catRepo.findAll()
+    const sendCourses=await convertSignedUrlInArray(data,["thumbnail"])
+
+  return { data:sendCourses, total,categories };
 }
 
 

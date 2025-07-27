@@ -18,7 +18,7 @@ import { getGemaniResponse } from "../../config/gemaniAi";
 import { buildMcqOptionsPrompt } from "../../utils/Rportprompt";
 import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
 import { logger } from "../../utils/logger";
-import { convertSignedUrlInArray, uploadThumbnail, deleteFromS3 } from "../../utils/s3Utilits";
+import { convertSignedUrlInArray, uploadThumbnail, deleteFromS3, convertSignedUrlInObject } from "../../utils/s3Utilits";
 
 @injectable()
 export class MentorLessonService implements IMentorLessonService {
@@ -37,7 +37,6 @@ export class MentorLessonService implements IMentorLessonService {
     const result = await this._lessonRepo.findAll({ courseId });
     if (!result) throwError("Invalid request", StatusCode.BAD_REQUEST);
     const updatedResult = await convertSignedUrlInArray(result, ["thumbnail"]);
-    console.log("get singend url",updatedResult);
     return updatedResult;
   }
 
@@ -158,8 +157,8 @@ export class MentorLessonService implements IMentorLessonService {
     if (!updated) {
       throwError("Lesson not found or update failed", StatusCode.NOT_FOUND);
     }
-
-    return updated;
+    const sendData=await convertSignedUrlInObject(updated,["thumbnail"])
+    return sendData;
   }
   async getQuestionService(lessonId: string | ObjectId): Promise<IQuestions[]> {
     const result = await this._questionRepository.findAll({ lessonId });

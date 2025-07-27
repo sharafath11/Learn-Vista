@@ -10,8 +10,8 @@ const CourseSchema: Schema = new Schema(
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     categoryName:{type:String,required:true},
     thumbnail: { type: String },
-    students:{type:Number,default:0},
-    price: { type: Number, default: 0 },
+    students: { type: Number, default: 0 },
+    isActive:{type:Boolean,default:false},
     enrolledUsers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     mentorStatus: {
       type: String,

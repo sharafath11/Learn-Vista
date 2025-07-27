@@ -20,12 +20,16 @@ export default function CoursesAdminPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Blocked' | 'Approved' | 'Pending' | 'Rejected'>('All');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [statusFilter, setStatusFilter] = useState<
+    "All" | "Active" | "Blocked" | "Approved" | "Pending" | "Rejected"
+  >("All");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCourses, setTotalCourses] = useState(0);
   const [isConcernModalOpen, setIsConcernModalOpen] = useState(false);
-  const [selectedConcernId, setSelectedConcernId] = useState<string | null>(null);
+  const [selectedConcernId, setSelectedConcernId] = useState<string | null>(
+    null
+  );
   const coursesPerPage = 2;
 
   useEffect(() => {
@@ -38,12 +42,12 @@ export default function CoursesAdminPage() {
   useEffect(() => {
     fetchCourses();
   }, [debouncedSearchTerm, statusFilter, sortOrder, currentPage]);
- 
+
   const fetchCourses = async () => {
     const filters: Record<string, unknown> = {};
-  
-    if (statusFilter === 'Active') filters.isBlocked = false;
-    else if (statusFilter === 'Blocked') filters.isBlocked = true;
+
+    if (statusFilter === "Active") filters.isBlocked = false;
+    else if (statusFilter === "Blocked") filters.isBlocked = true;
 
     const res = await AdminAPIMethods.getCourses({
       page: currentPage,
@@ -62,7 +66,11 @@ export default function CoursesAdminPage() {
     const res = await AdminAPIMethods.blockCours(id, !status);
     if (res.ok) {
       showSuccessToast(res.msg);
-      setCourses(courses.map((prev) => (prev._id === id ? { ...prev, isBlock: !status } : prev)));
+      setCourses(
+        courses.map((prev) =>
+          prev.id === id ? { ...prev, isBlock: !status } : prev
+        )
+      );
     }
   };
 
@@ -71,10 +79,14 @@ export default function CoursesAdminPage() {
   };
 
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short", day: "numeric" };
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-  
+
   const totalPages = Math.ceil(totalCourses / coursesPerPage);
 
   const handleConcernClick = (concernId: string) => {
@@ -88,13 +100,13 @@ export default function CoursesAdminPage() {
   };
 
   const handleConcernStatusChange = () => {
-    fetchCourses(); 
+    fetchCourses();
   };
 
-const selectedConcern = selectedConcernId 
-  ? concern.find(c => c.id === selectedConcernId) || null
-  : null;
-
+  const selectedConcern = selectedConcernId
+    ? concern.find((c) => c.id === selectedConcernId) || null
+    : null;
+  console.log(courses);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -124,7 +136,7 @@ const selectedConcern = selectedConcernId
           <>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-6">
               {courses.map((course) => (
-                <Card key={course._id} className="overflow-hidden shadow-md">
+                <Card key={course.id} className="overflow-hidden shadow-md">
                   <div className="relative h-48 w-full">
                     <Image
                       src={course.thumbnail || "/placeholder.svg"}
@@ -133,70 +145,55 @@ const selectedConcern = selectedConcernId
                       className="object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <div className="flex items-center justify-between">
-                        <Badge variant={course.isBlock ? "destructive" : "default"} className="text-xs">
-                          {course.isBlock ? "Blocked" : "Active"}
-                        </Badge>
-                        <span
-                          className={`
-                            text-xs
-                            px-2 py-1
-                            rounded-full
-                            font-medium
-                            ${
-                              course.mentorStatus === "approved"
-                                ? "bg-green-100 text-green-800"
-                                : course.mentorStatus === "rejected"
-                                ? "bg-red-100 text-red-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }
-                          `}
-                        >
-                          {course.mentorStatus}
-                        </span>
-              
-                        <Badge variant="outline" className="text-xs bg-amber-50">
-                          {course.courseLanguage}
-                        </Badge>
-                      </div>
-                    </div>
                   </div>
-                  
+
                   {(() => {
-                    const activeConcern = concern.find(i => i.courseId === course._id && i.status !== "resolved");
+                    const activeConcern = concern.find(
+                      (i) =>
+                        i.courseId === course.id && i.status !== "resolved"
+                    );
                     if (!activeConcern) return null;
                     const isOpen = activeConcern.status === "open";
 
                     return (
-                      <div 
-                        className="px-4 mt-3 cursor-pointer" 
+                      <div
+                        className="px-4 mt-3 cursor-pointer"
                         onClick={() => handleConcernClick(activeConcern.id)}
                       >
-                        <div className={`flex items-center gap-2 w-fit px-3 py-1.5 rounded-full border font-medium text-xs shadow-sm
-                          ${isOpen 
-                            ? "bg-yellow-100 text-yellow-800 border-yellow-300" 
-                            : "bg-blue-100 text-blue-800 border-blue-300"}
-                        `}>
+                        <div
+                          className={`flex items-center gap-2 w-fit px-3 py-1.5 rounded-full border font-medium text-xs shadow-sm
+                          ${
+                            isOpen
+                              ? "bg-yellow-100 text-yellow-800 border-yellow-300"
+                              : "bg-blue-100 text-blue-800 border-blue-300"
+                          }
+                        `}
+                        >
                           <span className="animate-pulse w-2 h-2 rounded-full bg-current" />
-                          <span>Concern: {isOpen ? "Open" : "In Progress"}</span>
+                          <span>
+                            Concern: {isOpen ? "Open" : "In Progress"}
+                          </span>
                         </div>
                       </div>
                     );
                   })()}
 
                   <div className="p-4">
-                    <h3 className="mb-1 text-lg font-semibold line-clamp-1">{course.title}</h3>
-                    <p className="mb-3 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{course.description}</p>
-                    <strong>category:</strong><span>{ course.categoryId?.title}</span> <br />
-                    <strong>Mentor:</strong><span>{course?.mentorId?.username}</span>
-                  
-                    {course?.mentorStatus === 'rejected' && course.mentorId?.courseRejectReson && (
-                      <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/20 rounded-md">
-                        <p className="text-sm font-medium text-red-600 dark:text-red-400">Rejection Reason:</p>
-                        <p className="text-sm text-red-500 dark:text-red-300">
-                          {course.mentorId.courseRejectReson.find((reason: IReson) => reason.courseId == course._id)?.message || 
-                          "No specific reason provided"}
+                    <h3 className="mb-1 text-lg font-semibold line-clamp-1">
+                      {course.title}
+                    </h3>
+                    <p className="mb-3 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                      {course.description}
+                    </p>
+                    <strong>category:</strong>
+                    <span>{course.categoryId?.title}</span> <br />
+                    <strong>Mentor:</strong>
+                    <span>{course?.mentorId?.username}</span>
+                    {!course?.isActive && (
+                      <div className="mt-2 p-2 rounded-md bg-yellow-50 dark:bg-yellow-900/20">
+                        <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+                          This course is currently{" "}
+                          <span className="font-semibold">inactive</span>.
                         </p>
                       </div>
                     )}
@@ -204,7 +201,8 @@ const selectedConcern = selectedConcernId
                       <div className="flex items-center">
                         <Calendar className="mr-2 h-4 w-4" />
                         <span>
-                          {formatDate(course.startDate || "")} - {formatDate(course.endDate || "")}
+                          {formatDate(course.startDate || "")} -{" "}
+                          {formatDate(course.endDate || "")}
                         </span>
                       </div>
                       <div className="flex items-center">
@@ -212,16 +210,20 @@ const selectedConcern = selectedConcernId
                         <span>Starts at {course.startTime}</span>
                       </div>
                     </div>
-
                     <div className="flex justify-between items-center">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => toggleCourseStatus(course._id, course.isBlock)}
+                        onClick={() =>
+                          toggleCourseStatus(course.id, course.isBlock)
+                        }
                       >
                         {course.isBlock ? "Unblock" : "Block"}
                       </Button>
-                      <Button size="sm" onClick={() => handleEditCourse(course._id)}>
+                      <Button
+                        size="sm"
+                        onClick={() => handleEditCourse(course.id)}
+                      >
                         <PenSquare className="h-4 w-4 mr-2" />
                         Edit
                       </Button>
@@ -233,9 +235,14 @@ const selectedConcern = selectedConcernId
 
             {totalPages > 1 && (
               <div className="flex justify-center mt-6">
-                <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <nav
+                  className="inline-flex rounded-md shadow-sm -space-x-px"
+                  aria-label="Pagination"
+                >
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
                     disabled={currentPage === 1}
                     className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-100"
                   >
@@ -255,7 +262,9 @@ const selectedConcern = selectedConcernId
                     </button>
                   ))}
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
                     disabled={currentPage === totalPages}
                     className="px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-100"
                   >
@@ -272,7 +281,7 @@ const selectedConcern = selectedConcernId
             </div>
             <h3 className="text-xl font-semibold mb-2">No Courses Available</h3>
             <p className="text-gray-500 dark:text-gray-400 text-center max-w-md">
-              {debouncedSearchTerm || statusFilter !== 'All'
+              {debouncedSearchTerm || statusFilter !== "All"
                 ? "No courses match your current filters. Try adjusting your search criteria."
                 : "There are currently no courses in the system. Check back later or create a new course."}
             </p>

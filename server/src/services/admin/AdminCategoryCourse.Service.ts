@@ -4,7 +4,7 @@ import { ICategory, ICourse } from "../../types/classTypes";
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { throwError } from "../../utils/ResANDError";
-import { uploadThumbnail, deleteFromS3 } from "../../utils/s3Utilits";
+import { uploadThumbnail, deleteFromS3, convertSignedUrlInArray, convertSignedUrlInObject } from "../../utils/s3Utilits";
 import { validateCoursePayload } from "../../validation/adminValidation";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
@@ -13,6 +13,7 @@ import { IConcernRepository } from "../../core/interfaces/repositories/concern/I
 import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { logger } from "../../utils/logger";
 
 @injectable()
 class AdminCourseServices implements IAdminCourseServices {
@@ -63,7 +64,7 @@ class AdminCourseServices implements IAdminCourseServices {
 
   async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
     validateCoursePayload(data, thumbnail);
-
+    console.log(data)
     if (!data.mentorId) throwError("Mentor ID is required", StatusCode.BAD_REQUEST);
 
     const courses = await this.baseCourseRepo.findAll({ mentorId: data.mentorId });
@@ -96,8 +97,9 @@ class AdminCourseServices implements IAdminCourseServices {
       title: "Course Updated",
       message: `New course "${createdCourse.title}" has been Started.`,
       type: "info",
-    });
-    return createdCourse;
+      });
+    const sendData=await convertSignedUrlInObject(createdCourse,["thumbnail"])
+    return sendData;
   }
   async editCourseService(
     courseId: string,
@@ -164,8 +166,8 @@ class AdminCourseServices implements IAdminCourseServices {
     message: `Your course "${updatedCourse.title}" has been updated by the admin.`,
     type: "info",
    });
-
-    return updatedCourse;
+  const sendData=await convertSignedUrlInObject(updatedCourse,["thumbnail"])
+    return sendData;
   }
 
   async getAllCategory(): Promise<ICategory[]> {
@@ -200,11 +202,12 @@ async editCategories(categoryId: string, title: string, description: string): Pr
       filters,
       sort
     );
-
+    const convertedDatas=await convertSignedUrlInArray(data,["thumbnail"])
     if (!data) throwError("Failed to fetch courses", StatusCode.INTERNAL_SERVER_ERROR);
-
+    console.log(" datas", data)
+    console.log("converted datas",data)
     return {
-      data,
+      data:convertedDatas,
       total,
       ...(totalPages !== undefined && { totalPages })
     };

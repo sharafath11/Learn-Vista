@@ -68,7 +68,7 @@ export default function CoursesPage() {
   //     courses
   //       .filter((c) => typeof c.categoryId === "object" && c.categoryId !== null)
   //       .map((c) => [
-  //         (c.categoryId as ICategory)._id,
+  //         (c.categoryId as ICategory).id,
   //         c.categoryId as ICategory,
   //       ])
   //   ).values()
@@ -110,7 +110,7 @@ export default function CoursesPage() {
           <>
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr">
               {courses.map((course) => (
-                <Card key={course._id} className="group relative bg-gradient-to-br from-gray-800/40 via-gray-800/30 to-gray-800/40 border border-gray-700 hover:shadow-2xl transition-all duration-300 flex flex-col transform hover:-translate-y-1">
+                <Card key={course.id} className="group relative bg-gradient-to-br from-gray-800/40 via-gray-800/30 to-gray-800/40 border border-gray-700 hover:shadow-2xl transition-all duration-300 flex flex-col transform hover:-translate-y-1">
                   <CardHeader className="relative p-0 aspect-video overflow-hidden rounded-t-xl">
                     <Image
                       src={course.thumbnail || "/placeholder.png"}
@@ -162,23 +162,23 @@ export default function CoursesPage() {
                   </CardContent>
 
                   <CardFooter className="flex flex-col gap-3 p-4 pt-0">
-                    {course.mentorStatus === "approved" && (
+                   
                       <>
-                        <Link href={`/mentor/courses/${course._id}`} className="w-full">
+                        <Link href={`/mentor/courses/${course.id}`} className="w-full">
                           <Button className="w-full gap-2 h-10 text-base bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white shadow-md rounded-lg">
                             <BookText size={18} /> Manage Course
                           </Button>
                         </Link>
-                        <Link href={`/mentor/courses/students/${course._id}`} className="w-full">
+                        <Link href={`/mentor/courses/students/${course.id}`} className="w-full">
                           <Button className="w-full gap-2 h-10 text-base bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md rounded-lg">
                             <Users size={18} /> View Students
                           </Button>
                         </Link>
                         <div className="w-full flex justify-start mt-2">
-                          <RaiseConcernDialog courseId={course._id} />
+                          <RaiseConcernDialog courseId={course.id} />
                         </div>
                       </>
-                    )}
+                   
                   </CardFooter>
                 </Card>
               ))}

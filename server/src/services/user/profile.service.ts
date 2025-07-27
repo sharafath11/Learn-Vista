@@ -50,11 +50,8 @@ export class ProfileService implements IProfileService {
 
     try {
       resumeS3Key = await uploadBufferToS3(file.buffer, file.mimetype, 'resumes');
-      console.log(`[applyMentor] Resume uploaded to S3 with key: ${resumeS3Key}`);
       signedResumeUrl = await getSignedS3Url(resumeS3Key);
-      console.log(`[applyMentor] Signed URL generated for resume: ${signedResumeUrl.substring(0, 100)}...`);
     } catch (error) {
-      console.error("[applyMentor] Error uploading or signing resume:", error);
       throwError("Failed to upload or process resume. Please try again.", StatusCode.INTERNAL_SERVER_ERROR);
     }
 

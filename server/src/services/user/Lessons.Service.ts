@@ -21,6 +21,7 @@ import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { IUserLessonProgress } from "../../types/userLessonProgress";
 import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController"; 
 import { IUserLessonProgressRepository } from "../../core/interfaces/repositories/course/IUserLessonProgressRepo";
+import { convertSignedUrlInArray } from "../../utils/s3Utilits";
 
 const SECTION_WEIGHTS = {
   video: 0.40,
@@ -149,8 +150,8 @@ export class UserLessonsService implements IUserLessonsService {
     }
 
     const lessonProgress = await this._userLessonProgressRepo.findAll({ courseId, userId });
-
-    return { lessons: lessons, progress: lessonProgress };
+    const sendData=await convertSignedUrlInArray(lessons,["thumbnail"])
+    return { lessons: sendData, progress: lessonProgress };
   }
 
   async getQuestions(lessonId: string | ObjectId): Promise<IQuestions[]> {

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { ICertificateRepository } from "../../core/interfaces/repositories/course/ICertificateRepository";
 import CertificateModel from "../../models/class/certificateModel";
 import { ICertificate } from "../../types/certificateTypes";
-import { toDTO } from "../../utils/toDTO";
+import { toDTO, toDTOArray } from "../../utils/toDTO";
 import { BaseRepository } from "../BaseRepository";
 
 export class CertificateRepository extends BaseRepository<ICertificate, ICertificate> implements ICertificateRepository
@@ -54,7 +54,8 @@ export class CertificateRepository extends BaseRepository<ICertificate, ICertifi
         .lean(), 
       CertificateModel.countDocuments(query) 
     ]);
-    return { data: documents.map((doc) => toDTO<ICertificate>(doc)), total };
+     const toDtoData=toDTOArray<ICertificate>(documents)
+    return { data: toDtoData, total };
   }
 
 }

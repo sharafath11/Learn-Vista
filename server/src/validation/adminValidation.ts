@@ -7,7 +7,6 @@ export interface CoursePayload {
   mentorId: string;
   categoryId: string;
   category: string;
-  price: number;
   courseLanguage: string;
   tags: string;
   startDate: string;
@@ -27,9 +26,7 @@ export function validateCoursePayload(data: Partial<ICourse>, thumbnail?: Buffer
     }
   }
 
-  if (typeof data.price !== "string" || data.price <0) {
-    throwError("Price must be a positive numbetttr", 400);
-  }
+ 
 
   if (!thumbnail || !Buffer.isBuffer(thumbnail)) {
     throwError("Thumbnail file is required and must be a valid buffer", 400);

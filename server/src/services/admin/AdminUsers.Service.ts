@@ -11,7 +11,7 @@ import { INotificationService } from "../../core/interfaces/services/notificatio
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { ICertificateRepository } from "../../core/interfaces/repositories/course/ICertificateRepository";
 import { ICertificate } from "../../types/certificateTypes";
-import { convertSignedUrlInArray } from "../../utils/s3Utilits";
+import { convertSignedUrlInArray, convertSignedUrlInObject, getSignedS3Url } from "../../utils/s3Utilits";
 
 @injectable()
 export class AdminUsersServices implements IAdminUserServices {
@@ -61,10 +61,11 @@ export class AdminUsersServices implements IAdminUserServices {
     title: status ? " Account Blocked" : "Account Unblocked",
     message: `Your account has been ${status ? "blocked" : "unblocked"} by the admin.`,
     type: status ? "error" : "success",
-  });
+    });
+    const sendData = await convertSignedUrlInObject(updatedUser,["profilePicture"])
     return {
       ok: true,
-      data: updatedUser,
+      data: sendData,
       msg: `User ${status ? "Blocked" : "Unblocked"} successfully`
     };
 
