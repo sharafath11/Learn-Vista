@@ -59,8 +59,9 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
     total: number;
     totalPages: number;
   }> {
-    const { page = 1, limit = 10, search, filters, sort } = params;
+    const { page = 1,  search, filters, sort } = params;
     const query: FilterQuery<ICourse> = {};
+    const limit=2
 
     if (search) {
       query.title = { $regex: search, $options: 'i' };
@@ -144,11 +145,12 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
 
   async AdmingetClassRepo(
     page = 1,
-    limit = 2,
+    limit :number,
     search?: string,
     filters: FilterQuery<ICourse> = {},
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: ICourse[]; total: number; totalPages: number }> {
+    limit=2
     try {
       if (search) {
         const searchRegex = new RegExp(search, 'i');
@@ -176,7 +178,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       ]);
 
       const data = toDTOArray<ICourse>(documents);
-
+      console.log("hy;lppp")
       return {
         data,
         total,

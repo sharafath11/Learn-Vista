@@ -205,18 +205,25 @@ export class MentorLessonService implements IMentorLessonService {
     }
     const prompt = buildMcqOptionsPrompt(question);
     const resultRaw = await getGemaniResponse(prompt);
-    let parsed: string[];
-    try {
-      parsed =
-        typeof resultRaw === "string" ? JSON.parse(resultRaw) : resultRaw;
-    } catch {
-      throwError("Invalid format received. Please enter options manually.");
-    }
-    if (!Array.isArray(parsed)) {
-      throwError(
-        "Currently unable to generate options. Please try again later or enter manually."
-      );
-    }
+    console.log(resultRaw)
+let parsed: string[];
+
+try {
+  let response = resultRaw;
+
+  if (typeof response === "string") {
+    // Remove markdown code block if present
+    response = response.replace(/```(?:\w+)?\s*([\s\S]*?)\s*```/, "$1").trim();
+    parsed = JSON.parse(response);
+  } else if (Array.isArray(response)) {
+    parsed = response;
+  } else {
+    throw new Error("Unexpected response format");
+  }
+} catch (err) {
+  console.error("Parsing error:", err, resultRaw);
+  throwError("Invalid format received. Please enter options manually.");
+}
     const cleaned = parsed
       .map((opt) => opt.trim())
       .filter((opt) => opt.length > 0);

@@ -13,8 +13,11 @@ import { IConcernRepository } from "../../core/interfaces/repositories/concern/I
 import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
-import { logger } from "../../utils/logger";
-
+import dayjs from "dayjs";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter)
 @injectable()
 class AdminCourseServices implements IAdminCourseServices {
   constructor(
@@ -62,45 +65,75 @@ class AdminCourseServices implements IAdminCourseServices {
     if (!updated) throwError("Failed to update category status", StatusCode.INTERNAL_SERVER_ERROR);
   }
 
-  async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
-    validateCoursePayload(data, thumbnail);
-    console.log(data)
-    if (!data.mentorId) throwError("Mentor ID is required", StatusCode.BAD_REQUEST);
+  
+async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
+  validateCoursePayload(data, thumbnail);
 
-    const courses = await this.baseCourseRepo.findAll({ mentorId: data.mentorId });
-    const hasOverlap = courses.some(course =>
-      course.startDate &&
-      course.endDate &&
-      data.startDate &&
-      data.endDate &&
-      course.startDate <= data.endDate &&
-      course.endDate >= data.startDate
-    );
-
-    if (hasOverlap) {
-      throwError("This mentor already has a class at the same date.", StatusCode.BAD_REQUEST);
-    }
-
-    const imageUrl = await uploadThumbnail(thumbnail);
-
-    const courseData: Partial<ICourse> = {
-      ...data,
-      thumbnail: imageUrl,
-    };
-
-    const createdCourse = await this.baseCourseRepo.create(courseData);
-    if (!createdCourse) throwError("Failed to create course", StatusCode.INTERNAL_SERVER_ERROR);
-      await notifyWithSocket({
-      notificationService: this._notificationService,
-      userIds: [createdCourse.mentorId.toString()],
-      roles:["user"],
-      title: "Course Updated",
-      message: `New course "${createdCourse.title}" has been Started.`,
-      type: "info",
-      });
-    const sendData=await convertSignedUrlInObject(createdCourse,["thumbnail"])
-    return sendData;
+  if (!data.mentorId) {
+    throwError("Mentor ID is required", StatusCode.BAD_REQUEST);
   }
+
+  if (!data.startDate || !data.endDate || !data.startTime) {
+    throwError("Missing date/time range", StatusCode.BAD_REQUEST);
+  }
+
+  const newStartDate = dayjs(data.startDate);
+  const newEndDate = dayjs(data.endDate);
+  const newStartTime = dayjs(data.startTime, "HH:mm");
+  const newEndTime = newStartTime.add(1, "hour"); // only used internally
+
+  const courses = await this.baseCourseRepo.findAll({ mentorId: data.mentorId });
+
+  const hasTimeOverlap = courses.some(course => {
+    if (!course.startDate || !course.endDate || !course.startTime || !course.endTime) return false;
+
+    const existingStartDate = dayjs(course.startDate);
+    const existingEndDate = dayjs(course.endDate);
+    const existingStartTime = dayjs(course.startTime, "HH:mm");
+    const existingEndTime = dayjs(course.endTime, "HH:mm");
+
+    const isDateOverlap =
+      newStartDate.isSameOrBefore(existingEndDate, "day") &&
+      newEndDate.isSameOrAfter(existingStartDate, "day");
+
+    const isTimeOverlap =
+      newStartTime.isBefore(existingEndTime) &&
+      newEndTime.isAfter(existingStartTime);
+
+    return isDateOverlap && isTimeOverlap;
+  });
+
+  if (hasTimeOverlap) {
+    throwError("This mentor already has a class during this time range.", StatusCode.BAD_REQUEST);
+  }
+
+  const imageUrl = await uploadThumbnail(thumbnail);
+
+  const courseData: Partial<ICourse> = {
+    ...data,
+    thumbnail: imageUrl,
+    // ✅ no endTime included here
+  };
+
+  const createdCourse = await this.baseCourseRepo.create(courseData);
+
+  if (!createdCourse) {
+    throwError("Failed to create course", StatusCode.INTERNAL_SERVER_ERROR);
+  }
+
+  await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [createdCourse.mentorId.toString()],
+    roles: ["user"],
+    title: "New Course Scheduled",
+    message: `Course "${createdCourse.title}" is scheduled to start at ${createdCourse.startTime}.`,
+    type: "info",
+  });
+
+  const sendData = await convertSignedUrlInObject(createdCourse, ["thumbnail"]);
+  return sendData;
+}
+
   async editCourseService(
     courseId: string,
     data: Partial<ICourse>,

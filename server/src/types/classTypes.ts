@@ -19,8 +19,8 @@ export interface ICourse extends Document {
   isBlock: boolean;
   tags?: string[];
   enrolledUsers: string[];
-  // mentorApproved: boolean
-  isActive:boolean
+  endTime?: string;
+  isActive: boolean
   isStreaming?: boolean;
   lessons: ObjectId[] | string[];
   category: ICategory;
