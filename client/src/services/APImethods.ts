@@ -207,6 +207,7 @@ getAllComments: (params: {
   page?: number
   limit?: number
 }) => get("/mentor/comments", { params }),
+publishCourse:(courseId:string,status:boolean)=>patch(`/mentor/publishCourse/${courseId}`,{status})
 
 } as const;
 

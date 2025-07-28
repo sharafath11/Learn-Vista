@@ -133,6 +133,10 @@ import { IUserCertificateController } from '../interfaces/controllers/user/IUser
 import { UserCertificateController } from '../../controllers/user/userCertificate.controller';
 import { ISharedController } from '../interfaces/controllers/shared/ISharedController';
 import { SharedController } from '../../controllers/shared/Shared.Controller';
+import { IMentorCourseService } from '../interfaces/services/mentor/IMentorCourse.Service';
+import { MentorCourseService } from '../../services/mentor/MentorCourse.service';
+import { IMentorCourseController } from '../interfaces/controllers/mentor/IMentorCourse.controller';
+import { MentorCourseController } from '../../controllers/mentor/MentorCourse.Controller';
 
 const container = new Container();
 
@@ -160,6 +164,7 @@ container.bind<INotificationController>(TYPES.NotificationController).to(Notific
 container.bind<IMentorCommentsController>(TYPES.MentorCommentController).to(MentorCommentController),    
 container.bind<IUserCertificateController>(TYPES.UserCertificateController).to(UserCertificateController)   
 container.bind<ISharedController>(TYPES.SharedController).to(SharedController) 
+container.bind<IMentorCourseController>(TYPES.IMentorCourseController).to(MentorCourseController),
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -182,7 +187,8 @@ container.bind<IUserDonationServices>(TYPES.UserDonationServices).to(UserDonatio
 container.bind<IAdminDonationServices>(TYPES.AdminDonationService).to(AdminDonationService);
 container.bind<INotificationService>(TYPES.NotificationService).to(NotificationService),
 container.bind<IMentorCommentsService>(TYPES.MentorCommentsService).to(MentorCommentsService),
-container.bind<IUserCertificateService>(TYPES.UserCertificateService).to(UserCertificateService),    
+container.bind<IUserCertificateService>(TYPES.UserCertificateService).to(UserCertificateService),   
+container.bind<IMentorCourseService>(TYPES.MentorCourseService).to(MentorCourseService),
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);

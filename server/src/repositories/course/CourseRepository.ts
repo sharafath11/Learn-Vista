@@ -91,7 +91,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
         mentorId: course.mentorId as IMentor,
         categoryId: course.categoryId as ICategory,
       }))
-      .filter(course => !course.isBlock && !course.categoryId.isBlock && course.mentorStatus === 'approved');
+      .filter(course => !course.isBlock && !course.categoryId.isBlock && course.isActive);
 
     const total = filteredCourses.length;
     const totalPages = Math.ceil(total / limit);
@@ -124,9 +124,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
     if (filters.categoryId) {
       query.categoryId = filters.categoryId;
     }
-
     const total = await CourseModel.countDocuments(query);
-
     const courses = await CourseModel.find(query)
       .populate('mentorId')
       .populate('categoryId')

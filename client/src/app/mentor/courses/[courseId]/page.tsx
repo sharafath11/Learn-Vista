@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { Card } from "@/src/components/shared/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/shared/components/ui/dialog";
-import { ArrowLeft, Pencil, PlusCircle, PlayCircle, MessageSquare } from "lucide-react"; 
+import { ArrowLeft, Pencil, PlusCircle, PlayCircle, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 
-import { showErrorToast } from "@/src/utils/Toast";
+import { showErrorToast, showInfoToast } from "@/src/utils/Toast";
 import { useMentorContext } from "@/src/context/mentorContext";
 import { MentorAPIMethods } from "@/src/services/APImethods";
 import { ILessons } from "@/src/types/lessons";
@@ -17,6 +17,8 @@ import { ICourse } from "@/src/types/courseTypes";
 import { AddLessonModal } from "./addLessonModal";
 import { EditLessonModal } from "./EditLessonModal";
 import { CommentsModal } from "./CommentsModal";
+import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
+
 export default function CourseLessonsPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -24,23 +26,26 @@ export default function CourseLessonsPage() {
   const [selectedLesson, setSelectedLesson] = useState<ILessons | null>(null);
   const [showVideoPlayerModal, setShowVideoPlayerModal] = useState(false);
   const [videoToPlay, setVideoToPlay] = useState<string | null>(null);
+  const [showConfirmPublish, setShowConfirmPublish] = useState(false);
 
-  // New state for comments modal
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [lessonIdForComments, setLessonIdForComments] = useState<string | null>(null);
 
-  const { courses } = useMentorContext();
+  const { courses, setCourses } = useMentorContext();
   const params = useParams();
   const courseId = params.courseId as string;
 
-  const course: ICourse | undefined = courses.find((c) => c.id === courseId);
-  const nextLessonOrder = lessons.length > 0 ? Math.max(...lessons.map((l) => l.order || 0)) + 1 : 1;
+  const courseFromContext: ICourse | undefined = courses.find((c) => c.id === courseId);
+  const [courseData, setCourseData] = useState<ICourse | undefined>(courseFromContext);
 
   useEffect(() => {
     if (courseId) {
       getLessons(courseId);
     }
-  }, [courseId]);
+    if (courseFromContext) {
+      setCourseData(courseFromContext);
+    }
+  }, [courseId, courseFromContext]);
 
   const getLessons = async (id: string) => {
     const res = await MentorAPIMethods.getLessons(id);
@@ -59,7 +64,7 @@ export default function CourseLessonsPage() {
   };
 
   const handlePlayVideo = async (lessonId: string, videoUrl: string) => {
-    const res = await MentorAPIMethods.getSignedVideoUrl(lessonId as string, videoUrl);
+    const res = await MentorAPIMethods.getSignedVideoUrl(lessonId, videoUrl);
     if (res.ok) {
       setVideoToPlay(res.data.signedUrl);
       setShowVideoPlayerModal(true);
@@ -80,7 +85,7 @@ export default function CourseLessonsPage() {
     getLessons(courseId);
   };
 
-  if (!course) {
+  if (!courseData) {
     return (
       <div className="container mx-auto py-8 px-4 text-center bg-gray-900 text-white min-h-screen">
         <p>Loading course details or course not found...</p>
@@ -90,6 +95,8 @@ export default function CourseLessonsPage() {
       </div>
     );
   }
+
+  const nextLessonOrder = lessons.length > 0 ? Math.max(...lessons.map((l) => l.order || 0)) + 1 : 1;
 
   return (
     <div className="mx-auto py-8 px-4 bg-gray-900 text-white min-h-screen">
@@ -101,10 +108,22 @@ export default function CourseLessonsPage() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Courses
         </Link>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{course.title}</h1>
-            <p className="text-gray-400 mt-1">{course.description}</p>
+
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold tracking-tight text-white">{courseData.title}</h1>
+            <p className="text-gray-400 mt-1">{courseData.description}</p>
+          </div>
+
+          <div className="flex-shrink-0">
+            <Button
+              className={
+                courseData.isActive ? "bg-yellow-600 hover:bg-yellow-700" : "bg-green-600 hover:bg-green-700"
+              }
+              onClick={() => setShowConfirmPublish(true)}
+            >
+              {courseData.isActive ? "Hide This Course" : "Publish This Course"}
+            </Button>
           </div>
         </div>
       </div>
@@ -127,10 +146,9 @@ export default function CourseLessonsPage() {
                       className="w-full h-full object-cover"
                       width={128}
                       height={80}
-                      priority={false}
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-opacity-20 cursor-pointer">
-                      <div className="w-12 h-12 rounded-fullbg-opacity-50 flex items-center justify-center">
+                      <div className="w-12 h-12 flex items-center justify-center">
                         <PlayCircle className="h-6 w-6 text-white opacity-90" />
                       </div>
                     </div>
@@ -161,12 +179,11 @@ export default function CourseLessonsPage() {
                             Manage Questions
                           </Button>
                         </Link>
-                        {/* Show Comments Button */}
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={(e) => {
-                            e.stopPropagation(); // Prevent video play click
+                            e.stopPropagation();
                             handleShowComments(lesson.id);
                           }}
                         >
@@ -184,24 +201,6 @@ export default function CourseLessonsPage() {
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Lesson
             </Button>
-
-            <AddLessonModal
-              open={showAddModal}
-              setOpen={setShowAddModal}
-              onLessonAdded={handleLessonActionCompleted}
-              nextOrder={nextLessonOrder}
-              courseId={courseId}
-            />
-
-            {selectedLesson && (
-              <EditLessonModal
-                open={showEditModal}
-                setOpen={setShowEditModal}
-                selectedLesson={selectedLesson}
-                onLessonUpdated={handleLessonActionCompleted}
-                courseId={courseId}
-              />
-            )}
           </div>
         ) : (
           <div className="text-center py-12 border rounded-lg bg-gray-800 border-gray-700">
@@ -212,17 +211,27 @@ export default function CourseLessonsPage() {
               <PlusCircle className="mr-2 h-4 w-4" />
               Add Lesson
             </Button>
-
-            <AddLessonModal
-              open={showAddModal}
-              setOpen={setShowAddModal}
-              onLessonAdded={handleLessonActionCompleted}
-              nextOrder={nextLessonOrder}
-              courseId={courseId}
-            />
           </div>
         )}
       </div>
+
+      <AddLessonModal
+        open={showAddModal}
+        setOpen={setShowAddModal}
+        onLessonAdded={handleLessonActionCompleted}
+        nextOrder={nextLessonOrder}
+        courseId={courseId}
+      />
+
+      {selectedLesson && (
+        <EditLessonModal
+          open={showEditModal}
+          setOpen={setShowEditModal}
+          selectedLesson={selectedLesson}
+          onLessonUpdated={handleLessonActionCompleted}
+          courseId={courseId}
+        />
+      )}
 
       <Dialog open={showVideoPlayerModal} onOpenChange={setShowVideoPlayerModal}>
         <DialogContent className="sm:max-w-[800px] aspect-video p-0 overflow-hidden bg-gray-900">
@@ -241,13 +250,40 @@ export default function CourseLessonsPage() {
           )}
         </DialogContent>
       </Dialog>
-      {lessonIdForComments && ( 
+
+      {lessonIdForComments && (
         <CommentsModal
           open={showCommentsModal}
           setOpen={setShowCommentsModal}
           lessonId={lessonIdForComments}
         />
       )}
+
+      {/* Confirmation Dialog */}
+      <CustomAlertDialog
+        isOpen={showConfirmPublish}
+        onClose={() => setShowConfirmPublish(false)}
+        title={courseData.isActive ? "Hide Course" : "Publish Course"}
+        description={
+          courseData.isActive
+            ? "Are you sure you want to hide this course? It will no longer be visible to students."
+            : "Are you sure you want to publish this course? Once published, students will be able to view it."
+        }
+        confirmText={courseData.isActive ? "Hide" : "Publish"}
+        cancelText="Cancel"
+        variant="warning"
+        onConfirm={async () => {
+          const res = await MentorAPIMethods.publishCourse(courseData.id, !courseData.isActive);
+          if (res.ok) {
+            showInfoToast(courseData.isActive ? "Course hidden successfully!" : "Course published successfully!");
+            setCourseData((prev) => prev ? { ...prev, isActive: !prev.isActive } : prev);
+          } else {
+            showErrorToast("Failed to update course visibility.");
+          }
+          setShowConfirmPublish(false);
+        }}
+        onCancel={() => setShowConfirmPublish(false)}
+      />
     </div>
   );
 }

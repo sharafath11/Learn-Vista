@@ -11,6 +11,7 @@ import { IMentorLessonsController } from '../../core/interfaces/controllers/ment
 import { IMentorStudentsController } from '../../core/interfaces/controllers/mentor/ImentorStudent.controller';
 import { IMentorConcernController } from '../../core/interfaces/controllers/mentor/IMentorConcern.Controller';
 import { IMentorCommentsController } from '../../core/interfaces/controllers/mentor/IMentorComments.controller';
+import { IMentorCourseController } from '../../core/interfaces/controllers/mentor/IMentorCourse.controller';
 const router = express.Router();
 const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
 const mentorController = container.get<IMentorController>(TYPES.MentorController);
@@ -19,7 +20,8 @@ const mentorLessonController=container.get<IMentorLessonsController>(TYPES.Mento
 const mentorStreamController = container.get<IMentorStreamController>(TYPES.MentorStreamController)
 const mentorStudentsController = container.get<IMentorStudentsController>(TYPES.MentorStudentsController)
 const _mentorConcernControler = container.get<IMentorConcernController>(TYPES.mentorConcernController)
-const _mentorCommentController=container.get<IMentorCommentsController>(TYPES.MentorCommentController)
+const _mentorCommentController = container.get<IMentorCommentsController>(TYPES.MentorCommentController)
+const _mentorCourseController=container.get<IMentorCourseController>(TYPES.IMentorCourseController)
 router.post('/signup', (req, res) => mentorAuthController.signupController(req, res));
 router.post('/send-otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
 router.post('/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
@@ -31,8 +33,8 @@ router.get('/get-mentor', verifyMentor, (req, res, next) => {
 });
 router.post("/forget-password", (req, res) => mentorAuthController.forgetPassword(req, res));
 router.post("/reset-password", (req, res) => mentorAuthController.restartPassword(req, res));
-router.get("/courses", verifyMentor, mentorController.getCourses.bind(mentorController));
-router.patch("/course/status-change",verifyMentor, mentorController.statusChange.bind(mentorController));
+router.get("/courses", verifyMentor, _mentorCourseController.getCourses.bind(_mentorCourseController));
+router.patch("/course/status-change",verifyMentor, _mentorCourseController.changeStatus.bind(_mentorCourseController));
 router.get("/live-session/start/:courseId", verifyMentor, mentorStreamController.startStreamController.bind(mentorStreamController));
 router.get("/end/stream/:liveId",verifyMentor,mentorStreamController.endStreamController.bind(mentorStreamController))
 router.post("/change/password",verifyMentor,mentorProfileController.changePassword.bind(mentorProfileController))
@@ -67,7 +69,8 @@ router.post(
   _mentorConcernControler.addConcern.bind(_mentorConcernControler)
 );
 router.get("/concerns", verifyMentor, _mentorConcernControler.getConcern.bind(_mentorConcernControler))
-router.get("/pagenated/courses", verifyMentor, mentorController.coursePagenated.bind(mentorController));
+router.get("/pagenated/courses", verifyMentor, _mentorCourseController.getPaginatedCourses.bind(_mentorCourseController));
 router.get("/comments", verifyMentor, _mentorCommentController.getAllComments.bind(_mentorCommentController));
+router.patch("/publishCourse/:courseId",verifyMentor,_mentorCourseController.publishCourse.bind(_mentorCourseController))
 
 export default router;

@@ -23,7 +23,8 @@ export const TYPES = {
   NotificationController: Symbol.for("NotificationController"),
   MentorCommentController: Symbol.for("MentorCommentController"),
   UserCertificateController: Symbol.for("UserCertificateController"),
-  SharedController:Symbol.for("SharedController"),
+  SharedController: Symbol.for("SharedController"),
+  IMentorCourseController:Symbol.for("MentorCourseController"),
   // Services
   MentorAuthService: Symbol.for('MentorAuthService'),
   MentorService: Symbol.for('MentorService'),
@@ -47,6 +48,7 @@ export const TYPES = {
   NotificationService: Symbol.for("NotificationService"),
   UserCertificateService:Symbol.for("UserCertificateService"),
   MentorCommentsService: Symbol.for("MentorCommentsService"),
+  MentorCourseService:Symbol.for("MentorCourseService"),
   // Repositories
   MentorRepository: Symbol.for('MentorRepository'),
   MentorOtpRepository: Symbol.for('MentorOtpRepository'),
