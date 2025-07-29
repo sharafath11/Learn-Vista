@@ -8,7 +8,9 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/src/components/shared/components/ui/avatar"
 import { RaiseConcernDialog } from "./ConcernDialog"
 import {
-  Layers, Calendar, Tag, Clock, BookText, Users, AlertCircle
+  Layers, Calendar, Tag, Clock, BookText, Users, AlertCircle,
+  CheckCircle,
+  XCircle
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -118,19 +120,29 @@ export default function CoursesPage() {
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300 group-hover:brightness-100"
                     />
-                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
-                      {/* <Badge className={`${statusVariants[course.mentorStatus]} text-white px-3 py-1.5 text-sm font-bold rounded-full shadow-md`}>
-                        {course.mentorStatus.charAt(0).toUpperCase() + course.mentorStatus.slice(1)}
-                      </Badge> */}
-                      {typeof course.categoryId === "object" && course.categoryId?.title && (
-                        <Badge
-                          variant="secondary"
-                          className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 text-sm font-semibold rounded-full"
-                        >
-                          {course.categoryId.title}
-                        </Badge>
-                      )}
-                    </div>
+                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center gap-2">
+  {typeof course.categoryId === "object" && course.categoryId?.title && (
+    <Badge
+      variant="secondary"
+      className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 text-sm font-semibold rounded-full"
+    >
+      {course.categoryId.title}
+    </Badge>
+  )}
+
+  <Badge
+    variant={course.isActive ? "default" : "secondary"}
+    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-semibold rounded-full ${
+      course.isActive
+        ? "bg-green-600/80 text-white"
+        : "bg-red-600/80 text-white"
+    }`}
+  >
+    {course.isActive ? <CheckCircle size={14} /> : <XCircle size={14} />}
+    {course.isActive ? "Active" : "Inactive"}
+  </Badge>
+</div>
+
                   </CardHeader>
 
                   <CardContent className="flex-grow">

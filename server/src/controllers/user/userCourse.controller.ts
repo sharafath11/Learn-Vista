@@ -64,7 +64,7 @@ export class UserCourseController implements IUserCourseController {
     }
     async updateUserCourse(req: Request, res: Response): Promise<void> {
         try {
-            const { courseId } = req.body;
+          const { courseId } = req.body;
             const decoded = decodeToken(req.cookies.token);
 
             if (!decoded?.id) {

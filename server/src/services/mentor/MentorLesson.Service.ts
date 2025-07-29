@@ -212,7 +212,6 @@ try {
   let response = resultRaw;
 
   if (typeof response === "string") {
-    // Remove markdown code block if present
     response = response.replace(/```(?:\w+)?\s*([\s\S]*?)\s*```/, "$1").trim();
     parsed = JSON.parse(response);
   } else if (Array.isArray(response)) {
@@ -235,3 +234,7 @@ try {
     return cleaned;
   }
 }
+
+
+
+

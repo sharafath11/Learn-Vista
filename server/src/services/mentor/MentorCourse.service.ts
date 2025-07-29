@@ -98,7 +98,7 @@ export class MentorCourseService implements IMentorCourseService {
      if (status) {
     await notifyWithSocket({
       notificationService: this._notificationService,
-      userIds:[...userIds],
+      userIds,
       roles:["user","admin"],
       title: "New Course Published!",
       message: `The course "${coures?.title}"  is now available. Start learning today!`,

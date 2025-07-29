@@ -26,7 +26,9 @@ export default function MentorDashboard() {
     totalLessons += course?.sessions?.length ?? 0
     completedLessons += course?.sessions?.filter((lesson) => lesson)?.length ?? 0
   })
-
+  let totalCourses = courses.length
+let publishedCourses = courses.filter((course) => course.isActive).length
+ 
   const completionRate = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
 
   return (
@@ -67,14 +69,15 @@ export default function MentorDashboard() {
 
             {/* Active Courses */}
             <MetricCard
-              title="Active Courses"
-              value={courses.length.toString()}
-              subtitle="Currently published"
-              icon={BookOpen}
-              gradient="from-green-500 to-emerald-500"
-              bgGradient="from-green-500/10 to-emerald-500/10"
-              href="/mentor/courses"
-            />
+  title="Published Courses"
+  value={publishedCourses.toString()}
+  subtitle="Visible to students"
+  icon={BookOpen}
+  gradient="from-green-500 to-teal-500"
+  bgGradient="from-green-500/10 to-teal-500/10"
+  href="/mentor/courses"
+/>
+
 
             {/* Total Lessons */}
             <MetricCard
@@ -87,15 +90,19 @@ export default function MentorDashboard() {
               href="/mentor/courses"
             />
 
-            {/* Completion Rate */}
-            {/* <MetricCard
-              title="Completion Rate"
-              value={`${completionRate}%`}
-              subtitle="Average progress"
-              icon={Award}
-              gradient="from-orange-500 to-red-500"
-              bgGradient="from-orange-500/10 to-red-500/10"
-            /> */}
+            {/* Total Courses */}
+<MetricCard
+  title="Total Courses"
+  value={totalCourses.toString()}
+  subtitle="Courses you've created"
+  icon={BookOpen}
+  gradient="from-indigo-500 to-purple-500"
+  bgGradient="from-indigo-500/10 to-purple-500/10"
+  href="/mentor/courses"
+/>
+
+{/* Published Courses */}
+
           </div>
         </section>
 

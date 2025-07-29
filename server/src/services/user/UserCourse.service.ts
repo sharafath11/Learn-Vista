@@ -54,7 +54,6 @@ export class UserCourseService implements IUserCourseService {
   async updateUserCourse(courseId: string, userId: string): Promise<void> {
     const courseObjectId = new mongoose.Types.ObjectId(courseId);
     const userObjectId = new mongoose.Types.ObjectId(userId);
-
     const course = await this._baseCourseRepo.findById(courseId);
     if (!course) {
       throwError("Course not found.", StatusCode.BAD_REQUEST);
