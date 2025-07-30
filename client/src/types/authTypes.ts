@@ -27,9 +27,7 @@ interface IEnrolledCourse {
   allowed: boolean;
 }
 export interface IUser {
-  id:string
-  
-  _id: string;
+  id:string  
   username: string;
   email: string;
   password?: string;

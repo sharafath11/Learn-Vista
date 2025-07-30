@@ -4,7 +4,7 @@ import { ICategory, ICourse } from "../../types/classTypes";
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { throwError } from "../../utils/ResANDError";
-import { uploadThumbnail, deleteFromS3, convertSignedUrlInArray, convertSignedUrlInObject } from "../../utils/s3Utilits";
+import { uploadThumbnail, deleteFromS3, convertSignedUrlInArray, convertSignedUrlInObject, getSignedS3Url, signConcernAttachmentUrls } from "../../utils/s3Utilits";
 import { validateCoursePayload } from "../../validation/adminValidation";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
@@ -112,7 +112,6 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
   const courseData: Partial<ICourse> = {
     ...data,
     thumbnail: imageUrl,
-    // ✅ no endTime included here
   };
 
   const createdCourse = await this.baseCourseRepo.create(courseData);
@@ -237,8 +236,6 @@ async editCategories(categoryId: string, title: string, description: string): Pr
     );
     const convertedDatas=await convertSignedUrlInArray(data,["thumbnail"])
     if (!data) throwError("Failed to fetch courses", StatusCode.INTERNAL_SERVER_ERROR);
-    console.log(" datas", data)
-    console.log("converted datas",data)
     return {
       data:convertedDatas,
       total,
@@ -272,12 +269,12 @@ async editCategories(categoryId: string, title: string, description: string): Pr
     type: isBlock ? "error" : "success",
   });
 }
+async getConcern(): Promise<IConcern[]> {
+  const data = await this._concernRepo.findAll(); 
+  const result = await signConcernAttachmentUrls(data);
+  return result;
+}
 
-  async getConcern(): Promise<IConcern[]> {
-    const result = await this._concernRepo.findAll();
-    if (!result) throwError("Somthing wrong");
-    return result
-  }
  async updateConcernStatus(
   concernId: string,
   status: 'resolved' | 'in-progress',
@@ -341,7 +338,8 @@ async getAllConcerns(
   if (!concerns) throwError("Failed to fetch concerns");
 
   const courses = await this.baseCourseRepo.findAll();
-  return { concerns, courses };
+  const sendData=await signConcernAttachmentUrls(concerns)
+  return { concerns:sendData, courses };
 }
 
   async countAllConcerns(filters: {

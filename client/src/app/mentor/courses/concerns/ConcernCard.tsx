@@ -99,7 +99,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
 
   const statusDisplay = getStatusDisplay(concern.status)
   const courseName =
-    courses?.find((c) => c._id === concern.courseId)?.title || concern.courseId
+    courses?.find((c) => c.id === concern.courseId)?.title || concern.courseId
 
   return (
     <>

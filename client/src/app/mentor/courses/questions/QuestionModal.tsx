@@ -105,10 +105,11 @@ export function QuestionModal({
     setLoadingOptions(true);
 
     const res = await MentorAPIMethods.generateOptions(formData.question.trim());
-
-    if (!res.ok) {
+    console.log("from hemaini", res);
+     setLoadingOptions(false);
+    if (!res.ok ) {
       showInfoToast(res.msg);
-      setLoadingOptions(false);
+     
       return;
     }
 

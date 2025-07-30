@@ -106,7 +106,7 @@ export default function UpcomingSessions() {
             <div className="divide-y divide-gray-100">
               {filteredCourses.map((session, index) => (
                 <SessionTableRow
-                  key={session._id}
+                  key={session.id}
                   session={session}
                   index={index}
                   isExpired={isExpired(session.endDate)}
@@ -122,7 +122,7 @@ export default function UpcomingSessions() {
           <div className="lg:hidden space-y-4">
             {filteredCourses.map((session) => (
               <SessionCard
-                key={session._id}
+                key={session.id}
                 session={session}
                 isExpired={isExpired(session.endDate)}
                 joiningSession={joiningSession}

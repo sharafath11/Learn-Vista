@@ -30,7 +30,7 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
         Lesson {lesson.order}: {lesson.title}
       </h1>
-      {allSectionsCompleted || report ? (
+      {allSectionsCompleted && report ? (
         <Button
           onClick={onViewReport}
           className="ml-4 bg-blue-600 hover:bg-blue-700 text-white"

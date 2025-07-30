@@ -54,7 +54,7 @@ export default function SuccessPage() {
 
   return (
     <>
-      {user?._id && <NotificationListener userId={user.id} role={"user"} />}
+      {user?.id && <NotificationListener userId={user.id} role={"user"} />}
       <SuccessView session={session} />
     </>
   );

@@ -16,7 +16,7 @@ export default function ProgressOverview() {
       }
     }
     const enrolledCourses = allCourses.filter((course) =>
-      user.enrolledCourses?.some((enrolled) => enrolled.courseId === course._id),
+      user.enrolledCourses?.some((enrolled) => enrolled.courseId === course.id),
     )
     let totalProgress = 0
     let totalLessons = 0
@@ -24,7 +24,7 @@ export default function ProgressOverview() {
     const categoryProgress: Record<string, { total: number; completed: number; courses: number }> = {}
 
     enrolledCourses.forEach((course) => {
-      const progress = getCourseProgress(course._id, progresses)
+      const progress = getCourseProgress(course.id, progresses)
       const lessons = course.sessions?.length || 0
       const completed = Math.round((lessons * progress) / 100)
 

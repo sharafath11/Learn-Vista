@@ -3,6 +3,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuidv4 } from "uuid";
 import { s3 } from "../config/AWS";
 import { fileTypeFromBuffer } from "file-type";
+import { IConcern } from "../types/concernTypes";
 
 const S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!;
 const AWS_REGION = process.env.AWS_REGION || 'ap-south-1';
@@ -146,3 +147,19 @@ export const convertSignedUrlInObject = async <T extends Record<string, any>>(
   }
   return updatedItem;
 };
+
+export async function signConcernAttachmentUrls(data: IConcern[]): Promise<IConcern[]> {
+  for (const concern of data) {
+    if (Array.isArray(concern.attachments)) {
+      for (const attachment of concern.attachments) {
+        try {
+          attachment.url = await getSignedS3Url(attachment.url);
+        } catch (err) {
+          console.warn(`Failed to sign URL for ${attachment.filename}:`, err);
+          attachment.url = "";
+        }
+      }
+    }
+  }
+  return data;
+}

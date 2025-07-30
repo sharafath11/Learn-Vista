@@ -8,7 +8,7 @@ import { throwError } from "../../utils/ResANDError";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
-import { getSignedS3Url, uploadConcernAttachment } from "../../utils/s3Utilits";
+import { getSignedS3Url, signConcernAttachmentUrls, uploadConcernAttachment } from "../../utils/s3Utilits";
 
 @injectable()
 export class MentorConcernService implements IMentorConcernService {
@@ -85,19 +85,7 @@ console.log(attachments,"fvf")
   limit: number
 ): Promise<{ data: IConcern[]; total: number }> {
   const { data, total } = await this._concernRepo.findMany(filters, sort, skip, limit);
-
-  for (const concern of data) {
-    if (concern.attachments && Array.isArray(concern.attachments)) {
-      for (const attachment of concern.attachments) {
-        try {
-          attachment.url = await getSignedS3Url(attachment.url);
-        } catch {
-          attachment.url = "";
-        }
-      }
-    }
-  }
-
-  return { data, total };
+ const sendData=await signConcernAttachmentUrls(data)
+  return { data:sendData, total };
 }
 }

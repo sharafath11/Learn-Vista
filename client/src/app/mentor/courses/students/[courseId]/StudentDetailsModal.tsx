@@ -28,7 +28,7 @@ export default function StudentDetailsModal({ student, isOpen, onClose }: Studen
   // Combine enrolledCourses with full course details and enrollment status
   const userCourses = student.enrolledCourses?.map((enrolledCourse) => {
     // Find course detail by courseId
-    const courseDetail = courses.find(c => c._id === enrolledCourse.courseId);
+    const courseDetail = courses.find(c => c.id === enrolledCourse.courseId);
     if (!courseDetail) return null;
 
     return {
@@ -103,7 +103,7 @@ export default function StudentDetailsModal({ student, isOpen, onClose }: Studen
                   </div>
                   <div className="space-y-2">
                     {userCourses.map((course) => (
-                      <div key={course?._id} className="flex justify-between items-center bg-muted/50 p-2 rounded">
+                      <div key={course?.id} className="flex justify-between items-center bg-muted/50 p-2 rounded">
                         <span className="font-medium">{course?.title}</span>
                         <Badge variant={course?.allowed ? "default" : "destructive"}>
                           {course?.allowed ? "Allowed" : "Blocked"}

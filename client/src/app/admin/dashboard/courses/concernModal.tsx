@@ -11,16 +11,12 @@ import {
 import {
   AlertCircle,
   CheckCircle,
-  XCircle,
-  Download,
   ImageIcon,
   Music,
   FileText
 } from "lucide-react"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { Separator } from "@/src/components/shared/components/ui/separator"
-import { Textarea } from "@/src/components/shared/components/ui/textarea"
-import { AdminAPIMethods, MentorAPIMethods } from "@/src/services/APImethods"
+import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast"
 import { IConcern } from "@/src/types/concernTypes"
 import { useAdminContext } from "@/src/context/adminContext"
@@ -33,29 +29,8 @@ interface ConcernModalProps {
 
 export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalProps) {
   const [resolution, setResolution] = useState("")
-  const [isProcessing, setIsProcessing] = useState(false);
-  const {setAllConcerns}=useAdminContext()
-
-  const getStatusDisplay = (status: string) => {
-    const statusConfig: Record<string, { icon: React.ReactNode; colorClasses: string; label: string }> = {
-      resolved: {
-        icon: <CheckCircle className="w-4 h-4" />,
-        colorClasses: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25 shadow-emerald-500/10",
-        label: "Resolved"
-      },
-      open: {
-        icon: <AlertCircle className="w-4 h-4" />,
-        colorClasses: "bg-amber-500/15 text-amber-400 border-amber-500/25 shadow-amber-500/10",
-        label: "Open"
-      },
-      'in-progress': {
-        icon: <AlertCircle className="w-4 h-4" />,
-        colorClasses: "bg-blue-500/15 text-blue-400 border-blue-500/25 shadow-blue-500/10",
-        label: "In Progress"
-      }
-    }
-    return statusConfig[status] || statusConfig.open
-  }
+  const [isProcessing, setIsProcessing] = useState(false)
+  const { setAllConcerns } = useAdminContext()
 
   const getAttachmentIcon = (type: string) => {
     const iconClass = "w-4 h-4"
@@ -75,131 +50,128 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
   }
 
   const handleStatusUpdate = async (status: 'resolved' | 'in-progress') => {
-  if (!concern) return;
+    if (!concern) return
 
-  setIsProcessing(true);
+    console.log("Updating status to:", status)
+    setIsProcessing(true)
 
-  const messages = {
-    resolved: "Concern resolved successfully",
-    'in-progress': "Concern marked as in-progress",
-  };
+    const messages = {
+      resolved: "Concern resolved successfully",
+      'in-progress': "Concern marked as in-progress"
+    }
 
-
-  const res = await AdminAPIMethods.updateConcernStatus(concern._id?concern._id:concern.id, status, resolution)
-
-    setIsProcessing(false);
-
-
-  if (!res?.ok) return showInfoToast(res.msg);
-    setAllConcerns((prev) =>
-    prev.map((c) =>
-      c.id === concern.id ? { ...c, status, resolution } : c
+    const res = await AdminAPIMethods.updateConcernStatus(
+      concern.id,
+      status,
+      resolution
     )
-  );
-  showSuccessToast(messages[status]);
-  onStatusChange();
-  onClose();
-};
 
+    setIsProcessing(false)
+
+    if (!res?.ok) {
+      console.error("Status update failed:", res.msg)
+      return showInfoToast(res.msg)
+    }
+
+    console.log("Status updated successfully:", res)
+    setAllConcerns(prev =>
+      prev.map(c =>
+        c.id === concern.id ? { ...c, status, resolution } : c
+      )
+    )
+
+    showSuccessToast(messages[status])
+    onStatusChange()
+    onClose()
+  }
 
   if (!concern) return null
 
-  const statusDisplay = getStatusDisplay(concern.status)
+  console.log("Concern modal opened:", concern)
 
   return (
     <Dialog open={!!concern} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-gray-50 dark:bg-gray-900">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            Concern Details
-            <Badge className={`${statusDisplay.colorClasses} px-3 py-1 text-xs font-semibold`}>
-              {statusDisplay.icon}
-              {statusDisplay.label}
-            </Badge>
-          </DialogTitle>
+          <DialogTitle>Concern Details</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold">{concern.title}</h3>
-            <p className="text-gray-700 dark:text-gray-300">{concern.message}</p>
+          <div>
+            <h3 className="text-lg font-semibold">Title</h3>
+            <p>{concern.title}</p>
           </div>
 
-          {Array.isArray(concern.attachments) && concern.attachments.length > 0 && (
-  <div className="space-y-3">
-    <Separator />
-    <div>
-      <h4 className="text-sm font-medium mb-2">
-        Attachments ({concern.attachments.length})
-      </h4>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {concern.attachments.map((att, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between bg-gray-100 dark:bg-gray-800 p-3 rounded-lg"
-          >
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gray-200 dark:bg-gray-700 rounded-md">
-                {getAttachmentIcon(att.type)}
-              </div>
-              <div>
-                <p className="text-sm font-medium">{att.filename}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {att.type} • {formatFileSize(att.size)}
-                </p>
-              </div>
-            </div>
-            {att.url && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.open(att.url, "_blank")}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            )}
+          <div>
+            <h3 className="text-lg font-semibold">Message</h3>
+            <p>{concern.message}</p>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
-)}
 
+          <div>
+            <h3 className="text-lg font-semibold">Status</h3>
+            <Badge variant={concern.status === "resolved" ? "success" : "destructive"}>
+              {concern.status.toUpperCase()}
+            </Badge>
+          </div>
 
-          <div className="space-y-3">
-            <Separator />
+          {concern.attachments && concern.attachments.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium mb-2">Resolution</h4>
-              <Textarea
-                placeholder="Enter resolution details..."
-                value={resolution}
-                onChange={(e) => setResolution(e.target.value)}
-                className="min-h-[100px]"
-              />
+              <h3 className="text-lg font-semibold mb-2">Attachments</h3>
+              <ul className="space-y-2">
+                {concern.attachments.map((att, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-center justify-between bg-muted p-3 rounded-lg hover:bg-muted/80 transition cursor-pointer"
+                    onClick={() => {
+                      console.log("Opening attachment:", att.url)
+                      if (!att.url || !att.url.startsWith("http")) {
+                        showErrorToast("Invalid or missing attachment URL.")
+                        return
+                      }
+                      window.open(att.url, "_blank")
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      {getAttachmentIcon(att.type)}
+                      <div>
+                        <p className="text-sm font-medium">{att.filename}</p>
+                        <p className="text-xs text-gray-500">
+                          {att.type} • {formatFileSize(att.size)}
+                        </p>
+                      </div>
+                    </div>
+                    <Button size="sm" variant="secondary">Open</Button>
+                  </li>
+                ))}
+              </ul>
             </div>
+          )}
+
+          <div>
+            <h3 className="text-lg font-semibold">Resolution</h3>
+            <textarea
+              className="w-full p-2 border border-gray-300 rounded"
+              rows={3}
+              placeholder="Enter resolution..."
+              value={resolution}
+              onChange={(e) => setResolution(e.target.value)}
+            />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4">
-            <Button 
-              variant="outline" 
-              onClick={onClose}
-              disabled={isProcessing}
-            >
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
+          <div className="flex justify-end gap-3">
+            <Button onClick={onClose} disabled={isProcessing}>Cancel</Button>
+            <Button
+              variant="outline"
               onClick={() => handleStatusUpdate("in-progress")}
-              disabled={isProcessing || concern.status === 'in-progress'}
+              disabled={isProcessing || concern.status === "in-progress"}
             >
-              <AlertCircle className="h-4 w-4 mr-2" />
               Mark In-Progress
             </Button>
-            <Button 
+            <Button
+              variant="destructive"
               onClick={() => handleStatusUpdate("resolved")}
-              disabled={isProcessing || concern.status === 'resolved'}
+              disabled={isProcessing || concern.status === "resolved"}
             >
-              <CheckCircle className="h-4 w-4 mr-2" />
               Resolve Concern
             </Button>
           </div>

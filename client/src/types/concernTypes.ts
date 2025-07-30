@@ -34,7 +34,7 @@ export interface ConcernDialogProps {
 }
 
 export interface IConcern {
-  _id:string
+  
   id: string;
   title:string
   message: string;

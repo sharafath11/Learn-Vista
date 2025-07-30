@@ -59,9 +59,9 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
     total: number;
     totalPages: number;
   }> {
-    const { page = 1,  search, filters, sort } = params;
+    const { page = 1,  search, filters,limit = 10, sort } = params;
     const query: FilterQuery<ICourse> = {};
-    const limit=2
+   
 
     if (search) {
       query.title = { $regex: search, $options: 'i' };
@@ -178,7 +178,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       ]);
 
       const data = toDTOArray<ICourse>(documents);
-      console.log("hy;lppp")
+    
       return {
         data,
         total,

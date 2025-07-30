@@ -3,6 +3,7 @@ dotenv.config();
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { throwError } from '../utils/ResANDError';
+import { StatusCode } from '../enums/statusCode.enum';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY!);
 
@@ -16,6 +17,6 @@ export async function getGemaniResponse(prompt: string): Promise<string> {
 
     return text;
   } catch (error) {
-    throwError("AI is currently busy. Please try again later 😮‍💨");
+    throwError("AI is currently busy. Please try again later 😮‍💨",StatusCode.BAD_REQUEST);
   }
 }

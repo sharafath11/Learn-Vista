@@ -13,6 +13,7 @@ import {
   PlayCircle,
   TrendingUp,
 } from "lucide-react"
+import { ICourse } from "@/src/types/courseTypes"
 
 export default function MentorDashboard() {
   const { courses } = useMentorContext()
@@ -265,7 +266,7 @@ function ActionCard({ icon: Icon, title, description, color, bgColor, hoverColor
 }
 
 interface CourseCardProps {
-  course: any
+  course: ICourse
   title: string
   description: string
   progress: number
@@ -310,10 +311,10 @@ function CourseCard({ course, title, description, progress, status, students, le
 
       <div className="flex gap-3">
         <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-          <Link href={`/mentor/courses/${course._id}`}>manage Lessons</Link>
+          <Link href={`/mentor/courses/${course.id}`}>manage Lessons</Link>
         </Button>
         <Button size="sm" className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600">
-          <Link href={`/mentor/courses/students/${course._id}`}>manage Students</Link>
+          <Link href={`/mentor/courses/students/${course.id}`}>manage Students</Link>
         </Button>
       </div>
     </div>

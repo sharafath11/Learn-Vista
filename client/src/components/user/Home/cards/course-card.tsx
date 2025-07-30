@@ -16,7 +16,7 @@ export default function CourseCard({ course }: CourseCardProps) {
       transition={{ duration: 0.3 }}
       className="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow group flex flex-col h-full"
     >
-      <Link href={`/user/sessions/${course.id || course._id}`} className="block h-full">
+      <Link href={`/user/sessions/${course.id || course.id}`} className="block h-full">
         <div className="flex flex-col items-center text-center h-full">
           {/* Placeholder for thumbnail or icon */}
           <div className="p-4 bg-blue-900 rounded-full group-hover:bg-blue-700 transition-colors">

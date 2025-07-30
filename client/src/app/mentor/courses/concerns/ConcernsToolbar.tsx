@@ -83,7 +83,7 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
   const courseFilterOptions: FilterOption[] = [
     { value: 'all', label: 'All Courses' },
     ...(courses?.map(course => ({
-      value: course._id,
+      value: course.id,
       label: course.title
     })) || [])
   ]
@@ -138,7 +138,7 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="bg-gray-800/50 border-gray-700 text-gray-300 hover:bg-gray-700/50">
             <Filter className="w-4 h-4 mr-2" />
-            {courseFilter === "all" ? "Course" : courses?.find(c => c._id === courseFilter)?.title || "Course"}
+            {courseFilter === "all" ? "Course" : courses?.find(c => c.id === courseFilter)?.title || "Course"}
             <ChevronDown className="w-4 h-4 ml-2" />
           </Button>
         </DropdownMenuTrigger>

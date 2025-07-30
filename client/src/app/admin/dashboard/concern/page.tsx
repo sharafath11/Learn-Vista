@@ -74,7 +74,7 @@ export default function ConcernsPage() {
     new Date(date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
 
   const selectedConcern = selectedConcernId
-    ? concerns.find((c) => c._id === selectedConcernId) || null
+    ? concerns.find((c) => c.id === selectedConcernId) || null
     : null
 
   return (
@@ -197,9 +197,9 @@ export default function ConcernsPage() {
 
             return (
               <Card
-                key={c._id}
+                key={c.id}
                 className="p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer"
-                onClick={() => setSelectedConcernId(c._id)}
+                onClick={() => setSelectedConcernId(c.id)}
               >
                 <div className="flex items-center justify-between mb-2">
                   <Badge

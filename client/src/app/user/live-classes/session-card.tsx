@@ -53,7 +53,7 @@ export const SessionCard = ({ session, isExpired, joiningSession, onJoinCall, on
     if (isExpired) {
       return (
         <Button
-          onClick={() => onViewContent(session._id)}
+          onClick={() => onViewContent(session.id)}
           className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200"
         >
           <div className="flex items-center justify-center gap-2">
@@ -68,11 +68,11 @@ export const SessionCard = ({ session, isExpired, joiningSession, onJoinCall, on
     if (session.isStreaming) {
       return (
         <Button
-          onClick={() => onJoinCall(session._id)}
-          disabled={joiningSession === session._id}
+          onClick={() => onJoinCall(session.id)}
+          disabled={joiningSession === session.id}
           className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50"
         >
-          {joiningSession === session._id ? (
+          {joiningSession === session.id ? (
             <div className="flex items-center justify-center gap-2">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               Joining Session...

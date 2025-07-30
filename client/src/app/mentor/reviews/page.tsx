@@ -103,7 +103,7 @@ export default function ReviewsComponent() {
               >
                 <option value="all">All Courses</option>
                 {courses.map((course) => (
-                  <option className="text-black" key={course._id} value={course._id}>
+                  <option className="text-black" key={course.id} value={course.id}>
                     {course.title}
                   </option>
                 ))}

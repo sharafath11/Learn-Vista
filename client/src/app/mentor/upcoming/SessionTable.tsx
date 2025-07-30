@@ -39,7 +39,7 @@ export const SessionTable = ({
             const status = getSessionStatus(session)
             return (
               <div
-                key={session._id}
+                key={session.id}
                 className={`px-6 py-5 grid grid-cols-12 gap-4 items-center transition-all duration-200 hover:bg-indigo-900/20 ${
                   status === "ready" ? "bg-gradient-to-r from-emerald-900/30 to-teal-900/30 border-l-4 border-l-emerald-400" : ""
                 } ${isEnded ? "opacity-90" : ""}`}
@@ -136,7 +136,7 @@ const SessionRow = ({ session, isEnded, status, handleStartSession }: any) => (
         </Button>
       ) : status === "ready" ? (
         <Button 
-          onClick={() => handleStartSession(session._id)} 
+          onClick={() => handleStartSession(session.id)} 
           className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md"
         >
           <Play className="w-4 h-4 mr-2" />

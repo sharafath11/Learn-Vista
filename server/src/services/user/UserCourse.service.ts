@@ -50,6 +50,7 @@ export class UserCourseService implements IUserCourseService {
     const sendData=await convertSignedUrlInArray(data,["thumbnail"])
     return {data:sendData, total, totalPages };
   }
+  
 
   async updateUserCourse(courseId: string, userId: string): Promise<void> {
     const courseObjectId = new mongoose.Types.ObjectId(courseId);

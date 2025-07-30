@@ -9,7 +9,7 @@ export function MentorNotificationWrapper() {
  
   return (
     <NotificationListener
-      userId={mentor._id || mentor.id}
+      userId={mentor.id || mentor.id}
       role="mentor"
     />
   );
