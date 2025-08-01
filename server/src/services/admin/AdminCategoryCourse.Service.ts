@@ -144,7 +144,12 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
     }
 
     const updateData: Partial<ICourse> = { ...data };
-
+if (typeof updateData.mentorId === 'string' && updateData.mentorId === '') {
+    delete updateData.mentorId;
+}
+if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
+    delete updateData.categoryId;
+}
     const newMentorId = data.mentorId || currentCourse.mentorId;
     const isMentorChanged = !!data.mentorId && data.mentorId !== currentCourse.mentorId;
 
@@ -186,8 +191,11 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
       }
       updateData.thumbnail = await uploadThumbnail(thumbnail);
     }
-
+    
+    // Because we deleted the invalid fields from `updateData` above,
+    // this line will no longer fail with the "Cast to ObjectId failed" error.
     const updatedCourse = await this.baseCourseRepo.update(courseId, updateData);
+    
     if (!updatedCourse) {
       throwError("Failed to update course", StatusCode.INTERNAL_SERVER_ERROR);
     }

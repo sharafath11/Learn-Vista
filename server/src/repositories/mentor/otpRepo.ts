@@ -9,6 +9,11 @@ export class MentorOtpRepository extends BaseRepository <IMentorOtp,IMentorOtp> 
  
   constructor() {
     super(MentorOtpModel);
-   
+  }
+
+  async createAt(): Promise<IMentorOtp|null>{
+    let userID = 'asfasfw32wfsf'
+    let date = new Date();
+    return await this.findOne({ _id: userID, createdAt: {$gte:{date}} })
   }
 }

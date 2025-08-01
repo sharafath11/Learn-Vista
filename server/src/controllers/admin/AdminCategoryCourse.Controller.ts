@@ -167,6 +167,7 @@ class AdminCourseController implements IAdminCourseController {
       const courseId = data.courseId;
       const thumbnailBuffer = req.file?.buffer;
       delete data.thumbnail;
+      console.log(courseId,"jjjjjjj")
       if (!courseId) {
         sendResponse(res, StatusCode.BAD_REQUEST, "Missing courseId", false);
         return;

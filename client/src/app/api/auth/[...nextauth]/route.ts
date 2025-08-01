@@ -40,10 +40,10 @@ const handler = NextAuth({
           role: "user"
         };
 
-      
+  
 
         const response = await axios.post(
-          ` http://localhost:4000/google/signup`,
+          `http://localhost:4000/api/google/signup`,
           payload,
           {
             withCredentials: true,

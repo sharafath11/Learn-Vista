@@ -41,7 +41,6 @@ export default function ReviewsComponent() {
   const getCourseForLesson = (lessonId: string) => {
     return courseMap[lessonId]
   }
-
   const formatDate = (date: Date | undefined) => {
     if (!date) return "Unknown date"
     return new Date(date).toLocaleDateString("en-US", {
@@ -74,7 +73,8 @@ export default function ReviewsComponent() {
     }
 
     fetchComments()
-  }, [sortBy, filterByCourse, debouncedSearch, page])
+  }, [sortBy, filterByCourse, debouncedSearch, page]);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
