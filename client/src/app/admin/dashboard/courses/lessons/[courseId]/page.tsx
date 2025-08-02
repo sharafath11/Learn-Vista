@@ -47,7 +47,6 @@ export default function AdminSessionPage() {
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-8 font-sans antialiased text-gray-800">
       <div className="flex items-center justify-between mb-6 max-w-7xl mx-auto">
-        <h2 className="text-xl md:text-2xl font-bold">Admin Sessions</h2>
         <Button
           variant="outline"
           onClick={() => router.push("/admin/dashboard/courses")}

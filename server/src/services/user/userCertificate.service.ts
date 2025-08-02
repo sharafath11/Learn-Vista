@@ -15,7 +15,6 @@ export class UserCertificateService implements IUserCertificateService {
 
   async createCertificate(data: CreateCertificateInput): Promise<ICertificate> {
       const certificateId = generateCertificateId()
-      console.log("hyloo")
     const qrCodeUrl = await generateQRCode(certificateId)
 
     const newCertificate: Partial<ICertificate> = {

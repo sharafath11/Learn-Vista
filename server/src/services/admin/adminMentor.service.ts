@@ -94,7 +94,6 @@ export class AdminMentorService implements IAdminMentorServices {
     const mentor = await this._mentorRepo.findById(id);
     if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
     const sendData = await convertSignedUrlInObject(mentor, ["profilePicture","cvOrResume"]);
-    console.log(sendData,"datagdvkjbj")
     return sendData;
   }
 }

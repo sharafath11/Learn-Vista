@@ -205,7 +205,6 @@ export class MentorLessonService implements IMentorLessonService {
     }
     const prompt = buildMcqOptionsPrompt(question);
     const resultRaw = await getGemaniResponse(prompt);
-    console.log(resultRaw)
 let parsed: string[];
 
 try {

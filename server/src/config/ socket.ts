@@ -26,7 +26,6 @@ export function socketHandler(io: Server) {
       }
 
       if (role === 'mentor' && rooms[roomId] && rooms[roomId].mentorSocketId) {
-        console.warn(`Mentor ${currentSocketId} tried to join room ${roomId}, but a mentor (${rooms[roomId].mentorSocketId}) is already present.`);
         socket.emit('mentor-already-present', rooms[roomId].mentorSocketId);
         socket.disconnect(true); 
         return; 
@@ -61,7 +60,6 @@ export function socketHandler(io: Server) {
     });
     socket.on('ice-candidate', (targetSocketId: string, candidate: any) => {
       if (socket.id === targetSocketId) { 
-        console.warn(`ICE candidate from ${socket.id} targeting self. Skipping.`);
         return;
       }
       io.to(targetSocketId).emit('ice-candidate', socket.id, candidate);

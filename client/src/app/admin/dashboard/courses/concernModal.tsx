@@ -51,8 +51,6 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
 
   const handleStatusUpdate = async (status: 'resolved' | 'in-progress') => {
     if (!concern) return
-
-    console.log("Updating status to:", status)
     setIsProcessing(true)
 
     const messages = {
@@ -72,8 +70,6 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
       console.error("Status update failed:", res.msg)
       return showInfoToast(res.msg)
     }
-
-    console.log("Status updated successfully:", res)
     setAllConcerns(prev =>
       prev.map(c =>
         c.id === concern.id ? { ...c, status, resolution } : c
@@ -87,7 +83,6 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
 
   if (!concern) return null
 
-  console.log("Concern modal opened:", concern)
 
   return (
     <Dialog open={!!concern} onOpenChange={onClose}>
@@ -123,7 +118,7 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
                     key={idx}
                     className="flex items-center justify-between bg-muted p-3 rounded-lg hover:bg-muted/80 transition cursor-pointer"
                     onClick={() => {
-                      console.log("Opening attachment:", att.url)
+              
                       if (!att.url || !att.url.startsWith("http")) {
                         showErrorToast("Invalid or missing attachment URL.")
                         return

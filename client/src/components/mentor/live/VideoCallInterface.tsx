@@ -116,7 +116,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           showInfoToast(msg)
         })
         socket.on('disconnect', (reason: any) => {
-          console.warn(`MentorStream: Socket disconnected: ${reason}`);
           toast.error("Disconnected from server. Please refresh.");
         });
 

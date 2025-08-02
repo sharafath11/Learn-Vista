@@ -227,7 +227,6 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
             } else if (videoUrl.startsWith(`https://${pathStyleDomain}/`)) {
                 s3Key = videoUrl.substring(`https://${pathStyleDomain}/`.length);
             } else {
-                console.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
             }
             if (!s3Key) {
                 throwError("Invalid video URL format provided. Could not extract S3 key.", StatusCode.BAD_REQUEST);

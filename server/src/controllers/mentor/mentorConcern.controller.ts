@@ -27,7 +27,6 @@ export class MentorConcernController implements IMentorConcernController {
     }
 
     const files = req.files && Array.isArray(req.files) ? req.files : [];
-   console.log(req.file,req.files)
     const concern = await this._mentorConcernService.addConcern({
       title,
       message,

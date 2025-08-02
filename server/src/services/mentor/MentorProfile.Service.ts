@@ -52,7 +52,7 @@ export class MentorProfileService implements IMentorProfileService {
       try {
         await deleteFromS3(mentor.profilePicture);
       } catch (err) {
-        console.warn("Failed to delete old profile picture from S3:", err);
+        throwError("Failed to delete old profile picture ");
       }
     }
   }

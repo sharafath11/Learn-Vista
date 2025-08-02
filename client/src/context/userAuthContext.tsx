@@ -31,7 +31,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
       const res = await UserAPIMethods.fetchUser();
       if (res.ok) {
         setUser(res.data);
-        console.log("user with singend url",res.data)
       } else {
         router.push("/user/login");
       }

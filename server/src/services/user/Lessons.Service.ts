@@ -22,6 +22,7 @@ import { IUserLessonProgress } from "../../types/userLessonProgress";
 import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController"; 
 import { IUserLessonProgressRepository } from "../../core/interfaces/repositories/course/IUserLessonProgressRepo";
 import { convertSignedUrlInArray } from "../../utils/s3Utilits";
+import { logger } from "../../utils/logger";
 
 const SECTION_WEIGHTS = {
   video: 0.40,
@@ -30,17 +31,7 @@ const SECTION_WEIGHTS = {
   mcq: 0.20,
 };
 
-const TOTAL_SECTION_WEIGHT =
-  SECTION_WEIGHTS.video +
-  SECTION_WEIGHTS.theory +
-  SECTION_WEIGHTS.practical +
-  SECTION_WEIGHTS.mcq;
 
-if (TOTAL_SECTION_WEIGHT !== 1) {
-  console.warn(
-    "Warning: Section weights in UserLessonsService.ts do not sum to 1. Overall lesson progress calculation might be off."
-  );
-}
 
 @injectable()
 export class UserLessonsService implements IUserLessonsService {
@@ -66,7 +57,7 @@ export class UserLessonsService implements IUserLessonsService {
     } else if (videoUrl.startsWith(`https://${pathStyleDomain}/`)) {
       s3Key = videoUrl.substring(`https://${pathStyleDomain}/`.length);
     } else {
-      console.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
+      logger.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
     }
 
     if (!s3Key) {

@@ -65,7 +65,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
         socket.on("rtc-offer", async (mentorSocketId: string, offer: any) => {
 
           if (mentorSocketIdRef.current !== mentorSocketId) {
-              console.warn("User: Received offer from unexpected mentor. Updating mentorSocketIdRef.");
               mentorSocketIdRef.current = mentorSocketId;
               if (peerRef.current) {
                 peerRef.current.destroy();
@@ -103,7 +102,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
               stream.getAudioTracks().forEach(track => {
               });
             } else {
-              console.warn("User: Received an empty or null stream!");
             }
           });
 
@@ -145,7 +143,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           window.location.href="/user/live-classes"
         })
         socket.on('disconnect', (reason: any) => {
-          console.warn(`UserLiveSession: Socket disconnected: ${reason}`);
           toast.error("Disconnected from server. Please refresh.");
         });
 

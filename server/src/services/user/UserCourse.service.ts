@@ -121,7 +121,6 @@ export class UserCourseService implements IUserCourseService {
     const overallProgress = this.calculateOverallProgress(allProgress, totalLessons);
 
     await this.upsertCourseProgress(userId, courseId, overallProgress, completedLessons, totalLessons);
-    console.log("overall progress",overallProgress)
     if (Math.round(overallProgress) === 100) {
       await this.issueCertificateIfNotExists(userId, courseId);
     }

@@ -106,7 +106,7 @@ export default function CoursesAdminPage() {
   const selectedConcern = selectedConcernId
     ? concern.find((c) => c.id === selectedConcernId) || null
     : null;
-  console.log(courses);
+ 
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">

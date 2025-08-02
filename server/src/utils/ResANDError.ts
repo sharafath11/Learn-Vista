@@ -1,8 +1,9 @@
 import { Response } from "express";
 import { CustomError } from "../types/errorTypes";
+import { logger } from "./logger";
 
 export function throwError(message: string, statusCode = 400): never {
-  console.error("Throwing error:", message);
+  logger.error("Throwing error:", message);
   const error: CustomError = new Error(message);
   error.statusCode = statusCode;
   throw error;
@@ -14,7 +15,7 @@ export function sendResponse<T>(
   ok: boolean,
   data?: T
 ): void {
-  console.error(msg);
+  logger.error(msg);
   res.status(status).json({ ok, msg, data });
 }
 export function handleControllerError(
@@ -38,6 +39,6 @@ export function handleControllerError(
     }
   }
 
-  console.error(message);
+  logger.error(message);
   sendResponse(res, statusCode, message, false);
 }

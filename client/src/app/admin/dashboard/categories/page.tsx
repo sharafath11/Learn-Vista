@@ -70,7 +70,6 @@ export default function CategoriesList() {
           setTotalPages(res.data.totalPages);
         }
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
       } finally {
         setIsLoading(false);
       }

@@ -16,7 +16,6 @@ export class MentorCourseController implements IMentorCourseController{
 
   async getCourses(req: Request, res: Response): Promise<void> {
       try {
-        console.log("fhnjnh")
       const decoded = decodeToken(req.cookies.token);
       if (!decoded?.id) {
         return throwError("Unauthorized", StatusCode.UNAUTHORIZED);

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { s3 } from "../config/AWS";
 import { fileTypeFromBuffer } from "file-type";
 import { IConcern } from "../types/concernTypes";
+import { logger } from "./logger";
 
 const S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!;
 const AWS_REGION = process.env.AWS_REGION || 'ap-south-1';
@@ -37,7 +38,6 @@ export async function deleteFromS3(s3Key: string): Promise<void> {
       Key: s3Key,
     });
     await s3.send(command);
-    console.log(`Successfully deleted ${s3Key} from S3.`);
   } catch (error) {
     console.error(`Error deleting file from S3: ${s3Key}`, error);
     throw new Error(`Failed to delete file from S3: ${error instanceof Error ? error.message : String(error)}`);
@@ -113,7 +113,7 @@ export const convertSignedUrlInArray = async <T extends Record<string, any>>(
             const signedUrl = await getSignedS3Url(value);
             updatedItem[key] = signedUrl as T[keyof T];
           } catch (error) {
-            console.warn(`Could not generate signed URL for key: ${value}. Error: ${error}`);
+            logger.warn(`Could not generate signed URL for key: ${value}. Error: ${error}`);
           }
         }
       }
@@ -141,7 +141,7 @@ export const convertSignedUrlInObject = async <T extends Record<string, any>>(
         const signedUrl = await getSignedS3Url(value);
         updatedItem[key] = signedUrl as T[keyof T];
       } catch (error) {
-        console.warn(`Could not generate signed URL for key: ${value}. Error: ${error}`);
+        logger.warn(`Could not generate signed URL for key: ${value}. Error: ${error}`);
       }
     }
   }
@@ -155,7 +155,7 @@ export async function signConcernAttachmentUrls(data: IConcern[]): Promise<IConc
         try {
           attachment.url = await getSignedS3Url(attachment.url);
         } catch (err) {
-          console.warn(`Failed to sign URL for ${attachment.filename}:`, err);
+          logger.warn(`Failed to sign URL for ${attachment.filename}:`, err);
           attachment.url = "";
         }
       }
@@ -174,7 +174,7 @@ function extractS3KeyFromUrl(videoUrl: string): string {
   } else if (videoUrl.startsWith(`https://${pathStyleDomain}/`)) {
     s3Key = videoUrl.substring(`https://${pathStyleDomain}/`.length);
   } else {
-    console.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
+    logger.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
   }
 
   return s3Key;
@@ -206,7 +206,7 @@ export async function generateSignedUrlForVideoFieldInObjects<T extends object>(
             const signedUrl = await getSignedS3Url(s3Key, expiresInSeconds);
             (updatedItem as Record<typeof key, string>)[key] = signedUrl;
           } catch (err) {
-            console.warn(`Failed to sign URL for key "${String(key)}"`, err);
+            logger.warn(`Failed to sign URL for key "${String(key)}"`, err);
             (updatedItem as Record<typeof key, string>)[key] = "";
           }
         }

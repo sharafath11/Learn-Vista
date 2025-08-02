@@ -19,7 +19,6 @@ interface UserDropdownProps {
 export const UserDropdown = ({ user, isDropdownOpen, setIsDropdownOpen, handleLogout }: UserDropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
-  console.log("user profile picture",user?.profilePicture)
   const handleProfileClick = () => {
     router.push("/user/profile")
     setIsDropdownOpen(false)

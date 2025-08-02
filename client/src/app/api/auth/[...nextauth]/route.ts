@@ -27,7 +27,7 @@ const handler = NextAuth({
       try {
         // Validate required fields
         if (!account?.providerAccountId || !user.email) {
-          console.error("Missing required fields for sign-in");
+        
           throw new Error("Missing required user information");
         }
 

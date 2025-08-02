@@ -47,7 +47,6 @@ class AdminCategoryController implements IAdminCategoryController {
 
   async getAllCategories(req: Request, res: Response): Promise<void> {
     try {
-      console.log("fgbhgn")
       const queryParams = (req.query as any).params || req.query;
       const page = Math.max(Number(queryParams.page) || 1, 1);
       const limit = Math.min(Math.max(Number(queryParams.limit) || 10, 1), 100);

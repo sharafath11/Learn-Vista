@@ -21,7 +21,6 @@ export class MentorConcernService implements IMentorConcernService {
 
   async addConcern(data: IConcern , files?: Express.Multer.File[] ): Promise<IConcern> {
   validateConcernPayload(data);
-  console.log(files)
   const existingConcern = await this._concernRepo.findAll({ 
     courseId: data.courseId,
     mentorId: data.mentorId 
@@ -47,7 +46,6 @@ export class MentorConcernService implements IMentorConcernService {
       }
     }
   }
-console.log(attachments,"fvf")
   const concern = await this._concernRepo.create({
     ...data,
     attachments,
