@@ -25,7 +25,6 @@ export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
     if (open && lessonId) {
       fetchComments();
     } else {
-      // Clear comments and input when the modal closes
       setComments([]);
       setNewComment("");
     }

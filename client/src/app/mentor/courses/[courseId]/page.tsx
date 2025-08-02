@@ -18,6 +18,7 @@ import { AddLessonModal } from "./addLessonModal";
 import { EditLessonModal } from "./EditLessonModal";
 import { CommentsModal } from "./CommentsModal";
 import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
+import VideoPreviewModal from "@/src/components/VideoPreviewModal";
 
 export default function CourseLessonsPage() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -31,7 +32,7 @@ export default function CourseLessonsPage() {
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [lessonIdForComments, setLessonIdForComments] = useState<string | null>(null);
 
-  const { courses, setCourses } = useMentorContext();
+  const { courses} = useMentorContext();
   const params = useParams();
   const courseId = params.courseId as string;
 
@@ -232,24 +233,12 @@ export default function CourseLessonsPage() {
           courseId={courseId}
         />
       )}
+     <VideoPreviewModal
+  open={showVideoPlayerModal}
+  onClose={() => setShowVideoPlayerModal(false)}
+  videoUrl={videoToPlay || ""}
+/>
 
-      <Dialog open={showVideoPlayerModal} onOpenChange={setShowVideoPlayerModal}>
-        <DialogContent className="sm:max-w-[800px] aspect-video p-0 overflow-hidden bg-gray-900">
-          <DialogHeader>
-            <DialogTitle className="sr-only">Lesson Video</DialogTitle>
-          </DialogHeader>
-          {videoToPlay && (
-            <video
-              src={videoToPlay}
-              controls
-              autoPlay
-              className="w-full h-full object-contain bg-black"
-            >
-              Your browser does not support the video tag.
-            </video>
-          )}
-        </DialogContent>
-      </Dialog>
 
       {lessonIdForComments && (
         <CommentsModal

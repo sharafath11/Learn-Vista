@@ -51,10 +51,10 @@ import { IMentorProfileController } from '../interfaces/controllers/mentor/IMent
 import { IMentorProfileService } from '../interfaces/services/mentor/IMentorProfile.Service';
 import { MentorProfileController } from '../../controllers/mentor/mentorProfile.controller';
 import { MentorProfileService } from '../../services/mentor/MentorProfile.Service';
-import AdminCourseController from '../../controllers/admin/AdminCategoryCourse.Controller';
+import AdminCourseController from '../../controllers/admin/AdminCourse.Controller';
 import { IAdminCourseController } from '../interfaces/controllers/admin/IAdminCourse.Controller';
 import { IAdminCourseServices } from '../interfaces/services/admin/IAdminCourseService';
-import AdminCourseServices from '../../services/admin/AdminCategoryCourse.Service';
+import AdminCourseServices from '../../services/admin/AdminCourse.Service';
 import { ICourseRepository } from '../interfaces/repositories/course/ICourseRepository';
 import { CourseRepository } from '../../repositories/course/CourseRepository';
 import { ILiveRepository } from '../interfaces/repositories/course/ILiveRepository';
@@ -137,6 +137,14 @@ import { IMentorCourseService } from '../interfaces/services/mentor/IMentorCours
 import { MentorCourseService } from '../../services/mentor/MentorCourse.service';
 import { IMentorCourseController } from '../interfaces/controllers/mentor/IMentorCourse.controller';
 import { MentorCourseController } from '../../controllers/mentor/MentorCourse.Controller';
+import { IAdminCategoryController } from '../interfaces/controllers/admin/IAdminCategory.Controller';
+import AdminCategoryController from '../../controllers/admin/AdminCategory.Controller';
+import { IAdminConcernController } from '../interfaces/controllers/admin/IAdminConcern.Controller';
+import AdminConcernController from '../../controllers/admin/AdminConcern.Controller';
+import { IAdminCategoryService } from '../interfaces/services/admin/IAdminCategoryService';
+import { IAdminConcernService } from '../interfaces/services/admin/IAdminConcernService';
+import { AdminCategoryService } from '../../services/admin/AdminCategory.Service';
+import { AdminConcernService } from '../../services/admin/AdminConcern.Service';
 
 const container = new Container();
 
@@ -164,7 +172,9 @@ container.bind<INotificationController>(TYPES.NotificationController).to(Notific
 container.bind<IMentorCommentsController>(TYPES.MentorCommentController).to(MentorCommentController),    
 container.bind<IUserCertificateController>(TYPES.UserCertificateController).to(UserCertificateController)   
 container.bind<ISharedController>(TYPES.SharedController).to(SharedController) 
-container.bind<IMentorCourseController>(TYPES.IMentorCourseController).to(MentorCourseController),
+container.bind<IMentorCourseController>(TYPES.MentorCourseController).to(MentorCourseController),
+container.bind<IAdminCategoryController>(TYPES.AdminCategoryController).to(AdminCategoryController)
+container.bind<IAdminConcernController>(TYPES.AdminConcernController).to(AdminConcernController)
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -189,6 +199,9 @@ container.bind<INotificationService>(TYPES.NotificationService).to(NotificationS
 container.bind<IMentorCommentsService>(TYPES.MentorCommentsService).to(MentorCommentsService),
 container.bind<IUserCertificateService>(TYPES.UserCertificateService).to(UserCertificateService),   
 container.bind<IMentorCourseService>(TYPES.MentorCourseService).to(MentorCourseService),
+container.bind<IAdminCategoryService>(TYPES.AdminCategoryService).to(AdminCategoryService);
+container.bind<IAdminConcernService>(TYPES.AdminConcernService).to(AdminConcernService);
+    
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
 container.bind<IMentorOtpRepository>(TYPES.MentorOtpRepository).to(MentorOtpRepository);

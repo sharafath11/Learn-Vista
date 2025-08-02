@@ -163,3 +163,56 @@ export async function signConcernAttachmentUrls(data: IConcern[]): Promise<IConc
   }
   return data;
 }
+
+function extractS3KeyFromUrl(videoUrl: string): string {
+  let s3Key = videoUrl;
+  const bucketDomain = `${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`;
+  const pathStyleDomain = `s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_S3_BUCKET_NAME}`;
+
+  if (videoUrl.startsWith(`https://${bucketDomain}/`)) {
+    s3Key = videoUrl.substring(`https://${bucketDomain}/`.length);
+  } else if (videoUrl.startsWith(`https://${pathStyleDomain}/`)) {
+    s3Key = videoUrl.substring(`https://${pathStyleDomain}/`.length);
+  } else {
+    console.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
+  }
+
+  return s3Key;
+}
+
+export async function generateSignedUrlForVideo(
+  videoUrl: string,
+  expiresInSeconds: number = 3600
+): Promise<string> {
+  const s3Key = extractS3KeyFromUrl(videoUrl);
+  return getSignedS3Url(s3Key, expiresInSeconds);
+}
+
+export async function generateSignedUrlForVideoFieldInObjects<T extends object>(
+  items: T[],
+  keys: (keyof T)[],
+  expiresInSeconds: number = 3600
+): Promise<T[]> {
+  return await Promise.all(
+    items.map(async (item) => {
+      const updatedItem = { ...item };
+
+      for (const key of keys) {
+        const value = item[key];
+
+        if (typeof value === "string" && value.includes("amazonaws.com")) {
+          try {
+            const s3Key = extractS3KeyFromUrl(value);
+            const signedUrl = await getSignedS3Url(s3Key, expiresInSeconds);
+            (updatedItem as Record<typeof key, string>)[key] = signedUrl;
+          } catch (err) {
+            console.warn(`Failed to sign URL for key "${String(key)}"`, err);
+            (updatedItem as Record<typeof key, string>)[key] = "";
+          }
+        }
+      }
+
+      return updatedItem;
+    })
+  );
+}

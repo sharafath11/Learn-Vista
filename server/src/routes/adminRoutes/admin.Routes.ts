@@ -8,13 +8,17 @@ import { IAdminMentorController } from "../../core/interfaces/controllers/admin/
 import { IAdminCourseController } from "../../core/interfaces/controllers/admin/IAdminCourse.Controller";
 import { uploadImage } from "../../middlewares/upload";
 import { IAdminDonationController } from "../../core/interfaces/controllers/admin/IAdminDonation.Controller";
+import { IAdminConcernController } from "../../core/interfaces/controllers/admin/IAdminConcern.Controller";
+import { IAdminCategoryController } from "../../core/interfaces/controllers/admin/IAdminCategory.Controller";
 const route = express.Router();
 
 const adminMentorController = container.get<IAdminMentorController>(TYPES.AdminMentorController);
 const adminUsersController = container.get<IAdminUserController>(TYPES.AdminUserController); 
 const adminAuthController = container.get<IAdminAuthController>(TYPES.AdminAuthController)
 const adminCourseController = container.get<IAdminCourseController>(TYPES.AdminCourseController)
-const adminDonationController=container.get<IAdminDonationController>(TYPES.AdminDonationCOntroller)
+const adminDonationController = container.get<IAdminDonationController>(TYPES.AdminDonationCOntroller)
+const adminConcernController = container.get<IAdminConcernController>(TYPES.AdminConcernController)
+const adminCategoryController=container.get<IAdminCategoryController>(TYPES.AdminCategoryController)
 route.post("/login", adminAuthController.login.bind(adminAuthController));
 route.post("/logout", verifyAdmin, adminAuthController.logout.bind(adminAuthController));
 route.get("/users", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));
@@ -28,17 +32,17 @@ route.patch("/course/edit-course",verifyAdmin, uploadImage.single('thumbnail'),a
 route.post("/create-course", verifyAdmin, uploadImage.single('thumbnail'), adminCourseController.createClass.bind(adminCourseController));
 route.get("/courses",verifyAdmin, adminCourseController.getCourse.bind(adminCourseController));
 route.patch("/block-courses",verifyAdmin,adminCourseController.blockCourses.bind(adminCourseController))
-route.post("/add-categories", verifyAdmin, adminCourseController.addCategories.bind(adminCourseController));
-route.get("/categories", verifyAdmin, adminCourseController.getAllCategories.bind(adminCourseController));
-route.get("/all/categegory",verifyAdmin,adminCourseController.getCategories.bind(adminCourseController))
-route.patch("/categorie/block", verifyAdmin, adminCourseController.blockCategorie.bind(adminCourseController));
-route.patch("/edit/category", verifyAdmin, adminCourseController.editCategories.bind(adminCourseController));
-route.get("/concers", verifyAdmin, adminCourseController.getConcernController.bind(adminCourseController))
-route.patch("/concern/:id/status",verifyAdmin,adminCourseController.updateConcernStatus.bind(adminCourseController) );
-route.get("/all/concerns",verifyAdmin,adminCourseController.getAllConcerns.bind(adminCourseController))
+route.post("/add-categories", verifyAdmin, adminCategoryController.addCategory.bind(adminCategoryController));
+route.get("/categories", verifyAdmin, adminCategoryController.getAllCategories.bind(adminCategoryController));
+route.get("/all/categegory",verifyAdmin,adminCategoryController.getCategories.bind(adminCategoryController))
+route.patch("/categorie/block", verifyAdmin, adminCategoryController.blockCategory.bind(adminCategoryController));
+route.patch("/edit/category", verifyAdmin, adminCategoryController.editCategory.bind(adminCategoryController));
+route.get("/concers", verifyAdmin, adminConcernController.getConcernController.bind(adminConcernController))
+route.patch("/concern/:id/status",verifyAdmin,adminConcernController.updateConcernStatus.bind(adminConcernController) );
+route.get("/all/concerns",verifyAdmin,adminConcernController.getAllConcerns.bind(adminConcernController))
 route.get("/donations", verifyAdmin, adminDonationController.getDonations.bind(adminDonationController));
 route.get("/donations/filter", verifyAdmin, adminDonationController.getFilteredDonations.bind(adminDonationController));
 route.get("/user/certificates/:userId",verifyAdmin,adminUsersController.getCertificate.bind(adminUsersController))
 route.patch("/user/certificate/isRevocked", verifyAdmin, adminUsersController.revokCertificate.bind(adminUsersController));
-route.get("/course/lessons/:courseId",verifyAdmin,adminCourseController.)
+route.get("/course/lessons/:courseId",verifyAdmin,adminCourseController.getLessons.bind(adminCourseController))
 export default route;
