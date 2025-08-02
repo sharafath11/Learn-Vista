@@ -12,12 +12,18 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { getSignedS3Url } from "../../utils/s3Utilits";
+import { ObjectId ,Types} from "mongoose";
+import { dailyTaskPrompt } from "../../utils/Rportprompt";
+import { getGemaniResponse } from "../../config/gemaniAi";
+import { IDailyTaskRepository } from "../../core/interfaces/repositories/user/IDailyTaskRepository";
+import { IDailyTask, ISubTask } from "../../types/dailyTaskType";
 dotenv.config();
 
 export class UserService implements IUserService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-    @inject(TYPES.NotificationService) private _notificationService: INotificationService 
+    @inject(TYPES.NotificationService) private _notificationService: INotificationService,
+    @inject(TYPES.DailyTaskRepository) private _dailyTaskRepo:IDailyTaskRepository
     
   ) {}
 
@@ -84,4 +90,56 @@ export class UserService implements IUserService {
     type: "info",
   });
   }
+   async getDailyTaskSevice(userId: string | Types.ObjectId): Promise< IDailyTask> {
+  const userObjectId = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+
+  const today = new Date();
+  const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+
+  const existingTask = await this._dailyTaskRepo.findOne({
+    userId: userObjectId,
+    createdAt: { $gte: startOfDay },
+  });
+
+  if (existingTask) return existingTask;
+
+  const userTasks = await this._dailyTaskRepo.findAll(userObjectId);
+  const day = userTasks.length + 1;
+
+  const prompt = dailyTaskPrompt(day);
+  const geminiResponse = await getGemaniResponse(prompt);
+
+  let tasks: ISubTask[];
+
+  try {
+    const parsed = JSON.parse(geminiResponse);
+    if (!Array.isArray(parsed)) throw new Error("Invalid task array");
+
+    tasks = parsed.map((task: any) => ({
+      type: task.type,
+      prompt: task.prompt,
+      isCompleted: false,
+    }));
+  } catch (err) {
+    throwError("Failed to parse Gemini task response", StatusCode.BAD_REQUEST);
+  }
+
+  const newTask = await this._dailyTaskRepo.create({
+    userId: userObjectId,
+    date: String(day),
+    tasks,
+    createdAt: new Date(),
+  });
+
+  await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [userObjectId.toString()],
+    title: "New Daily Task",
+    message: `Your Day ${day} task is ready!`,
+    type: "info",
+  });
+
+  return newTask;
+}
+
 }

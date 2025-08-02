@@ -99,3 +99,37 @@ Create **1 brand-new multiple choice question (MCQ)** suitable for Kerala PSC or
 Now generate a new question.
 `;
 
+
+
+
+export const dailyTaskPrompt = (day: number) => `
+You are an English learning assistant. For day ${day}, generate 3 tasks for a student learning English at beginner to intermediate level. Each task should be unique and practical.
+
+Provide:
+1. A speaking task (for example, describe your favorite meal, or answer a situational question).
+2. A listening task (provide a short audio script or dialogue that the student could listen to and answer questions on).
+3. A writing task (for example, write a short email, describe a picture, or answer a question in 100 words).
+
+Format the response as:
+{
+  "day": ${day},
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+`;

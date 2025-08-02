@@ -1,1 +1,25 @@
 [2025-07-26 19:30:18] ERROR: Error during thumbnail upload or deletion in editLesson: Failed to delete file from S3: User: arn:aws:iam::879381286576:user/s3-lessons is not authorized to perform: s3:DeleteObject on resource: "arn:aws:s3:::learn-vista/dksofshjh/image/upload/v1750764383/lesson_thumbnails/vr4lcna7shvb7xegxidy.png" because no identity-based policy allows the s3:DeleteObject action
+[2025-08-03 00:08:41] ERROR: 
+[2025-08-03 00:08:41] ERROR: 
+[2025-08-03 00:08:41] ERROR: 
+[2025-08-03 00:08:41] ERROR: 
+[2025-08-03 00:08:41] ERROR: Throwing error:
+[2025-08-03 00:08:41] ERROR: Unhotharized
+[2025-08-03 00:08:41] ERROR: Unhotharized
+[2025-08-03 00:08:41] ERROR: 
+[2025-08-03 00:08:41] ERROR: 
+[2025-08-03 00:08:41] ERROR: Throwing error:
+[2025-08-03 00:08:41] ERROR: Unhotharized
+[2025-08-03 00:08:41] ERROR: Unhotharized
+[2025-08-03 00:08:41] ERROR: User retrieved successfully
+[2025-08-03 00:08:41] ERROR: Progress fetched succesfully
+[2025-08-03 00:08:42] ERROR: Notifications fetched
+[2025-08-03 00:08:42] ERROR: User retrieved successfully
+[2025-08-03 00:08:42] ERROR: Courses Fetched
+[2025-08-03 00:08:42] ERROR: Notifications fetched
+[2025-08-03 00:08:42] ERROR: Progress fetched succesfully
+[2025-08-03 00:08:42] ERROR: Courses Fetched
+[2025-08-03 00:13:09] ERROR: User retrieved successfully
+[2025-08-03 00:13:09] ERROR: Progress fetched succesfully
+[2025-08-03 00:13:09] ERROR: Notifications fetched
+[2025-08-03 00:13:09] ERROR: Courses Fetched

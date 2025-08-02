@@ -91,8 +91,20 @@ export class UserController implements IUserController {
         sendResponse(res, StatusCode.OK, "", true, answer);
     } catch (error) {
      handleControllerError(res,error)
-  }
+    }
+      
   
+  }
+  async getDailyTask(req: Request, res: Response): Promise<void> {
+      try {
+          const decoded = decodeToken(req.cookies.token);
+          if (!decoded?.id) throwError("unautheized", StatusCode.UNAUTHORIZED);
+          const result=await this.userService.getDailyTaskSevice(decoded.id)
+    sendResponse(res, StatusCode.OK, "Daily tasks generated", true, result);
+  } catch (error) {
+    handleControllerError(res, error);
+  }
 }
+
 
 }

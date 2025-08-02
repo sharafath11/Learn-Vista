@@ -57,6 +57,7 @@ router.get("/let-fun/psc", userController.getQuestionByNumber.bind(userControlle
 router.post("/lesson/update-progress",authenticateToken,userLessonsController.updateLessonProgress.bind(UserLessonsController));
 router.get("/donations/:page", authenticateToken, userDonationController.getPaginatedDonations.bind(userDonationController));
 router.get("/certificates", authenticateToken, userCertificateController.getCertificates.bind(userCertificateController))
-router.get("/certificate/:certificateId",authenticateToken,userCertificateController.getCertificate.bind(userCertificateController))
+router.get("/certificate/:certificateId", authenticateToken, userCertificateController.getCertificate.bind(userCertificateController))
+router.get("/daily-task/today",authenticateToken,userController.getDailyTask.bind(userController))
 
 export default router;

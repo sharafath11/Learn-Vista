@@ -145,6 +145,8 @@ import { IAdminCategoryService } from '../interfaces/services/admin/IAdminCatego
 import { IAdminConcernService } from '../interfaces/services/admin/IAdminConcernService';
 import { AdminCategoryService } from '../../services/admin/AdminCategory.Service';
 import { AdminConcernService } from '../../services/admin/AdminConcern.Service';
+import { IDailyTaskRepository } from '../interfaces/repositories/user/IDailyTaskRepository';
+import { DailyTaskRepository } from '../../repositories/user/DailyTaskRepository';
 
 const container = new Container();
 
@@ -221,5 +223,6 @@ container.bind<IUserCourseProgressRepository>(TYPES.UserCourseProgressRepository
 container.bind<INotificationRepository>(TYPES.NotificationRepository).to(NotificationRepository);
 container.bind<IUserLessonProgressRepository>(TYPES.UserLessonProgressRepository).to(UserLessonProgresssRepository)
 container.bind<ICertificateRepository>(TYPES.CertificateRepository).to(CertificateRepository)
+container.bind<IDailyTaskRepository>(TYPES.DailyTaskRepository).to(DailyTaskRepository)
 
 export default container;

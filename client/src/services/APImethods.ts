@@ -66,7 +66,8 @@ updateLessonProgress: (
     isRevoked?: boolean;
   };
 }) => get("/certificates", { params }),
-  getCertificate:(certificateId:string)=>get(`/certificate/${certificateId}`)
+  getCertificate: (certificateId: string) => get(`/certificate/${certificateId}`),
+  getDailyTask:()=>get("/daily-task/today")
 
 } as const;
 
