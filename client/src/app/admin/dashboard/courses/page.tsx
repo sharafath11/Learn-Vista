@@ -210,24 +210,34 @@ export default function CoursesAdminPage() {
                         <span>Starts at {course.startTime}</span>
                       </div>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          toggleCourseStatus(course.id, course.isBlock)
-                        }
-                      >
-                        {course.isBlock ? "Unblock" : "Block"}
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => handleEditCourse(course.id)}
-                      >
-                        <PenSquare className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
-                    </div>
+                    <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4">
+  <Button
+    variant="outline"
+    size="sm"
+    onClick={() => toggleCourseStatus(course.id, course.isBlock)}
+  >
+    {course.isBlock ? "Unblock" : "Block"}
+  </Button>
+
+ <Button
+    size="sm"
+    className="bg-purple-600 hover:bg-purple-700 text-white"
+    onClick={() => router.push(`/admin/dashboard/courses/lessons/${course.id}`)}
+  >
+    Lessons
+  </Button>
+
+
+  <Button
+    size="sm"
+    onClick={() => handleEditCourse(course.id)}
+    className="flex items-center"
+  >
+    <PenSquare className="h-4 w-4 mr-1.5" />
+    Edit
+  </Button>
+</div>
+
                   </div>
                 </Card>
               ))}

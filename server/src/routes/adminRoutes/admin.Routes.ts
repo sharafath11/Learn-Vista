@@ -39,5 +39,6 @@ route.get("/all/concerns",verifyAdmin,adminCourseController.getAllConcerns.bind(
 route.get("/donations", verifyAdmin, adminDonationController.getDonations.bind(adminDonationController));
 route.get("/donations/filter", verifyAdmin, adminDonationController.getFilteredDonations.bind(adminDonationController));
 route.get("/user/certificates/:userId",verifyAdmin,adminUsersController.getCertificate.bind(adminUsersController))
-route.patch("/user/certificate/isRevocked",verifyAdmin,adminUsersController.revokCertificate.bind(adminUsersController))
+route.patch("/user/certificate/isRevocked", verifyAdmin, adminUsersController.revokCertificate.bind(adminUsersController));
+route.get("/course/lessons/:courseId",verifyAdmin,adminCourseController.)
 export default route;

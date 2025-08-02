@@ -12,5 +12,6 @@ export interface IAdminCourseController {
     blockCourses(req: Request, res: Response): Promise<void>
     getConcernController(req:Request,res:Response):Promise<void>
     updateConcernStatus(req: Request, res: Response): Promise<void>
-    getAllConcerns(req:Request,res:Response):Promise<void>
+    getAllConcerns(req: Request, res: Response): Promise<void>
+    getLessons(req:Request,res:Response):Promise<void>
 }

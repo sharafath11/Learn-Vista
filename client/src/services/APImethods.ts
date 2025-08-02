@@ -128,7 +128,8 @@ export const AdminAPIMethods = {
   getDonation: () => get("/admin/donations"),
   getFilteredDonations: (query: string) => get(`/admin/donations/filter?${query}`),
   getCertificate: (userId: string) => get(`/admin/user/certificates/${userId}`),
-  revokedCertificate:(certificateId:string,isRevoked:boolean)=>patch(`/admin/user/certificate/isRevocked`,{certificateId,isRevoked})
+  revokedCertificate: (certificateId: string, isRevoked: boolean) => patch(`/admin/user/certificate/isRevocked`, { certificateId, isRevoked }),
+  getLesson:(courseId:string)=>get(`/admin/course/lessons/${courseId}`)
 } as const;
 
 export const MentorAPIMethods = {
