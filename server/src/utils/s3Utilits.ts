@@ -245,3 +245,9 @@ export const updateDailyTaskWithSignedUrls = async (
   dailyTask.tasks = await Promise.all(dailyTask.tasks.map(addSignedUrlToTask));
   return dailyTask;
 };
+export const updateTasksWithSignedUrls = async (
+  tasks: ISubTask[]
+): Promise<ISubTask[]> => {
+  return await Promise.all(tasks.map(addSignedUrlToTask));
+};
+

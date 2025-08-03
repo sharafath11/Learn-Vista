@@ -63,5 +63,5 @@ router
   .get(authenticateToken, userController.getDailyTask.bind(userController))
   .post(uploadDailyTaskAudio.single("audioFile"), authenticateToken, userController.updateDailyTask.bind(userController));
 
-
+router.get("/dailyTaks",authenticateToken,userController.getAllDailyTask.bind(userController))
 export default router;

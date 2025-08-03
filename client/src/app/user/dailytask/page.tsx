@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 import { TaskSkeleton } from "./task-skeleton"
-import type { IDailyTask } from "@/src/types/dailyTaskTypes"
+import type { IDailyTask, ITask } from "@/src/types/dailyTaskTypes"
 import { UserAPIMethods } from "@/src/services/APImethods"
 import { showInfoToast } from "@/src/utils/Toast"
 import {  Calendar, CheckCircle2, Clock, Trophy } from "lucide-react"
@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "@/src/components/shared/components/ui/a
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { DailyTaskCard } from "./DailyTaskCard"
+import Link from "next/link"
 
 
 export default function DailyTaskPage() {
@@ -80,13 +81,22 @@ export default function DailyTaskPage() {
               <Calendar className="h-8 w-8 text-blue-600" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Daily Learning Tasks
+              Daily Learning Tasks 
             </h1>
           </div>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Complete your daily tasks to improve your skills and track your progress
           </p>
+          {dailyTask.overallScore}
         </div>
+        <div className="flex justify-end max-w-2xl mx-auto">
+  <Link
+    href="/user/dailytask/tasks"
+    className="inline-block text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+  >
+    View All Tasks & Progress
+  </Link>
+</div>
 
         {/* Progress Overview */}
         <Card className="max-w-2xl mx-auto border-0 shadow-lg bg-white/80 backdrop-blur-sm">

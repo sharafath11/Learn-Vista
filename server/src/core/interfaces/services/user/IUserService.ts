@@ -11,5 +11,6 @@ export interface IUserService {
         taskType,
         answer,
         audioFile,
-    }: IUpdateDailyTaskInput): Promise<ISubTask|ISubTaskWithSignedUrl>
+     }: IUpdateDailyTaskInput): Promise<ISubTask | ISubTaskWithSignedUrl>
+    getAllDailyTasks(userId:string):Promise<IDailyTask[]>
 }

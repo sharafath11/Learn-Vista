@@ -18,6 +18,7 @@ export interface IDailyTask extends Document {
   overallScore?: number;
   createdAt?: Date;
   updatedAt?: Date;
+  
 }
 export interface IUpdateDailyTaskInput {
   taskId: string;

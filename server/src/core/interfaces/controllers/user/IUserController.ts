@@ -8,4 +8,5 @@ export interface IUserController{
     getDailyTask(req:Request,res:Response):void
     getQuestionByNumber(req: Request, res: Response): void
     updateDailyTask(req: Request, res: Response): Promise<void>,
+    getAllDailyTask(req: Request, res: Response): Promise<void>
 }

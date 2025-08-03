@@ -1,32 +1,30 @@
 import { inject } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import {  IUser } from "../../types/userTypes";
+import { IUser } from "../../types/userTypes";
 import { IUserService } from "../../core/interfaces/services/user/IUserService";
 import { sendPasswordResetEmail } from "../../utils/emailService";
 import { generateAccessToken } from "../../utils/JWTtoken";
-import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
-import { addSignedUrlToTask, getSignedS3Url, updateDailyTaskWithSignedUrls, uploadDailyTaskAudio } from "../../utils/s3Utilits";
-import { ObjectId ,Types} from "mongoose";
+import { getSignedS3Url, updateDailyTaskWithSignedUrls, updateTasksWithSignedUrls, uploadDailyTaskAudio } from "../../utils/s3Utilits";
+import { Types } from "mongoose";
 import { buildDailyTaskEvaluationPrompt, dailyTaskPrompt } from "../../utils/Rportprompt";
 import { getGemaniResponse } from "../../config/gemaniAi";
 import { IDailyTaskRepository } from "../../core/interfaces/repositories/user/IDailyTaskRepository";
-import { IDailyTask, ISubTask, ISubTaskWithSignedUrl, IUpdateDailyTaskInput, TaskType } from "../../types/dailyTaskType";
+import { IDailyTask, ISubTask, IUpdateDailyTaskInput, TaskType } from "../../types/dailyTaskType";
+import { ISubTaskWithSignedUrl } from "../../types/dailyTaskType";
 import { logger } from "../../utils/logger";
-dotenv.config();
 
 export class UserService implements IUserService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: IUserRepository,
     @inject(TYPES.NotificationService) private _notificationService: INotificationService,
     @inject(TYPES.DailyTaskRepository) private _dailyTaskRepo: IDailyTaskRepository
-    
-  ) { }
+  ) {}
 
   async getUser(id: string): Promise<IUser> {
     const user = await this.userRepository.findById(id);
@@ -43,7 +41,6 @@ export class UserService implements IUserService {
       try {
         user.profilePicture = await getSignedS3Url(user.profilePicture);
       } catch (error) {
-        console.error(`Failed to sign profile picture URL for user ${id}:`, error);
         user.profilePicture = null;
       }
     } else if (user.profilePicture === undefined || user.profilePicture === null || user.profilePicture === "") {
@@ -91,6 +88,7 @@ export class UserService implements IUserService {
       type: "info",
     });
   }
+
   async getDailyTaskSevice(userId: string | Types.ObjectId): Promise<IDailyTask> {
     const userObjectId = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
     const startOfDay = new Date();
@@ -166,87 +164,115 @@ if (existingTask) {
 
     return newTask;
   }
-async updateDailyTask({
-  taskId,
-  taskType,
-  answer,
-  audioFile,
-}: IUpdateDailyTaskInput): Promise<ISubTask|ISubTaskWithSignedUrl> {
-  const task = await this._dailyTaskRepo.findById(taskId);
-  if (!task) throwError("Task not found", StatusCode.NOT_FOUND);
 
-  const subtaskIndex = task.tasks.findIndex((t) => t.type === taskType);
-  if (subtaskIndex === -1) throwError("Task type not found", StatusCode.NOT_FOUND);
+  async updateDailyTask({
+    taskId,
+    taskType,
+    answer,
+    audioFile,
+  }: IUpdateDailyTaskInput): Promise<ISubTask> {
+    const task = await this._dailyTaskRepo.findById(taskId);
+    if (!task) throwError("Task not found", StatusCode.NOT_FOUND);
+  
+    const subtaskIndex = task.tasks.findIndex((t) => t.type === taskType);
+    if (subtaskIndex === -1) throwError("Task type not found", StatusCode.NOT_FOUND);
+  
+    const subtask = task.tasks[subtaskIndex];
+    if (subtask.isCompleted) return subtask;
+  
+    let userResponseToDB: string | null = null;
+    let userTextForEvaluation: string | null = null;
+    let signedUrl: string | undefined;
+  
+    if (taskType === "speaking") {
+      if (!audioFile) throwError("Audio file is required", StatusCode.BAD_REQUEST);
+    
+      const { buffer, mimetype } = audioFile;
+      userResponseToDB = await uploadDailyTaskAudio(buffer, mimetype);
+      userTextForEvaluation = answer || null;
+      signedUrl = await getSignedS3Url(userResponseToDB);
+    } else {
+      userResponseToDB = answer || null;
+      userTextForEvaluation = answer || null;
+    }
+    
+    if (!userTextForEvaluation) {
+      throwError("Answer is required for evaluation", StatusCode.BAD_REQUEST);
+    }
+    
+    let aiFeedback = "No feedback available.";
+    let score = 0;
+  
+    try {
+      const promptForEvaluation = buildDailyTaskEvaluationPrompt({
+        type: taskType as TaskType, 
+        prompt: subtask.prompt,
+        userResponse: userTextForEvaluation, 
+      });
+      
+      const evaluationResponse = await getGemaniResponse(promptForEvaluation);
+      
+      const jsonMatch = evaluationResponse.match(/```json\s*([\s\S]*?)\s*```/);
+      let cleanResponse = jsonMatch ? jsonMatch[1].trim() : evaluationResponse;
+      const parsedEvaluation = JSON.parse(cleanResponse);
+  
+      if (parsedEvaluation.feedback) {
+        aiFeedback = parsedEvaluation.feedback;
+      }
+      if (parsedEvaluation.score !== undefined) {
+        score = parsedEvaluation.score;
+      }
+  
+    } catch (err) {
+      throwError("Failed to get or parse AI evaluation.", StatusCode.INTERNAL_SERVER_ERROR);
+    }
+  
+    const updatedSubtask: ISubTask = {
+      ...subtask,
+      isCompleted: true,
+      userResponse: userResponseToDB,
+      aiFeedback: aiFeedback, 
+      score: score,
+    };
+  
+    const updatedTasks = [...task.tasks];
+    updatedTasks[subtaskIndex] = updatedSubtask;
+  
+    const allTasksCompleted = updatedTasks.every(t => t.isCompleted);
+    let overallScore = task.overallScore;
 
-  const subtask = task.tasks[subtaskIndex];
-  if (subtask.isCompleted) return subtask;
+    if (allTasksCompleted) {
+        const totalScore = updatedTasks.reduce((sum, current) => sum + (current.score || 0), 0);
+        overallScore = Number((totalScore / updatedTasks.length).toFixed(2));
 
-  let finalResponse = answer;
-  let userTextForEvaluation: string | null = null;
-  let signedUrl
-  if (taskType === "speaking") {
-    if (!audioFile) throwError("Audio file is required", StatusCode.BAD_REQUEST);
+    }
   
-    const { buffer, mimetype } = audioFile;
-    finalResponse = await uploadDailyTaskAudio(buffer, mimetype);
-    signedUrl=await getSignedS3Url(finalResponse)
-    userTextForEvaluation = answer || null;
-  
-  } else {
-    userTextForEvaluation = answer || null;
-  }
-  
-  if (!userTextForEvaluation) {
-    throwError("Answer is required for evaluation", StatusCode.BAD_REQUEST);
-  }
-  
-  let aiFeedback = "No feedback available.";
-  let score = 0;
-
-  try {
-    const promptForEvaluation = buildDailyTaskEvaluationPrompt({
-      type: taskType as TaskType, 
-      prompt: subtask.prompt,
-      userResponse: userTextForEvaluation, 
+    await this._dailyTaskRepo.update(taskId, {
+      tasks: updatedTasks,
+      overallScore: overallScore,
     });
     
-    const evaluationResponse = await getGemaniResponse(promptForEvaluation);
-    
-    const jsonMatch = evaluationResponse.match(/```json\s*([\s\S]*?)\s*```/);
-    let cleanResponse = jsonMatch ? jsonMatch[1].trim() : evaluationResponse;
-    const parsedEvaluation = JSON.parse(cleanResponse);
-
-    if (parsedEvaluation.feedback) {
-      aiFeedback = parsedEvaluation.feedback;
+    if (signedUrl) {
+      const responseSubtask = { ...updatedSubtask, userResponse: signedUrl };
+      return responseSubtask;
     }
-    if (parsedEvaluation.score !== undefined) {
-      score = parsedEvaluation.score;
-    }
-
-  } catch (err) {
-    logger.error("Failed to get or parse AI evaluation:", err);
+    return updatedSubtask;
   }
+async getAllDailyTasks(userId: string): Promise<IDailyTask[]> {
+  const result = await this._dailyTaskRepo.findAll({ userId });
 
-  const updatedSubtask: ISubTask = {
-    ...subtask,
-    isCompleted: true,
-    userResponse: finalResponse,
-    aiFeedback: aiFeedback, 
-    score: score,
-  };
+  const sendData: IDailyTask[] = await Promise.all(
+    result.map(async (dailyTaskDoc) => {
+      const updatedTasks = await updateTasksWithSignedUrls(dailyTaskDoc.tasks as ISubTask[]);
+      dailyTaskDoc.tasks = updatedTasks;
 
-  const updatedTasks = [...task.tasks];
-  updatedTasks[subtaskIndex] = updatedSubtask;
+      return dailyTaskDoc;
+    })
+  );
 
-  await this._dailyTaskRepo.update(taskId, {
-    tasks: updatedTasks,
-  });
-  if (signedUrl) {
-    return { updatedSubtask, signedUrl}
-  
-  }
-  return updatedSubtask;
+  return sendData;
 }
+
 
 
 }
