@@ -12,47 +12,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/share
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { DailyTaskCard } from "./DailyTaskCard"
 import Link from "next/link"
+import { useUserContext } from "@/src/context/userAuthContext"
 
 
 export default function DailyTaskPage() {
-  const [dailyTask, setDailyTask] = useState<IDailyTask | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchTasks() {
-      try {
-        const res = await UserAPIMethods.getDailyTask()
-        if (res.ok) {
-          setDailyTask(res.data)
-        } else {
-          showInfoToast(res.msg)
-        }
-      } catch (error) {
-        showInfoToast("Failed to fetch daily tasks")
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchTasks()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 md:p-6">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="text-center space-y-4">
-            <div className="h-8 bg-gray-200 rounded-lg w-64 mx-auto animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded w-48 mx-auto animate-pulse" />
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <TaskSkeleton />
-            <TaskSkeleton />
-            <TaskSkeleton />
-          </div>
-        </div>
-      </div>
-    )
-  }
+ const {dailyTask}=useUserContext()
+ 
 
   if (!dailyTask) {
     return (

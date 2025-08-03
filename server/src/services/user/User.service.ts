@@ -10,20 +10,35 @@ import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
-import { getSignedS3Url, updateDailyTaskWithSignedUrls, updateTasksWithSignedUrls, uploadDailyTaskAudio } from "../../utils/s3Utilits";
+import {
+  getSignedS3Url,
+  updateDailyTaskWithSignedUrls,
+  updateTasksWithSignedUrls,
+  uploadDailyTaskAudio,
+} from "../../utils/s3Utilits";
 import { Types } from "mongoose";
-import { buildDailyTaskEvaluationPrompt, dailyTaskPrompt } from "../../utils/Rportprompt";
+import {
+  buildDailyTaskEvaluationPrompt,
+  dailyTaskPrompt,
+} from "../../utils/Rportprompt";
 import { getGemaniResponse } from "../../config/gemaniAi";
 import { IDailyTaskRepository } from "../../core/interfaces/repositories/user/IDailyTaskRepository";
-import { IDailyTask, ISubTask, IUpdateDailyTaskInput, TaskType } from "../../types/dailyTaskType";
+import {
+  IDailyTask,
+  ISubTask,
+  IUpdateDailyTaskInput,
+  TaskType,
+} from "../../types/dailyTaskType";
 import { ISubTaskWithSignedUrl } from "../../types/dailyTaskType";
 import { logger } from "../../utils/logger";
 
 export class UserService implements IUserService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-    @inject(TYPES.NotificationService) private _notificationService: INotificationService,
-    @inject(TYPES.DailyTaskRepository) private _dailyTaskRepo: IDailyTaskRepository
+    @inject(TYPES.NotificationService)
+    private _notificationService: INotificationService,
+    @inject(TYPES.DailyTaskRepository)
+    private _dailyTaskRepo: IDailyTaskRepository
   ) {}
 
   async getUser(id: string): Promise<IUser> {
@@ -37,13 +52,17 @@ export class UserService implements IUserService {
       throwError("User was blocked", StatusCode.FORBIDDEN);
     }
 
-    if (user.profilePicture && !user.profilePicture.startsWith('http')) {
+    if (user.profilePicture && !user.profilePicture.startsWith("http")) {
       try {
         user.profilePicture = await getSignedS3Url(user.profilePicture);
       } catch (error) {
         user.profilePicture = null;
       }
-    } else if (user.profilePicture === undefined || user.profilePicture === null || user.profilePicture === "") {
+    } else if (
+      user.profilePicture === undefined ||
+      user.profilePicture === null ||
+      user.profilePicture === ""
+    ) {
       user.profilePicture = "/default-avatar.png";
     }
 
@@ -67,13 +86,16 @@ export class UserService implements IUserService {
     const result = await sendPasswordResetEmail(user.email, resetLink);
 
     if (!result.success) {
-      throwError("Failed to send reset email. Try again later.", StatusCode.INTERNAL_SERVER_ERROR);
+      throwError(
+        "Failed to send reset email. Try again later.",
+        StatusCode.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
   async resetPassword(id: string, password: string): Promise<void> {
     const user = await this.userRepository.findById(id);
-    
+
     if (!user) {
       throwError("User not found", StatusCode.NOT_FOUND);
     }
@@ -89,20 +111,25 @@ export class UserService implements IUserService {
     });
   }
 
-  async getDailyTaskSevice(userId: string | Types.ObjectId): Promise<IDailyTask> {
-    const userObjectId = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+  async getDailyTaskSevice(
+    userId: string | Types.ObjectId
+  ): Promise<IDailyTask> {
+    const userObjectId =
+      typeof userId === "string" ? new Types.ObjectId(userId) : userId;
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
-   const existingTask = await this._dailyTaskRepo.findOne({
-  userId: userObjectId,
-  createdAt: { $gte: startOfDay },
-});
+    const existingTask = await this._dailyTaskRepo.findOne({
+      userId: userObjectId,
+      createdAt: { $gte: startOfDay },
+    });
 
-if (existingTask) {
- const sendData= await updateDailyTaskWithSignedUrls(existingTask as IDailyTask); 
-  return sendData;
-}
+    if (existingTask) {
+      const sendData = await updateDailyTaskWithSignedUrls(
+        existingTask as IDailyTask
+      );
+      return sendData;
+    }
     const userTasks = await this._dailyTaskRepo.findAll(userObjectId);
     const day = userTasks.length + 1;
     const prompt = dailyTaskPrompt(day);
@@ -119,12 +146,14 @@ if (existingTask) {
       if (jsonMatch && jsonMatch[1]) {
         cleanResponse = jsonMatch[1].trim();
       } else {
-        const firstBrace = geminiResponse.indexOf('{');
-        const lastBrace = geminiResponse.lastIndexOf('}');
+        const firstBrace = geminiResponse.indexOf("{");
+        const lastBrace = geminiResponse.lastIndexOf("}");
         if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
           cleanResponse = geminiResponse.substring(firstBrace, lastBrace + 1);
         } else {
-          throw new Error("Failed to extract a valid JSON structure from Gemini response.");
+          throw new Error(
+            "Failed to extract a valid JSON structure from Gemini response."
+          );
         }
       }
       const parsed = JSON.parse(cleanResponse);
@@ -144,7 +173,10 @@ if (existingTask) {
       if (geminiResponse) {
         logger.error("Raw Gemini Response:", geminiResponse);
       }
-      throwError("Failed to parse Gemini task response", StatusCode.BAD_REQUEST);
+      throwError(
+        "Failed to parse Gemini task response",
+        StatusCode.BAD_REQUEST
+      );
     }
 
     const newTask = await this._dailyTaskRepo.create({
@@ -173,20 +205,22 @@ if (existingTask) {
   }: IUpdateDailyTaskInput): Promise<ISubTask> {
     const task = await this._dailyTaskRepo.findById(taskId);
     if (!task) throwError("Task not found", StatusCode.NOT_FOUND);
-  
+
     const subtaskIndex = task.tasks.findIndex((t) => t.type === taskType);
-    if (subtaskIndex === -1) throwError("Task type not found", StatusCode.NOT_FOUND);
-  
+    if (subtaskIndex === -1)
+      throwError("Task type not found", StatusCode.NOT_FOUND);
+
     const subtask = task.tasks[subtaskIndex];
     if (subtask.isCompleted) return subtask;
-  
+
     let userResponseToDB: string | null = null;
     let userTextForEvaluation: string | null = null;
     let signedUrl: string | undefined;
-  
+
     if (taskType === "speaking") {
-      if (!audioFile) throwError("Audio file is required", StatusCode.BAD_REQUEST);
-    
+      if (!audioFile)
+        throwError("Audio file is required", StatusCode.BAD_REQUEST);
+
       const { buffer, mimetype } = audioFile;
       userResponseToDB = await uploadDailyTaskAudio(buffer, mimetype);
       userTextForEvaluation = answer || null;
@@ -195,84 +229,87 @@ if (existingTask) {
       userResponseToDB = answer || null;
       userTextForEvaluation = answer || null;
     }
-    
+
     if (!userTextForEvaluation) {
       throwError("Answer is required for evaluation", StatusCode.BAD_REQUEST);
     }
-    
+
     let aiFeedback = "No feedback available.";
     let score = 0;
-  
+
     try {
       const promptForEvaluation = buildDailyTaskEvaluationPrompt({
-        type: taskType as TaskType, 
+        type: taskType as TaskType,
         prompt: subtask.prompt,
-        userResponse: userTextForEvaluation, 
+        userResponse: userTextForEvaluation,
       });
-      
+
       const evaluationResponse = await getGemaniResponse(promptForEvaluation);
-      
+
       const jsonMatch = evaluationResponse.match(/```json\s*([\s\S]*?)\s*```/);
       let cleanResponse = jsonMatch ? jsonMatch[1].trim() : evaluationResponse;
       const parsedEvaluation = JSON.parse(cleanResponse);
-  
+
       if (parsedEvaluation.feedback) {
         aiFeedback = parsedEvaluation.feedback;
       }
       if (parsedEvaluation.score !== undefined) {
         score = parsedEvaluation.score;
       }
-  
     } catch (err) {
-      throwError("Failed to get or parse AI evaluation.", StatusCode.INTERNAL_SERVER_ERROR);
+      throwError(
+        "Failed to get or parse AI evaluation.",
+        StatusCode.INTERNAL_SERVER_ERROR
+      );
     }
-  
+
     const updatedSubtask: ISubTask = {
       ...subtask,
       isCompleted: true,
       userResponse: userResponseToDB,
-      aiFeedback: aiFeedback, 
+      aiFeedback: aiFeedback,
       score: score,
     };
-  
+
     const updatedTasks = [...task.tasks];
     updatedTasks[subtaskIndex] = updatedSubtask;
-  
-    const allTasksCompleted = updatedTasks.every(t => t.isCompleted);
+
+    const allTasksCompleted = updatedTasks.every((t) => t.isCompleted);
     let overallScore = task.overallScore;
 
     if (allTasksCompleted) {
-        const totalScore = updatedTasks.reduce((sum, current) => sum + (current.score || 0), 0);
-        overallScore = Number((totalScore / updatedTasks.length).toFixed(2));
-
+      const totalScore = updatedTasks.reduce(
+        (sum, current) => sum + (current.score || 0),
+        0
+      );
+      overallScore = Number((totalScore / updatedTasks.length).toFixed(2));
     }
-  
+
     await this._dailyTaskRepo.update(taskId, {
       tasks: updatedTasks,
       overallScore: overallScore,
     });
-    
+
     if (signedUrl) {
       const responseSubtask = { ...updatedSubtask, userResponse: signedUrl };
       return responseSubtask;
     }
     return updatedSubtask;
   }
-async getAllDailyTasks(userId: string): Promise<IDailyTask[]> {
-  const result = await this._dailyTaskRepo.findAll({ userId });
+  async getAllDailyTasks(userId: string): Promise<IDailyTask[]> {
+    const result = await this._dailyTaskRepo.findAll({ userId });
 
-  const sendData: IDailyTask[] = await Promise.all(
-    result.map(async (dailyTaskDoc) => {
-      const updatedTasks = await updateTasksWithSignedUrls(dailyTaskDoc.tasks as ISubTask[]);
-      dailyTaskDoc.tasks = updatedTasks;
+    const sendData: IDailyTask[] = await Promise.all(
+      result.map(async (dailyTaskDoc) => {
+        const updatedTasks = await updateTasksWithSignedUrls(
+          dailyTaskDoc.tasks as ISubTask[]
+        );
+        dailyTaskDoc.tasks = updatedTasks;
 
-      return dailyTaskDoc;
-    })
-  );
+        return dailyTaskDoc;
+      })
+    );
 
-  return sendData;
-}
-
-
-
+    return sendData;
+  }
 }

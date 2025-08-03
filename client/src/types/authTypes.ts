@@ -3,6 +3,7 @@ import { IPopulatedCourse } from "./courseTypes";
 import { ILessons } from "./lessons";
 import { IUserCourseProgress, IUserLessonProgress } from "./userProgressTypes";
 import { INotification } from "./notificationsTypes";
+import { IDailyTask } from "./dailyTaskTypes";
 
 export type UserRole = "user" | "mentor";
 
@@ -58,7 +59,8 @@ export interface UserContextType {
   userNotifications: INotification[],
   unreadCount: number,
   setUnreadCount: React.Dispatch<React.SetStateAction<number>>
-  refereshNotifcation:()=>void
+  refereshNotifcation: () => void
+  dailyTask:IDailyTask|null
   
 }
 

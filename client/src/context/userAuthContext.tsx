@@ -12,6 +12,7 @@ import { IPopulatedCourse } from "../types/courseTypes";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
 import { IUserCourseProgress } from "../types/userProgressTypes";
 import { INotification } from "../types/notificationsTypes";
+import { IDailyTask } from "../types/dailyTaskTypes";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
@@ -22,6 +23,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [progresses, setProgress] = useState<IUserCourseProgress[]>([]);
   const [userNotifications, setUserNotifications] = useState<INotification[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
+  const [dailyTask, setDailyTask] = useState<IDailyTask | null>(null)
+
   localStorage.removeItem("role")
   localStorage.setItem("role","user")
   const router = useRouter();
@@ -67,14 +70,23 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     fetchUserData();
     fetchCourses();
     fetchProgress();
-    fetchNotifications()
+    fetchNotifications();
+    fetchTasks()
   }, [fetchUserData]);
   const fetchCourses = async () => {
     const res = await UserAPIMethods.fetchAllCourse({});
     if (res.ok) setAllCourses(res.data.data);
     else showErrorToast(res.msg)
   }
-
+ async function fetchTasks() {
+      
+        const res = await UserAPIMethods.getDailyTask()
+        if (res.ok) {
+          setDailyTask(res.data)
+        } else {
+          showInfoToast(res.msg)
+        }
+    }
   const contextValue = {
     user,
     setUser,
@@ -88,7 +100,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     userNotifications,
     unreadCount,
     setUnreadCount,
-    refereshNotifcation:fetchNotifications
+    refereshNotifcation: fetchNotifications,
+    dailyTask
   };
 
   return (
