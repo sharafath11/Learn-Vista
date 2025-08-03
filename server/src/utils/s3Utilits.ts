@@ -5,6 +5,7 @@ import { s3 } from "../config/AWS";
 import { fileTypeFromBuffer } from "file-type";
 import { IConcern } from "../types/concernTypes";
 import { logger } from "./logger";
+import { IDailyTask, ISubTask, ISubTaskWithSignedUrl } from "../types/dailyTaskType";
 
 const S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!;
 const AWS_REGION = process.env.AWS_REGION || 'ap-south-1';
@@ -188,6 +189,17 @@ export async function generateSignedUrlForVideo(
   return getSignedS3Url(s3Key, expiresInSeconds);
 }
 
+export async function uploadDailyTaskAudio(
+  buffer: Buffer,
+  mimetype: string
+): Promise<string> {
+  if (!mimetype.startsWith("audio/")) {
+    throw new Error("Invalid MIME type for daily task audio upload. Expected audio type.");
+  }
+  return uploadBufferToS3(buffer, mimetype, "daily_tasks/audio");
+}
+
+
 export async function generateSignedUrlForVideoFieldInObjects<T extends object>(
   items: T[],
   keys: (keyof T)[],
@@ -216,3 +228,20 @@ export async function generateSignedUrlForVideoFieldInObjects<T extends object>(
     })
   );
 }
+export const addSignedUrlToTask = async (task: ISubTask): Promise<ISubTask> => {
+  if (task.type === "speaking" && task.userResponse) {
+    const signedUrl = await getSignedS3Url(task.userResponse);
+    return {
+      ...task,
+      userResponse: signedUrl,
+    };
+  }
+  return task;
+};
+
+export const updateDailyTaskWithSignedUrls = async (
+  dailyTask: IDailyTask
+): Promise<IDailyTask> => {
+  dailyTask.tasks = await Promise.all(dailyTask.tasks.map(addSignedUrlToTask));
+  return dailyTask;
+};

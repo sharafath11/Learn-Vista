@@ -67,7 +67,9 @@ updateLessonProgress: (
   };
 }) => get("/certificates", { params }),
   getCertificate: (certificateId: string) => get(`/certificate/${certificateId}`),
-  getDailyTask:()=>get("/daily-task/today")
+  getDailyTask: () => get("/daily-task/today"),
+ submitDailyTaskAnswer: (formData:FormData) =>post("/daily-task/today",formData),
+
 
 } as const;
 

@@ -4,7 +4,7 @@ import AuthController from "../../controllers/user/auth.controller";
 import { TYPES } from "../../core/types";
 import { ProfileController } from "../../controllers/user/profile.controller";
 import { authenticateToken } from "../../middlewares/authenticateToken";
-import upload, { uploadImage } from "../../middlewares/upload";
+import upload, { uploadDailyTaskAudio, uploadImage } from "../../middlewares/upload";
 import { IUserController } from "../../core/interfaces/controllers/user/IUserController";
 import { IUserCourseController } from "../../core/interfaces/controllers/user/IUserCourseController";
 import { IUserLiveController } from "../../core/interfaces/controllers/user/IUserLiveVideoController";
@@ -58,6 +58,10 @@ router.post("/lesson/update-progress",authenticateToken,userLessonsController.up
 router.get("/donations/:page", authenticateToken, userDonationController.getPaginatedDonations.bind(userDonationController));
 router.get("/certificates", authenticateToken, userCertificateController.getCertificates.bind(userCertificateController))
 router.get("/certificate/:certificateId", authenticateToken, userCertificateController.getCertificate.bind(userCertificateController))
-router.get("/daily-task/today",authenticateToken,userController.getDailyTask.bind(userController))
+router
+  .route("/daily-task/today")
+  .get(authenticateToken, userController.getDailyTask.bind(userController))
+  .post(uploadDailyTaskAudio.single("audioFile"), authenticateToken, userController.updateDailyTask.bind(userController));
+
 
 export default router;

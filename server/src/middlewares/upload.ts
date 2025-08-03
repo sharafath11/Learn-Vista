@@ -51,5 +51,16 @@ export const uploadConcernFiles = multer({
     }
   }
 });
+export const uploadDailyTaskAudio = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, 
+  fileFilter: (req, file, cb) => {
+    if (AUDIO_MIME_TYPES.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`Only audio files are allowed! Received: ${file.mimetype}`));
+    }
+  }
+});
 
 export default upload;

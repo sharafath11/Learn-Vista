@@ -546,3 +546,1231 @@
 [2025-08-03 00:13:09] ERROR: Notifications fetched
 [2025-08-03 00:13:09] ERROR: Courses Fetched
 [2025-08-03 00:45:07] INFO:  Server running on port 4000
+[2025-08-03 12:36:18] INFO:  Server running on port 4000
+[2025-08-03 12:37:02] ERROR: 
+[2025-08-03 12:37:02] ERROR: 
+[2025-08-03 12:37:02] ERROR: 
+[2025-08-03 12:37:02] ERROR: 
+[2025-08-03 12:37:02] ERROR: Throwing error:
+[2025-08-03 12:37:02] ERROR: Unhotharized
+[2025-08-03 12:37:02] ERROR: Unhotharized
+[2025-08-03 12:37:02] ERROR: Throwing error:
+[2025-08-03 12:37:02] ERROR: Unhotharized
+[2025-08-03 12:37:02] ERROR: Unhotharized
+[2025-08-03 12:37:02] ERROR: 
+[2025-08-03 12:37:02] ERROR: 
+[2025-08-03 12:37:02] ERROR: User retrieved successfully
+[2025-08-03 12:37:02] ERROR: Notifications fetched
+[2025-08-03 12:37:02] ERROR: Progress fetched succesfully
+[2025-08-03 12:37:02] ERROR: User retrieved successfully
+[2025-08-03 12:37:02] ERROR: Notifications fetched
+[2025-08-03 12:37:02] ERROR: Courses Fetched
+[2025-08-03 12:37:02] ERROR: Progress fetched succesfully
+[2025-08-03 12:37:03] ERROR: Courses Fetched
+[2025-08-03 12:37:15] ERROR: Throwing error:
+[2025-08-03 12:37:15] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:37:15] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:37:17] ERROR: Throwing error:
+[2025-08-03 12:37:17] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:37:17] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:38:49] INFO:  Server running on port 4000
+[2025-08-03 12:38:54] ERROR: User retrieved successfully
+[2025-08-03 12:38:54] ERROR: Progress fetched succesfully
+[2025-08-03 12:38:54] ERROR: Courses Fetched
+[2025-08-03 12:38:54] ERROR: Notifications fetched
+[2025-08-03 12:38:54] ERROR: Progress fetched succesfully
+[2025-08-03 12:38:54] ERROR: User retrieved successfully
+[2025-08-03 12:38:54] ERROR: Courses Fetched
+[2025-08-03 12:38:54] ERROR: Notifications fetched
+[2025-08-03 12:38:57] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at beginner to intermediate level. Each task should be unique and practical.
+
+Provide:
+1. A speaking task (for example, describe your favorite meal, or answer a situational question).
+2. A listening task (provide a short audio script or dialogue that the student could listen to and answer questions on).
+3. A writing task (for example, write a short email, describe a picture, or answer a question in 100 words).
+
+Format the response as:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+[2025-08-03 12:38:57] ERROR: Throwing error:
+[2025-08-03 12:38:57] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:38:57] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:39:00] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at beginner to intermediate level. Each task should be unique and practical.
+
+Provide:
+1. A speaking task (for example, describe your favorite meal, or answer a situational question).
+2. A listening task (provide a short audio script or dialogue that the student could listen to and answer questions on).
+3. A writing task (for example, write a short email, describe a picture, or answer a question in 100 words).
+
+Format the response as:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+[2025-08-03 12:39:00] ERROR: Throwing error:
+[2025-08-03 12:39:00] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:39:00] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:42:24] INFO:  Server running on port 4000
+[2025-08-03 12:42:56] ERROR: User retrieved successfully
+[2025-08-03 12:42:56] ERROR: Progress fetched succesfully
+[2025-08-03 12:42:56] ERROR: Courses Fetched
+[2025-08-03 12:42:56] ERROR: Notifications fetched
+[2025-08-03 12:42:56] ERROR: Progress fetched succesfully
+[2025-08-03 12:42:56] ERROR: User retrieved successfully
+[2025-08-03 12:42:56] ERROR: Notifications fetched
+[2025-08-03 12:42:56] ERROR: Courses Fetched
+[2025-08-03 12:43:00] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at beginner to intermediate level. Each task should be unique and practical.
+
+Provide:
+1. A speaking task (for example, describe your favorite meal, or answer a situational question).
+2. A listening task (provide a short audio script or dialogue that the student could listen to and answer questions on).
+3. A writing task (for example, write a short email, describe a picture, or answer a question in 100 words).
+
+Format the response as:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+[2025-08-03 12:43:00] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:43:00] ERROR: Throwing error:
+[2025-08-03 12:43:00] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:43:00] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:43:05] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at beginner to intermediate level. Each task should be unique and practical.
+
+Provide:
+1. A speaking task (for example, describe your favorite meal, or answer a situational question).
+2. A listening task (provide a short audio script or dialogue that the student could listen to and answer questions on).
+3. A writing task (for example, write a short email, describe a picture, or answer a question in 100 words).
+
+Format the response as:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+[2025-08-03 12:43:05] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:43:05] ERROR: Throwing error:
+[2025-08-03 12:43:05] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:43:05] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:45:41] INFO:  Server running on port 4000
+[2025-08-03 12:46:17] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at beginner to intermediate level. Each task should be unique and practical.
+
+Provide:
+1. A speaking task (for example, describe your favorite meal, or answer a situational question).
+2. A listening task (provide a short audio script or dialogue that the student could listen to and answer questions on).
+3. A writing task (for example, write a short email, describe a picture, or answer a question in 100 words).
+
+Format the response as:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+[2025-08-03 12:46:17] ERROR: User retrieved successfully
+[2025-08-03 12:46:17] ERROR: Progress fetched succesfully
+[2025-08-03 12:46:17] ERROR: Courses Fetched
+[2025-08-03 12:46:17] ERROR: Notifications fetched
+[2025-08-03 12:46:17] ERROR: User retrieved successfully
+[2025-08-03 12:46:17] ERROR: Progress fetched succesfully
+[2025-08-03 12:46:17] ERROR: Notifications fetched
+[2025-08-03 12:46:17] ERROR: Courses Fetched
+[2025-08-03 12:46:20] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:46:20] ERROR: Throwing error:
+[2025-08-03 12:46:20] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:46:20] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:46:20] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at beginner to intermediate level. Each task should be unique and practical.
+
+Provide:
+1. A speaking task (for example, describe your favorite meal, or answer a situational question).
+2. A listening task (provide a short audio script or dialogue that the student could listen to and answer questions on).
+3. A writing task (for example, write a short email, describe a picture, or answer a question in 100 words).
+
+Format the response as:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+[2025-08-03 12:46:23] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:46:23] ERROR: Throwing error:
+[2025-08-03 12:46:23] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:46:23] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:49:17] INFO:  Server running on port 4000
+[2025-08-03 12:49:22] ERROR: User retrieved successfully
+[2025-08-03 12:49:22] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at a beginner to intermediate level. Each task should be unique and practical.
+
+Respond with ONLY a single, valid JSON object that contains the tasks. Do NOT include any additional text, explanations, or code blocks outside of the JSON.
+
+The JSON object MUST have the following structure:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+Please generate the content for a speaking, listening, and writing task for day 1 following this exact structure.
+
+[2025-08-03 12:49:23] ERROR: Courses Fetched
+[2025-08-03 12:49:23] ERROR: Notifications fetched
+[2025-08-03 12:49:23] ERROR: Progress fetched succesfully
+[2025-08-03 12:49:23] ERROR: User retrieved successfully
+[2025-08-03 12:49:23] ERROR: Courses Fetched
+[2025-08-03 12:49:23] ERROR: Notifications fetched
+[2025-08-03 12:49:23] ERROR: Progress fetched succesfully
+[2025-08-03 12:49:26] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:49:26] ERROR: Throwing error:
+[2025-08-03 12:49:26] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:49:26] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:49:26] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at a beginner to intermediate level. Each task should be unique and practical.
+
+Respond with ONLY a single, valid JSON object that contains the tasks. Do NOT include any additional text, explanations, or code blocks outside of the JSON.
+
+The JSON object MUST have the following structure:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+Please generate the content for a speaking, listening, and writing task for day 1 following this exact structure.
+
+[2025-08-03 12:49:30] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:49:30] ERROR: Throwing error:
+[2025-08-03 12:49:30] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:49:30] ERROR: Failed to parse Gemini task response
+[2025-08-03 12:51:35] INFO:  Server running on port 4000
+[2025-08-03 12:53:02] INFO:  Server running on port 4000
+[2025-08-03 12:53:21] ERROR: 
+[2025-08-03 12:53:21] ERROR: 
+[2025-08-03 12:53:21] ERROR: 
+[2025-08-03 12:53:21] ERROR: 
+[2025-08-03 12:53:21] ERROR: Throwing error:
+[2025-08-03 12:53:21] ERROR: Unhotharized
+[2025-08-03 12:53:21] ERROR: Unhotharized
+[2025-08-03 12:53:21] ERROR: 
+[2025-08-03 12:53:21] ERROR: 
+[2025-08-03 12:53:21] ERROR: 
+[2025-08-03 12:53:21] ERROR: 
+[2025-08-03 12:53:21] ERROR: Throwing error:
+[2025-08-03 12:53:21] ERROR: Unhotharized
+[2025-08-03 12:53:21] ERROR: Unhotharized
+[2025-08-03 12:53:22] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at a beginner to intermediate level. Each task should be unique and practical.
+
+Respond with ONLY a single, valid JSON object that contains the tasks. Do NOT include any additional text, explanations, or code blocks outside of the JSON.
+
+The JSON object MUST have the following structure:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+Please generate the content for a speaking, listening, and writing task for day 1 following this exact structure.
+
+[2025-08-03 12:53:22] ERROR: User retrieved successfully
+[2025-08-03 12:53:22] ERROR: Progress fetched succesfully
+[2025-08-03 12:53:22] ERROR: Notifications fetched
+[2025-08-03 12:53:22] ERROR: Courses Fetched
+[2025-08-03 12:53:22] ERROR: Progress fetched succesfully
+[2025-08-03 12:53:22] ERROR: User retrieved successfully
+[2025-08-03 12:53:22] ERROR: Notifications fetched
+[2025-08-03 12:53:22] ERROR: Courses Fetched
+[2025-08-03 12:53:24] ERROR: Daily tasks generated
+[2025-08-03 12:53:24] ERROR: Daily tasks generated
+[2025-08-03 12:53:49] ERROR: Notifications fetched
+[2025-08-03 12:53:49] ERROR: Notifications fetched
+[2025-08-03 12:53:49] ERROR: Notifications fetched
+[2025-08-03 12:53:51] ERROR: Notifications fetched
+[2025-08-03 12:58:39] ERROR: Daily tasks generated
+[2025-08-03 12:58:39] ERROR: User retrieved successfully
+[2025-08-03 12:58:39] ERROR: Progress fetched succesfully
+[2025-08-03 12:58:39] ERROR: Daily tasks generated
+[2025-08-03 12:58:39] ERROR: Progress fetched succesfully
+[2025-08-03 12:58:39] ERROR: Notifications fetched
+[2025-08-03 12:58:39] ERROR: Courses Fetched
+[2025-08-03 12:58:39] ERROR: User retrieved successfully
+[2025-08-03 12:58:39] ERROR: Notifications fetched
+[2025-08-03 12:58:39] ERROR: Courses Fetched
+[2025-08-03 12:58:48] ERROR: Daily tasks generated
+[2025-08-03 12:58:48] ERROR: User retrieved successfully
+[2025-08-03 12:58:48] ERROR: Daily tasks generated
+[2025-08-03 12:58:48] ERROR: Courses Fetched
+[2025-08-03 12:58:48] ERROR: Progress fetched succesfully
+[2025-08-03 12:58:48] ERROR: Notifications fetched
+[2025-08-03 12:58:48] ERROR: User retrieved successfully
+[2025-08-03 12:58:48] ERROR: Progress fetched succesfully
+[2025-08-03 12:58:48] ERROR: Courses Fetched
+[2025-08-03 12:58:48] ERROR: Notifications fetched
+[2025-08-03 12:58:53] ERROR: Daily tasks generated
+[2025-08-03 12:58:53] ERROR: User retrieved successfully
+[2025-08-03 12:58:53] ERROR: Progress fetched succesfully
+[2025-08-03 12:58:53] ERROR: Courses Fetched
+[2025-08-03 12:58:53] ERROR: Notifications fetched
+[2025-08-03 12:58:53] ERROR: Daily tasks generated
+[2025-08-03 12:58:53] ERROR: User retrieved successfully
+[2025-08-03 12:58:53] ERROR: Progress fetched succesfully
+[2025-08-03 12:58:53] ERROR: Notifications fetched
+[2025-08-03 12:58:53] ERROR: Courses Fetched
+[2025-08-03 12:59:27] ERROR: Daily tasks generated
+[2025-08-03 12:59:27] ERROR: Daily tasks generated
+[2025-08-03 12:59:27] ERROR: User retrieved successfully
+[2025-08-03 12:59:27] ERROR: Courses Fetched
+[2025-08-03 12:59:27] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:27] ERROR: User retrieved successfully
+[2025-08-03 12:59:27] ERROR: Notifications fetched
+[2025-08-03 12:59:27] ERROR: Courses Fetched
+[2025-08-03 12:59:27] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:27] ERROR: Notifications fetched
+[2025-08-03 12:59:30] ERROR: Daily tasks generated
+[2025-08-03 12:59:30] ERROR: Daily tasks generated
+[2025-08-03 12:59:30] ERROR: User retrieved successfully
+[2025-08-03 12:59:30] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:30] ERROR: Notifications fetched
+[2025-08-03 12:59:31] ERROR: Courses Fetched
+[2025-08-03 12:59:31] ERROR: User retrieved successfully
+[2025-08-03 12:59:31] ERROR: Notifications fetched
+[2025-08-03 12:59:31] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:31] ERROR: Courses Fetched
+[2025-08-03 12:59:34] ERROR: Daily tasks generated
+[2025-08-03 12:59:34] ERROR: User retrieved successfully
+[2025-08-03 12:59:34] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:34] ERROR: Notifications fetched
+[2025-08-03 12:59:34] ERROR: Courses Fetched
+[2025-08-03 12:59:34] ERROR: Daily tasks generated
+[2025-08-03 12:59:34] ERROR: Notifications fetched
+[2025-08-03 12:59:34] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:34] ERROR: User retrieved successfully
+[2025-08-03 12:59:34] ERROR: Courses Fetched
+[2025-08-03 12:59:37] ERROR: Daily tasks generated
+[2025-08-03 12:59:37] ERROR: User retrieved successfully
+[2025-08-03 12:59:37] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:37] ERROR: Daily tasks generated
+[2025-08-03 12:59:37] ERROR: Notifications fetched
+[2025-08-03 12:59:37] ERROR: Courses Fetched
+[2025-08-03 12:59:37] ERROR: User retrieved successfully
+[2025-08-03 12:59:37] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:37] ERROR: Notifications fetched
+[2025-08-03 12:59:37] ERROR: Courses Fetched
+[2025-08-03 12:59:40] ERROR: Daily tasks generated
+[2025-08-03 12:59:40] ERROR: User retrieved successfully
+[2025-08-03 12:59:40] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:40] ERROR: Notifications fetched
+[2025-08-03 12:59:40] ERROR: Courses Fetched
+[2025-08-03 12:59:40] ERROR: User retrieved successfully
+[2025-08-03 12:59:40] ERROR: Progress fetched succesfully
+[2025-08-03 12:59:40] ERROR: Daily tasks generated
+[2025-08-03 12:59:40] ERROR: Notifications fetched
+[2025-08-03 12:59:40] ERROR: Courses Fetched
+[2025-08-03 13:00:01] ERROR: Daily tasks generated
+[2025-08-03 13:00:01] ERROR: User retrieved successfully
+[2025-08-03 13:00:01] ERROR: Progress fetched succesfully
+[2025-08-03 13:00:01] ERROR: Courses Fetched
+[2025-08-03 13:00:01] ERROR: Notifications fetched
+[2025-08-03 13:00:01] ERROR: Daily tasks generated
+[2025-08-03 13:00:01] ERROR: User retrieved successfully
+[2025-08-03 13:00:01] ERROR: Progress fetched succesfully
+[2025-08-03 13:00:01] ERROR: Notifications fetched
+[2025-08-03 13:00:01] ERROR: Courses Fetched
+[2025-08-03 13:00:08] ERROR: Daily tasks generated
+[2025-08-03 13:00:08] ERROR: User retrieved successfully
+[2025-08-03 13:00:08] ERROR: Daily tasks generated
+[2025-08-03 13:00:08] ERROR: Courses Fetched
+[2025-08-03 13:00:08] ERROR: Progress fetched succesfully
+[2025-08-03 13:00:08] ERROR: User retrieved successfully
+[2025-08-03 13:00:08] ERROR: Notifications fetched
+[2025-08-03 13:00:08] ERROR: Progress fetched succesfully
+[2025-08-03 13:00:08] ERROR: Notifications fetched
+[2025-08-03 13:00:08] ERROR: Courses Fetched
+[2025-08-03 13:00:43] ERROR: Daily tasks generated
+[2025-08-03 13:00:43] ERROR: User retrieved successfully
+[2025-08-03 13:00:44] ERROR: Daily tasks generated
+[2025-08-03 13:00:44] ERROR: Courses Fetched
+[2025-08-03 13:00:44] ERROR: Notifications fetched
+[2025-08-03 13:00:44] ERROR: Progress fetched succesfully
+[2025-08-03 13:00:44] ERROR: User retrieved successfully
+[2025-08-03 13:00:44] ERROR: Progress fetched succesfully
+[2025-08-03 13:00:44] ERROR: Notifications fetched
+[2025-08-03 13:00:44] ERROR: Courses Fetched
+[2025-08-03 13:01:12] ERROR: Daily tasks generated
+[2025-08-03 13:01:12] ERROR: User retrieved successfully
+[2025-08-03 13:01:12] ERROR: Daily tasks generated
+[2025-08-03 13:01:12] ERROR: Courses Fetched
+[2025-08-03 13:01:12] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:12] ERROR: Notifications fetched
+[2025-08-03 13:01:12] ERROR: User retrieved successfully
+[2025-08-03 13:01:12] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:12] ERROR: Courses Fetched
+[2025-08-03 13:01:12] ERROR: Notifications fetched
+[2025-08-03 13:01:21] ERROR: Daily tasks generated
+[2025-08-03 13:01:21] ERROR: User retrieved successfully
+[2025-08-03 13:01:21] ERROR: Daily tasks generated
+[2025-08-03 13:01:21] ERROR: Courses Fetched
+[2025-08-03 13:01:21] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:21] ERROR: Notifications fetched
+[2025-08-03 13:01:21] ERROR: User retrieved successfully
+[2025-08-03 13:01:21] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:21] ERROR: Notifications fetched
+[2025-08-03 13:01:21] ERROR: Courses Fetched
+[2025-08-03 13:01:25] ERROR: Daily tasks generated
+[2025-08-03 13:01:25] ERROR: User retrieved successfully
+[2025-08-03 13:01:25] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:25] ERROR: Notifications fetched
+[2025-08-03 13:01:25] ERROR: Courses Fetched
+[2025-08-03 13:01:25] ERROR: User retrieved successfully
+[2025-08-03 13:01:25] ERROR: Daily tasks generated
+[2025-08-03 13:01:25] ERROR: Notifications fetched
+[2025-08-03 13:01:25] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:25] ERROR: Courses Fetched
+[2025-08-03 13:01:28] ERROR: Daily tasks generated
+[2025-08-03 13:01:28] ERROR: User retrieved successfully
+[2025-08-03 13:01:28] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:28] ERROR: Notifications fetched
+[2025-08-03 13:01:28] ERROR: Courses Fetched
+[2025-08-03 13:01:28] ERROR: Daily tasks generated
+[2025-08-03 13:01:28] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:28] ERROR: User retrieved successfully
+[2025-08-03 13:01:28] ERROR: Notifications fetched
+[2025-08-03 13:01:28] ERROR: Courses Fetched
+[2025-08-03 13:01:32] ERROR: Daily tasks generated
+[2025-08-03 13:01:32] ERROR: User retrieved successfully
+[2025-08-03 13:01:32] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:32] ERROR: Notifications fetched
+[2025-08-03 13:01:32] ERROR: Courses Fetched
+[2025-08-03 13:01:32] ERROR: Daily tasks generated
+[2025-08-03 13:01:32] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:32] ERROR: User retrieved successfully
+[2025-08-03 13:01:32] ERROR: Notifications fetched
+[2025-08-03 13:01:32] ERROR: Courses Fetched
+[2025-08-03 13:01:37] ERROR: Daily tasks generated
+[2025-08-03 13:01:37] ERROR: User retrieved successfully
+[2025-08-03 13:01:37] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:37] ERROR: Notifications fetched
+[2025-08-03 13:01:37] ERROR: Courses Fetched
+[2025-08-03 13:01:37] ERROR: Daily tasks generated
+[2025-08-03 13:01:37] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:37] ERROR: User retrieved successfully
+[2025-08-03 13:01:37] ERROR: Notifications fetched
+[2025-08-03 13:01:37] ERROR: Courses Fetched
+[2025-08-03 13:01:43] ERROR: Daily tasks generated
+[2025-08-03 13:01:43] ERROR: User retrieved successfully
+[2025-08-03 13:01:43] ERROR: Daily tasks generated
+[2025-08-03 13:01:43] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:43] ERROR: Courses Fetched
+[2025-08-03 13:01:43] ERROR: Notifications fetched
+[2025-08-03 13:01:43] ERROR: User retrieved successfully
+[2025-08-03 13:01:43] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:43] ERROR: Courses Fetched
+[2025-08-03 13:01:43] ERROR: Notifications fetched
+[2025-08-03 13:01:48] ERROR: Daily tasks generated
+[2025-08-03 13:01:48] ERROR: User retrieved successfully
+[2025-08-03 13:01:48] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:48] ERROR: Notifications fetched
+[2025-08-03 13:01:48] ERROR: Courses Fetched
+[2025-08-03 13:01:48] ERROR: Daily tasks generated
+[2025-08-03 13:01:48] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:48] ERROR: Notifications fetched
+[2025-08-03 13:01:48] ERROR: User retrieved successfully
+[2025-08-03 13:01:48] ERROR: Courses Fetched
+[2025-08-03 13:01:52] ERROR: Daily tasks generated
+[2025-08-03 13:01:52] ERROR: User retrieved successfully
+[2025-08-03 13:01:52] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:52] ERROR: Notifications fetched
+[2025-08-03 13:01:52] ERROR: Daily tasks generated
+[2025-08-03 13:01:52] ERROR: Courses Fetched
+[2025-08-03 13:01:52] ERROR: User retrieved successfully
+[2025-08-03 13:01:52] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:52] ERROR: Notifications fetched
+[2025-08-03 13:01:52] ERROR: Courses Fetched
+[2025-08-03 13:01:56] ERROR: Daily tasks generated
+[2025-08-03 13:01:56] ERROR: User retrieved successfully
+[2025-08-03 13:01:56] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:56] ERROR: Notifications fetched
+[2025-08-03 13:01:56] ERROR: Courses Fetched
+[2025-08-03 13:01:56] ERROR: User retrieved successfully
+[2025-08-03 13:01:56] ERROR: Daily tasks generated
+[2025-08-03 13:01:56] ERROR: Notifications fetched
+[2025-08-03 13:01:56] ERROR: Progress fetched succesfully
+[2025-08-03 13:01:57] ERROR: Courses Fetched
+[2025-08-03 13:07:03] ERROR: Daily tasks generated
+[2025-08-03 13:07:03] ERROR: User retrieved successfully
+[2025-08-03 13:07:03] ERROR: Daily tasks generated
+[2025-08-03 13:07:03] ERROR: Courses Fetched
+[2025-08-03 13:07:03] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:03] ERROR: Notifications fetched
+[2025-08-03 13:07:03] ERROR: User retrieved successfully
+[2025-08-03 13:07:03] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:03] ERROR: Courses Fetched
+[2025-08-03 13:07:03] ERROR: Notifications fetched
+[2025-08-03 13:07:24] ERROR: Daily tasks generated
+[2025-08-03 13:07:24] ERROR: User retrieved successfully
+[2025-08-03 13:07:24] ERROR: Daily tasks generated
+[2025-08-03 13:07:24] ERROR: Courses Fetched
+[2025-08-03 13:07:24] ERROR: Notifications fetched
+[2025-08-03 13:07:24] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:24] ERROR: User retrieved successfully
+[2025-08-03 13:07:24] ERROR: Courses Fetched
+[2025-08-03 13:07:24] ERROR: Notifications fetched
+[2025-08-03 13:07:24] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:26] ERROR: Daily tasks generated
+[2025-08-03 13:07:26] ERROR: User retrieved successfully
+[2025-08-03 13:07:26] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:26] ERROR: Courses Fetched
+[2025-08-03 13:07:26] ERROR: Notifications fetched
+[2025-08-03 13:07:26] ERROR: Daily tasks generated
+[2025-08-03 13:07:27] ERROR: Daily tasks generated
+[2025-08-03 13:07:27] ERROR: User retrieved successfully
+[2025-08-03 13:07:27] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:27] ERROR: Courses Fetched
+[2025-08-03 13:07:27] ERROR: Notifications fetched
+[2025-08-03 13:07:27] ERROR: Daily tasks generated
+[2025-08-03 13:07:27] ERROR: Daily tasks generated
+[2025-08-03 13:07:27] ERROR: User retrieved successfully
+[2025-08-03 13:07:27] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:27] ERROR: Courses Fetched
+[2025-08-03 13:07:27] ERROR: Notifications fetched
+[2025-08-03 13:07:27] ERROR: Daily tasks generated
+[2025-08-03 13:07:29] ERROR: User retrieved successfully
+[2025-08-03 13:07:29] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:29] ERROR: Courses Fetched
+[2025-08-03 13:07:29] ERROR: Notifications fetched
+[2025-08-03 13:07:29] ERROR: Daily tasks generated
+[2025-08-03 13:07:29] ERROR: Daily tasks generated
+[2025-08-03 13:07:32] ERROR: Daily tasks generated
+[2025-08-03 13:07:32] ERROR: User retrieved successfully
+[2025-08-03 13:07:32] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:32] ERROR: Notifications fetched
+[2025-08-03 13:07:32] ERROR: Daily tasks generated
+[2025-08-03 13:07:32] ERROR: Courses Fetched
+[2025-08-03 13:07:33] ERROR: User retrieved successfully
+[2025-08-03 13:07:33] ERROR: Daily tasks generated
+[2025-08-03 13:07:33] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:33] ERROR: Courses Fetched
+[2025-08-03 13:07:33] ERROR: Notifications fetched
+[2025-08-03 13:07:33] ERROR: Daily tasks generated
+[2025-08-03 13:07:42] ERROR: Daily tasks generated
+[2025-08-03 13:07:42] ERROR: User retrieved successfully
+[2025-08-03 13:07:42] ERROR: Courses Fetched
+[2025-08-03 13:07:42] ERROR: Daily tasks generated
+[2025-08-03 13:07:42] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:42] ERROR: Notifications fetched
+[2025-08-03 13:07:42] ERROR: Daily tasks generated
+[2025-08-03 13:07:42] ERROR: User retrieved successfully
+[2025-08-03 13:07:42] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:42] ERROR: Notifications fetched
+[2025-08-03 13:07:42] ERROR: Courses Fetched
+[2025-08-03 13:07:42] ERROR: Daily tasks generated
+[2025-08-03 13:07:43] ERROR: Daily tasks generated
+[2025-08-03 13:07:43] ERROR: User retrieved successfully
+[2025-08-03 13:07:43] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:43] ERROR: Notifications fetched
+[2025-08-03 13:07:43] ERROR: Courses Fetched
+[2025-08-03 13:07:43] ERROR: Daily tasks generated
+[2025-08-03 13:07:46] ERROR: Daily tasks generated
+[2025-08-03 13:07:46] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:46] ERROR: Notifications fetched
+[2025-08-03 13:07:46] ERROR: User retrieved successfully
+[2025-08-03 13:07:46] ERROR: Courses Fetched
+[2025-08-03 13:07:46] ERROR: Daily tasks generated
+[2025-08-03 13:07:46] ERROR: Daily tasks generated
+[2025-08-03 13:07:46] ERROR: User retrieved successfully
+[2025-08-03 13:07:46] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:46] ERROR: Notifications fetched
+[2025-08-03 13:07:46] ERROR: Courses Fetched
+[2025-08-03 13:07:46] ERROR: Daily tasks generated
+[2025-08-03 13:07:55] ERROR: Daily tasks generated
+[2025-08-03 13:07:55] ERROR: User retrieved successfully
+[2025-08-03 13:07:55] ERROR: Courses Fetched
+[2025-08-03 13:07:55] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:55] ERROR: Daily tasks generated
+[2025-08-03 13:07:55] ERROR: Notifications fetched
+[2025-08-03 13:07:56] ERROR: Daily tasks generated
+[2025-08-03 13:07:56] ERROR: User retrieved successfully
+[2025-08-03 13:07:56] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:57] ERROR: Notifications fetched
+[2025-08-03 13:07:57] ERROR: Courses Fetched
+[2025-08-03 13:07:57] ERROR: Daily tasks generated
+[2025-08-03 13:07:57] ERROR: Daily tasks generated
+[2025-08-03 13:07:57] ERROR: User retrieved successfully
+[2025-08-03 13:07:57] ERROR: Progress fetched succesfully
+[2025-08-03 13:07:57] ERROR: Notifications fetched
+[2025-08-03 13:07:57] ERROR: Daily tasks generated
+[2025-08-03 13:07:57] ERROR: Courses Fetched
+[2025-08-03 13:08:05] ERROR: Daily tasks generated
+[2025-08-03 13:08:05] ERROR: User retrieved successfully
+[2025-08-03 13:08:05] ERROR: Notifications fetched
+[2025-08-03 13:08:05] ERROR: Progress fetched succesfully
+[2025-08-03 13:08:05] ERROR: Courses Fetched
+[2025-08-03 13:08:05] ERROR: Daily tasks generated
+[2025-08-03 13:08:29] ERROR: 
+[2025-08-03 13:08:29] ERROR: 
+[2025-08-03 13:08:29] ERROR: 
+[2025-08-03 13:08:29] ERROR: 
+[2025-08-03 13:08:29] ERROR: Throwing error:
+[2025-08-03 13:08:29] ERROR: Unhotharized
+[2025-08-03 13:08:29] ERROR: Unhotharized
+[2025-08-03 13:08:29] ERROR: 
+[2025-08-03 13:08:29] ERROR: Daily tasks generated
+[2025-08-03 13:08:29] ERROR: User retrieved successfully
+[2025-08-03 13:08:29] ERROR: Progress fetched succesfully
+[2025-08-03 13:08:29] ERROR: Notifications fetched
+[2025-08-03 13:08:29] ERROR: Courses Fetched
+[2025-08-03 13:08:29] ERROR: Daily tasks generated
+[2025-08-03 13:16:15] ERROR: Daily tasks generated
+[2025-08-03 13:16:15] ERROR: Daily tasks generated
+[2025-08-03 13:16:15] ERROR: User retrieved successfully
+[2025-08-03 13:16:15] ERROR: Progress fetched succesfully
+[2025-08-03 13:16:15] ERROR: Courses Fetched
+[2025-08-03 13:16:15] ERROR: User retrieved successfully
+[2025-08-03 13:16:15] ERROR: Progress fetched succesfully
+[2025-08-03 13:16:15] ERROR: Notifications fetched
+[2025-08-03 13:16:15] ERROR: Courses Fetched
+[2025-08-03 13:16:15] ERROR: Notifications fetched
+[2025-08-03 13:38:12] INFO:  Server running on port 4000
+[2025-08-03 13:39:03] INFO:  Server running on port 4000
+[2025-08-03 13:39:42] INFO:  Server running on port 4000
+[2025-08-03 13:40:59] INFO:  Server running on port 4000
+[2025-08-03 13:43:44] INFO:  Server running on port 4000
+[2025-08-03 13:44:37] INFO:  Server running on port 4000
+[2025-08-03 13:44:59] ERROR: 
+[2025-08-03 13:44:59] ERROR: 
+[2025-08-03 13:44:59] ERROR: 
+[2025-08-03 13:44:59] ERROR: 
+[2025-08-03 13:44:59] ERROR: Throwing error:
+[2025-08-03 13:44:59] ERROR: Unhotharized
+[2025-08-03 13:44:59] ERROR: Unhotharized
+[2025-08-03 13:44:59] ERROR: 
+[2025-08-03 13:44:59] ERROR: 
+[2025-08-03 13:44:59] ERROR: Throwing error:
+[2025-08-03 13:44:59] ERROR: Unhotharized
+[2025-08-03 13:44:59] ERROR: Unhotharized
+[2025-08-03 13:45:00] ERROR: User retrieved successfully
+[2025-08-03 13:45:00] ERROR: Progress fetched succesfully
+[2025-08-03 13:45:00] ERROR: Notifications fetched
+[2025-08-03 13:45:00] ERROR: User retrieved successfully
+[2025-08-03 13:45:00] ERROR: Progress fetched succesfully
+[2025-08-03 13:45:00] ERROR: Notifications fetched
+[2025-08-03 13:45:00] ERROR: Courses Fetched
+[2025-08-03 13:45:00] ERROR: Courses Fetched
+[2025-08-03 13:45:02] ERROR: Daily tasks generated
+[2025-08-03 13:45:02] ERROR: Daily tasks generated
+[2025-08-03 13:45:43] INFO: POST /api/daily-task/submit
+[2025-08-03 13:46:06] ERROR: User retrieved successfully
+[2025-08-03 13:46:06] ERROR: Progress fetched succesfully
+[2025-08-03 13:46:06] ERROR: Courses Fetched
+[2025-08-03 13:46:06] ERROR: Notifications fetched
+[2025-08-03 13:46:06] ERROR: Daily tasks generated
+[2025-08-03 13:46:06] ERROR: Daily tasks generated
+[2025-08-03 13:46:08] ERROR: Daily tasks generated
+[2025-08-03 13:46:08] ERROR: User retrieved successfully
+[2025-08-03 13:46:08] ERROR: Progress fetched succesfully
+[2025-08-03 13:46:08] ERROR: Notifications fetched
+[2025-08-03 13:46:08] ERROR: Daily tasks generated
+[2025-08-03 13:46:08] ERROR: Courses Fetched
+[2025-08-03 13:46:18] ERROR: Task updated successfully
+[2025-08-03 13:46:24] ERROR: Daily tasks generated
+[2025-08-03 13:46:24] ERROR: User retrieved successfully
+[2025-08-03 13:46:24] ERROR: Progress fetched succesfully
+[2025-08-03 13:46:24] ERROR: Courses Fetched
+[2025-08-03 13:46:24] ERROR: User retrieved successfully
+[2025-08-03 13:46:24] ERROR: Progress fetched succesfully
+[2025-08-03 13:46:24] ERROR: Notifications fetched
+[2025-08-03 13:46:24] ERROR: Daily tasks generated
+[2025-08-03 13:46:24] ERROR: Courses Fetched
+[2025-08-03 13:46:24] ERROR: Notifications fetched
+[2025-08-03 13:48:57] INFO:  Server running on port 4000
+[2025-08-03 14:00:32] INFO:  Server running on port 4000
+[2025-08-03 14:01:55] INFO:  Server running on port 4000
+[2025-08-03 14:06:13] ERROR: 
+[2025-08-03 14:06:13] ERROR: 
+[2025-08-03 14:06:13] ERROR: 
+[2025-08-03 14:06:13] ERROR: 
+[2025-08-03 14:06:13] ERROR: Throwing error:
+[2025-08-03 14:06:13] ERROR: Unhotharized
+[2025-08-03 14:06:13] ERROR: Unhotharized
+[2025-08-03 14:06:13] ERROR: User retrieved successfully
+[2025-08-03 14:06:13] ERROR: 
+[2025-08-03 14:06:14] ERROR: Progress fetched succesfully
+[2025-08-03 14:06:14] ERROR: Daily tasks generated
+[2025-08-03 14:06:14] ERROR: Courses Fetched
+[2025-08-03 14:06:14] ERROR: Notifications fetched
+[2025-08-03 14:06:14] ERROR: Daily tasks generated
+[2025-08-03 14:06:17] ERROR: Daily tasks generated
+[2025-08-03 14:06:17] ERROR: User retrieved successfully
+[2025-08-03 14:06:17] ERROR: Progress fetched succesfully
+[2025-08-03 14:06:17] ERROR: Notifications fetched
+[2025-08-03 14:06:17] ERROR: Courses Fetched
+[2025-08-03 14:06:17] ERROR: Daily tasks generated
+[2025-08-03 14:06:26] ERROR: Daily tasks generated
+[2025-08-03 14:06:26] ERROR: User retrieved successfully
+[2025-08-03 14:06:26] ERROR: Daily tasks generated
+[2025-08-03 14:06:26] ERROR: Progress fetched succesfully
+[2025-08-03 14:06:26] ERROR: Notifications fetched
+[2025-08-03 14:06:26] ERROR: Courses Fetched
+[2025-08-03 14:06:27] ERROR: Daily tasks generated
+[2025-08-03 14:06:27] ERROR: User retrieved successfully
+[2025-08-03 14:06:27] ERROR: Progress fetched succesfully
+[2025-08-03 14:06:27] ERROR: Notifications fetched
+[2025-08-03 14:06:27] ERROR: Courses Fetched
+[2025-08-03 14:06:27] ERROR: Daily tasks generated
+[2025-08-03 14:06:28] ERROR: Daily tasks generated
+[2025-08-03 14:06:28] ERROR: User retrieved successfully
+[2025-08-03 14:06:28] ERROR: Progress fetched succesfully
+[2025-08-03 14:06:28] ERROR: Notifications fetched
+[2025-08-03 14:06:28] ERROR: Courses Fetched
+[2025-08-03 14:06:28] ERROR: Daily tasks generated
+[2025-08-03 14:10:31] INFO:  Server running on port 4000
+[2025-08-03 14:13:05] INFO:  Server running on port 4000
+[2025-08-03 14:13:16] ERROR: Failed to upload file to S3: User: arn:aws:iam::879381286576:user/s3-lessons is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::learn-vista/daily_tasks/audio/e5bd87f4-2f21-4543-b915-a87cf76705cb.webm" because no identity-based policy allows the s3:PutObject action
+[2025-08-03 14:13:16] ERROR: Failed to upload file to S3: User: arn:aws:iam::879381286576:user/s3-lessons is not authorized to perform: s3:PutObject on resource: "arn:aws:s3:::learn-vista/daily_tasks/audio/e5bd87f4-2f21-4543-b915-a87cf76705cb.webm" because no identity-based policy allows the s3:PutObject action
+[2025-08-03 14:14:06] INFO:  Server running on port 4000
+[2025-08-03 14:28:27] INFO:  Server running on port 4000
+[2025-08-03 14:28:59] ERROR: 
+[2025-08-03 14:29:00] ERROR: Task updated
+[2025-08-03 14:29:10] ERROR: User retrieved successfully
+[2025-08-03 14:29:10] ERROR: Daily tasks generated
+[2025-08-03 14:29:10] ERROR: Courses Fetched
+[2025-08-03 14:29:10] ERROR: Progress fetched succesfully
+[2025-08-03 14:29:10] ERROR: Daily tasks generated
+[2025-08-03 14:29:10] ERROR: Notifications fetched
+[2025-08-03 14:29:10] ERROR: Progress fetched succesfully
+[2025-08-03 14:29:10] ERROR: User retrieved successfully
+[2025-08-03 14:29:10] ERROR: Courses Fetched
+[2025-08-03 14:29:10] ERROR: Notifications fetched
+[2025-08-03 14:29:29] ERROR: Throwing error:
+[2025-08-03 14:29:29] ERROR: Answer is required
+[2025-08-03 14:29:29] ERROR: Answer is required
+[2025-08-03 14:44:00] INFO:  Server running on port 4000
+[2025-08-03 14:46:58] INFO:  Server running on port 4000
+[2025-08-03 14:50:53] INFO:  Server running on port 4000
+[2025-08-03 14:51:21] INFO:  Server running on port 4000
+[2025-08-03 15:21:48] INFO:  Server running on port 4000
+[2025-08-03 15:22:11] ERROR: 
+[2025-08-03 15:22:11] ERROR: 
+[2025-08-03 15:22:11] ERROR: 
+[2025-08-03 15:22:11] ERROR: 
+[2025-08-03 15:22:11] ERROR: Throwing error:
+[2025-08-03 15:22:11] ERROR: Unhotharized
+[2025-08-03 15:22:11] ERROR: Unhotharized
+[2025-08-03 15:22:11] ERROR: 
+[2025-08-03 15:22:11] ERROR: 
+[2025-08-03 15:22:11] ERROR: Throwing error:
+[2025-08-03 15:22:11] ERROR: Unhotharized
+[2025-08-03 15:22:11] ERROR: Unhotharized
+[2025-08-03 15:22:12] ERROR: User retrieved successfully
+[2025-08-03 15:22:12] ERROR: Progress fetched succesfully
+[2025-08-03 15:22:12] ERROR: Notifications fetched
+[2025-08-03 15:22:12] ERROR: Courses Fetched
+[2025-08-03 15:22:12] ERROR: User retrieved successfully
+[2025-08-03 15:22:12] ERROR: Progress fetched succesfully
+[2025-08-03 15:22:12] ERROR: Notifications fetched
+[2025-08-03 15:22:12] ERROR: Courses Fetched
+[2025-08-03 15:22:12] ERROR: Login successful
+[2025-08-03 15:22:16] ERROR: User retrieved successfully
+[2025-08-03 15:22:16] ERROR: Progress fetched succesfully
+[2025-08-03 15:22:16] ERROR: Courses Fetched
+[2025-08-03 15:22:16] ERROR: Notifications fetched
+[2025-08-03 15:22:16] ERROR: User retrieved successfully
+[2025-08-03 15:22:16] ERROR: Progress fetched succesfully
+[2025-08-03 15:22:16] ERROR: Notifications fetched
+[2025-08-03 15:22:16] ERROR: Courses Fetched
+[2025-08-03 15:22:18] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at a beginner to intermediate level. Each task should be unique and practical.
+
+Respond with ONLY a single, valid JSON object that contains the tasks. Do NOT include any additional text, explanations, or code blocks outside of the JSON.
+
+The JSON object MUST have the following structure:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+Please generate the content for a speaking, listening, and writing task for day 1 following this exact structure.
+
+[2025-08-03 15:22:21] ERROR: Daily tasks generated
+[2025-08-03 15:22:21] ERROR: Daily tasks generated
+[2025-08-03 15:27:34] ERROR: Task updated
+[2025-08-03 15:29:33] ERROR: Daily tasks generated
+[2025-08-03 15:29:33] ERROR: User retrieved successfully
+[2025-08-03 15:29:33] ERROR: Progress fetched succesfully
+[2025-08-03 15:29:33] ERROR: Courses Fetched
+[2025-08-03 15:29:33] ERROR: User retrieved successfully
+[2025-08-03 15:29:34] ERROR: Notifications fetched
+[2025-08-03 15:29:34] ERROR: Progress fetched succesfully
+[2025-08-03 15:29:34] ERROR: Daily tasks generated
+[2025-08-03 15:29:34] ERROR: Notifications fetched
+[2025-08-03 15:29:34] ERROR: Courses Fetched
+[2025-08-03 16:06:12] ERROR: 
+[2025-08-03 16:06:12] ERROR: 
+[2025-08-03 16:06:12] ERROR: 
+[2025-08-03 16:06:12] ERROR: 
+[2025-08-03 16:06:13] ERROR: Throwing error:
+[2025-08-03 16:06:13] ERROR: Unhotharized
+[2025-08-03 16:06:13] ERROR: Unhotharized
+[2025-08-03 16:06:13] ERROR: Daily tasks generated
+[2025-08-03 16:06:13] ERROR: User retrieved successfully
+[2025-08-03 16:06:13] ERROR: Progress fetched succesfully
+[2025-08-03 16:06:13] ERROR: Notifications fetched
+[2025-08-03 16:06:13] ERROR: Courses Fetched
+[2025-08-03 16:06:17] ERROR: Daily tasks generated
+[2025-08-03 16:06:17] ERROR: User retrieved successfully
+[2025-08-03 16:06:17] ERROR: Progress fetched succesfully
+[2025-08-03 16:06:17] ERROR: Notifications fetched
+[2025-08-03 16:06:17] ERROR: Courses Fetched
+[2025-08-03 16:06:18] ERROR: Daily tasks generated
+[2025-08-03 16:06:18] ERROR: Notifications fetched
+[2025-08-03 16:06:18] ERROR: Progress fetched succesfully
+[2025-08-03 16:06:18] ERROR: Courses Fetched
+[2025-08-03 16:06:18] ERROR: User retrieved successfully
+[2025-08-03 16:06:48] ERROR: Daily tasks generated
+[2025-08-03 16:06:48] ERROR: User retrieved successfully
+[2025-08-03 16:06:48] ERROR: Progress fetched succesfully
+[2025-08-03 16:06:48] ERROR: Courses Fetched
+[2025-08-03 16:06:48] ERROR: Notifications fetched
+[2025-08-03 16:06:50] ERROR: Daily tasks generated
+[2025-08-03 16:06:50] ERROR: User retrieved successfully
+[2025-08-03 16:06:50] ERROR: Progress fetched succesfully
+[2025-08-03 16:06:50] ERROR: Courses Fetched
+[2025-08-03 16:06:50] ERROR: Notifications fetched
+[2025-08-03 16:06:50] ERROR: Daily tasks generated
+[2025-08-03 16:06:50] ERROR: Progress fetched succesfully
+[2025-08-03 16:06:50] ERROR: Notifications fetched
+[2025-08-03 16:06:50] ERROR: User retrieved successfully
+[2025-08-03 16:06:50] ERROR: Courses Fetched
+[2025-08-03 16:06:54] ERROR: Daily tasks generated
+[2025-08-03 16:06:54] ERROR: User retrieved successfully
+[2025-08-03 16:06:54] ERROR: Progress fetched succesfully
+[2025-08-03 16:06:54] ERROR: Notifications fetched
+[2025-08-03 16:06:54] ERROR: Courses Fetched
+[2025-08-03 16:06:54] ERROR: User retrieved successfully
+[2025-08-03 16:06:54] ERROR: Daily tasks generated
+[2025-08-03 16:06:54] ERROR: Progress fetched succesfully
+[2025-08-03 16:06:54] ERROR: Notifications fetched
+[2025-08-03 16:06:54] ERROR: Courses Fetched
+[2025-08-03 16:07:02] ERROR: Daily tasks generated
+[2025-08-03 16:07:02] ERROR: User retrieved successfully
+[2025-08-03 16:07:02] ERROR: Courses Fetched
+[2025-08-03 16:07:03] ERROR: User retrieved successfully
+[2025-08-03 16:07:03] ERROR: Daily tasks generated
+[2025-08-03 16:07:03] ERROR: Notifications fetched
+[2025-08-03 16:07:03] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:03] ERROR: Notifications fetched
+[2025-08-03 16:07:03] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:03] ERROR: Courses Fetched
+[2025-08-03 16:07:06] ERROR: Daily tasks generated
+[2025-08-03 16:07:06] ERROR: User retrieved successfully
+[2025-08-03 16:07:06] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:06] ERROR: Courses Fetched
+[2025-08-03 16:07:06] ERROR: Notifications fetched
+[2025-08-03 16:07:07] ERROR: User retrieved successfully
+[2025-08-03 16:07:07] ERROR: Daily tasks generated
+[2025-08-03 16:07:07] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:07] ERROR: Notifications fetched
+[2025-08-03 16:07:07] ERROR: Courses Fetched
+[2025-08-03 16:07:16] ERROR: Daily tasks generated
+[2025-08-03 16:07:16] ERROR: User retrieved successfully
+[2025-08-03 16:07:16] ERROR: Daily tasks generated
+[2025-08-03 16:07:16] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:16] ERROR: Notifications fetched
+[2025-08-03 16:07:16] ERROR: Courses Fetched
+[2025-08-03 16:07:16] ERROR: User retrieved successfully
+[2025-08-03 16:07:16] ERROR: Notifications fetched
+[2025-08-03 16:07:16] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:16] ERROR: Courses Fetched
+[2025-08-03 16:07:19] ERROR: Daily tasks generated
+[2025-08-03 16:07:19] ERROR: User retrieved successfully
+[2025-08-03 16:07:19] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:19] ERROR: Notifications fetched
+[2025-08-03 16:07:20] ERROR: Courses Fetched
+[2025-08-03 16:07:20] ERROR: Daily tasks generated
+[2025-08-03 16:07:20] ERROR: User retrieved successfully
+[2025-08-03 16:07:20] ERROR: Notifications fetched
+[2025-08-03 16:07:20] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:20] ERROR: Courses Fetched
+[2025-08-03 16:07:24] ERROR: Daily tasks generated
+[2025-08-03 16:07:24] ERROR: User retrieved successfully
+[2025-08-03 16:07:24] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:24] ERROR: Courses Fetched
+[2025-08-03 16:07:24] ERROR: Notifications fetched
+[2025-08-03 16:07:24] ERROR: Daily tasks generated
+[2025-08-03 16:07:24] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:24] ERROR: User retrieved successfully
+[2025-08-03 16:07:24] ERROR: Notifications fetched
+[2025-08-03 16:07:24] ERROR: Courses Fetched
+[2025-08-03 16:07:31] ERROR: Daily tasks generated
+[2025-08-03 16:07:31] ERROR: User retrieved successfully
+[2025-08-03 16:07:31] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:31] ERROR: Courses Fetched
+[2025-08-03 16:07:31] ERROR: Notifications fetched
+[2025-08-03 16:07:31] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:31] ERROR: Daily tasks generated
+[2025-08-03 16:07:31] ERROR: Notifications fetched
+[2025-08-03 16:07:31] ERROR: User retrieved successfully
+[2025-08-03 16:07:31] ERROR: Courses Fetched
+[2025-08-03 16:07:44] ERROR: Daily tasks generated
+[2025-08-03 16:07:44] ERROR: User retrieved successfully
+[2025-08-03 16:07:44] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:44] ERROR: Notifications fetched
+[2025-08-03 16:07:44] ERROR: Courses Fetched
+[2025-08-03 16:07:44] ERROR: Daily tasks generated
+[2025-08-03 16:07:44] ERROR: Progress fetched succesfully
+[2025-08-03 16:07:44] ERROR: Notifications fetched
+[2025-08-03 16:07:44] ERROR: Courses Fetched
+[2025-08-03 16:07:44] ERROR: User retrieved successfully
+[2025-08-03 16:09:24] ERROR: Daily tasks generated
+[2025-08-03 16:09:24] ERROR: User retrieved successfully
+[2025-08-03 16:09:24] ERROR: Courses Fetched
+[2025-08-03 16:09:24] ERROR: Notifications fetched
+[2025-08-03 16:09:24] ERROR: Progress fetched succesfully
+[2025-08-03 16:09:25] ERROR: Daily tasks generated
+[2025-08-03 16:09:25] ERROR: User retrieved successfully
+[2025-08-03 16:09:25] ERROR: Progress fetched succesfully
+[2025-08-03 16:09:25] ERROR: Notifications fetched
+[2025-08-03 16:09:25] ERROR: Courses Fetched
+[2025-08-03 16:09:27] ERROR: Daily tasks generated
+[2025-08-03 16:09:27] ERROR: User retrieved successfully
+[2025-08-03 16:09:27] ERROR: Progress fetched succesfully
+[2025-08-03 16:09:27] ERROR: Notifications fetched
+[2025-08-03 16:09:27] ERROR: Daily tasks generated
+[2025-08-03 16:09:27] ERROR: Courses Fetched
+[2025-08-03 16:09:28] ERROR: User retrieved successfully
+[2025-08-03 16:09:28] ERROR: Progress fetched succesfully
+[2025-08-03 16:09:28] ERROR: Notifications fetched
+[2025-08-03 16:09:28] ERROR: Courses Fetched
+[2025-08-03 16:09:58] ERROR: Daily tasks generated
+[2025-08-03 16:09:58] ERROR: User retrieved successfully
+[2025-08-03 16:09:58] ERROR: Courses Fetched
+[2025-08-03 16:09:58] ERROR: Progress fetched succesfully
+[2025-08-03 16:09:58] ERROR: Notifications fetched
+[2025-08-03 16:10:01] ERROR: Daily tasks generated
+[2025-08-03 16:10:01] ERROR: User retrieved successfully
+[2025-08-03 16:10:01] ERROR: Progress fetched succesfully
+[2025-08-03 16:10:01] ERROR: Notifications fetched
+[2025-08-03 16:10:01] ERROR: Daily tasks generated
+[2025-08-03 16:10:01] ERROR: Courses Fetched
+[2025-08-03 16:10:01] ERROR: Notifications fetched
+[2025-08-03 16:10:01] ERROR: Progress fetched succesfully
+[2025-08-03 16:10:02] ERROR: User retrieved successfully
+[2025-08-03 16:10:02] ERROR: Courses Fetched
+[2025-08-03 16:10:15] ERROR: Daily tasks generated
+[2025-08-03 16:10:15] ERROR: User retrieved successfully
+[2025-08-03 16:10:15] ERROR: Daily tasks generated
+[2025-08-03 16:10:15] ERROR: Courses Fetched
+[2025-08-03 16:10:15] ERROR: Notifications fetched
+[2025-08-03 16:10:15] ERROR: User retrieved successfully
+[2025-08-03 16:10:15] ERROR: Progress fetched succesfully
+[2025-08-03 16:10:15] ERROR: Courses Fetched
+[2025-08-03 16:10:15] ERROR: Notifications fetched
+[2025-08-03 16:10:15] ERROR: Progress fetched succesfully
+[2025-08-03 16:12:09] ERROR: Daily tasks generated
+[2025-08-03 16:12:09] ERROR: User retrieved successfully
+[2025-08-03 16:12:09] ERROR: Progress fetched succesfully
+[2025-08-03 16:12:09] ERROR: Courses Fetched
+[2025-08-03 16:12:09] ERROR: Notifications fetched
+[2025-08-03 16:12:17] ERROR: Daily tasks generated
+[2025-08-03 16:12:17] ERROR: User retrieved successfully
+[2025-08-03 16:12:17] ERROR: Daily tasks generated
+[2025-08-03 16:12:18] ERROR: Courses Fetched
+[2025-08-03 16:12:18] ERROR: User retrieved successfully
+[2025-08-03 16:12:18] ERROR: Progress fetched succesfully
+[2025-08-03 16:12:18] ERROR: Notifications fetched
+[2025-08-03 16:12:18] ERROR: Courses Fetched
+[2025-08-03 16:12:18] ERROR: Notifications fetched
+[2025-08-03 16:12:18] ERROR: Progress fetched succesfully
+[2025-08-03 16:14:54] ERROR: Error finding document by ID: Cast to ObjectId failed for value "undefined" (type string) at path "_id" for model "DailyTask"
+[2025-08-03 16:14:54] ERROR: Error finding document by ID: Cast to ObjectId failed for value "undefined" (type string) at path "_id" for model "DailyTask"
+[2025-08-03 16:15:13] ERROR: Daily tasks generated
+[2025-08-03 16:15:13] ERROR: User retrieved successfully
+[2025-08-03 16:15:13] ERROR: Progress fetched succesfully
+[2025-08-03 16:15:13] ERROR: Courses Fetched
+[2025-08-03 16:15:13] ERROR: Notifications fetched
+[2025-08-03 16:15:16] ERROR: Daily tasks generated
+[2025-08-03 16:15:16] ERROR: Daily tasks generated
+[2025-08-03 16:15:16] ERROR: User retrieved successfully
+[2025-08-03 16:15:16] ERROR: Progress fetched succesfully
+[2025-08-03 16:15:16] ERROR: Notifications fetched
+[2025-08-03 16:15:17] ERROR: Courses Fetched
+[2025-08-03 16:15:17] ERROR: Progress fetched succesfully
+[2025-08-03 16:15:17] ERROR: User retrieved successfully
+[2025-08-03 16:15:17] ERROR: Notifications fetched
+[2025-08-03 16:15:17] ERROR: Courses Fetched
+[2025-08-03 16:15:23] ERROR: Daily tasks generated
+[2025-08-03 16:15:23] ERROR: User retrieved successfully
+[2025-08-03 16:15:23] ERROR: Progress fetched succesfully
+[2025-08-03 16:15:23] ERROR: Notifications fetched
+[2025-08-03 16:15:23] ERROR: Courses Fetched
+[2025-08-03 16:15:23] ERROR: Daily tasks generated
+[2025-08-03 16:15:23] ERROR: Notifications fetched
+[2025-08-03 16:15:23] ERROR: Progress fetched succesfully
+[2025-08-03 16:15:23] ERROR: Courses Fetched
+[2025-08-03 16:15:23] ERROR: User retrieved successfully
+[2025-08-03 16:15:57] ERROR: Throwing error:
+[2025-08-03 16:15:57] ERROR: Answer is required for evaluation
+[2025-08-03 16:15:57] ERROR: Answer is required for evaluation
+[2025-08-03 16:31:07] ERROR: 
+[2025-08-03 16:31:07] ERROR: 
+[2025-08-03 16:31:07] ERROR: 
+[2025-08-03 16:31:07] ERROR: 
+[2025-08-03 16:31:07] ERROR: Throwing error:
+[2025-08-03 16:31:07] ERROR: Unhotharized
+[2025-08-03 16:31:07] ERROR: Unhotharized
+[2025-08-03 16:31:08] ERROR: Daily tasks generated
+[2025-08-03 16:31:08] ERROR: User retrieved successfully
+[2025-08-03 16:31:08] ERROR: Progress fetched succesfully
+[2025-08-03 16:31:08] ERROR: Notifications fetched
+[2025-08-03 16:31:08] ERROR: Courses Fetched
+[2025-08-03 16:31:37] ERROR: Daily tasks generated
+[2025-08-03 16:31:37] ERROR: User retrieved successfully
+[2025-08-03 16:31:37] ERROR: Daily tasks generated
+[2025-08-03 16:31:37] ERROR: User retrieved successfully
+[2025-08-03 16:31:37] ERROR: Progress fetched succesfully
+[2025-08-03 16:31:37] ERROR: Notifications fetched
+[2025-08-03 16:31:37] ERROR: Courses Fetched
+[2025-08-03 16:31:37] ERROR: Progress fetched succesfully
+[2025-08-03 16:31:37] ERROR: Notifications fetched
+[2025-08-03 16:31:37] ERROR: Courses Fetched
+[2025-08-03 16:32:54] ERROR: Daily tasks generated
+[2025-08-03 16:32:54] ERROR: User retrieved successfully
+[2025-08-03 16:32:54] ERROR: Courses Fetched
+[2025-08-03 16:32:54] ERROR: Progress fetched succesfully
+[2025-08-03 16:32:54] ERROR: Notifications fetched
+[2025-08-03 16:32:56] ERROR: Daily tasks generated
+[2025-08-03 16:32:56] ERROR: User retrieved successfully
+[2025-08-03 16:32:56] ERROR: Progress fetched succesfully
+[2025-08-03 16:32:56] ERROR: Notifications fetched
+[2025-08-03 16:32:56] ERROR: Courses Fetched
+[2025-08-03 16:32:56] ERROR: Daily tasks generated
+[2025-08-03 16:32:56] ERROR: Progress fetched succesfully
+[2025-08-03 16:32:56] ERROR: Notifications fetched
+[2025-08-03 16:32:56] ERROR: User retrieved successfully
+[2025-08-03 16:32:56] ERROR: Courses Fetched
+[2025-08-03 16:45:13] ERROR: Task updated
+[2025-08-03 16:46:17] ERROR: 
+[2025-08-03 16:46:17] ERROR: Failed to transcribe audio file: Failed to transcribe audio for evaluation.
+[2025-08-03 16:46:17] ERROR: Throwing error:
+[2025-08-03 16:46:17] ERROR: Failed to transcribe audio for evaluation
+[2025-08-03 16:46:17] ERROR: Failed to transcribe audio for evaluation
+[2025-08-03 16:53:31] ERROR: Throwing error:
+[2025-08-03 16:53:31] ERROR: Audio file is required
+[2025-08-03 16:53:31] ERROR: Audio file is required
+[2025-08-03 17:34:07] INFO:  Server running on port 4000
+[2025-08-03 17:58:44] ERROR: 
+[2025-08-03 17:58:44] ERROR: Failed to transcribe audio file: Failed to transcribe audio for evaluation.
+[2025-08-03 17:58:44] ERROR: Throwing error:
+[2025-08-03 17:58:44] ERROR: Failed to transcribe audio for evaluation
+[2025-08-03 17:58:44] ERROR: Failed to transcribe audio for evaluation
+[2025-08-03 18:01:16] INFO:  Server running on port 4000
+[2025-08-03 18:01:54] ERROR: Task updated
+[2025-08-03 18:03:37] INFO:  Server running on port 4000
+[2025-08-03 18:04:16] INFO:  Server running on port 4000
+[2025-08-03 18:05:38] INFO:  Server running on port 4000
+[2025-08-03 18:06:44] INFO:  Server running on port 4000
+[2025-08-03 18:07:04] INFO:  Server running on port 4000
+[2025-08-03 18:07:49] INFO:  Server running on port 4000
+[2025-08-03 18:11:39] INFO:  Server running on port 4000
+[2025-08-03 18:29:37] INFO:  Server running on port 4000
+[2025-08-03 18:30:05] INFO:  Server running on port 4000
+[2025-08-03 18:33:24] ERROR: 
+[2025-08-03 18:33:24] ERROR: 
+[2025-08-03 18:33:24] ERROR: 
+[2025-08-03 18:33:24] ERROR: 
+[2025-08-03 18:33:24] ERROR: Throwing error:
+[2025-08-03 18:33:24] ERROR: Unhotharized
+[2025-08-03 18:33:24] ERROR: Unhotharized
+[2025-08-03 18:33:24] ERROR: 
+[2025-08-03 18:33:24] ERROR: 
+[2025-08-03 18:33:24] ERROR: 
+[2025-08-03 18:33:24] ERROR: Throwing error:
+[2025-08-03 18:33:24] ERROR: Unhotharized
+[2025-08-03 18:33:24] ERROR: Unhotharized
+[2025-08-03 18:33:24] ERROR: 
+[2025-08-03 18:33:24] ERROR: User retrieved successfully
+[2025-08-03 18:33:24] ERROR: Progress fetched succesfully
+[2025-08-03 18:33:24] ERROR: Daily tasks generated
+[2025-08-03 18:33:24] ERROR: Notifications fetched
+[2025-08-03 18:33:24] ERROR: User retrieved successfully
+[2025-08-03 18:33:24] ERROR: Progress fetched succesfully
+[2025-08-03 18:33:24] ERROR: Daily tasks generated
+[2025-08-03 18:33:24] ERROR: Notifications fetched
+[2025-08-03 18:33:24] ERROR: Courses Fetched
+[2025-08-03 18:33:24] ERROR: Courses Fetched

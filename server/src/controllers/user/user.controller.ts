@@ -104,6 +104,28 @@ export class UserController implements IUserController {
   } catch (error) {
     handleControllerError(res, error);
   }
+  }
+async updateDailyTask(req: Request, res: Response): Promise<void> {
+  try {
+    const { taskId, taskType } = req.body;
+    const audioFile = req.file; // for speaking task
+    const answer = req.body.answer; // for writing or listening
+
+    if (!taskId || !taskType) {
+      throwError("Missing required fields", StatusCode.BAD_REQUEST);
+    }
+
+    const result = await this.userService.updateDailyTask({
+  taskId,
+  taskType,
+  answer,
+  audioFile,
+});
+
+    sendResponse(res, StatusCode.OK, "Task updated", true, result);
+  } catch (error) {
+    handleControllerError(res, error);
+  }
 }
 
 

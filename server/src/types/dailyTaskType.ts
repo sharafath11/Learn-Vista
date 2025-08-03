@@ -19,3 +19,13 @@ export interface IDailyTask extends Document {
   createdAt?: Date;
   updatedAt?: Date;
 }
+export interface IUpdateDailyTaskInput {
+  taskId: string;
+  taskType: string;
+  answer?: string;
+  audioFile?: Express.Multer.File;
+}
+export interface ISubTaskWithSignedUrl {
+  updatedSubtask: ISubTask;
+  signedUrl: string;
+}

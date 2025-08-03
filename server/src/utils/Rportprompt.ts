@@ -101,16 +101,13 @@ Now generate a new question.
 
 
 
+// A more robust prompt to ensure correct JSON output
+export  const dailyTaskPrompt = (day:number) => `
+You are an English learning assistant. For day ${day}, generate 3 tasks for a student learning English at a beginner to intermediate level. Each task should be unique and practical.
 
-export const dailyTaskPrompt = (day: number) => `
-You are an English learning assistant. For day ${day}, generate 3 tasks for a student learning English at beginner to intermediate level. Each task should be unique and practical.
+Respond with ONLY a single, valid JSON object that contains the tasks. Do NOT include any additional text, explanations, or code blocks outside of the JSON.
 
-Provide:
-1. A speaking task (for example, describe your favorite meal, or answer a situational question).
-2. A listening task (provide a short audio script or dialogue that the student could listen to and answer questions on).
-3. A writing task (for example, write a short email, describe a picture, or answer a question in 100 words).
-
-Format the response as:
+The JSON object MUST have the following structure:
 {
   "day": ${day},
   "tasks": [
@@ -132,4 +129,34 @@ Format the response as:
     }
   ]
 }
+
+Please generate the content for a speaking, listening, and writing task for day ${day} following this exact structure.
 `;
+
+
+
+export const buildDailyTaskEvaluationPrompt = (task: {
+  type: "writing" | "listening" | "speaking";
+  prompt: string;
+  userResponse: string;
+}) => `
+You are a professional English language evaluator helping students improve their language skills.
+
+Evaluate the student's response to the following **${task.type}** task.
+
+Instructions:
+1. Determine whether the response correctly and completely addresses the task prompt.
+2. Check for grammar, vocabulary, clarity, and relevance.
+3. Give short, clear feedback. Mention specific improvements if needed.
+4. Assign a score out of 10 based on quality and task fit.
+
+⚠️ Respond strictly in this JSON format:
+{
+  "type": "${task.type}",
+  "prompt": "${task.prompt.replace(/"/g, '\\"')}",
+  "studentResponse": "${task.userResponse.replace(/"/g, '\\"')}",
+  "feedback": "Your evaluation and suggestions here",
+  "score": <number between 0 and 10>
+}
+`;
+
