@@ -52,7 +52,6 @@ export default function ConcernsPage() {
         }))
       }
     } catch (error) {
-      console.error("Error fetching concerns:", error)
     } finally {
       setIsLoading(false)
     }

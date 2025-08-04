@@ -153,9 +153,6 @@ export function AddLessonModal({
     };
 
     const handleVideoError = (e: Event) => {
-      console.error("tempVideo error event:", e);
-      console.error("tempVideo networkState:", tempVideo.networkState);
-      console.error("tempVideo error object:", (tempVideo as HTMLVideoElement).error);
       showErrorToast("Could not retrieve video duration. Video might be corrupted or unsupported.");
       form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
       setUploadedS3VideoUrl(publicVideoUrl);

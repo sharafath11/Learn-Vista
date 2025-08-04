@@ -52,7 +52,6 @@ export default function CertificatePage() {
       await generateCertificatePDF(certificateRef.current, certificate)
       showInfoToast("Certificate downloaded successfully!")
     } catch (err) {
-      console.error("Download error:", err)
       showInfoToast("Failed to download certificate.")
     }
   }

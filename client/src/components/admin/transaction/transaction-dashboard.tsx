@@ -60,7 +60,6 @@ export default function TransactionDashboard() {
         showErrorToast(res.msg || "Failed to fetch transactions")
       }
     } catch (error) {
-      console.error("Error fetching transactions:", error)
       showErrorToast("Error fetching transactions")
     } finally {
       setLoading(false)

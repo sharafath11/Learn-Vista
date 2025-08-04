@@ -92,7 +92,6 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
         minute: "2-digit"
       })
     } catch (error) {
-      console.error("Error formatting date:", dateString, error)
       return "Invalid Date"
     }
   }

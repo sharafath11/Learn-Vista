@@ -8,6 +8,7 @@ import { UserAPIMethods } from "@/src/services/APImethods";
 import { IDonation } from "@/src/types/donationTyps";
 import { NotificationListener } from "@/src/components/NotificationListener";
 import { useUserContext } from "@/src/context/userAuthContext";
+import { showErrorToast } from "@/src/utils/Toast";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
@@ -24,7 +25,7 @@ export default function SuccessPage() {
       if (res.ok) {
         setSession(res.data);
       } else {
-        console.error("Failed to fetch donation session");
+        showErrorToast("Failed to fetch donation session");
       }
       setLoading(false);
     };

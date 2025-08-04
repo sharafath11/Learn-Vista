@@ -67,7 +67,6 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
     setIsProcessing(false)
 
     if (!res?.ok) {
-      console.error("Status update failed:", res.msg)
       return showInfoToast(res.msg)
     }
     setAllConcerns(prev =>

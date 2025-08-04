@@ -109,7 +109,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           });
 
           peer.on("error", (err) => {
-            console.error("User: Peer error:", err);
             peerRef.current = null;
             setMentorStream(null);
             setIsPlaying(false); 
@@ -147,7 +146,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
         });
 
       } catch (err) {
-        console.error("User: Init error:", err);
         toast.error("Failed to join session");
         window.location.href="/user/live-classes"
       }
@@ -184,7 +182,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
       videoRef.current.play().then(() => {
           setIsPlaying(true); 
       }).catch(e => {
-          console.error("User: Error playing video after user interaction:", e);
           toast.error("Failed to play video. Please ensure browser autoplay settings allow it.");
       });
     }

@@ -101,7 +101,6 @@ export default function SignupForm() {
         showSuccessToast("OTP sent to your email");
       }
     } catch (error) {
-      console.error("Send OTP error:", error);
       showErrorToast("Failed to send OTP");
     }
   };
@@ -129,7 +128,6 @@ export default function SignupForm() {
         router.push("/user/login");
       }
     } catch (error) {
-      console.error("Signup error:", error);
       showErrorToast("Signup failed. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -144,7 +142,6 @@ export default function SignupForm() {
         router.push("/");
       }
     } catch (error) {
-      console.error("Google signup error:", error);
       showErrorToast("Signup failed, please try again.");
     }
   };
@@ -170,7 +167,6 @@ export default function SignupForm() {
             router.push("/");
           }
         } catch (error) {
-          console.error("Auto login error:", error);
         }
       }
     };

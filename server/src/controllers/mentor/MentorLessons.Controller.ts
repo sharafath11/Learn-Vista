@@ -73,7 +73,6 @@ export class MentorLessonsController implements IMentorLessonsController {
     // Generate PUT URL for upload
     s3.getSignedUrl("putObject", uploadParams, (err, signedUploadUrl) => {
       if (err) {
-        console.error("[S3Upload] Error generating upload URL:", err);
         return handleControllerError(res, throwError("Upload URL generation failed.", StatusCode.INTERNAL_SERVER_ERROR));
       }
 
@@ -132,7 +131,6 @@ export class MentorLessonsController implements IMentorLessonsController {
             sendResponse(res, StatusCode.CREATED, "Lesson added successfully", true, createdLesson);
 
         } catch (error: any) {
-            console.error("Error adding lesson:", error);
             handleControllerError(res, error);
         }
     }
@@ -171,7 +169,6 @@ export class MentorLessonsController implements IMentorLessonsController {
     const updatedLesson = await this._mentorLessonsSerive.editLesson(lessonId, updateData);
     sendResponse(res, StatusCode.OK, "Lesson updated successfully", true, updatedLesson);
   } catch (error) {
-    console.error("Error editing lesson:", error);
     handleControllerError(res, error);
   }
 }
@@ -243,7 +240,6 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
             if (error.statusCode && error.message) {
                 return sendResponse(res, error.statusCode, error.message, false);
             }
-            console.error("An unexpected error occurred in getSignedVideoUrl:", error);
             return sendResponse(res, StatusCode.INTERNAL_SERVER_ERROR, 'An unexpected server error occurred.', false);
         }
      }

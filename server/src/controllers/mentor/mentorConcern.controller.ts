@@ -37,7 +37,6 @@ export class MentorConcernController implements IMentorConcernController {
 
     sendResponse(res, StatusCode.OK, "Concern raised successfully", true, concern);
   } catch (error) {
-    console.error("Error in addConcern Controller:", error);
     handleControllerError(res, error);
   }
 }

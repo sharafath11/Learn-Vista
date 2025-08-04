@@ -38,7 +38,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         router.push("/user/login");
       }
     } catch (error) {
-      console.error("Failed to fetch user data:", error);
       router.push("/user/login");
     }
   }, [router]);

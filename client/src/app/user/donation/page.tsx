@@ -38,7 +38,6 @@ export default function DonationHistoryPage() {
       setHasMore(res.data.hasMore)
       setPage(currentPage + 1)
     } catch (err) {
-      console.error("Failed to fetch donations:", err)
     } finally {
       setLoading(false)
     }
@@ -87,7 +86,6 @@ export default function DonationHistoryPage() {
       }
       await generateReceiptPDF(receiptData)
     } catch (error) {
-      console.error("Error generating PDF:", error)
     } finally {
       setDownloadingPDFId(null)
     }

@@ -185,7 +185,6 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
         totalPages: Math.ceil(total / limit),
       };
     } catch (error) {
-      console.error('Error in getClassRepo:', error);
       throwError('Failed to fetch courses', 500);
     }
   }

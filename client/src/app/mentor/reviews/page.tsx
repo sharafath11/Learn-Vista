@@ -66,7 +66,6 @@ export default function ReviewsComponent() {
         setComments(res.data.comments)
         setTotalPages(res.data.pagination.totalPages)
       } catch (err) {
-        console.error("Failed to fetch comments", err)
       } finally {
         setLoading(false)
       }

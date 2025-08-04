@@ -41,7 +41,6 @@ export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
         showErrorToast("Failed to fetch comments. Please try again.");
       }
     } catch (error) {
-      console.error("Error fetching comments:", error);
       showErrorToast("An unexpected error occurred while fetching comments.");
     } finally {
       setLoadingComments(false);

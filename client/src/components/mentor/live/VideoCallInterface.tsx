@@ -75,7 +75,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           });
 
           peer.on("error", err => {
-            console.error(`MentorStream: Peer error for user ${userId} (socket: ${socketId}):`, err);
             removePeer(socketId);
             toast.error(`Viewer ${userId.slice(0,5)} connection error.`);
           });
@@ -120,7 +119,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         });
 
       } catch (err) {
-        console.error("MentorStream: Error during initialization:", err);
         toast.error("Failed to initialize stream");
       }
     };
@@ -191,7 +189,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         toast.success("Screen sharing started");
       }
     } catch (err) {
-      console.error("MentorStream: Error during screen sharing:", err);
       toast.error("Failed to toggle screen share. Ensure permissions are granted.");
     }
   };

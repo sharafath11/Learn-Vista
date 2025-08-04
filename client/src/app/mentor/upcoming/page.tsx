@@ -34,7 +34,6 @@ export default function UpcomingSessions() {
       return currentTime >= courseStartDate && currentTime <= courseEndDate && 
              currentTime >= startWindow && currentTime <= endWindow
     } catch (err) {
-      console.error("Error in time eligibility check:", err)
       return false
     }
   }
@@ -47,7 +46,6 @@ export default function UpcomingSessions() {
       const sessionEnd = new Date(sessionEndDate.getFullYear(), sessionEndDate.getMonth(), sessionEndDate.getDate())
       return isBefore(sessionEnd, today)
     } catch (err) {
-      console.error("Error checking if session ended:", err)
       return false
     }
   }

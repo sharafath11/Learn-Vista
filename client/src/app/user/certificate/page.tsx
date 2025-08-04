@@ -29,7 +29,6 @@ export default function CertificateListPage() {
       const data = await UserAPIMethods.getCertificates(queryParams)
       setCertificates(data.data.data)
     } catch (error) {
-      console.error("Failed to fetch certificates", error)
     } finally {
       setLoading(false)
     }

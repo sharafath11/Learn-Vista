@@ -4,7 +4,7 @@
 import Image from "next/image";
 import { Settings } from "lucide-react";
 import { useUserContext } from "@/src/context/userAuthContext";
-import { useState, useEffect } from "react"; // Keep useEffect if you decide to use it, but for direct prop it's not strictly needed for the image src
+import { useState, useEffect } from "react"; 
 import EditProfileModal from "./EditProfileModal";
 import ChangePasswordModal from "../../ChangePasswordModal";
 
@@ -13,10 +13,7 @@ export default function ProfileCard() {
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
-  // --- ADDED CONSOLE LOGS ---
-  console.debug("[ProfileCard] Component rendering.");
-  console.debug("[ProfileCard] User object from context:", user);
-  console.debug("[ProfileCard] Raw user?.profilePicture value:", user?.profilePicture);
+
 
   const formattedDate = user?.createdAt
     ? new Date(user.createdAt).toLocaleDateString("en-US", {
@@ -26,9 +23,7 @@ export default function ProfileCard() {
       })
     : "";
 
-  // Determine the final image source here and log it
   const finalProfileImageSrc = user?.profilePicture || "/default-avatar.png";
-  console.debug("[ProfileCard] Final Image src for <Image> component:", finalProfileImageSrc);
 
   return (
     <>

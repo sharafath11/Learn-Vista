@@ -32,7 +32,6 @@ export default function ReportModal({ report, isOpen, onClose }: ReportModalProp
   try {
     parsedReport = JSON.parse(cleanedTruncated);
   } catch (err) {
-    console.error("Failed to parse report JSON:", err);
     return <p>Failed to load report.</p>;
   }
 

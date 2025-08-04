@@ -62,7 +62,6 @@ const Page = () => {
       setCourses(newCourses.filter((i: IPopulatedCourse) => !i.isBlock))
       setTotalPages(totalPages)
     } else {
-      console.error(res.msg)
       setCourses([])
       setTotalPages(0)
     }

@@ -62,7 +62,6 @@ export const useMentorPagination = (): UseMentorPaginationReturn => {
         throw new Error(res.msg || 'Failed to fetch mentors');
       }
     } catch (error: unknown) {
-      console.error("Failed to fetch mentors:", error);
       showInfoToast(error instanceof Error ? error.message : 'Failed to fetch mentors');
     } finally {
       setLoading(false);

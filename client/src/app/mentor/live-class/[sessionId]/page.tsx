@@ -61,7 +61,6 @@ export default function LiveStarterPage() {
       const liveId=res.data.liveId
       router.push(`/mentor/live/${liveId}`);
     } else {
-      console.error("Failed to start live stream:", res.message || "Unknown error");
       showInfoToast("Failed to start the live stream. Please try again.");
     }
   };

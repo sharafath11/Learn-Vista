@@ -56,7 +56,6 @@ export default function LetsFunPSC() {
         throw new Error("API Error")
       }
     } catch (error) {
-      console.error("Error loading question:", error)
       setApiUnavailable(true)
       showErrorToast("Service temporarily unavailable")
     } finally {

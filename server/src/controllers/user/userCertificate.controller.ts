@@ -49,7 +49,6 @@ export class UserCertificateController implements IUserCertificateController {
       total,
     });
   } catch (error) {
-    console.error("[GET /certificates] Error occurred:", error);
     handleControllerError(res, error);
   }
 }

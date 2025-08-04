@@ -172,9 +172,7 @@ export function EditLessonModal({
       };
 
       const handleVideoError = (e: Event) => {
-        console.error("tempVideo error event:", e);
-        console.error("tempVideo networkState:", tempVideo.networkState);
-        console.error("tempVideo error object:", (tempVideo as HTMLVideoElement).error);
+       
         showErrorToast("Could not retrieve video duration. Video might be corrupted or unsupported.");
         form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
         setUploadedS3VideoUrl(publicVideoUrl);
@@ -192,7 +190,6 @@ export function EditLessonModal({
    
 
     } catch (error: any) {
-      console.error("Video upload error:", error);
       showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
       form.setValue("videoUrl", "");
       form.setValue("duration", "");
@@ -215,11 +212,10 @@ export function EditLessonModal({
         showErrorToast(`Delete failed: ${deleteResult.error?.message || "Unknown error"}`);
       }
     } catch (error: any) {
-      console.error("Video removal error:", error);
       showErrorToast(`Delete Error: ${error.message || "Unexpected error."}`);
     } finally {
       form.setValue("videoUrl", "");
-      form.setValue("duration", ""); // Also clear duration
+      form.setValue("duration", ""); 
       setUploadedS3VideoUrl(null);
     }
   };
@@ -299,7 +295,6 @@ export function EditLessonModal({
       onLessonUpdated();
       setOpen(false);
     } catch (error) {
-      console.error(error);
       showErrorToast("Failed to update lesson.");
     } finally {
       setIsSaving(false);

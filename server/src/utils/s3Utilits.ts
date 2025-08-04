@@ -27,7 +27,6 @@ export async function uploadBufferToS3(
     await s3.send(command);
     return key;
   } catch (error) {
-    console.error(`Error uploading file to S3 in folder ${folder}:`, error);
     throw new Error(`Failed to upload file to S3: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
@@ -40,7 +39,6 @@ export async function deleteFromS3(s3Key: string): Promise<void> {
     });
     await s3.send(command);
   } catch (error) {
-    console.error(`Error deleting file from S3: ${s3Key}`, error);
     throw new Error(`Failed to delete file from S3: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
@@ -57,7 +55,6 @@ export async function getSignedS3Url(
     const signedUrl = await getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
     return signedUrl;
   } catch (error) {
-    console.error(`Error generating signed URL for key ${key}:`, error);
     throw new Error(`Failed to generate signed URL: ${error instanceof Error ? error.message : String(error)}`);
   }
 }

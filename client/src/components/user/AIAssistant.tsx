@@ -70,7 +70,6 @@ const BatmanAssistant = () => {
         setMessages((prev) => [...prev, { role: "batman", content: "Something’s wrong in Gotham. Try again later." }])
       }
     } catch (error) {
-      console.error("Error sending message:", error)
       setIsLoading(false)
       setMessages((prev) => [
         ...prev,
