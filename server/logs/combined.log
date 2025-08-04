@@ -3838,3 +3838,546 @@ Please generate the content for a speaking, listening, and writing task for day 
 [2025-08-04 13:39:54] ERROR: 
 [2025-08-04 13:39:55] ERROR: Donations fetched successfully
 [2025-08-04 13:39:55] ERROR: Donations fetched successfully
+[2025-08-04 20:10:22] INFO:  Server running on port 4000
+[2025-08-04 20:10:23] ERROR: User retrieved successfully
+[2025-08-04 20:10:23] ERROR: 
+[2025-08-04 20:10:23] ERROR: Progress fetched succesfully
+[2025-08-04 20:10:23] ERROR: Courses Fetched
+[2025-08-04 20:10:23] ERROR: Notifications fetched
+[2025-08-04 20:10:23] ERROR: Daily tasks generated
+[2025-08-04 20:10:23] ERROR: 
+[2025-08-04 20:10:39] ERROR: User retrieved successfully
+[2025-08-04 20:10:39] ERROR: 
+[2025-08-04 20:10:39] ERROR: Progress fetched succesfully
+[2025-08-04 20:10:39] ERROR: Courses Fetched
+[2025-08-04 20:10:39] ERROR: User retrieved successfully
+[2025-08-04 20:10:39] ERROR: Notifications fetched
+[2025-08-04 20:10:39] ERROR: Progress fetched succesfully
+[2025-08-04 20:10:39] ERROR: Daily tasks generated
+[2025-08-04 20:10:39] ERROR: Courses Fetched
+[2025-08-04 20:10:39] ERROR: 
+[2025-08-04 20:10:40] ERROR: Notifications fetched
+[2025-08-04 20:10:40] ERROR: Daily tasks generated
+[2025-08-04 20:12:06] INFO:  Server running on port 4000
+[2025-08-04 20:13:19] ERROR: 
+[2025-08-04 20:13:19] ERROR: 
+[2025-08-04 20:13:19] ERROR: 
+[2025-08-04 20:13:19] ERROR: 
+[2025-08-04 20:13:19] ERROR: 
+[2025-08-04 20:13:19] ERROR: Throwing error:
+[2025-08-04 20:13:20] ERROR: Unhotharized
+[2025-08-04 20:13:20] ERROR: Unhotharized
+[2025-08-04 20:13:20] ERROR: 
+[2025-08-04 20:13:20] ERROR: User retrieved successfully
+[2025-08-04 20:13:20] ERROR: Progress fetched succesfully
+[2025-08-04 20:13:20] ERROR: Notifications fetched
+[2025-08-04 20:13:20] ERROR: Daily tasks generated
+[2025-08-04 20:13:20] ERROR: 
+[2025-08-04 20:13:20] ERROR: Courses Fetched
+[2025-08-04 20:13:20] ERROR: 
+[2025-08-04 20:13:24] ERROR: User retrieved successfully
+[2025-08-04 20:13:24] ERROR: Progress fetched succesfully
+[2025-08-04 20:13:24] ERROR: Courses Fetched
+[2025-08-04 20:13:24] ERROR: Notifications fetched
+[2025-08-04 20:13:24] ERROR: Daily tasks generated
+[2025-08-04 20:13:24] ERROR: 
+[2025-08-04 20:13:24] ERROR: 
+[2025-08-04 20:13:25] ERROR: Progress fetched succesfully
+[2025-08-04 20:13:25] ERROR: User retrieved successfully
+[2025-08-04 20:13:25] ERROR: Notifications fetched
+[2025-08-04 20:13:25] ERROR: Daily tasks generated
+[2025-08-04 20:13:25] ERROR: 
+[2025-08-04 20:13:25] ERROR: Courses Fetched
+[2025-08-04 20:13:25] ERROR: 
+[2025-08-04 20:13:28] ERROR: User retrieved successfully
+[2025-08-04 20:13:28] ERROR: Progress fetched succesfully
+[2025-08-04 20:13:28] ERROR: Notifications fetched
+[2025-08-04 20:13:28] ERROR: Daily tasks generated
+[2025-08-04 20:13:28] ERROR: Courses Fetched
+[2025-08-04 20:13:28] ERROR: 
+[2025-08-04 20:13:28] ERROR: 
+[2025-08-04 20:13:37] ERROR: User retrieved successfully
+[2025-08-04 20:13:37] ERROR: Progress fetched succesfully
+[2025-08-04 20:13:37] ERROR: Notifications fetched
+[2025-08-04 20:13:37] ERROR: Courses Fetched
+[2025-08-04 20:13:37] ERROR: Daily tasks generated
+[2025-08-04 20:13:38] ERROR: 
+[2025-08-04 20:13:38] ERROR: 
+[2025-08-04 20:13:48] ERROR: Fetced categrios0
+[2025-08-04 20:13:48] ERROR: Courses Fetched
+[2025-08-04 20:13:48] ERROR: Fetced categrios0
+[2025-08-04 20:13:48] ERROR: Courses Fetched
+[2025-08-04 20:13:48] ERROR: Courses Fetched
+[2025-08-04 20:13:52] ERROR: 
+[2025-08-04 20:13:52] ERROR: 
+[2025-08-04 20:13:55] ERROR: 
+[2025-08-04 20:13:55] ERROR: 
+[2025-08-04 20:14:04] ERROR: 
+[2025-08-04 20:14:04] ERROR: 
+[2025-08-04 20:14:06] ERROR: 
+[2025-08-04 20:14:06] ERROR: 
+[2025-08-04 20:14:10] ERROR: 
+[2025-08-04 20:14:10] ERROR: 
+[2025-08-04 20:14:11] ERROR: Fetced categrios0
+[2025-08-04 20:14:11] ERROR: Courses Fetched
+[2025-08-04 20:14:11] ERROR: Fetced categrios0
+[2025-08-04 20:14:11] ERROR: Courses Fetched
+[2025-08-04 20:14:11] ERROR: Courses Fetched
+[2025-08-04 20:14:15] ERROR: 
+[2025-08-04 20:14:15] ERROR: 
+[2025-08-04 20:14:17] ERROR: 
+[2025-08-04 20:14:17] ERROR: 
+[2025-08-04 20:14:22] ERROR: Lesson progress updated
+[2025-08-04 20:14:33] ERROR: Lesson progress updated
+[2025-08-04 20:14:34] ERROR: 
+[2025-08-04 20:14:34] ERROR: 
+[2025-08-04 20:14:39] ERROR: Notifications fetched
+[2025-08-04 20:14:39] ERROR: Notifications fetched
+[2025-08-04 20:14:39] ERROR: Notifications fetched
+[2025-08-04 20:14:40] ERROR: Notifications fetched
+[2025-08-04 20:18:43] ERROR: 
+[2025-08-04 20:18:43] ERROR: Progress fetched succesfully
+[2025-08-04 20:18:43] ERROR: Notifications fetched
+[2025-08-04 20:18:43] ERROR: User retrieved successfully
+[2025-08-04 20:18:43] ERROR: Courses Fetched
+[2025-08-04 20:18:43] ERROR: Daily tasks generated
+[2025-08-04 20:18:43] ERROR: 
+[2025-08-04 20:19:10] INFO:  Server running on port 4000
+[2025-08-04 20:19:36] ERROR: User retrieved successfully
+[2025-08-04 20:19:36] ERROR: Progress fetched succesfully
+[2025-08-04 20:19:36] ERROR: 
+[2025-08-04 20:19:36] ERROR: Courses Fetched
+[2025-08-04 20:19:36] ERROR: Notifications fetched
+[2025-08-04 20:19:36] ERROR: Daily tasks generated
+[2025-08-04 20:19:36] ERROR: 
+[2025-08-04 20:19:37] ERROR: User retrieved successfully
+[2025-08-04 20:19:37] ERROR: Progress fetched succesfully
+[2025-08-04 20:19:38] ERROR: Notifications fetched
+[2025-08-04 20:19:38] ERROR: Courses Fetched
+[2025-08-04 20:19:38] ERROR: Daily tasks generated
+[2025-08-04 20:19:38] ERROR: 
+[2025-08-04 20:19:38] ERROR: 
+[2025-08-04 20:19:41] ERROR: User retrieved successfully
+[2025-08-04 20:19:41] ERROR: Progress fetched succesfully
+[2025-08-04 20:19:41] ERROR: Notifications fetched
+[2025-08-04 20:19:41] ERROR: Courses Fetched
+[2025-08-04 20:19:41] ERROR: Daily tasks generated
+[2025-08-04 20:19:41] ERROR: 
+[2025-08-04 20:19:42] ERROR: 
+[2025-08-04 20:19:43] ERROR: User retrieved successfully
+[2025-08-04 20:19:43] ERROR: Progress fetched succesfully
+[2025-08-04 20:19:43] ERROR: Notifications fetched
+[2025-08-04 20:19:43] ERROR: Courses Fetched
+[2025-08-04 20:19:43] ERROR: Daily tasks generated
+[2025-08-04 20:19:43] ERROR: 
+[2025-08-04 20:19:43] ERROR: 
+[2025-08-04 20:19:45] ERROR: User retrieved successfully
+[2025-08-04 20:19:45] ERROR: Progress fetched succesfully
+[2025-08-04 20:19:45] ERROR: Notifications fetched
+[2025-08-04 20:19:45] ERROR: Courses Fetched
+[2025-08-04 20:19:45] ERROR: Daily tasks generated
+[2025-08-04 20:19:45] ERROR: 
+[2025-08-04 20:19:45] ERROR: 
+[2025-08-04 20:19:58] ERROR: User retrieved successfully
+[2025-08-04 20:19:58] ERROR: 
+[2025-08-04 20:19:59] ERROR: Progress fetched succesfully
+[2025-08-04 20:19:59] ERROR: Courses Fetched
+[2025-08-04 20:19:59] ERROR: Notifications fetched
+[2025-08-04 20:19:59] ERROR: User retrieved successfully
+[2025-08-04 20:19:59] ERROR: Daily tasks generated
+[2025-08-04 20:19:59] ERROR: Progress fetched succesfully
+[2025-08-04 20:19:59] ERROR: Notifications fetched
+[2025-08-04 20:19:59] ERROR: Daily tasks generated
+[2025-08-04 20:19:59] ERROR: 
+[2025-08-04 20:19:59] ERROR: Courses Fetched
+[2025-08-04 20:20:06] ERROR: User retrieved successfully
+[2025-08-04 20:20:06] ERROR: Progress fetched succesfully
+[2025-08-04 20:20:06] ERROR: 
+[2025-08-04 20:20:06] ERROR: Notifications fetched
+[2025-08-04 20:20:06] ERROR: Courses Fetched
+[2025-08-04 20:20:06] ERROR: Daily tasks generated
+[2025-08-04 20:20:06] ERROR: 
+[2025-08-04 20:21:11] INFO:  Server running on port 4000
+[2025-08-04 20:21:37] ERROR: 
+[2025-08-04 20:21:38] ERROR: User retrieved successfully
+[2025-08-04 20:21:38] ERROR: Courses Fetched
+[2025-08-04 20:21:38] ERROR: Notifications fetched
+[2025-08-04 20:21:38] ERROR: Progress fetched succesfully
+[2025-08-04 20:21:38] ERROR: 
+[2025-08-04 20:21:38] ERROR: Daily tasks generated
+[2025-08-04 20:21:40] ERROR: User retrieved successfully
+[2025-08-04 20:21:40] ERROR: Progress fetched succesfully
+[2025-08-04 20:21:40] ERROR: Notifications fetched
+[2025-08-04 20:21:40] ERROR: Courses Fetched
+[2025-08-04 20:21:40] ERROR: Daily tasks generated
+[2025-08-04 20:21:40] ERROR: 
+[2025-08-04 20:21:41] ERROR: 
+[2025-08-04 20:21:48] ERROR: User retrieved successfully
+[2025-08-04 20:21:48] ERROR: Progress fetched succesfully
+[2025-08-04 20:21:48] ERROR: 
+[2025-08-04 20:21:48] ERROR: Courses Fetched
+[2025-08-04 20:21:48] ERROR: Notifications fetched
+[2025-08-04 20:21:48] ERROR: Daily tasks generated
+[2025-08-04 20:21:48] ERROR: 
+[2025-08-04 20:21:50] ERROR: User retrieved successfully
+[2025-08-04 20:21:50] ERROR: Progress fetched succesfully
+[2025-08-04 20:21:50] ERROR: Notifications fetched
+[2025-08-04 20:21:50] ERROR: Courses Fetched
+[2025-08-04 20:21:50] ERROR: Daily tasks generated
+[2025-08-04 20:21:50] ERROR: 
+[2025-08-04 20:21:50] ERROR: 
+[2025-08-04 20:21:50] ERROR: User retrieved successfully
+[2025-08-04 20:21:50] ERROR: Progress fetched succesfully
+[2025-08-04 20:21:50] ERROR: Notifications fetched
+[2025-08-04 20:21:50] ERROR: Daily tasks generated
+[2025-08-04 20:21:51] ERROR: Courses Fetched
+[2025-08-04 20:21:51] ERROR: 
+[2025-08-04 20:21:51] ERROR: 
+[2025-08-04 20:21:52] ERROR: User retrieved successfully
+[2025-08-04 20:21:52] ERROR: Progress fetched succesfully
+[2025-08-04 20:21:52] ERROR: Notifications fetched
+[2025-08-04 20:21:52] ERROR: Courses Fetched
+[2025-08-04 20:21:52] ERROR: Daily tasks generated
+[2025-08-04 20:21:52] ERROR: 
+[2025-08-04 20:21:52] ERROR: 
+[2025-08-04 20:22:03] ERROR: User retrieved successfully
+[2025-08-04 20:22:03] ERROR: Progress fetched succesfully
+[2025-08-04 20:22:03] ERROR: Notifications fetched
+[2025-08-04 20:22:03] ERROR: Daily tasks generated
+[2025-08-04 20:22:03] ERROR: Courses Fetched
+[2025-08-04 20:22:03] ERROR: 
+[2025-08-04 20:22:03] ERROR: 
+[2025-08-04 20:24:33] INFO:  Server running on port 4000
+[2025-08-04 20:24:59] INFO:  Server running on port 4000
+[2025-08-04 20:25:10] ERROR: User retrieved successfully
+[2025-08-04 20:25:10] ERROR: Courses Fetched
+[2025-08-04 20:25:10] ERROR: Progress fetched succesfully
+[2025-08-04 20:25:10] ERROR: Notifications fetched
+[2025-08-04 20:25:10] ERROR: Daily tasks generated
+[2025-08-04 20:25:10] ERROR: 
+[2025-08-04 20:25:10] ERROR: 
+[2025-08-04 20:25:33] ERROR: User retrieved successfully
+[2025-08-04 20:25:34] ERROR: Courses Fetched
+[2025-08-04 20:25:34] ERROR: Progress fetched succesfully
+[2025-08-04 20:25:34] ERROR: 
+[2025-08-04 20:25:34] ERROR: User retrieved successfully
+[2025-08-04 20:25:34] ERROR: Notifications fetched
+[2025-08-04 20:25:34] ERROR: Progress fetched succesfully
+[2025-08-04 20:25:34] ERROR: Courses Fetched
+[2025-08-04 20:25:34] ERROR: Daily tasks generated
+[2025-08-04 20:25:34] ERROR: Notifications fetched
+[2025-08-04 20:25:34] ERROR: Daily tasks generated
+[2025-08-04 20:25:34] ERROR: 
+[2025-08-04 20:25:36] ERROR: User retrieved successfully
+[2025-08-04 20:25:36] ERROR: Progress fetched succesfully
+[2025-08-04 20:25:36] ERROR: Notifications fetched
+[2025-08-04 20:25:36] ERROR: Courses Fetched
+[2025-08-04 20:25:36] ERROR: Daily tasks generated
+[2025-08-04 20:25:36] ERROR: 
+[2025-08-04 20:25:36] ERROR: 
+[2025-08-04 20:25:38] ERROR: Progress fetched succesfully
+[2025-08-04 20:25:38] ERROR: Notifications fetched
+[2025-08-04 20:25:38] ERROR: Daily tasks generated
+[2025-08-04 20:25:38] ERROR: User retrieved successfully
+[2025-08-04 20:25:38] ERROR: Courses Fetched
+[2025-08-04 20:25:38] ERROR: 
+[2025-08-04 20:25:38] ERROR: 
+[2025-08-04 20:25:39] ERROR: 
+[2025-08-04 20:25:39] ERROR: User retrieved successfully
+[2025-08-04 20:25:39] ERROR: Progress fetched succesfully
+[2025-08-04 20:25:39] ERROR: Notifications fetched
+[2025-08-04 20:25:39] ERROR: Courses Fetched
+[2025-08-04 20:25:39] ERROR: Daily tasks generated
+[2025-08-04 20:25:39] ERROR: 
+[2025-08-04 20:25:43] ERROR: User retrieved successfully
+[2025-08-04 20:25:43] ERROR: Progress fetched succesfully
+[2025-08-04 20:25:43] ERROR: Notifications fetched
+[2025-08-04 20:25:43] ERROR: Courses Fetched
+[2025-08-04 20:25:43] ERROR: Daily tasks generated
+[2025-08-04 20:25:43] ERROR: 
+[2025-08-04 20:25:43] ERROR: 
+[2025-08-04 20:26:44] INFO:  Server running on port 4000
+[2025-08-04 20:30:06] INFO:  Server running on port 4000
+[2025-08-04 20:30:21] ERROR: 
+[2025-08-04 20:30:22] ERROR: 
+[2025-08-04 20:30:22] ERROR: 
+[2025-08-04 20:30:22] ERROR: 
+[2025-08-04 20:30:22] ERROR: 
+[2025-08-04 20:30:22] ERROR: Throwing error:
+[2025-08-04 20:30:22] ERROR: Unhotharized
+[2025-08-04 20:30:22] ERROR: Unhotharized
+[2025-08-04 20:30:22] ERROR: 
+[2025-08-04 20:30:22] ERROR: User retrieved successfully
+[2025-08-04 20:30:22] ERROR: Progress fetched succesfully
+[2025-08-04 20:30:22] ERROR: Courses Fetched
+[2025-08-04 20:30:22] ERROR: Notifications fetched
+[2025-08-04 20:30:22] ERROR: 
+[2025-08-04 20:30:22] ERROR: Daily tasks generated
+[2025-08-04 20:30:22] ERROR: 
+[2025-08-04 20:30:28] ERROR: User retrieved successfully
+[2025-08-04 20:30:28] ERROR: Progress fetched succesfully
+[2025-08-04 20:30:28] ERROR: Notifications fetched
+[2025-08-04 20:30:28] ERROR: Daily tasks generated
+[2025-08-04 20:30:28] ERROR: Courses Fetched
+[2025-08-04 20:30:28] ERROR: 
+[2025-08-04 20:30:28] ERROR: 
+[2025-08-04 20:30:44] ERROR: Daily tasks generated
+[2025-08-04 20:30:44] ERROR: Notifications fetched
+[2025-08-04 20:30:44] ERROR: User retrieved successfully
+[2025-08-04 20:30:44] ERROR: Progress fetched succesfully
+[2025-08-04 20:30:45] ERROR: Courses Fetched
+[2025-08-04 20:30:45] ERROR: 
+[2025-08-04 20:30:45] ERROR: 
+[2025-08-04 20:30:46] ERROR: User retrieved successfully
+[2025-08-04 20:30:46] ERROR: Progress fetched succesfully
+[2025-08-04 20:30:46] ERROR: Notifications fetched
+[2025-08-04 20:30:46] ERROR: Daily tasks generated
+[2025-08-04 20:30:46] ERROR: Courses Fetched
+[2025-08-04 20:30:46] ERROR: 
+[2025-08-04 20:30:46] ERROR: 
+[2025-08-04 20:30:58] ERROR: Progress fetched succesfully
+[2025-08-04 20:30:58] ERROR: Notifications fetched
+[2025-08-04 20:30:58] ERROR: User retrieved successfully
+[2025-08-04 20:30:58] ERROR: Daily tasks generated
+[2025-08-04 20:30:58] ERROR: 
+[2025-08-04 20:30:58] ERROR: Courses Fetched
+[2025-08-04 20:30:58] ERROR: 
+[2025-08-04 20:31:04] ERROR: Progress fetched succesfully
+[2025-08-04 20:31:04] ERROR: Daily tasks generated
+[2025-08-04 20:31:04] ERROR: Notifications fetched
+[2025-08-04 20:31:04] ERROR: User retrieved successfully
+[2025-08-04 20:31:04] ERROR: Courses Fetched
+[2025-08-04 20:31:04] ERROR: 
+[2025-08-04 20:31:04] ERROR: 
+[2025-08-04 20:31:58] INFO:  Server running on port 4000
+[2025-08-04 20:36:33] INFO:  Server running on port 4000
+[2025-08-04 20:39:17] INFO:  Server running on port 4000
+[2025-08-04 20:41:46] INFO:  Server running on port 4000
+[2025-08-04 20:41:47] ERROR: User retrieved successfully
+[2025-08-04 20:41:47] ERROR: Progress fetched succesfully
+[2025-08-04 20:41:47] ERROR: Notifications fetched
+[2025-08-04 20:41:47] ERROR: 
+[2025-08-04 20:41:47] ERROR: Daily tasks generated
+[2025-08-04 20:41:47] ERROR: Courses Fetched
+[2025-08-04 20:41:47] ERROR: 
+[2025-08-04 20:41:49] ERROR: User retrieved successfully
+[2025-08-04 20:41:49] ERROR: Progress fetched succesfully
+[2025-08-04 20:41:49] ERROR: Notifications fetched
+[2025-08-04 20:41:49] ERROR: Courses Fetched
+[2025-08-04 20:41:49] ERROR: Daily tasks generated
+[2025-08-04 20:41:49] ERROR: 
+[2025-08-04 20:41:49] ERROR: 
+[2025-08-04 20:42:33] INFO:  Server running on port 4000
+[2025-08-04 20:45:00] ERROR: User retrieved successfully
+[2025-08-04 20:45:00] ERROR: Progress fetched succesfully
+[2025-08-04 20:45:00] ERROR: Daily tasks generated
+[2025-08-04 20:45:00] ERROR: Notifications fetched
+[2025-08-04 20:45:00] ERROR: 
+[2025-08-04 20:45:00] ERROR: Courses Fetched
+[2025-08-04 20:45:00] ERROR: 
+[2025-08-04 20:45:06] ERROR: User retrieved successfully
+[2025-08-04 20:45:06] ERROR: 
+[2025-08-04 20:45:06] ERROR: Progress fetched succesfully
+[2025-08-04 20:45:06] ERROR: Courses Fetched
+[2025-08-04 20:45:06] ERROR: Notifications fetched
+[2025-08-04 20:45:06] ERROR: Daily tasks generated
+[2025-08-04 20:45:06] ERROR: 
+[2025-08-04 20:45:09] ERROR: User retrieved successfully
+[2025-08-04 20:45:09] ERROR: Notifications fetched
+[2025-08-04 20:45:09] ERROR: Progress fetched succesfully
+[2025-08-04 20:45:09] ERROR: Courses Fetched
+[2025-08-04 20:45:09] ERROR: Daily tasks generated
+[2025-08-04 20:45:09] ERROR: 
+[2025-08-04 20:45:09] ERROR: 
+[2025-08-04 20:45:10] ERROR: User retrieved successfully
+[2025-08-04 20:45:10] ERROR: Progress fetched succesfully
+[2025-08-04 20:45:10] ERROR: Notifications fetched
+[2025-08-04 20:45:10] ERROR: Daily tasks generated
+[2025-08-04 20:45:10] ERROR: Courses Fetched
+[2025-08-04 20:45:10] ERROR: 
+[2025-08-04 20:45:10] ERROR: 
+[2025-08-04 20:45:15] ERROR: User retrieved successfully
+[2025-08-04 20:45:15] ERROR: Progress fetched succesfully
+[2025-08-04 20:45:15] ERROR: Notifications fetched
+[2025-08-04 20:45:15] ERROR: Courses Fetched
+[2025-08-04 20:45:15] ERROR: Daily tasks generated
+[2025-08-04 20:45:15] ERROR: 
+[2025-08-04 20:45:15] ERROR: 
+[2025-08-04 20:45:22] ERROR: 
+[2025-08-04 20:45:22] ERROR: 
+[2025-08-04 20:45:22] ERROR: 
+[2025-08-04 20:45:22] ERROR: 
+[2025-08-04 20:45:22] ERROR: Throwing error:
+[2025-08-04 20:45:22] ERROR: Unhotharized
+[2025-08-04 20:45:22] ERROR: Unhotharized
+[2025-08-04 20:45:22] ERROR: 
+[2025-08-04 20:45:22] ERROR: 
+[2025-08-04 20:45:23] ERROR: Notifications fetched
+[2025-08-04 20:45:23] ERROR: Daily tasks generated
+[2025-08-04 20:45:23] ERROR: Progress fetched succesfully
+[2025-08-04 20:45:23] ERROR: User retrieved successfully
+[2025-08-04 20:45:23] ERROR: Courses Fetched
+[2025-08-04 20:45:23] ERROR: 
+[2025-08-04 20:45:23] ERROR: 
+[2025-08-04 20:46:00] ERROR: Daily tasks generated
+[2025-08-04 20:46:00] ERROR: User retrieved successfully
+[2025-08-04 20:46:00] ERROR: Progress fetched succesfully
+[2025-08-04 20:46:00] ERROR: Notifications fetched
+[2025-08-04 20:46:01] ERROR: Courses Fetched
+[2025-08-04 20:46:01] ERROR: Daily tasks generated
+[2025-08-04 20:46:01] ERROR: User retrieved successfully
+[2025-08-04 20:46:01] ERROR: 
+[2025-08-04 20:46:01] ERROR: Progress fetched succesfully
+[2025-08-04 20:46:01] ERROR: Notifications fetched
+[2025-08-04 20:46:01] ERROR: Courses Fetched
+[2025-08-04 20:46:01] ERROR: 
+[2025-08-04 20:46:37] INFO:  Server running on port 4000
+[2025-08-04 20:48:01] INFO:  Server running on port 4000
+[2025-08-04 20:49:02] ERROR: Progress fetched succesfully
+[2025-08-04 20:49:02] ERROR: User retrieved successfully
+[2025-08-04 20:49:02] ERROR: 
+[2025-08-04 20:49:03] ERROR: Daily tasks generated
+[2025-08-04 20:49:03] ERROR: Notifications fetched
+[2025-08-04 20:49:03] ERROR: Courses Fetched
+[2025-08-04 20:49:03] ERROR: 
+[2025-08-04 20:49:09] ERROR: User retrieved successfully
+[2025-08-04 20:49:09] ERROR: Courses Fetched
+[2025-08-04 20:49:09] ERROR: Progress fetched succesfully
+[2025-08-04 20:49:09] ERROR: Notifications fetched
+[2025-08-04 20:49:09] ERROR: 
+[2025-08-04 20:49:09] ERROR: Daily tasks generated
+[2025-08-04 20:49:09] ERROR: 
+[2025-08-04 20:49:10] ERROR: User retrieved successfully
+[2025-08-04 20:49:10] ERROR: Progress fetched succesfully
+[2025-08-04 20:49:10] ERROR: Notifications fetched
+[2025-08-04 20:49:10] ERROR: Courses Fetched
+[2025-08-04 20:49:10] ERROR: Daily tasks generated
+[2025-08-04 20:49:10] ERROR: 
+[2025-08-04 20:49:10] ERROR: 
+[2025-08-04 20:49:11] ERROR: User retrieved successfully
+[2025-08-04 20:49:11] ERROR: Progress fetched succesfully
+[2025-08-04 20:49:11] ERROR: Notifications fetched
+[2025-08-04 20:49:11] ERROR: Daily tasks generated
+[2025-08-04 20:49:12] ERROR: Courses Fetched
+[2025-08-04 20:49:12] ERROR: 
+[2025-08-04 20:49:12] ERROR: 
+[2025-08-04 20:49:12] ERROR: User retrieved successfully
+[2025-08-04 20:49:12] ERROR: Progress fetched succesfully
+[2025-08-04 20:49:12] ERROR: Notifications fetched
+[2025-08-04 20:49:12] ERROR: Courses Fetched
+[2025-08-04 20:49:12] ERROR: Daily tasks generated
+[2025-08-04 20:49:12] ERROR: 
+[2025-08-04 20:49:12] ERROR: 
+[2025-08-04 20:52:25] INFO:  Server running on port 4000
+[2025-08-04 20:52:43] ERROR: User retrieved successfully
+[2025-08-04 20:52:43] ERROR: Daily tasks generated
+[2025-08-04 20:52:43] ERROR: Notifications fetched
+[2025-08-04 20:52:43] ERROR: Progress fetched succesfully
+[2025-08-04 20:52:43] ERROR: 
+[2025-08-04 20:52:43] ERROR: Courses Fetched
+[2025-08-04 20:52:43] ERROR: 
+[2025-08-04 20:52:45] ERROR: User retrieved successfully
+[2025-08-04 20:52:45] ERROR: Notifications fetched
+[2025-08-04 20:52:45] ERROR: Courses Fetched
+[2025-08-04 20:52:45] ERROR: Progress fetched succesfully
+[2025-08-04 20:52:45] ERROR: Daily tasks generated
+[2025-08-04 20:52:46] ERROR: 
+[2025-08-04 20:52:46] ERROR: 
+[2025-08-04 20:54:46] INFO:  Server running on port 4000
+[2025-08-04 20:55:11] ERROR: User retrieved successfully
+[2025-08-04 20:55:11] ERROR: Progress fetched succesfully
+[2025-08-04 20:55:11] ERROR: Courses Fetched
+[2025-08-04 20:55:11] ERROR: Notifications fetched
+[2025-08-04 20:55:11] ERROR: Daily tasks generated
+[2025-08-04 20:55:11] ERROR: 
+[2025-08-04 20:55:11] ERROR: 
+[2025-08-04 20:57:54] INFO:  Server running on port 4000
+[2025-08-04 20:58:25] INFO:  Server running on port 4000
+[2025-08-04 20:58:53] ERROR: User retrieved successfully
+[2025-08-04 20:58:53] ERROR: Progress fetched succesfully
+[2025-08-04 20:58:53] ERROR: Courses Fetched
+[2025-08-04 20:58:53] ERROR: 
+[2025-08-04 20:58:53] ERROR: Notifications fetched
+[2025-08-04 20:58:53] ERROR: Daily tasks generated
+[2025-08-04 20:58:54] ERROR: 
+[2025-08-04 20:58:55] ERROR: User retrieved successfully
+[2025-08-04 20:58:55] ERROR: Progress fetched succesfully
+[2025-08-04 20:58:55] ERROR: Notifications fetched
+[2025-08-04 20:58:55] ERROR: Daily tasks generated
+[2025-08-04 20:58:55] ERROR: Courses Fetched
+[2025-08-04 20:58:55] ERROR: 
+[2025-08-04 20:58:55] ERROR: 
+[2025-08-04 20:58:59] ERROR: Progress fetched succesfully
+[2025-08-04 20:58:59] ERROR: User retrieved successfully
+[2025-08-04 20:58:59] ERROR: Notifications fetched
+[2025-08-04 20:58:59] ERROR: Daily tasks generated
+[2025-08-04 20:58:59] ERROR: 
+[2025-08-04 20:58:59] ERROR: Courses Fetched
+[2025-08-04 20:58:59] ERROR: 
+[2025-08-04 20:59:02] ERROR: User retrieved successfully
+[2025-08-04 20:59:02] ERROR: Progress fetched succesfully
+[2025-08-04 20:59:02] ERROR: Notifications fetched
+[2025-08-04 20:59:02] ERROR: Daily tasks generated
+[2025-08-04 20:59:02] ERROR: Courses Fetched
+[2025-08-04 20:59:02] ERROR: 
+[2025-08-04 20:59:02] ERROR: 
+[2025-08-04 20:59:04] ERROR: User retrieved successfully
+[2025-08-04 20:59:04] ERROR: Notifications fetched
+[2025-08-04 20:59:04] ERROR: Progress fetched succesfully
+[2025-08-04 20:59:04] ERROR: Courses Fetched
+[2025-08-04 20:59:04] ERROR: Daily tasks generated
+[2025-08-04 20:59:04] ERROR: 
+[2025-08-04 20:59:04] ERROR: 
+[2025-08-04 20:59:07] ERROR: User retrieved successfully
+[2025-08-04 20:59:07] ERROR: Progress fetched succesfully
+[2025-08-04 20:59:07] ERROR: Notifications fetched
+[2025-08-04 20:59:07] ERROR: Daily tasks generated
+[2025-08-04 20:59:07] ERROR: Courses Fetched
+[2025-08-04 20:59:07] ERROR: 
+[2025-08-04 20:59:07] ERROR: 
+[2025-08-04 21:05:42] INFO:  Server running on port 4000
+[2025-08-04 21:06:19] INFO:  Server running on port 4000
+[2025-08-04 21:06:31] ERROR: 
+[2025-08-04 21:06:31] ERROR: 
+[2025-08-04 21:06:31] ERROR: 
+[2025-08-04 21:06:31] ERROR: Throwing error:
+[2025-08-04 21:06:31] ERROR: Unhotharized
+[2025-08-04 21:06:31] ERROR: Unhotharized
+[2025-08-04 21:06:31] ERROR: 
+[2025-08-04 21:06:32] ERROR: 
+[2025-08-04 21:06:32] ERROR: 
+[2025-08-04 21:06:32] ERROR: 
+[2025-08-04 21:06:32] ERROR: Throwing error:
+[2025-08-04 21:06:32] ERROR: Unhotharized
+[2025-08-04 21:06:32] ERROR: Unhotharized
+[2025-08-04 21:06:32] ERROR: 
+[2025-08-04 21:06:35] ERROR: User retrieved successfully
+[2025-08-04 21:06:35] ERROR: Progress fetched succesfully
+[2025-08-04 21:06:35] ERROR: Notifications fetched
+[2025-08-04 21:06:35] ERROR: Daily tasks generated
+[2025-08-04 21:06:35] ERROR: Courses Fetched
+[2025-08-04 21:06:35] ERROR: Progress fetched succesfully
+[2025-08-04 21:06:35] ERROR: User retrieved successfully
+[2025-08-04 21:06:35] ERROR: Notifications fetched
+[2025-08-04 21:06:35] ERROR: Daily tasks generated
+[2025-08-04 21:06:36] ERROR: Courses Fetched
+[2025-08-04 21:06:40] ERROR: User retrieved successfully
+[2025-08-04 21:06:40] ERROR: Daily tasks generated
+[2025-08-04 21:06:40] ERROR: Progress fetched succesfully
+[2025-08-04 21:06:40] ERROR: Notifications fetched
+[2025-08-04 21:06:40] ERROR: Daily tasks generated
+[2025-08-04 21:06:40] ERROR: Courses Fetched
+[2025-08-04 21:06:40] ERROR: User retrieved successfully
+[2025-08-04 21:06:40] ERROR: Progress fetched succesfully
+[2025-08-04 21:06:40] ERROR: Notifications fetched
+[2025-08-04 21:06:40] ERROR: Courses Fetched
+[2025-08-04 21:06:47] ERROR: Notifications fetched
+[2025-08-04 21:06:47] ERROR: Daily tasks generated
+[2025-08-04 21:06:47] ERROR: Progress fetched succesfully
+[2025-08-04 21:06:47] ERROR: User retrieved successfully
+[2025-08-04 21:06:47] ERROR: Courses Fetched
+[2025-08-04 21:06:49] ERROR: Progress fetched succesfully
+[2025-08-04 21:06:49] ERROR: User retrieved successfully
+[2025-08-04 21:06:49] ERROR: Notifications fetched
+[2025-08-04 21:06:49] ERROR: Daily tasks generated
+[2025-08-04 21:06:49] ERROR: Courses Fetched

@@ -35,7 +35,7 @@ export class UserLessonsController implements IUserLessonsController{
     }
     async  getAllDetilsInLesson(req: Request, res: Response): Promise<void> {
         try {
-            const lessonId = req.body.lessonId
+            const lessonId = req.params.lessonId
             const decode=decodeToken(req.cookies.token) 
             const result = await this._userLessonsService.getLessonDetils(lessonId as string,decode?.id as string);
             if (!result.videoUrl || !result.lesson || !result.questions) throwError("Somthing wront wrong", StatusCode.BAD_REQUEST);
@@ -46,7 +46,8 @@ export class UserLessonsController implements IUserLessonsController{
     }
     async getLessonReport(req: Request, res: Response): Promise<void> {
         try {
-            const { lessonId, data } = req.body; 
+            const lessonId=req.params.lessonId
+            const {data } = req.body; 
             const decode=decodeToken(req.cookies.token)
             if (!lessonId || !data) throwError("Somthing wrnot wrong");
             const result = await this._userLessonsService.lessonReport(decode?.id as string, lessonId, data);
@@ -57,7 +58,8 @@ export class UserLessonsController implements IUserLessonsController{
     }
     async saveComments(req: Request, res: Response): Promise<void> {
         try {
-            const { lessonId, comment } = req.body
+            const lessonId=req.params.lessonId
+            const {comment } = req.body
             const decode = decodeToken(req.cookies.token)
             if(!decode) throwError("Unautherizes")
             const result=await this._userLessonsService.saveComments(decode?.id as string,lessonId, comment);
@@ -68,13 +70,14 @@ export class UserLessonsController implements IUserLessonsController{
     }
     updateLessonProgress = async (req: Request, res: Response): Promise<void> => {
         try {
+            const lessonId = req.params.lessonId;
             const decoded = decodeToken(req.cookies.token);
             if (!decoded?.id) {
                 return sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized", false);
             }
 
             const {
-                lessonId,
+               
                 videoWatchedDuration,
                 videoTotalDuration,
                 theoryCompleted,
