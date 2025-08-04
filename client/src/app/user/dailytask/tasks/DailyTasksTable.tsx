@@ -76,7 +76,7 @@ export function DailyTasksTable({ dailyTasks }: Props) {
                     </td>
                     <td className="px-4 py-3">
                       {dailyTask.overallScore !== null
-                        ? `${dailyTask.overallScore} / 5`
+                        ? `${dailyTask.overallScore?`${dailyTask.overallScore}/5`:"You not complete this task"}`
                         : "-"}
                     </td>
                     <td className="px-4 py-3 text-blue-500 hover:underline">

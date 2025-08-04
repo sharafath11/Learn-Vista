@@ -169,12 +169,12 @@ export class UserService implements IUserService {
         isCompleted: false,
       }));
     } catch (err) {
-      logger.error("Failed to parse Gemini task response");
+      logger.error("Failed to create task response");
       if (geminiResponse) {
         logger.error("Raw Gemini Response:", geminiResponse);
       }
       throwError(
-        "Failed to parse Gemini task response",
+        "Failed to parse create task ",
         StatusCode.BAD_REQUEST
       );
     }
