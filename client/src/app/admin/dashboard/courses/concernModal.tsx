@@ -16,7 +16,7 @@ import {
   FileText
 } from "lucide-react"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { AdminAPIMethods } from "@/src/services/APImethods"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast"
 import { IConcern } from "@/src/types/concernTypes"
 import { useAdminContext } from "@/src/context/adminContext"

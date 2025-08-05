@@ -2,13 +2,13 @@
 
 import type React from "react"
 import { useState, useEffect, useCallback } from "react"
-import { Menu, X, Home, BookOpen, Video, Heart, Bell, BadgeCheck, ClipboardList } from "lucide-react" // Added LogOut icon
+import { Menu, X, Home, BookOpen, Video, Heart, Bell, BadgeCheck, ClipboardList } from "lucide-react" 
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { signOut } from "next-auth/react"
 import { useUserContext } from "@/src/context/userAuthContext" 
-import { UserAPIMethods } from "@/src/services/APImethods" 
+import { UserAPIMethods } from "@/src/services/methods/user.api" 
 import { cn } from "@/src/utils/cn" 
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast" 
 import { UserDropdown } from "./user-dropdown"

@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/share
 import { Plus, Edit, BookOpen, Code, GraduationCap, Info, List, CheckCircle } from "lucide-react";
 import { QuestionModal } from "../QuestionModal";
 import { IQuestions, QuestionType } from "@/src/types/lessons";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import { useParams } from "next/navigation";
 import { isValidQuestion } from "@/src/validations/mentorValidation";

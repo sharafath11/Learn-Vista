@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback, memo, JSX } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, Mail, Lock, User, Camera, CheckCircle, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { useUserContext } from "@/src/context/userAuthContext";
 import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast";
 

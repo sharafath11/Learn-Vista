@@ -16,8 +16,8 @@ import { useState, useRef, type ChangeEvent } from "react"
 import { MessageCircleWarning, Upload, X, ImageIcon, Mic, Loader2 } from "lucide-react"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import type { ConcernDialogProps, sendAttachement } from "@/src/types/concernTypes"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useMentorContext } from "@/src/context/mentorContext"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) {
   const [open, setOpen] = useState(false)

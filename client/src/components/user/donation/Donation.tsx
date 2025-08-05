@@ -20,7 +20,7 @@ import {
 import { Input } from "@/src/components/shared/components/ui/input";
 import { Label } from "@/src/components/shared/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/src/components/shared/components/ui/radio-group";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useUserContext } from "@/src/context/userAuthContext";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');

@@ -25,7 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { FileImage, PlayCircle, XCircle, Loader2 } from "lucide-react";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 
 interface ILessons {

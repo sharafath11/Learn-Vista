@@ -27,7 +27,7 @@ import { z } from "zod";
 import { FileImage, PlayCircle, XCircle, Loader2 } from "lucide-react";
 import { ILessons } from "@/src/types/lessons";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 
 const lessonFormSchema = z.object({
   title: z.string().min(1, "Title is required"),

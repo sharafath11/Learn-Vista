@@ -11,7 +11,7 @@ import Image from "next/image";
 
 import { showErrorToast, showInfoToast } from "@/src/utils/Toast";
 import { useMentorContext } from "@/src/context/mentorContext";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { ILessons } from "@/src/types/lessons";
 import { ICourse } from "@/src/types/courseTypes";
 import { AddLessonModal } from "./addLessonModal";

@@ -4,12 +4,12 @@ import { useRef, useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import { Loader2, DownloadIcon, ShieldOff, ShieldCheck } from "lucide-react"
 import type { ICertificate } from "@/src/types/certificateTypes"
-import { UserAPIMethods } from "@/src/services/APImethods"
 import { showInfoToast } from "@/src/utils/Toast"
 import { generateCertificatePDF } from "@/src/utils/certificateUtils"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import CertificateViewer from "./CertificateViewer"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 
 export default function CertificatePage() {
   const params = useParams()

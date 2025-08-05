@@ -14,10 +14,10 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast } from "@/src/utils/Toast"
 import { ICourse } from "@/src/types/courseTypes"
 import { ICategory } from "@/src/types/categoryTypes"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 export default function CoursesPage() {
   const [filters, setFilters] = useState({

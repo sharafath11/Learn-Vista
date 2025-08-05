@@ -18,7 +18,7 @@ import {
   CardTitle,
 } from "@/src/components/shared/components/ui/card";
 import { Textarea } from "@/src/components/shared/components/ui/textarea";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import {
   showErrorToast,
   showInfoToast,

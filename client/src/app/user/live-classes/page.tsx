@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { Card } from "@/src/components/shared/components/ui/card"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 import { cn } from "@/src/utils/cn"

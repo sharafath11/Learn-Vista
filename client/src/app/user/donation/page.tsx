@@ -7,7 +7,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/src/components/shared/components/ui/table"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { IDonation } from "@/src/types/donationTyps"
 import { generateReceiptPDF } from "@/src/utils/receiptGenerator"

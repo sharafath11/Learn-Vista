@@ -12,7 +12,7 @@ import { signIn, useSession } from "next-auth/react";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import type { ILogin, IUserRegistration } from "@/src/types/authTypes";
 import { FormOTP } from "./FormOTP";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { validateSignup } from "@/src/validations/validation";
 
 interface FormInputProps {

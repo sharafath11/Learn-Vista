@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 
 import { TaskSkeleton } from "./task-skeleton"
 import type { IDailyTask, ITask } from "@/src/types/dailyTaskTypes"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showInfoToast } from "@/src/utils/Toast"
 import {  Calendar, CheckCircle2, Clock, Trophy } from "lucide-react"
 import { Alert, AlertDescription } from "@/src/components/shared/components/ui/alert"

@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/src/components/shared/components/ui/dialog";
 import { showErrorToast } from "@/src/utils/Toast";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { formatDistanceToNow } from 'date-fns'; 
 import { IComment } from "@/src/types/lessons";
 

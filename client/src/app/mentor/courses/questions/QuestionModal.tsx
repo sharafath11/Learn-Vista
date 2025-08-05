@@ -17,7 +17,7 @@ import { Button } from "@/src/components/shared/components/ui/button";
 import { useEffect, useState } from "react";
 import { IQuestions, QuestionType } from "@/src/types/lessons";
 import { showInfoToast } from "@/src/utils/Toast";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 
 interface QuestionModalProps {
   open: boolean;

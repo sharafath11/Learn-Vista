@@ -1,7 +1,7 @@
 // app/create-course/page.tsx
 "use client"
 
-import { AdminAPIMethods } from "@/src/services/APImethods"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast"
 import { useAdminContext } from "@/src/context/adminContext"
 import { validateCourseForm } from "@/src/validations/adminvalidation"

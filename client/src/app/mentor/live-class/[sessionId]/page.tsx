@@ -13,7 +13,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card";
 import { Mic, Video, Radio } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
 
 interface DeviceInfo {

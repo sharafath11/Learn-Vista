@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { AdminAPIMethods } from "@/src/services/APImethods"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 
 import { Calendar, AlertCircle, Search, ChevronDown, Layers } from "lucide-react"
 import { ConcernModal } from "../courses/concernModal"

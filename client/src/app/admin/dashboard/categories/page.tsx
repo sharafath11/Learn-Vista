@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { MoreHorizontal, Pencil, Plus } from "lucide-react";
 import { useAdminContext } from "@/src/context/adminContext";
-import { AdminAPIMethods } from "@/src/services/APImethods";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
 import CategoryForm from "./categoriesModal";
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
@@ -22,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/shared/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/shared/components/ui/badge";
+import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 
 
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { useState, useEffect, useRef } from "react"
 import type React from "react"
 

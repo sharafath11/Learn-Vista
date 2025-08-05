@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Calendar, Clock, PenSquare, BookOpen } from "lucide-react";
 import { useAdminContext } from "@/src/context/adminContext";
-import { AdminAPIMethods } from "@/src/services/APImethods";
+import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { showSuccessToast } from "@/src/utils/Toast";
 import Cheader from "./header";
 import { Button } from "@/src/components/shared/components/ui/button";

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { IComment, ILessons, IQuestions } from "@/src/types/lessons";
-import { AdminAPIMethods } from "@/src/services/APImethods";
+import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { showErrorToast } from "@/src/utils/Toast";
 
 import LessonModal from "./LessonModal";

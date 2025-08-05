@@ -8,7 +8,7 @@ import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toa
 
 import { FormOTP } from "./FormOTP";
 import { FormInput } from "@/src/components/mentor/signup/FormInput";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { validateMentorSignup } from "@/src/validations/mentorValidation";
 
 export default function MentorSignupForm() {

@@ -14,7 +14,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { useEffect, useState } from "react"
-import { AdminAPIMethods } from "@/src/services/APImethods"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 import { ICategory } from "@/src/types/categoryTypes"

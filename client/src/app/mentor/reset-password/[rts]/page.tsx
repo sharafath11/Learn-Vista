@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 import { validatePassword } from "@/src/utils/restPasswordValidatior";
 import { Eye, EyeOff } from "lucide-react";

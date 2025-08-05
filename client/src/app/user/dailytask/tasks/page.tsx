@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { IDailyTask } from "@/src/types/dailyTaskTypes";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { showErrorToast } from "@/src/utils/Toast";
 import { Skeleton } from "@/src/components/shared/components/ui/skeleton";
 
