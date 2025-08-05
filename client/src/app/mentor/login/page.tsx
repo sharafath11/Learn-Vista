@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
 import {  useMentorContext } from '@/src/context/mentorContext';
 import { showSuccessToast } from '@/src/utils/Toast';
-import { MentorAPIMethods } from '@/src/services/APImethods';
+import { MentorAPIMethods } from '@/src/services/methods/mentor.api';
 
 interface FormData {
   email: string;

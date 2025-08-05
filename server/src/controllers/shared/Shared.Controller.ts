@@ -3,6 +3,9 @@ import { getSignedS3Url } from "../../utils/s3Utilits";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { ISharedController } from "../../core/interfaces/controllers/shared/ISharedController";
+import { refreshAccessToken, setTokensInCookies } from "../../utils/JWTtoken";
+import { batmanPrompt } from "../../utils/Rportprompt";
+import { getGemaniResponse } from "../../config/gemaniAi";
 
 export class SharedController implements ISharedController {
   async getSignedS3Url(req: Request, res: Response) {
@@ -18,5 +21,30 @@ export class SharedController implements ISharedController {
     } catch (err) {
       handleControllerError(res, err);
     }
+  }
+  async refeshToken(req: Request, res: Response): Promise<void> {
+     try {
+        const tokens = refreshAccessToken(req.cookies.refreshToken);
+    
+       if (!tokens) {
+         sendResponse(res, StatusCode.OK, "Invalid refresh token", true);
+         return 
+       }
+       setTokensInCookies(res, tokens.accessToken, tokens.refreshToken);
+       sendResponse(res,StatusCode.OK,"Tokens refreshed successfully",true)
+        return
+      } catch (error) {
+        handleControllerError(res,error)
+        return
+      }
+  }
+  async batmanAi(req: Request, res: Response): Promise<void> {
+    try {
+    const prompt=batmanPrompt(req.body.text)
+  const answer = await getGemaniResponse(prompt);
+  sendResponse(res, StatusCode.OK, "", true, answer);
+  } catch (error) {
+    handleControllerError(res,error)
+  }
   }
 }

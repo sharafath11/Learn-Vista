@@ -9,12 +9,7 @@ import connectDb from "./config/db";
 import userRoutes from "./routes/userRoutes/user.Routes";
 import mentorRoutes from "./routes/mentor/mentor.Routes";
 import adminRoutes from "./routes/adminRoutes/admin.Routes";
-import { refreshAccessToken, setTokensInCookies } from "./utils/JWTtoken";
 import { socketHandler } from "./config/ socket";
-import { getGemaniResponse } from "./config/gemaniAi";
-import { handleControllerError, sendResponse } from "./utils/ResANDError";
-import { StatusCode } from "./enums/statusCode.enum";
-import { batmanPrompt } from "./utils/Rportprompt";
 import { setIOInstance } from "./config/globalSocket";
 import sharedRoutes from "../src/routes/shared/shared.Routes"
 import { requestLogger } from "./middlewares/requestLogger";
@@ -44,33 +39,6 @@ app.use("/api", userRoutes);
 app.use("/api/mentor", mentorRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/shared",sharedRoutes)
-app.use("/api/refresh-token", (req: Request, res: Response) => {
-  try {
-    const tokens = refreshAccessToken(req.cookies.refreshToken);
-
-    if (!tokens) {
-       res.status(401).json({ message: "Invalid refresh token" });
-      return
-     
-    }
-
-    setTokensInCookies(res, tokens.accessToken, tokens.refreshToken);
-    res.status(200).json({ ok: true, msg: "Tokens refreshed successfully" });
-    return
-  } catch (error: any) {
-    res.status(StatusCode.UNAUTHORIZED).json({ ok: false, msg: "Failed to refresh token", error: error.message });
-    return
-  }
-});
-app.use("/api/ai/doubt", async (req: Request, res: Response) => {
-  try {
-    const prompt=batmanPrompt(req.body.text)
-  const answer = await getGemaniResponse(prompt);
-  sendResponse(res, StatusCode.OK, "", true, answer);
-  } catch (error) {
-    handleControllerError(res,error)
-  }
-});
 app.use(requestLogger);
 app.use((err: CustomError, req: Request, res: Response, _next: NextFunction) => {
   console.error(err.stack);

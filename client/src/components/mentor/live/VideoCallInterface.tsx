@@ -9,8 +9,8 @@ import Peer from "simple-peer"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Card } from "@/src/components/shared/components/ui/card"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 
 export default function MentorStream({ roomId }: { roomId: string }) {

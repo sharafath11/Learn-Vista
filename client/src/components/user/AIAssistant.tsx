@@ -8,7 +8,7 @@ import { Input } from "@/src/components/shared/components/ui/input"
 import { ScrollArea } from "@/src/components/shared/components/ui/scroll-area"
 import { Card, CardContent } from "@/src/components/shared/components/ui/card"
 import Image from "next/image"
-import { batmanAi } from "@/src/services/APImethods"
+import { batmanAi } from "@/src/services/methods/shared.api"
 
 const CHAT_WINDOW_WIDTH = 350
 const CHAT_WINDOW_HEIGHT = 500

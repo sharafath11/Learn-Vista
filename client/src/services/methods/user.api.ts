@@ -1,5 +1,5 @@
 import { ILogin, IUserRegistration } from "../../types/authTypes";
-import { AnswerWithType } from "../../types/lessons";
+import { AnswerWithType, ILessonProgressUpdate } from "../../types/lessons";
 import { getRequest, postRequest, patchRequest } from "../api";
 
 const get = getRequest;
@@ -24,7 +24,7 @@ export const UserAPIMethods = {
     page?: number;
     limit?: number;
     search?: string;
-    filters?: Record<string, any>;
+    filters?: Record<string,any>;
     sort?: Record<string, 1 | -1>
   }) => get(`/courses`,{params}),
   updateCourse: (courseId: string) => patch(`/courses/${courseId}`,{}),
@@ -38,16 +38,9 @@ export const UserAPIMethods = {
   getStripeCheckoutSession: (sessionId: string) => get(`/donation-session/${sessionId}/verify`),
   getUserProgress: () => get("/course/progress"),
   psc: (number: number) => get(`/let-fun/psc`, { number }),
-updateLessonProgress: (
+ updateLessonProgress: (
   lessonId: string,
-  update: {
-    videoWatchedDuration?: number;
-    videoTotalDuration?: number;
-    videoCompleted?: boolean;
-    theoryCompleted?: boolean;
-    practicalCompleted?: boolean;
-    mcqCompleted?: boolean;
-  }
+  update: ILessonProgressUpdate 
   ) => patch(`/lessons/${lessonId}/progress`, {...update }),
   getMyDonations: (limit: number) => get(`/donations/${limit}`),
  getCertificates: (params?: {

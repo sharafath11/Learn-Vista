@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { MessageSquare, Search } from "lucide-react"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useMentorContext } from "@/src/context/mentorContext"
 import { IComment } from "@/src/types/lessons"
 import { ICourse } from "@/src/types/courseTypes"
 import CommentCard from "./comment-card"
 import useDebounce from "@/src/hooks/useDebouncing"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 type SortOption = "newest" | "oldest"
 type FilterOption = "all" | string

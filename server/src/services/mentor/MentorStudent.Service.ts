@@ -86,14 +86,11 @@ async studentStatusService(
   courseId: string | Types.ObjectId,
   status: boolean
 ): Promise<void> {
-  
+  console.log(userId,courseId,status)
   const user = await this._userRepo.findById(userId as string);
- 
   if (!user) {
-    
     throwError("User not found");
   }
-
   const updatedCourses = user.enrolledCourses.map((course) => {
     const courseIdStr = course.courseId?.toString();
     const match = courseIdStr === courseId.toString();

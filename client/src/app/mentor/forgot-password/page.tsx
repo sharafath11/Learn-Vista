@@ -5,8 +5,8 @@ import type React from "react"
 import { useState, useCallback, useRef, useEffect } from "react"
 import { Mail, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { showSuccessToast } from "@/src/utils/Toast"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("")

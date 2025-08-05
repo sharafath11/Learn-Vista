@@ -64,12 +64,12 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await axiosInstance.get("/refresh-token");
+        await axiosInstance.get("/shared/refresh-token");
         processQueue(null);
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        showInfoToast("Session expired. Please login again.");
+        showInfoToast("Please login dsfvdsfagain.");
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

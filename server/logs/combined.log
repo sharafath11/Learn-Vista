@@ -4381,3 +4381,1346 @@ Please generate the content for a speaking, listening, and writing task for day 
 [2025-08-04 21:06:49] ERROR: Notifications fetched
 [2025-08-04 21:06:49] ERROR: Daily tasks generated
 [2025-08-04 21:06:49] ERROR: Courses Fetched
+[2025-08-05 14:23:14] INFO:  Server running on port 4000
+[2025-08-05 14:26:23] ERROR: 
+[2025-08-05 14:26:23] ERROR: 
+[2025-08-05 14:26:23] ERROR: 
+[2025-08-05 14:26:23] ERROR: Throwing error:
+[2025-08-05 14:26:23] ERROR: Unhotharized
+[2025-08-05 14:26:23] ERROR: Unhotharized
+[2025-08-05 14:26:23] ERROR: 
+[2025-08-05 14:26:23] ERROR: 
+[2025-08-05 14:26:23] ERROR: 
+[2025-08-05 14:26:23] ERROR: Throwing error:
+[2025-08-05 14:26:23] ERROR: Unhotharized
+[2025-08-05 14:26:23] ERROR: Unhotharized
+[2025-08-05 14:26:23] ERROR: 
+[2025-08-05 14:26:23] ERROR: 
+[2025-08-05 14:26:23] ERROR: User retrieved successfully
+[2025-08-05 14:26:23] ERROR: Progress fetched succesfully
+[2025-08-05 14:26:23] ERROR: Notifications fetched
+[2025-08-05 14:26:23] ERROR: Courses Fetched
+[2025-08-05 14:26:23] ERROR: Progress fetched succesfully
+[2025-08-05 14:26:23] ERROR: Notifications fetched
+[2025-08-05 14:26:23] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at a beginner to intermediate level. Each task should be unique and practical.
+
+Respond with ONLY a single, valid JSON object that contains the tasks. Do NOT include any additional text, explanations, or code blocks outside of the JSON.
+
+The JSON object MUST have the following structure:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+Please generate the content for a speaking, listening, and writing task for day 1 following this exact structure.
+
+[2025-08-05 14:26:23] ERROR: User retrieved successfully
+[2025-08-05 14:26:24] ERROR: Courses Fetched
+[2025-08-05 14:26:28] ERROR: Daily tasks generated
+[2025-08-05 14:26:28] ERROR: Daily tasks generated
+[2025-08-05 14:26:37] ERROR: Fetced categrios0
+[2025-08-05 14:26:37] ERROR: Courses Fetched
+[2025-08-05 14:26:37] ERROR: Fetced categrios0
+[2025-08-05 14:26:37] ERROR: Courses Fetched
+[2025-08-05 14:26:37] ERROR: Courses Fetched
+[2025-08-05 14:27:15] ERROR: Fetced categrios0
+[2025-08-05 14:27:15] ERROR: Courses Fetched
+[2025-08-05 14:27:15] ERROR: Fetced categrios0
+[2025-08-05 14:27:15] ERROR: User retrieved successfully
+[2025-08-05 14:27:15] ERROR: Daily tasks generated
+[2025-08-05 14:27:15] ERROR: User retrieved successfully
+[2025-08-05 14:27:15] ERROR: Courses Fetched
+[2025-08-05 14:27:15] ERROR: Daily tasks generated
+[2025-08-05 14:27:15] ERROR: Notifications fetched
+[2025-08-05 14:27:15] ERROR: Progress fetched succesfully
+[2025-08-05 14:27:15] ERROR: Courses Fetched
+[2025-08-05 14:27:16] ERROR: Courses Fetched
+[2025-08-05 14:27:16] ERROR: Notifications fetched
+[2025-08-05 14:27:16] ERROR: Progress fetched succesfully
+[2025-08-05 14:27:16] ERROR: Courses Fetched
+[2025-08-05 14:27:31] ERROR: Fetced categrios0
+[2025-08-05 14:27:31] ERROR: Courses Fetched
+[2025-08-05 14:27:31] ERROR: User retrieved successfully
+[2025-08-05 14:27:31] ERROR: Daily tasks generated
+[2025-08-05 14:27:31] ERROR: Fetced categrios0
+[2025-08-05 14:27:31] ERROR: Progress fetched succesfully
+[2025-08-05 14:27:31] ERROR: Courses Fetched
+[2025-08-05 14:27:31] ERROR: Notifications fetched
+[2025-08-05 14:27:31] ERROR: User retrieved successfully
+[2025-08-05 14:27:31] ERROR: Daily tasks generated
+[2025-08-05 14:27:32] ERROR: Courses Fetched
+[2025-08-05 14:27:32] ERROR: Progress fetched succesfully
+[2025-08-05 14:27:32] ERROR: Notifications fetched
+[2025-08-05 14:27:32] ERROR: Courses Fetched
+[2025-08-05 14:27:32] ERROR: Courses Fetched
+[2025-08-05 14:27:49] ERROR: 
+[2025-08-05 15:45:10] INFO:  Server running on port 4000
+[2025-08-05 15:46:40] INFO:  Server running on port 4000
+[2025-08-05 16:02:43] INFO:  Server running on port 4000
+[2025-08-05 16:06:00] INFO:  Server running on port 4000
+[2025-08-05 16:06:56] INFO:  Server running on port 4000
+[2025-08-05 16:07:58] INFO:  Server running on port 4000
+[2025-08-05 16:08:24] INFO:  Server running on port 4000
+[2025-08-05 16:09:20] INFO:  Server running on port 4000
+[2025-08-05 16:11:28] INFO:  Server running on port 4000
+[2025-08-05 16:13:19] ERROR: 
+[2025-08-05 16:13:19] INFO: GET /api/mentors/me
+[2025-08-05 16:13:19] INFO: GET /api/concerns
+[2025-08-05 16:13:19] INFO: GET /api/mentors/me
+[2025-08-05 16:13:19] ERROR: 
+[2025-08-05 16:13:19] ERROR: Throwing error:
+[2025-08-05 16:13:19] ERROR: Unhotharized
+[2025-08-05 16:13:19] ERROR: Unhotharized
+[2025-08-05 16:13:19] ERROR: 
+[2025-08-05 16:13:19] INFO: GET /api/concerns
+[2025-08-05 16:13:19] ERROR: 
+[2025-08-05 16:13:19] ERROR: 
+[2025-08-05 16:13:19] ERROR: Throwing error:
+[2025-08-05 16:13:19] ERROR: Unhotharized
+[2025-08-05 16:13:19] ERROR: Unhotharized
+[2025-08-05 16:13:19] ERROR: 
+[2025-08-05 16:13:19] ERROR: 
+[2025-08-05 16:13:20] ERROR: Notifications fetched
+[2025-08-05 16:13:21] ERROR: Courses Fetched
+[2025-08-05 16:13:21] ERROR: Courses Fetched
+[2025-08-05 16:13:21] ERROR: Notifications fetched
+[2025-08-05 16:13:21] ERROR: Courses Fetched
+[2025-08-05 16:13:21] ERROR: Courses Fetched
+[2025-08-05 16:13:21] ERROR: Courses Fetched
+[2025-08-05 16:13:21] ERROR: Courses Fetched
+[2025-08-05 16:13:21] ERROR: Courses Fetched
+[2025-08-05 16:13:27] INFO: GET /api/mentors/me
+[2025-08-05 16:13:27] INFO: GET /api/concerns
+[2025-08-05 16:13:27] INFO: GET /api/concerns
+[2025-08-05 16:13:27] ERROR: Courses Fetched
+[2025-08-05 16:13:27] ERROR: Courses Fetched
+[2025-08-05 16:13:27] INFO: GET /api/mentors/me
+[2025-08-05 16:13:27] ERROR: Notifications fetched
+[2025-08-05 16:13:27] ERROR: Courses Fetched
+[2025-08-05 16:13:27] ERROR: Notifications fetched
+[2025-08-05 16:13:27] ERROR: Courses Fetched
+[2025-08-05 16:13:27] ERROR: Courses Fetched
+[2025-08-05 16:13:27] ERROR: Courses Fetched
+[2025-08-05 16:13:27] ERROR: Courses Fetched
+[2025-08-05 16:13:32] INFO: GET /api/mentors/me
+[2025-08-05 16:13:32] INFO: GET /api/concerns
+[2025-08-05 16:13:32] INFO: GET /api/mentors/me
+[2025-08-05 16:13:32] INFO: GET /api/concerns
+[2025-08-05 16:13:32] ERROR: Notifications fetched
+[2025-08-05 16:13:32] ERROR: Courses Fetched
+[2025-08-05 16:13:32] ERROR: Courses Fetched
+[2025-08-05 16:13:32] ERROR: Notifications fetched
+[2025-08-05 16:13:32] ERROR: Courses Fetched
+[2025-08-05 16:13:32] ERROR: Courses Fetched
+[2025-08-05 16:13:32] ERROR: Courses Fetched
+[2025-08-05 16:13:32] ERROR: Courses Fetched
+[2025-08-05 16:13:32] ERROR: Courses Fetched
+[2025-08-05 16:13:54] INFO: GET /api/mentors/me
+[2025-08-05 16:13:54] INFO: GET /api/concerns
+[2025-08-05 16:13:54] INFO: GET /api/concerns
+[2025-08-05 16:13:54] ERROR: Courses Fetched
+[2025-08-05 16:13:54] ERROR: Notifications fetched
+[2025-08-05 16:13:54] INFO: GET /api/mentors/me
+[2025-08-05 16:13:54] ERROR: Courses Fetched
+[2025-08-05 16:13:54] ERROR: Notifications fetched
+[2025-08-05 16:13:55] ERROR: Courses Fetched
+[2025-08-05 16:13:55] ERROR: Courses Fetched
+[2025-08-05 16:13:55] ERROR: Courses Fetched
+[2025-08-05 16:13:55] ERROR: Courses Fetched
+[2025-08-05 16:13:55] ERROR: Courses Fetched
+[2025-08-05 16:14:02] INFO: GET /api/mentors/me
+[2025-08-05 16:14:02] ERROR: Courses Fetched
+[2025-08-05 16:14:02] INFO: GET /api/concerns
+[2025-08-05 16:14:02] ERROR: Courses Fetched
+[2025-08-05 16:14:02] INFO: GET /api/concerns
+[2025-08-05 16:14:02] ERROR: Notifications fetched
+[2025-08-05 16:14:02] INFO: GET /api/mentors/me
+[2025-08-05 16:14:02] ERROR: Courses Fetched
+[2025-08-05 16:14:02] ERROR: Notifications fetched
+[2025-08-05 16:14:02] ERROR: Courses Fetched
+[2025-08-05 16:14:02] ERROR: Courses Fetched
+[2025-08-05 16:14:02] ERROR: Courses Fetched
+[2025-08-05 16:14:02] ERROR: Courses Fetched
+[2025-08-05 16:14:06] INFO: GET /api/mentors/me
+[2025-08-05 16:14:06] INFO: GET /api/concerns
+[2025-08-05 16:14:06] INFO: GET /api/mentors/me
+[2025-08-05 16:14:06] INFO: GET /api/concerns
+[2025-08-05 16:14:06] ERROR: Notifications fetched
+[2025-08-05 16:14:06] ERROR: Courses Fetched
+[2025-08-05 16:14:06] ERROR: Courses Fetched
+[2025-08-05 16:14:06] ERROR: Notifications fetched
+[2025-08-05 16:14:06] ERROR: Courses Fetched
+[2025-08-05 16:14:07] ERROR: Courses Fetched
+[2025-08-05 16:14:07] ERROR: Courses Fetched
+[2025-08-05 16:14:07] ERROR: Courses Fetched
+[2025-08-05 16:14:07] ERROR: Courses Fetched
+[2025-08-05 16:14:25] INFO: GET /api/mentors/me
+[2025-08-05 16:14:25] INFO: GET /api/concerns
+[2025-08-05 16:14:25] INFO: GET /api/concerns
+[2025-08-05 16:14:25] ERROR: Courses Fetched
+[2025-08-05 16:14:25] ERROR: Notifications fetched
+[2025-08-05 16:14:25] ERROR: Courses Fetched
+[2025-08-05 16:14:25] INFO: GET /api/mentors/me
+[2025-08-05 16:14:25] ERROR: Courses Fetched
+[2025-08-05 16:14:25] ERROR: Notifications fetched
+[2025-08-05 16:14:25] ERROR: Courses Fetched
+[2025-08-05 16:14:25] ERROR: Courses Fetched
+[2025-08-05 16:14:25] ERROR: Courses Fetched
+[2025-08-05 16:14:25] ERROR: Courses Fetched
+[2025-08-05 16:14:46] INFO: GET /api/mentors/me
+[2025-08-05 16:14:46] INFO: GET /api/concerns
+[2025-08-05 16:14:46] INFO: GET /api/concerns
+[2025-08-05 16:14:46] ERROR: Courses Fetched
+[2025-08-05 16:14:46] ERROR: Courses Fetched
+[2025-08-05 16:14:46] INFO: GET /api/mentors/me
+[2025-08-05 16:14:46] ERROR: Notifications fetched
+[2025-08-05 16:14:47] ERROR: Courses Fetched
+[2025-08-05 16:14:47] ERROR: Notifications fetched
+[2025-08-05 16:14:47] ERROR: Courses Fetched
+[2025-08-05 16:14:47] ERROR: Courses Fetched
+[2025-08-05 16:14:47] ERROR: Courses Fetched
+[2025-08-05 16:14:47] ERROR: Courses Fetched
+[2025-08-05 16:14:54] INFO: GET /api/mentors/me
+[2025-08-05 16:14:54] INFO: GET /api/concerns
+[2025-08-05 16:14:54] INFO: GET /api/concerns
+[2025-08-05 16:14:54] ERROR: Courses Fetched
+[2025-08-05 16:14:54] ERROR: Courses Fetched
+[2025-08-05 16:14:54] INFO: GET /api/mentors/me
+[2025-08-05 16:14:54] ERROR: Notifications fetched
+[2025-08-05 16:14:54] ERROR: Courses Fetched
+[2025-08-05 16:14:54] ERROR: Notifications fetched
+[2025-08-05 16:14:54] ERROR: Courses Fetched
+[2025-08-05 16:14:54] ERROR: Courses Fetched
+[2025-08-05 16:14:54] ERROR: Courses Fetched
+[2025-08-05 16:14:54] ERROR: Courses Fetched
+[2025-08-05 16:15:26] ERROR: Courses Fetched
+[2025-08-05 16:15:26] INFO: GET /api/mentors/me
+[2025-08-05 16:15:26] INFO: GET /api/concerns
+[2025-08-05 16:15:26] INFO: GET /api/concerns
+[2025-08-05 16:15:26] ERROR: Courses Fetched
+[2025-08-05 16:15:26] ERROR: Notifications fetched
+[2025-08-05 16:15:26] INFO: GET /api/mentors/me
+[2025-08-05 16:15:26] ERROR: Courses Fetched
+[2025-08-05 16:15:26] ERROR: Notifications fetched
+[2025-08-05 16:15:26] ERROR: Courses Fetched
+[2025-08-05 16:15:26] ERROR: Courses Fetched
+[2025-08-05 16:15:26] ERROR: Courses Fetched
+[2025-08-05 16:15:26] ERROR: Courses Fetched
+[2025-08-05 16:15:31] INFO: GET /api/mentors/me
+[2025-08-05 16:15:31] INFO: GET /api/concerns
+[2025-08-05 16:15:31] ERROR: Notifications fetched
+[2025-08-05 16:15:31] INFO: GET /api/mentors/me
+[2025-08-05 16:15:31] INFO: GET /api/concerns
+[2025-08-05 16:15:31] ERROR: Courses Fetched
+[2025-08-05 16:15:31] ERROR: Notifications fetched
+[2025-08-05 16:15:32] ERROR: Courses Fetched
+[2025-08-05 16:15:32] ERROR: Courses Fetched
+[2025-08-05 16:15:32] ERROR: Courses Fetched
+[2025-08-05 16:15:38] INFO: GET /api/mentors/me
+[2025-08-05 16:15:38] INFO: GET /api/concerns
+[2025-08-05 16:15:39] INFO: GET /api/concerns
+[2025-08-05 16:15:39] ERROR: Courses Fetched
+[2025-08-05 16:15:39] INFO: GET /api/mentors/me
+[2025-08-05 16:15:39] ERROR: Notifications fetched
+[2025-08-05 16:15:39] ERROR: Notifications fetched
+[2025-08-05 16:15:39] ERROR: Courses Fetched
+[2025-08-05 16:15:39] ERROR: Courses Fetched
+[2025-08-05 16:15:39] ERROR: Courses Fetched
+[2025-08-05 16:16:19] INFO: GET /api/mentors/me
+[2025-08-05 16:16:19] INFO: GET /api/concerns
+[2025-08-05 16:16:19] ERROR: Courses Fetched
+[2025-08-05 16:16:19] ERROR: Notifications fetched
+[2025-08-05 16:16:19] INFO: GET /api/mentors/me
+[2025-08-05 16:16:19] INFO: GET /api/concerns
+[2025-08-05 16:16:19] ERROR: Notifications fetched
+[2025-08-05 16:16:19] ERROR: Courses Fetched
+[2025-08-05 16:16:19] ERROR: Courses Fetched
+[2025-08-05 16:16:19] ERROR: Courses Fetched
+[2025-08-05 16:16:22] INFO: GET /api/mentors/me
+[2025-08-05 16:16:22] INFO: GET /api/concerns
+[2025-08-05 16:16:22] INFO: GET /api/mentors/me
+[2025-08-05 16:16:22] INFO: GET /api/concerns
+[2025-08-05 16:16:22] ERROR: Notifications fetched
+[2025-08-05 16:16:22] ERROR: Courses Fetched
+[2025-08-05 16:16:22] ERROR: Courses Fetched
+[2025-08-05 16:16:22] ERROR: Notifications fetched
+[2025-08-05 16:16:22] ERROR: Courses Fetched
+[2025-08-05 16:16:22] ERROR: Courses Fetched
+[2025-08-05 16:22:55] INFO:  Server running on port 4000
+[2025-08-05 16:23:57] INFO:  Server running on port 4000
+[2025-08-05 16:25:20] INFO:  Server running on port 4000
+[2025-08-05 16:25:44] INFO:  Server running on port 4000
+[2025-08-05 16:27:21] INFO:  Server running on port 4000
+[2025-08-05 17:13:03] INFO:  Server running on port 4000
+[2025-08-05 17:13:34] INFO:  Server running on port 4000
+[2025-08-05 17:14:05] INFO: POST /api/auth/login
+[2025-08-05 17:15:04] INFO: GET /api/mentors/me
+[2025-08-05 17:15:04] INFO: GET /api/concerns
+[2025-08-05 17:15:04] ERROR: 
+[2025-08-05 17:15:04] ERROR: Throwing error:
+[2025-08-05 17:15:04] ERROR: Unhotharized
+[2025-08-05 17:15:04] ERROR: Unhotharized
+[2025-08-05 17:15:04] INFO: GET /api/mentors/me
+[2025-08-05 17:15:04] INFO: GET /api/concerns
+[2025-08-05 17:15:04] ERROR: 
+[2025-08-05 17:15:04] ERROR: Throwing error:
+[2025-08-05 17:15:04] ERROR: Unhotharized
+[2025-08-05 17:15:04] ERROR: Unhotharized
+[2025-08-05 17:15:04] ERROR: 
+[2025-08-05 17:15:04] ERROR: 
+[2025-08-05 17:15:04] ERROR: Notifications fetched
+[2025-08-05 17:15:04] ERROR: Notifications fetched
+[2025-08-05 17:15:04] ERROR: Courses Fetched
+[2025-08-05 17:15:04] ERROR: Courses Fetched
+[2025-08-05 17:15:04] ERROR: Courses Fetched
+[2025-08-05 17:15:05] ERROR: Courses Fetched
+[2025-08-05 17:15:09] INFO: GET /api/mentors/me
+[2025-08-05 17:15:09] INFO: GET /api/concerns
+[2025-08-05 17:15:09] ERROR: Notifications fetched
+[2025-08-05 17:15:09] INFO: GET /api/mentors/me
+[2025-08-05 17:15:09] INFO: GET /api/concerns
+[2025-08-05 17:15:09] ERROR: Courses Fetched
+[2025-08-05 17:15:09] ERROR: Notifications fetched
+[2025-08-05 17:15:10] ERROR: Courses Fetched
+[2025-08-05 17:15:10] ERROR: Courses Fetched
+[2025-08-05 17:15:10] ERROR: Courses Fetched
+[2025-08-05 17:17:11] INFO:  Server running on port 4000
+[2025-08-05 17:17:23] INFO: POST /api/auth/login
+[2025-08-05 17:18:17] INFO: GET /api/mentors/me
+[2025-08-05 17:18:17] INFO: GET /api/concerns
+[2025-08-05 17:18:17] ERROR: Notifications fetched
+[2025-08-05 17:18:17] INFO: GET /api/mentors/me
+[2025-08-05 17:18:17] ERROR: Courses Fetched
+[2025-08-05 17:18:17] INFO: GET /api/concerns
+[2025-08-05 17:18:17] ERROR: Notifications fetched
+[2025-08-05 17:18:17] ERROR: Courses Fetched
+[2025-08-05 17:18:17] ERROR: Courses Fetched
+[2025-08-05 17:18:17] ERROR: Courses Fetched
+[2025-08-05 17:18:43] INFO: GET /api/mentors/me
+[2025-08-05 17:18:43] INFO: GET /api/concerns
+[2025-08-05 17:18:43] INFO: GET /api/mentors/me
+[2025-08-05 17:18:43] ERROR: Courses Fetched
+[2025-08-05 17:18:43] ERROR: Notifications fetched
+[2025-08-05 17:18:43] INFO: GET /api/concerns
+[2025-08-05 17:18:43] ERROR: Courses Fetched
+[2025-08-05 17:18:43] ERROR: Notifications fetched
+[2025-08-05 17:18:43] ERROR: Courses Fetched
+[2025-08-05 17:18:43] ERROR: Courses Fetched
+[2025-08-05 17:19:41] INFO: GET /api/mentors/me
+[2025-08-05 17:19:41] INFO: GET /api/mentors/me
+[2025-08-05 17:19:41] ERROR: Courses Fetched
+[2025-08-05 17:19:41] INFO: GET /api/concerns
+[2025-08-05 17:19:41] ERROR: Notifications fetched
+[2025-08-05 17:19:41] ERROR: Courses Fetched
+[2025-08-05 17:19:41] INFO: GET /api/concerns
+[2025-08-05 17:19:41] ERROR: Notifications fetched
+[2025-08-05 17:19:41] ERROR: Courses Fetched
+[2025-08-05 17:19:41] ERROR: Courses Fetched
+[2025-08-05 17:20:03] INFO: GET /api/mentors/me
+[2025-08-05 17:20:03] INFO: GET /api/mentors/me
+[2025-08-05 17:20:03] ERROR: Courses Fetched
+[2025-08-05 17:20:03] INFO: GET /api/concerns
+[2025-08-05 17:20:03] ERROR: Notifications fetched
+[2025-08-05 17:20:03] ERROR: Courses Fetched
+[2025-08-05 17:20:03] INFO: GET /api/concerns
+[2025-08-05 17:20:03] ERROR: Notifications fetched
+[2025-08-05 17:20:03] ERROR: Courses Fetched
+[2025-08-05 17:20:03] ERROR: Courses Fetched
+[2025-08-05 17:20:09] INFO: GET /api/mentors/me
+[2025-08-05 17:20:09] ERROR: Courses Fetched
+[2025-08-05 17:20:09] INFO: GET /api/concerns
+[2025-08-05 17:20:09] INFO: GET /api/concerns
+[2025-08-05 17:20:09] INFO: GET /api/mentors/me
+[2025-08-05 17:20:10] ERROR: Notifications fetched
+[2025-08-05 17:20:10] ERROR: Notifications fetched
+[2025-08-05 17:20:10] ERROR: Courses Fetched
+[2025-08-05 17:20:10] ERROR: Courses Fetched
+[2025-08-05 17:20:10] ERROR: Courses Fetched
+[2025-08-05 17:20:17] INFO: GET /api/mentors/me
+[2025-08-05 17:20:17] INFO: GET /api/concerns
+[2025-08-05 17:20:17] ERROR: Logout Succesfull
+[2025-08-05 17:20:17] INFO: GET /api/mentors/me
+[2025-08-05 17:20:17] ERROR: Notifications fetched
+[2025-08-05 17:20:17] INFO: GET /api/concerns
+[2025-08-05 17:20:17] ERROR: Logout Succesfull
+[2025-08-05 17:20:17] ERROR: Notifications fetched
+[2025-08-05 17:20:17] ERROR: Logout Succesfull
+[2025-08-05 17:20:17] ERROR: Logout Succesfull
+[2025-08-05 17:20:26] INFO: GET /api/mentors/me
+[2025-08-05 17:20:26] INFO: GET /api/concerns
+[2025-08-05 17:20:26] ERROR: 
+[2025-08-05 17:20:26] INFO: GET /api/mentors/me
+[2025-08-05 17:20:26] INFO: GET /api/concerns
+[2025-08-05 17:20:26] ERROR: Throwing error:
+[2025-08-05 17:20:26] ERROR: Unhotharized
+[2025-08-05 17:20:26] ERROR: Unhotharized
+[2025-08-05 17:20:26] ERROR: 
+[2025-08-05 17:20:26] ERROR: Throwing error:
+[2025-08-05 17:20:26] ERROR: Unhotharized
+[2025-08-05 17:20:26] ERROR: Unhotharized
+[2025-08-05 17:20:26] ERROR: 
+[2025-08-05 17:20:26] ERROR: 
+[2025-08-05 17:20:26] ERROR: jwt must be provided
+[2025-08-05 17:20:26] ERROR: jwt must be provided
+[2025-08-05 17:20:37] INFO: GET /api/mentors/me
+[2025-08-05 17:20:37] INFO: GET /api/concerns
+[2025-08-05 17:20:37] ERROR: 
+[2025-08-05 17:20:37] INFO: GET /api/mentors/me
+[2025-08-05 17:20:37] ERROR: Throwing error:
+[2025-08-05 17:20:37] ERROR: Unhotharized
+[2025-08-05 17:20:37] ERROR: Unhotharized
+[2025-08-05 17:20:37] ERROR: 
+[2025-08-05 17:20:37] INFO: GET /api/concerns
+[2025-08-05 17:20:37] ERROR: Throwing error:
+[2025-08-05 17:20:37] ERROR: Unhotharized
+[2025-08-05 17:20:37] ERROR: Unhotharized
+[2025-08-05 17:20:37] ERROR: 
+[2025-08-05 17:20:37] ERROR: 
+[2025-08-05 17:20:37] ERROR: jwt must be provided
+[2025-08-05 17:20:37] ERROR: jwt must be provided
+[2025-08-05 17:20:44] INFO: GET /api/mentors/me
+[2025-08-05 17:20:44] ERROR: 
+[2025-08-05 17:20:44] INFO: GET /api/concerns
+[2025-08-05 17:20:44] INFO: GET /api/mentors/me
+[2025-08-05 17:20:44] ERROR: Throwing error:
+[2025-08-05 17:20:44] ERROR: Unhotharized
+[2025-08-05 17:20:45] ERROR: Unhotharized
+[2025-08-05 17:20:45] INFO: GET /api/concerns
+[2025-08-05 17:20:45] ERROR: 
+[2025-08-05 17:20:45] ERROR: Throwing error:
+[2025-08-05 17:20:45] ERROR: Unhotharized
+[2025-08-05 17:20:45] ERROR: Unhotharized
+[2025-08-05 17:20:45] ERROR: 
+[2025-08-05 17:20:45] ERROR: 
+[2025-08-05 17:20:45] ERROR: jwt must be provided
+[2025-08-05 17:20:45] ERROR: jwt must be provided
+[2025-08-05 17:20:56] INFO: GET /api/mentors/me
+[2025-08-05 17:20:56] INFO: GET /api/concerns
+[2025-08-05 17:20:56] ERROR: 
+[2025-08-05 17:20:56] ERROR: Throwing error:
+[2025-08-05 17:20:56] ERROR: Unhotharized
+[2025-08-05 17:20:56] ERROR: Unhotharized
+[2025-08-05 17:20:56] INFO: GET /api/mentors/me
+[2025-08-05 17:20:56] INFO: GET /api/concerns
+[2025-08-05 17:20:56] ERROR: 
+[2025-08-05 17:20:56] ERROR: Throwing error:
+[2025-08-05 17:20:56] ERROR: Unhotharized
+[2025-08-05 17:20:56] ERROR: Unhotharized
+[2025-08-05 17:20:56] ERROR: jwt must be provided
+[2025-08-05 17:20:56] ERROR: jwt must be provided
+[2025-08-05 17:20:56] ERROR: 
+[2025-08-05 17:20:56] ERROR: 
+[2025-08-05 17:20:57] ERROR: jwt must be provided
+[2025-08-05 17:20:57] ERROR: jwt must be provided
+[2025-08-05 17:21:11] INFO: GET /api/mentors/me
+[2025-08-05 17:21:11] INFO: GET /api/concerns
+[2025-08-05 17:21:11] ERROR: 
+[2025-08-05 17:21:11] ERROR: Throwing error:
+[2025-08-05 17:21:11] ERROR: Unhotharized
+[2025-08-05 17:21:11] ERROR: Unhotharized
+[2025-08-05 17:21:11] INFO: GET /api/concerns
+[2025-08-05 17:21:11] INFO: GET /api/mentors/me
+[2025-08-05 17:21:11] ERROR: 
+[2025-08-05 17:21:11] ERROR: Throwing error:
+[2025-08-05 17:21:11] ERROR: Unhotharized
+[2025-08-05 17:21:11] ERROR: Unhotharized
+[2025-08-05 17:21:11] ERROR: 
+[2025-08-05 17:21:11] ERROR: 
+[2025-08-05 17:21:12] ERROR: jwt must be provided
+[2025-08-05 17:21:12] ERROR: jwt must be provided
+[2025-08-05 17:21:17] INFO: GET /api/mentors/me
+[2025-08-05 17:21:17] ERROR: 
+[2025-08-05 17:21:17] ERROR: Throwing error:
+[2025-08-05 17:21:17] ERROR: Unhotharized
+[2025-08-05 17:21:17] ERROR: Unhotharized
+[2025-08-05 17:21:17] INFO: GET /api/concerns
+[2025-08-05 17:21:17] INFO: GET /api/mentors/me
+[2025-08-05 17:21:17] INFO: GET /api/concerns
+[2025-08-05 17:21:17] ERROR: Throwing error:
+[2025-08-05 17:21:17] ERROR: Unhotharized
+[2025-08-05 17:21:17] ERROR: Unhotharized
+[2025-08-05 17:21:17] ERROR: 
+[2025-08-05 17:21:17] ERROR: 
+[2025-08-05 17:21:18] ERROR: 
+[2025-08-05 17:21:18] ERROR: jwt must be provided
+[2025-08-05 17:21:18] ERROR: jwt must be provided
+[2025-08-05 17:21:26] ERROR: 
+[2025-08-05 17:21:26] INFO: GET /api/mentors/me
+[2025-08-05 17:21:26] INFO: GET /api/concerns
+[2025-08-05 17:21:26] INFO: GET /api/mentors/me
+[2025-08-05 17:21:26] INFO: GET /api/concerns
+[2025-08-05 17:21:26] ERROR: 
+[2025-08-05 17:21:26] ERROR: Throwing error:
+[2025-08-05 17:21:26] ERROR: Unhotharized
+[2025-08-05 17:21:26] ERROR: Unhotharized
+[2025-08-05 17:21:26] ERROR: 
+[2025-08-05 17:21:26] ERROR: Throwing error:
+[2025-08-05 17:21:26] ERROR: Unhotharized
+[2025-08-05 17:21:26] ERROR: Unhotharized
+[2025-08-05 17:21:26] ERROR: 
+[2025-08-05 17:21:26] ERROR: jwt must be provided
+[2025-08-05 17:21:26] ERROR: jwt must be provided
+[2025-08-05 17:21:42] INFO: GET /api/mentors/me
+[2025-08-05 17:21:42] ERROR: 
+[2025-08-05 17:21:42] INFO: GET /api/concerns
+[2025-08-05 17:21:42] ERROR: Throwing error:
+[2025-08-05 17:21:42] ERROR: Unhotharized
+[2025-08-05 17:21:42] ERROR: Unhotharized
+[2025-08-05 17:21:42] INFO: GET /api/mentors/me
+[2025-08-05 17:21:42] INFO: GET /api/concerns
+[2025-08-05 17:21:42] ERROR: 
+[2025-08-05 17:21:42] ERROR: Throwing error:
+[2025-08-05 17:21:42] ERROR: Unhotharized
+[2025-08-05 17:21:42] ERROR: Unhotharized
+[2025-08-05 17:21:42] ERROR: 
+[2025-08-05 17:21:42] ERROR: 
+[2025-08-05 17:21:43] ERROR: jwt must be provided
+[2025-08-05 17:21:43] ERROR: jwt must be provided
+[2025-08-05 17:21:53] ERROR: 
+[2025-08-05 17:21:53] INFO: GET /api/mentors/me
+[2025-08-05 17:21:53] INFO: GET /api/concerns
+[2025-08-05 17:21:53] ERROR: 
+[2025-08-05 17:21:53] ERROR: Throwing error:
+[2025-08-05 17:21:53] ERROR: Unhotharized
+[2025-08-05 17:21:53] ERROR: Unhotharized
+[2025-08-05 17:21:53] ERROR: 
+[2025-08-05 17:21:53] INFO: GET /api/mentors/me
+[2025-08-05 17:21:53] INFO: GET /api/concerns
+[2025-08-05 17:21:53] ERROR: Throwing error:
+[2025-08-05 17:21:53] ERROR: Unhotharized
+[2025-08-05 17:21:53] ERROR: Unhotharized
+[2025-08-05 17:21:53] ERROR: 
+[2025-08-05 17:21:53] ERROR: jwt must be provided
+[2025-08-05 17:21:53] ERROR: jwt must be provided
+[2025-08-05 17:22:04] INFO: GET /api/mentors/me
+[2025-08-05 17:22:04] INFO: GET /api/concerns
+[2025-08-05 17:22:04] ERROR: 
+[2025-08-05 17:22:04] ERROR: Throwing error:
+[2025-08-05 17:22:04] ERROR: Unhotharized
+[2025-08-05 17:22:04] ERROR: Unhotharized
+[2025-08-05 17:22:04] ERROR: 
+[2025-08-05 17:22:04] ERROR: Throwing error:
+[2025-08-05 17:22:04] ERROR: Unhotharized
+[2025-08-05 17:22:04] ERROR: Unhotharized
+[2025-08-05 17:22:04] INFO: GET /api/concerns
+[2025-08-05 17:22:04] INFO: GET /api/mentors/me
+[2025-08-05 17:22:04] ERROR: 
+[2025-08-05 17:22:04] ERROR: 
+[2025-08-05 17:22:05] ERROR: jwt must be provided
+[2025-08-05 17:22:05] ERROR: jwt must be provided
+[2025-08-05 17:22:18] INFO: GET /api/mentors/me
+[2025-08-05 17:22:18] ERROR: 
+[2025-08-05 17:22:18] INFO: GET /api/concerns
+[2025-08-05 17:22:18] ERROR: 
+[2025-08-05 17:22:18] ERROR: Throwing error:
+[2025-08-05 17:22:18] ERROR: Unhotharized
+[2025-08-05 17:22:18] ERROR: Unhotharized
+[2025-08-05 17:22:18] INFO: GET /api/mentors/me
+[2025-08-05 17:22:18] INFO: GET /api/concerns
+[2025-08-05 17:22:18] ERROR: Throwing error:
+[2025-08-05 17:22:18] ERROR: Unhotharized
+[2025-08-05 17:22:18] ERROR: Unhotharized
+[2025-08-05 17:22:18] ERROR: 
+[2025-08-05 17:22:18] ERROR: 
+[2025-08-05 17:22:18] ERROR: jwt must be provided
+[2025-08-05 17:22:18] ERROR: jwt must be provided
+[2025-08-05 17:22:28] INFO: GET /api/mentors/me
+[2025-08-05 17:22:28] ERROR: 
+[2025-08-05 17:22:28] ERROR: Throwing error:
+[2025-08-05 17:22:28] ERROR: Unhotharized
+[2025-08-05 17:22:28] ERROR: Unhotharized
+[2025-08-05 17:22:28] INFO: GET /api/mentors/me
+[2025-08-05 17:22:28] ERROR: 
+[2025-08-05 17:22:28] ERROR: Throwing error:
+[2025-08-05 17:22:28] ERROR: Unhotharized
+[2025-08-05 17:22:28] ERROR: Unhotharized
+[2025-08-05 17:22:28] ERROR: 
+[2025-08-05 17:22:28] ERROR: 
+[2025-08-05 17:22:28] ERROR: 
+[2025-08-05 17:22:28] ERROR: 
+[2025-08-05 17:22:29] ERROR: jwt must be provided
+[2025-08-05 17:22:29] ERROR: jwt must be provided
+[2025-08-05 17:22:34] INFO: GET /api/mentors/me
+[2025-08-05 17:22:34] ERROR: 
+[2025-08-05 17:22:34] ERROR: 
+[2025-08-05 17:22:34] ERROR: Throwing error:
+[2025-08-05 17:22:34] ERROR: Unhotharized
+[2025-08-05 17:22:34] ERROR: Unhotharized
+[2025-08-05 17:22:34] ERROR: 
+[2025-08-05 17:22:34] INFO: GET /api/mentors/me
+[2025-08-05 17:22:34] ERROR: 
+[2025-08-05 17:22:34] ERROR: Throwing error:
+[2025-08-05 17:22:34] ERROR: Unhotharized
+[2025-08-05 17:22:34] ERROR: Unhotharized
+[2025-08-05 17:22:34] ERROR: 
+[2025-08-05 17:22:34] ERROR: 
+[2025-08-05 17:22:34] ERROR: jwt must be provided
+[2025-08-05 17:22:34] ERROR: jwt must be provided
+[2025-08-05 17:23:24] INFO: GET /api/mentors/me
+[2025-08-05 17:23:24] ERROR: 
+[2025-08-05 17:23:24] ERROR: 
+[2025-08-05 17:23:24] ERROR: 
+[2025-08-05 17:23:24] ERROR: 
+[2025-08-05 17:23:24] INFO: GET /api/mentors/me
+[2025-08-05 17:23:24] ERROR: Throwing error:
+[2025-08-05 17:23:24] ERROR: Unhotharized
+[2025-08-05 17:23:24] ERROR: Unhotharized
+[2025-08-05 17:23:24] ERROR: 
+[2025-08-05 17:23:24] ERROR: Throwing error:
+[2025-08-05 17:23:24] ERROR: Unhotharized
+[2025-08-05 17:23:24] ERROR: Unhotharized
+[2025-08-05 17:23:25] ERROR: 
+[2025-08-05 17:23:25] ERROR: jwt must be provided
+[2025-08-05 17:23:25] ERROR: jwt must be provided
+[2025-08-05 17:23:36] INFO: GET /api/mentors/me
+[2025-08-05 17:23:36] ERROR: 
+[2025-08-05 17:23:36] ERROR: 
+[2025-08-05 17:23:36] ERROR: Throwing error:
+[2025-08-05 17:23:36] ERROR: Unhotharized
+[2025-08-05 17:23:36] ERROR: Unhotharized
+[2025-08-05 17:23:36] ERROR: 
+[2025-08-05 17:23:36] ERROR: 
+[2025-08-05 17:23:36] INFO: GET /api/mentors/me
+[2025-08-05 17:23:36] ERROR: Throwing error:
+[2025-08-05 17:23:36] ERROR: Unhotharized
+[2025-08-05 17:23:36] ERROR: Unhotharized
+[2025-08-05 17:23:36] ERROR: 
+[2025-08-05 17:23:36] ERROR: 
+[2025-08-05 17:23:36] ERROR: jwt must be provided
+[2025-08-05 17:23:36] ERROR: jwt must be provided
+[2025-08-05 17:23:50] INFO: GET /api/mentors/me
+[2025-08-05 17:23:50] ERROR: 
+[2025-08-05 17:23:50] ERROR: 
+[2025-08-05 17:23:50] ERROR: Throwing error:
+[2025-08-05 17:23:50] ERROR: Unhotharized
+[2025-08-05 17:23:50] ERROR: Unhotharized
+[2025-08-05 17:23:50] INFO: GET /api/mentors/me
+[2025-08-05 17:23:50] ERROR: 
+[2025-08-05 17:23:50] ERROR: 
+[2025-08-05 17:23:50] ERROR: Throwing error:
+[2025-08-05 17:23:50] ERROR: Unhotharized
+[2025-08-05 17:23:50] ERROR: Unhotharized
+[2025-08-05 17:23:50] ERROR: 
+[2025-08-05 17:23:50] ERROR: 
+[2025-08-05 17:23:51] ERROR: jwt must be provided
+[2025-08-05 17:23:51] ERROR: jwt must be provided
+[2025-08-05 17:26:05] ERROR: 
+[2025-08-05 17:26:05] INFO: GET /api/mentors/me
+[2025-08-05 17:26:05] ERROR: 
+[2025-08-05 17:26:05] INFO: GET /api/mentors/me
+[2025-08-05 17:26:05] ERROR: Throwing error:
+[2025-08-05 17:26:05] ERROR: Unhotharized
+[2025-08-05 17:26:05] ERROR: Unhotharized
+[2025-08-05 17:26:05] ERROR: 
+[2025-08-05 17:26:05] ERROR: 
+[2025-08-05 17:26:05] ERROR: Throwing error:
+[2025-08-05 17:26:05] ERROR: Unhotharized
+[2025-08-05 17:26:05] ERROR: Unhotharized
+[2025-08-05 17:26:05] ERROR: 
+[2025-08-05 17:26:05] ERROR: 
+[2025-08-05 17:26:05] ERROR: jwt must be provided
+[2025-08-05 17:26:05] ERROR: jwt must be provided
+[2025-08-05 17:26:24] INFO: GET /api/mentors/me
+[2025-08-05 17:26:24] ERROR: 
+[2025-08-05 17:26:24] ERROR: 
+[2025-08-05 17:26:24] ERROR: Throwing error:
+[2025-08-05 17:26:24] ERROR: Unhotharized
+[2025-08-05 17:26:24] ERROR: Unhotharized
+[2025-08-05 17:26:24] INFO: GET /api/mentors/me
+[2025-08-05 17:26:24] ERROR: 
+[2025-08-05 17:26:24] ERROR: 
+[2025-08-05 17:26:24] ERROR: Throwing error:
+[2025-08-05 17:26:24] ERROR: Unhotharized
+[2025-08-05 17:26:24] ERROR: Unhotharized
+[2025-08-05 17:26:24] ERROR: 
+[2025-08-05 17:26:24] ERROR: 
+[2025-08-05 17:26:25] ERROR: jwt must be provided
+[2025-08-05 17:26:25] ERROR: jwt must be provided
+[2025-08-05 19:25:03] ERROR: 
+[2025-08-05 19:25:03] INFO: GET /api/mentors/me
+[2025-08-05 19:25:03] ERROR: 
+[2025-08-05 19:25:03] ERROR: Throwing error:
+[2025-08-05 19:25:03] ERROR: Unhotharized
+[2025-08-05 19:25:03] ERROR: Unhotharized
+[2025-08-05 19:25:03] INFO: GET /api/mentors/me
+[2025-08-05 19:25:03] ERROR: 
+[2025-08-05 19:25:03] ERROR: 
+[2025-08-05 19:25:03] ERROR: Throwing error:
+[2025-08-05 19:25:03] ERROR: Unhotharized
+[2025-08-05 19:25:03] ERROR: Unhotharized
+[2025-08-05 19:25:03] ERROR: 
+[2025-08-05 19:25:03] ERROR: 
+[2025-08-05 19:25:04] ERROR: jwt must be provided
+[2025-08-05 19:25:04] ERROR: jwt must be provided
+[2025-08-05 19:29:50] INFO: GET /api/mentors/me
+[2025-08-05 19:29:50] ERROR: 
+[2025-08-05 19:29:50] ERROR: 
+[2025-08-05 19:29:50] ERROR: Throwing error:
+[2025-08-05 19:29:50] ERROR: Unhotharized
+[2025-08-05 19:29:50] ERROR: Unhotharized
+[2025-08-05 19:29:50] INFO: GET /api/mentors/me
+[2025-08-05 19:29:50] ERROR: 
+[2025-08-05 19:29:50] ERROR: 
+[2025-08-05 19:29:50] ERROR: Throwing error:
+[2025-08-05 19:29:50] ERROR: Unhotharized
+[2025-08-05 19:29:50] ERROR: Unhotharized
+[2025-08-05 19:29:50] ERROR: 
+[2025-08-05 19:29:50] ERROR: 
+[2025-08-05 19:29:50] ERROR: jwt must be provided
+[2025-08-05 19:29:50] ERROR: jwt must be provided
+[2025-08-05 19:30:37] INFO: GET /api/mentors/me
+[2025-08-05 19:30:37] ERROR: 
+[2025-08-05 19:30:37] ERROR: 
+[2025-08-05 19:30:37] ERROR: Throwing error:
+[2025-08-05 19:30:37] ERROR: Unhotharized
+[2025-08-05 19:30:37] ERROR: Unhotharized
+[2025-08-05 19:30:37] INFO: GET /api/mentors/me
+[2025-08-05 19:30:37] ERROR: 
+[2025-08-05 19:30:37] ERROR: 
+[2025-08-05 19:30:37] ERROR: Throwing error:
+[2025-08-05 19:30:37] ERROR: Unhotharized
+[2025-08-05 19:30:37] ERROR: Unhotharized
+[2025-08-05 19:30:37] ERROR: 
+[2025-08-05 19:30:37] ERROR: 
+[2025-08-05 19:30:37] INFO: GET /api/api/shared/refresh-token
+[2025-08-05 19:30:40] INFO: GET /api/mentors/me
+[2025-08-05 19:30:40] ERROR: 
+[2025-08-05 19:30:40] ERROR: 
+[2025-08-05 19:30:40] ERROR: Throwing error:
+[2025-08-05 19:30:40] ERROR: Unhotharized
+[2025-08-05 19:30:40] ERROR: Unhotharized
+[2025-08-05 19:30:40] ERROR: 
+[2025-08-05 19:30:40] INFO: GET /api/mentors/me
+[2025-08-05 19:30:40] ERROR: 
+[2025-08-05 19:30:40] ERROR: Throwing error:
+[2025-08-05 19:30:40] ERROR: Unhotharized
+[2025-08-05 19:30:40] ERROR: Unhotharized
+[2025-08-05 19:30:40] ERROR: 
+[2025-08-05 19:30:40] ERROR: 
+[2025-08-05 19:30:40] INFO: GET /api/api/shared/refresh-token
+[2025-08-05 19:30:52] ERROR: 
+[2025-08-05 19:30:52] INFO: GET /api/mentors/me
+[2025-08-05 19:30:52] ERROR: 
+[2025-08-05 19:30:52] ERROR: Throwing error:
+[2025-08-05 19:30:52] ERROR: Unhotharized
+[2025-08-05 19:30:52] ERROR: Unhotharized
+[2025-08-05 19:30:52] INFO: GET /api/mentors/me
+[2025-08-05 19:30:52] ERROR: 
+[2025-08-05 19:30:52] ERROR: Throwing error:
+[2025-08-05 19:30:52] ERROR: Unhotharized
+[2025-08-05 19:30:52] ERROR: Unhotharized
+[2025-08-05 19:30:52] ERROR: 
+[2025-08-05 19:30:52] ERROR: 
+[2025-08-05 19:30:52] ERROR: 
+[2025-08-05 19:30:52] INFO: GET /api/api/shared/refresh-token
+[2025-08-05 19:32:01] INFO: GET /api/mentors/me
+[2025-08-05 19:32:01] ERROR: 
+[2025-08-05 19:32:01] ERROR: 
+[2025-08-05 19:32:01] ERROR: Throwing error:
+[2025-08-05 19:32:01] ERROR: Unhotharized
+[2025-08-05 19:32:01] ERROR: Unhotharized
+[2025-08-05 19:32:01] INFO: GET /api/mentors/me
+[2025-08-05 19:32:01] ERROR: 
+[2025-08-05 19:32:01] ERROR: Throwing error:
+[2025-08-05 19:32:01] ERROR: Unhotharized
+[2025-08-05 19:32:01] ERROR: Unhotharized
+[2025-08-05 19:32:01] ERROR: 
+[2025-08-05 19:32:01] ERROR: 
+[2025-08-05 19:32:01] ERROR: 
+[2025-08-05 19:32:02] ERROR: jwt must be provided
+[2025-08-05 19:32:02] ERROR: jwt must be provided
+[2025-08-05 19:59:05] ERROR: Logout Succesfull
+[2025-08-05 19:59:37] INFO: GET /api/mentors/me
+[2025-08-05 19:59:37] ERROR: 
+[2025-08-05 19:59:37] ERROR: 
+[2025-08-05 19:59:37] ERROR: Throwing error:
+[2025-08-05 19:59:37] ERROR: Unhotharized
+[2025-08-05 19:59:37] ERROR: Unhotharized
+[2025-08-05 19:59:37] ERROR: 
+[2025-08-05 19:59:37] ERROR: 
+[2025-08-05 19:59:37] INFO: GET /api/mentors/me
+[2025-08-05 19:59:37] ERROR: Throwing error:
+[2025-08-05 19:59:37] ERROR: Unhotharized
+[2025-08-05 19:59:37] ERROR: Unhotharized
+[2025-08-05 19:59:37] ERROR: 
+[2025-08-05 19:59:37] ERROR: 
+[2025-08-05 19:59:38] ERROR: jwt must be provided
+[2025-08-05 19:59:38] ERROR: jwt must be provided
+[2025-08-05 20:01:51] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:56] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:57] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:58] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:58] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:58] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:58] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:59] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:59] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:59] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:59] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:59] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:01:59] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:02:00] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:02:00] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:02:10] INFO: POST /api/mentor/auth/login
+[2025-08-05 20:04:13] INFO:  Server running on port 4000
+[2025-08-05 20:04:17] ERROR: Throwing error:
+[2025-08-05 20:04:17] ERROR: Invalid email or password
+[2025-08-05 20:04:17] ERROR: Invalid email or password
+[2025-08-05 20:04:26] ERROR: Login successful
+[2025-08-05 20:04:36] INFO: GET /api/mentors/me
+[2025-08-05 20:04:36] ERROR: Fetched concerns successfully
+[2025-08-05 20:04:36] ERROR: Courses fetched successfully
+[2025-08-05 20:04:36] INFO: GET /api/mentors/me
+[2025-08-05 20:04:36] ERROR: Fetched concerns successfully
+[2025-08-05 20:04:36] ERROR: Notifications fetched
+[2025-08-05 20:04:36] ERROR: Notifications fetched
+[2025-08-05 20:04:36] ERROR: Courses fetched successfully
+[2025-08-05 20:04:37] ERROR: Courses fetched successfully
+[2025-08-05 20:04:37] ERROR: Courses fetched successfully
+[2025-08-05 20:09:31] INFO:  Server running on port 4000
+[2025-08-05 20:09:50] ERROR: Mentor fetched successfully
+[2025-08-05 20:09:50] ERROR: Fetched concerns successfully
+[2025-08-05 20:09:50] ERROR: Notifications fetched
+[2025-08-05 20:09:50] ERROR: Mentor fetched successfully
+[2025-08-05 20:09:50] ERROR: Fetched concerns successfully
+[2025-08-05 20:09:50] ERROR: Notifications fetched
+[2025-08-05 20:10:09] ERROR: Mentor fetched successfully
+[2025-08-05 20:10:09] ERROR: Notifications fetched
+[2025-08-05 20:10:09] ERROR: Fetched concerns successfully
+[2025-08-05 20:10:09] ERROR: Notifications fetched
+[2025-08-05 20:10:09] ERROR: Fetched concerns successfully
+[2025-08-05 20:10:09] ERROR: Mentor fetched successfully
+[2025-08-05 20:10:35] INFO:  Server running on port 4000
+[2025-08-05 20:13:16] ERROR: Mentor fetched successfully
+[2025-08-05 20:13:16] ERROR: Fetched concerns successfully
+[2025-08-05 20:13:16] ERROR: Notifications fetched
+[2025-08-05 20:13:16] ERROR: Fetched concerns successfully
+[2025-08-05 20:13:16] ERROR: Notifications fetched
+[2025-08-05 20:13:16] ERROR: Mentor fetched successfully
+[2025-08-05 20:13:53] ERROR: Mentor fetched successfully
+[2025-08-05 20:13:53] ERROR: Fetched concerns successfully
+[2025-08-05 20:13:53] ERROR: Notifications fetched
+[2025-08-05 20:13:53] ERROR: Mentor fetched successfully
+[2025-08-05 20:13:53] ERROR: Fetched concerns successfully
+[2025-08-05 20:13:53] ERROR: Notifications fetched
+[2025-08-05 20:13:57] ERROR: Notifications fetched
+[2025-08-05 20:13:57] ERROR: Notifications fetched
+[2025-08-05 20:14:02] ERROR: Mentor fetched successfully
+[2025-08-05 20:14:02] ERROR: Fetched concerns successfully
+[2025-08-05 20:14:02] ERROR: Notifications fetched
+[2025-08-05 20:14:03] ERROR: Fetched concerns successfully
+[2025-08-05 20:14:03] ERROR: Notifications fetched
+[2025-08-05 20:14:03] ERROR: Mentor fetched successfully
+[2025-08-05 20:15:06] ERROR: Mentor fetched successfully
+[2025-08-05 20:15:06] ERROR: Fetched concerns successfully
+[2025-08-05 20:15:06] ERROR: Fetched concerns successfully
+[2025-08-05 20:15:06] ERROR: Mentor fetched successfully
+[2025-08-05 20:15:06] ERROR: Notifications fetched
+[2025-08-05 20:15:06] ERROR: Notifications fetched
+[2025-08-05 20:15:17] ERROR: Mentor fetched successfully
+[2025-08-05 20:15:17] ERROR: Fetched concerns successfully
+[2025-08-05 20:15:17] ERROR: Notifications fetched
+[2025-08-05 20:15:17] ERROR: Fetched concerns successfully
+[2025-08-05 20:15:17] ERROR: Notifications fetched
+[2025-08-05 20:15:17] ERROR: Mentor fetched successfully
+[2025-08-05 20:16:03] ERROR: Mentor fetched successfully
+[2025-08-05 20:16:03] ERROR: Fetched concerns successfully
+[2025-08-05 20:16:03] ERROR: Mentor fetched successfully
+[2025-08-05 20:16:03] ERROR: Notifications fetched
+[2025-08-05 20:16:03] ERROR: Fetched concerns successfully
+[2025-08-05 20:16:03] ERROR: Notifications fetched
+[2025-08-05 20:16:07] INFO: GET /api/mentor/get-mentor
+[2025-08-05 20:16:07] ERROR: Fetched concerns successfully
+[2025-08-05 20:16:07] ERROR: Notifications fetched
+[2025-08-05 20:16:07] ERROR: Courses fetched successfully
+[2025-08-05 20:16:07] ERROR: Fetched concerns successfully
+[2025-08-05 20:16:07] INFO: GET /api/mentor/get-mentor
+[2025-08-05 20:16:08] ERROR: Notifications fetched
+[2025-08-05 20:16:08] ERROR: Courses fetched successfully
+[2025-08-05 20:16:08] ERROR: Courses fetched successfully
+[2025-08-05 20:16:08] ERROR: Courses fetched successfully
+[2025-08-05 20:16:36] INFO:  Server running on port 4000
+[2025-08-05 20:16:44] ERROR: Mentor fetched successfully
+[2025-08-05 20:16:44] ERROR: Fetched concerns successfully
+[2025-08-05 20:16:44] ERROR: Courses fetched successfully
+[2025-08-05 20:16:44] ERROR: Notifications fetched
+[2025-08-05 20:16:44] ERROR: Mentor fetched successfully
+[2025-08-05 20:16:44] ERROR: Fetched concerns successfully
+[2025-08-05 20:16:44] ERROR: Notifications fetched
+[2025-08-05 20:16:44] ERROR: Courses fetched successfully
+[2025-08-05 20:16:44] ERROR: Courses fetched successfully
+[2025-08-05 20:16:44] ERROR: Courses fetched successfully
+[2025-08-05 20:16:58] ERROR: Notifications fetched
+[2025-08-05 20:16:58] ERROR: Notifications fetched
+[2025-08-05 20:18:15] ERROR: Courses fetched
+[2025-08-05 20:18:15] ERROR: Courses fetched
+[2025-08-05 20:18:15] ERROR: Courses fetched
+[2025-08-05 20:19:56] ERROR: 
+[2025-08-05 20:19:56] ERROR: 
+[2025-08-05 20:19:56] ERROR: 
+[2025-08-05 20:19:56] ERROR: Throwing error:
+[2025-08-05 20:19:56] ERROR: Unhotharized
+[2025-08-05 20:19:56] ERROR: Unhotharized
+[2025-08-05 20:19:56] ERROR: 
+[2025-08-05 20:19:56] ERROR: 
+[2025-08-05 20:19:56] ERROR: 
+[2025-08-05 20:19:56] ERROR: Throwing error:
+[2025-08-05 20:19:56] ERROR: Unhotharized
+[2025-08-05 20:19:56] ERROR: Unhotharized
+[2025-08-05 20:19:56] ERROR: 
+[2025-08-05 20:19:56] ERROR: 
+[2025-08-05 20:19:56] ERROR: Tokens refreshed successfully
+[2025-08-05 20:19:56] ERROR: Mentor fetched successfully
+[2025-08-05 20:19:57] ERROR: Fetched concerns successfully
+[2025-08-05 20:19:57] ERROR: Courses fetched successfully
+[2025-08-05 20:19:57] ERROR: Notifications fetched
+[2025-08-05 20:19:57] ERROR: Mentor fetched successfully
+[2025-08-05 20:19:57] ERROR: Fetched concerns successfully
+[2025-08-05 20:19:57] ERROR: Courses fetched successfully
+[2025-08-05 20:19:57] ERROR: Notifications fetched
+[2025-08-05 20:19:57] ERROR: Courses fetched successfully
+[2025-08-05 20:19:57] ERROR: Courses fetched successfully
+[2025-08-05 20:20:29] ERROR: Comments fetched successfully
+[2025-08-05 20:20:30] ERROR: Mentor fetched successfully
+[2025-08-05 20:20:30] ERROR: Fetched concerns successfully
+[2025-08-05 20:20:30] ERROR: Notifications fetched
+[2025-08-05 20:20:30] ERROR: Courses fetched successfully
+[2025-08-05 20:20:30] ERROR: Mentor fetched successfully
+[2025-08-05 20:20:30] ERROR: Notifications fetched
+[2025-08-05 20:20:30] ERROR: Fetched concerns successfully
+[2025-08-05 20:20:30] ERROR: Comments fetched successfully
+[2025-08-05 20:20:30] ERROR: Courses fetched successfully
+[2025-08-05 20:20:30] ERROR: Courses fetched successfully
+[2025-08-05 20:20:30] ERROR: Courses fetched successfully
+[2025-08-05 20:20:33] ERROR: Comments fetched successfully
+[2025-08-05 20:20:34] ERROR: Comments fetched successfully
+[2025-08-05 20:20:34] ERROR: Comments fetched successfully
+[2025-08-05 20:20:49] ERROR: Notifications fetched
+[2025-08-05 20:20:49] ERROR: Notifications fetched
+[2025-08-05 20:20:50] ERROR: Notification marked as read
+[2025-08-05 20:20:52] ERROR: Notification marked as read
+[2025-08-05 20:21:58] ERROR: Mentor fetched successfully
+[2025-08-05 20:21:58] ERROR: Courses fetched successfully
+[2025-08-05 20:21:58] ERROR: Fetched concerns successfully
+[2025-08-05 20:21:58] ERROR: Mentor fetched successfully
+[2025-08-05 20:21:58] ERROR: Notifications fetched
+[2025-08-05 20:21:59] ERROR: Fetched concerns successfully
+[2025-08-05 20:21:59] ERROR: Courses fetched successfully
+[2025-08-05 20:21:59] ERROR: Notifications fetched
+[2025-08-05 20:21:59] ERROR: Courses fetched successfully
+[2025-08-05 20:21:59] ERROR: Courses fetched successfully
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Notifications fetched
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Logout Succesfull
+[2025-08-05 20:22:34] ERROR: Notifications fetched
+[2025-08-05 20:22:59] ERROR: 
+[2025-08-05 20:22:59] ERROR: 
+[2025-08-05 20:22:59] ERROR: 
+[2025-08-05 20:22:59] ERROR: Throwing error:
+[2025-08-05 20:22:59] ERROR: Unhotharized
+[2025-08-05 20:22:59] ERROR: Unhotharized
+[2025-08-05 20:22:59] ERROR: 
+[2025-08-05 20:22:59] ERROR: 
+[2025-08-05 20:22:59] ERROR: 
+[2025-08-05 20:22:59] ERROR: Throwing error:
+[2025-08-05 20:22:59] ERROR: Unhotharized
+[2025-08-05 20:22:59] ERROR: Unhotharized
+[2025-08-05 20:22:59] ERROR: jwt must be provided
+[2025-08-05 20:22:59] ERROR: jwt must be provided
+[2025-08-05 20:22:59] ERROR: 
+[2025-08-05 20:22:59] ERROR: 
+[2025-08-05 20:22:59] ERROR: jwt must be provided
+[2025-08-05 20:22:59] ERROR: jwt must be provided
+[2025-08-05 20:23:46] ERROR: Login successful
+[2025-08-05 20:23:49] ERROR: Progress fetched succesfully
+[2025-08-05 20:23:49] ERROR: Notifications fetched
+[2025-08-05 20:23:49] ERROR: Daily tasks generated
+[2025-08-05 20:23:49] ERROR: Courses Fetched
+[2025-08-05 20:23:49] ERROR: Notifications fetched
+[2025-08-05 20:23:49] ERROR: User retrieved successfully
+[2025-08-05 20:23:49] ERROR: Progress fetched succesfully
+[2025-08-05 20:23:49] ERROR: Daily tasks generated
+[2025-08-05 20:23:49] ERROR: Courses Fetched
+[2025-08-05 20:23:49] ERROR: User retrieved successfully
+[2025-08-05 20:24:40] ERROR: Throwing error:
+[2025-08-05 20:24:40] ERROR: Audio file is required
+[2025-08-05 20:24:40] ERROR: Audio file is required
+[2025-08-05 20:24:44] ERROR: Throwing error:
+[2025-08-05 20:24:44] ERROR: Audio file is required
+[2025-08-05 20:24:44] ERROR: Audio file is required
+[2025-08-05 20:24:45] ERROR: Throwing error:
+[2025-08-05 20:24:45] ERROR: Audio file is required
+[2025-08-05 20:24:45] ERROR: Audio file is required
+[2025-08-05 20:24:58] ERROR: Task updated
+[2025-08-05 20:25:57] ERROR: Task updated
+[2025-08-05 20:26:21] ERROR: Task updated
+[2025-08-05 20:26:40] ERROR: fetched all daily task 
+[2025-08-05 20:26:40] ERROR: fetched all daily task 
+[2025-08-05 20:26:56] ERROR: Certificates fetched successfully
+[2025-08-05 20:26:56] ERROR: Certificates fetched successfully
+[2025-08-05 20:26:56] ERROR: Certificates fetched successfully
+[2025-08-05 20:27:03] ERROR: Certificate fetched successfully
+[2025-08-05 20:27:03] ERROR: Certificate fetched successfully
+[2025-08-05 20:28:50] ERROR: Progress fetched succesfully
+[2025-08-05 20:28:50] ERROR: Courses Fetched
+[2025-08-05 20:28:50] ERROR: Progress fetched succesfully
+[2025-08-05 20:28:50] ERROR: User retrieved successfully
+[2025-08-05 20:28:51] ERROR: Notifications fetched
+[2025-08-05 20:28:51] ERROR: User retrieved successfully
+[2025-08-05 20:28:51] ERROR: Daily tasks generated
+[2025-08-05 20:28:51] ERROR: Notifications fetched
+[2025-08-05 20:28:51] ERROR: Courses Fetched
+[2025-08-05 20:28:51] ERROR: Daily tasks generated
+[2025-08-05 20:28:56] ERROR: Logout Succesfull
+[2025-08-05 20:28:56] ERROR: Logout Succesfull
+[2025-08-05 20:28:56] ERROR: Logout Succesfull
+[2025-08-05 20:28:57] ERROR: Logout Succesfull
+[2025-08-05 20:28:57] ERROR: Logout Succesfull
+[2025-08-05 20:28:57] ERROR: Notifications fetched
+[2025-08-05 20:28:57] ERROR: Logout Succesfull
+[2025-08-05 20:28:57] ERROR: Notifications fetched
+[2025-08-05 20:28:57] ERROR: Logout Succesfull
+[2025-08-05 20:28:57] ERROR: Logout Succesfull
+[2025-08-05 20:30:09] ERROR: 
+[2025-08-05 20:30:09] ERROR: 
+[2025-08-05 20:30:09] ERROR: 
+[2025-08-05 20:30:09] ERROR: 
+[2025-08-05 20:30:09] ERROR: jwt must be provided
+[2025-08-05 20:30:09] ERROR: jwt must be provided
+[2025-08-05 20:30:09] ERROR: Throwing error:
+[2025-08-05 20:30:09] ERROR: Unhotharized
+[2025-08-05 20:30:09] ERROR: Unhotharized
+[2025-08-05 20:30:09] ERROR: 
+[2025-08-05 20:30:09] ERROR: 
+[2025-08-05 20:30:09] ERROR: Throwing error:
+[2025-08-05 20:30:09] ERROR: Unhotharized
+[2025-08-05 20:30:09] ERROR: Unhotharized
+[2025-08-05 20:30:09] ERROR: 
+[2025-08-05 20:30:09] ERROR: 
+[2025-08-05 20:30:09] ERROR: jwt must be provided
+[2025-08-05 20:30:09] ERROR: jwt must be provided
+[2025-08-05 20:30:18] ERROR: Login successful
+[2025-08-05 20:30:19] ERROR: User retrieved successfully
+[2025-08-05 20:30:19] ERROR: User retrieved successfully
+[2025-08-05 20:30:19] ERROR: Courses Fetched
+[2025-08-05 20:30:19] ERROR: Progress fetched succesfully
+[2025-08-05 20:30:19] ERROR: Notifications fetched
+[2025-08-05 20:30:19] ERROR: Progress fetched succesfully
+[2025-08-05 20:30:19] ERROR: Courses Fetched
+[2025-08-05 20:30:19] ERROR: Daily tasks generated
+[2025-08-05 20:30:19] ERROR: Notifications fetched
+[2025-08-05 20:30:19] ERROR: Daily tasks generated
+[2025-08-05 20:30:23] ERROR: User retrieved successfully
+[2025-08-05 20:30:23] ERROR: Progress fetched succesfully
+[2025-08-05 20:30:23] ERROR: Notifications fetched
+[2025-08-05 20:30:23] ERROR: Courses Fetched
+[2025-08-05 20:30:23] ERROR: Daily tasks generated
+[2025-08-05 20:30:23] ERROR: Progress fetched succesfully
+[2025-08-05 20:30:23] ERROR: Notifications fetched
+[2025-08-05 20:30:23] ERROR: Daily tasks generated
+[2025-08-05 20:30:23] ERROR: Courses Fetched
+[2025-08-05 20:30:23] ERROR: User retrieved successfully
+[2025-08-05 20:31:24] ERROR: Logout Succesfull
+[2025-08-05 20:31:24] ERROR: Logout Succesfull
+[2025-08-05 20:31:24] ERROR: Logout Succesfull
+[2025-08-05 20:31:24] ERROR: Logout Succesfull
+[2025-08-05 20:31:24] ERROR: Logout Succesfull
+[2025-08-05 20:31:24] ERROR: Logout Succesfull
+[2025-08-05 20:31:24] ERROR: Logout Succesfull
+[2025-08-05 20:31:24] ERROR: Logout Succesfull
+[2025-08-05 20:31:24] ERROR: Notifications fetched
+[2025-08-05 20:31:24] ERROR: Notifications fetched
+[2025-08-05 20:32:53] ERROR: 
+[2025-08-05 20:32:53] INFO: GET /api/mentor/me
+[2025-08-05 20:32:53] ERROR: 
+[2025-08-05 20:32:53] ERROR: Throwing error:
+[2025-08-05 20:32:53] ERROR: Unhotharized
+[2025-08-05 20:32:53] ERROR: Unhotharized
+[2025-08-05 20:32:53] INFO: GET /api/mentor/me
+[2025-08-05 20:32:53] ERROR: 
+[2025-08-05 20:32:53] ERROR: 
+[2025-08-05 20:32:53] ERROR: Throwing error:
+[2025-08-05 20:32:53] ERROR: Unhotharized
+[2025-08-05 20:32:53] ERROR: Unhotharized
+[2025-08-05 20:32:53] ERROR: 
+[2025-08-05 20:32:53] ERROR: 
+[2025-08-05 20:32:53] ERROR: jwt must be provided
+[2025-08-05 20:32:53] ERROR: jwt must be provided
+[2025-08-05 20:33:02] INFO: GET /api/mentor/me
+[2025-08-05 20:33:02] ERROR: 
+[2025-08-05 20:33:02] ERROR: 
+[2025-08-05 20:33:02] ERROR: Throwing error:
+[2025-08-05 20:33:02] ERROR: Unhotharized
+[2025-08-05 20:33:02] ERROR: Unhotharized
+[2025-08-05 20:33:02] INFO: GET /api/mentor/me
+[2025-08-05 20:33:02] ERROR: 
+[2025-08-05 20:33:02] ERROR: 
+[2025-08-05 20:33:02] ERROR: Throwing error:
+[2025-08-05 20:33:02] ERROR: Unhotharized
+[2025-08-05 20:33:02] ERROR: Unhotharized
+[2025-08-05 20:33:02] ERROR: 
+[2025-08-05 20:33:02] ERROR: 
+[2025-08-05 20:33:02] ERROR: jwt must be provided
+[2025-08-05 20:33:02] ERROR: jwt must be provided
+[2025-08-05 20:33:07] ERROR: 
+[2025-08-05 20:33:07] INFO: GET /api/mentor/me
+[2025-08-05 20:33:07] ERROR: 
+[2025-08-05 20:33:07] ERROR: 
+[2025-08-05 20:33:07] ERROR: Throwing error:
+[2025-08-05 20:33:07] ERROR: Unhotharized
+[2025-08-05 20:33:07] ERROR: Unhotharized
+[2025-08-05 20:33:07] ERROR: 
+[2025-08-05 20:33:07] ERROR: jwt must be provided
+[2025-08-05 20:33:07] ERROR: jwt must be provided
+[2025-08-05 20:33:07] ERROR: Throwing error:
+[2025-08-05 20:33:07] ERROR: Unhotharized
+[2025-08-05 20:33:07] ERROR: Unhotharized
+[2025-08-05 20:33:07] INFO: GET /api/mentor/me
+[2025-08-05 20:33:07] ERROR: 
+[2025-08-05 20:33:07] ERROR: 
+[2025-08-05 20:33:08] ERROR: jwt must be provided
+[2025-08-05 20:33:08] ERROR: jwt must be provided
+[2025-08-05 20:34:33] INFO:  Server running on port 4000
+[2025-08-05 20:36:26] INFO:  Server running on port 4000
+[2025-08-05 20:36:54] ERROR: 
+[2025-08-05 20:36:54] ERROR: 
+[2025-08-05 20:36:54] ERROR: 
+[2025-08-05 20:36:54] ERROR: 
+[2025-08-05 20:36:54] ERROR: Throwing error:
+[2025-08-05 20:36:54] ERROR: Unhotharized
+[2025-08-05 20:36:54] ERROR: Unhotharized
+[2025-08-05 20:36:54] ERROR: 
+[2025-08-05 20:36:54] ERROR: 
+[2025-08-05 20:36:54] ERROR: jwt must be provided
+[2025-08-05 20:36:54] ERROR: jwt must be provided
+[2025-08-05 20:36:54] ERROR: Throwing error:
+[2025-08-05 20:36:54] ERROR: Unhotharized
+[2025-08-05 20:36:54] ERROR: Unhotharized
+[2025-08-05 20:36:54] ERROR: 
+[2025-08-05 20:36:54] ERROR: 
+[2025-08-05 20:36:55] ERROR: jwt must be provided
+[2025-08-05 20:36:55] ERROR: jwt must be provided
+[2025-08-05 20:37:36] ERROR: Login successful
+[2025-08-05 20:37:40] ERROR: Courses fetched successfully
+[2025-08-05 20:37:40] ERROR: Mentor fetched successfully
+[2025-08-05 20:37:40] ERROR: Mentor fetched successfully
+[2025-08-05 20:37:40] ERROR: Notifications fetched
+[2025-08-05 20:37:40] ERROR: Fetched concerns successfully
+[2025-08-05 20:37:40] ERROR: Courses fetched successfully
+[2025-08-05 20:37:40] ERROR: Notifications fetched
+[2025-08-05 20:37:40] ERROR: Fetched concerns successfully
+[2025-08-05 20:37:40] ERROR: Courses fetched successfully
+[2025-08-05 20:37:40] ERROR: Courses fetched successfully
+[2025-08-05 20:37:45] ERROR: Courses fetched
+[2025-08-05 20:37:45] ERROR: Courses fetched
+[2025-08-05 20:37:45] ERROR: Courses fetched
+[2025-08-05 20:38:04] ERROR: Student data fetched successfully
+[2025-08-05 20:38:04] ERROR: Student data fetched successfully
+[2025-08-05 20:38:07] ERROR: Cannot read properties of undefined (reading 'toString')
+[2025-08-05 20:38:07] ERROR: Cannot read properties of undefined (reading 'toString')
+[2025-08-05 20:38:10] ERROR: Cannot read properties of undefined (reading 'toString')
+[2025-08-05 20:38:10] ERROR: Cannot read properties of undefined (reading 'toString')
+[2025-08-05 20:38:24] ERROR: Cannot read properties of undefined (reading 'toString')
+[2025-08-05 20:38:24] ERROR: Cannot read properties of undefined (reading 'toString')
+[2025-08-05 20:40:13] ERROR: Student data fetched successfully
+[2025-08-05 20:40:13] ERROR: Mentor fetched successfully
+[2025-08-05 20:40:13] ERROR: Courses fetched successfully
+[2025-08-05 20:40:13] ERROR: Fetched concerns successfully
+[2025-08-05 20:40:13] ERROR: Notifications fetched
+[2025-08-05 20:40:13] ERROR: Student data fetched successfully
+[2025-08-05 20:40:13] ERROR: Mentor fetched successfully
+[2025-08-05 20:40:13] ERROR: Notifications fetched
+[2025-08-05 20:40:13] ERROR: Courses fetched successfully
+[2025-08-05 20:40:13] ERROR: Fetched concerns successfully
+[2025-08-05 20:40:13] ERROR: Courses fetched successfully
+[2025-08-05 20:40:13] ERROR: Courses fetched successfully
+[2025-08-05 20:40:30] INFO:  Server running on port 4000
+[2025-08-05 20:40:44] INFO: PATCH /api/mentor/students/6884ea362c642360ab8bc273/block
+[2025-08-05 20:40:45] INFO: PATCH /api/mentor/students/6884ea362c642360ab8bc273/block
+[2025-08-05 20:41:07] ERROR: Student data fetched successfully
+[2025-08-05 20:41:08] ERROR: Mentor fetched successfully
+[2025-08-05 20:41:08] ERROR: Courses fetched successfully
+[2025-08-05 20:41:08] ERROR: Fetched concerns successfully
+[2025-08-05 20:41:08] ERROR: Mentor fetched successfully
+[2025-08-05 20:41:08] ERROR: Notifications fetched
+[2025-08-05 20:41:08] ERROR: Fetched concerns successfully
+[2025-08-05 20:41:08] ERROR: Student data fetched successfully
+[2025-08-05 20:41:08] ERROR: Courses fetched successfully
+[2025-08-05 20:41:08] ERROR: Notifications fetched
+[2025-08-05 20:41:08] ERROR: Courses fetched successfully
+[2025-08-05 20:41:09] ERROR: Courses fetched successfully
+[2025-08-05 20:41:12] ERROR: Throwing error:
+[2025-08-05 20:41:12] ERROR: User not found
+[2025-08-05 20:41:12] ERROR: User not found
+[2025-08-05 20:41:39] INFO:  Server running on port 4000
+[2025-08-05 20:41:42] ERROR: Error finding document by ID: Cast to ObjectId failed for value "true" (type boolean) at path "_id" for model "User"
+[2025-08-05 20:41:42] ERROR: Error finding document by ID: Cast to ObjectId failed for value "true" (type boolean) at path "_id" for model "User"
+[2025-08-05 20:41:49] ERROR: Error finding document by ID: Cast to ObjectId failed for value "true" (type boolean) at path "_id" for model "User"
+[2025-08-05 20:41:49] ERROR: Error finding document by ID: Cast to ObjectId failed for value "true" (type boolean) at path "_id" for model "User"
+[2025-08-05 20:42:27] INFO:  Server running on port 4000
+[2025-08-05 20:42:45] ERROR: Error finding document by ID: Cast to ObjectId failed for value "true" (type boolean) at path "_id" for model "User"
+[2025-08-05 20:42:45] ERROR: Error finding document by ID: Cast to ObjectId failed for value "true" (type boolean) at path "_id" for model "User"
+[2025-08-05 20:46:03] INFO:  Server running on port 4000
+[2025-08-05 20:47:41] INFO:  Server running on port 4000
+[2025-08-05 20:48:47] ERROR: Error finding document by ID: Cast to ObjectId failed for value "true" (type boolean) at path "_id" for model "User"
+[2025-08-05 20:48:47] ERROR: Error finding document by ID: Cast to ObjectId failed for value "true" (type boolean) at path "_id" for model "User"
+[2025-08-05 20:49:40] ERROR: Student Blocked
+[2025-08-05 20:49:40] ERROR: Student data fetched successfully
+[2025-08-05 20:49:44] ERROR: Student Unblock
+[2025-08-05 20:49:44] ERROR: Student data fetched successfully
+[2025-08-05 20:49:45] ERROR: Student Blocked
+[2025-08-05 20:49:45] ERROR: Student data fetched successfully
+[2025-08-05 20:49:50] ERROR: Student Unblock
+[2025-08-05 20:49:50] ERROR: Student data fetched successfully
+[2025-08-05 20:50:01] ERROR: Student data fetched successfully
+[2025-08-05 20:50:01] ERROR: Courses fetched successfully
+[2025-08-05 20:50:01] ERROR: Fetched concerns successfully
+[2025-08-05 20:50:01] ERROR: Mentor fetched successfully
+[2025-08-05 20:50:01] ERROR: Notifications fetched
+[2025-08-05 20:50:01] ERROR: Courses fetched successfully
+[2025-08-05 20:50:01] ERROR: Fetched concerns successfully
+[2025-08-05 20:50:01] ERROR: Mentor fetched successfully
+[2025-08-05 20:50:01] ERROR: Notifications fetched
+[2025-08-05 20:50:01] ERROR: Courses fetched successfully
+[2025-08-05 20:50:01] ERROR: Student data fetched successfully
+[2025-08-05 20:50:01] ERROR: Courses fetched successfully
+[2025-08-05 20:50:21] ERROR: Logout Succesfull
+[2025-08-05 20:50:24] ERROR: 
+[2025-08-05 20:50:24] ERROR: 
+[2025-08-05 20:50:24] ERROR: 
+[2025-08-05 20:50:24] ERROR: Throwing error:
+[2025-08-05 20:50:24] ERROR: Unhotharized
+[2025-08-05 20:50:24] ERROR: Unhotharized
+[2025-08-05 20:50:24] ERROR: 
+[2025-08-05 20:50:24] ERROR: 
+[2025-08-05 20:50:24] ERROR: 
+[2025-08-05 20:50:24] ERROR: Throwing error:
+[2025-08-05 20:50:24] ERROR: Unhotharized
+[2025-08-05 20:50:24] ERROR: Unhotharized
+[2025-08-05 20:50:24] ERROR: 
+[2025-08-05 20:50:24] ERROR: 
+[2025-08-05 20:50:24] ERROR: jwt must be provided
+[2025-08-05 20:50:24] ERROR: jwt must be provided
+[2025-08-05 20:50:54] ERROR: 
+[2025-08-05 20:50:54] ERROR: 
+[2025-08-05 20:50:54] ERROR: 
+[2025-08-05 20:50:54] ERROR: Throwing error:
+[2025-08-05 20:50:54] ERROR: Unhotharized
+[2025-08-05 20:50:54] ERROR: Unhotharized
+[2025-08-05 20:50:55] ERROR: 
+[2025-08-05 20:50:55] ERROR: 
+[2025-08-05 20:50:55] ERROR: 
+[2025-08-05 20:50:55] ERROR: Throwing error:
+[2025-08-05 20:50:55] ERROR: Unhotharized
+[2025-08-05 20:50:55] ERROR: Unhotharized
+[2025-08-05 20:50:55] ERROR: 
+[2025-08-05 20:50:55] ERROR: 
+[2025-08-05 20:50:55] ERROR: jwt must be provided
+[2025-08-05 20:50:55] ERROR: jwt must be provided
+[2025-08-05 20:50:56] ERROR: 
+[2025-08-05 20:50:56] ERROR: 
+[2025-08-05 20:50:56] ERROR: 
+[2025-08-05 20:50:56] ERROR: Throwing error:
+[2025-08-05 20:50:56] ERROR: Unhotharized
+[2025-08-05 20:50:56] ERROR: Unhotharized
+[2025-08-05 20:50:56] ERROR: 
+[2025-08-05 20:50:56] ERROR: 
+[2025-08-05 20:50:56] ERROR: 
+[2025-08-05 20:50:56] ERROR: Throwing error:
+[2025-08-05 20:50:56] ERROR: Unhotharized
+[2025-08-05 20:50:56] ERROR: Unhotharized
+[2025-08-05 20:50:56] ERROR: 
+[2025-08-05 20:50:56] ERROR: 
+[2025-08-05 20:50:56] ERROR: jwt must be provided
+[2025-08-05 20:50:56] ERROR: jwt must be provided
+[2025-08-05 20:51:47] ERROR: Login successful
+[2025-08-05 20:51:53] ERROR: Mentor fetched successfully
+[2025-08-05 20:51:53] ERROR: Courses fetched successfully
+[2025-08-05 20:51:53] ERROR: Fetched concerns successfully
+[2025-08-05 20:51:54] ERROR: Notifications fetched
+[2025-08-05 20:51:54] ERROR: Fetched concerns successfully
+[2025-08-05 20:51:54] ERROR: Mentor fetched successfully
+[2025-08-05 20:51:54] ERROR: Courses fetched successfully
+[2025-08-05 20:51:54] ERROR: Notifications fetched
+[2025-08-05 20:51:54] ERROR: Courses fetched successfully
+[2025-08-05 20:51:54] ERROR: Courses fetched successfully
+[2025-08-05 20:52:02] ERROR: Courses fetched successfully
+[2025-08-05 20:52:02] ERROR: Mentor fetched successfully
+[2025-08-05 20:52:02] ERROR: Notifications fetched
+[2025-08-05 20:52:02] ERROR: Fetched concerns successfully
+[2025-08-05 20:52:02] ERROR: Mentor fetched successfully
+[2025-08-05 20:52:02] ERROR: Notifications fetched
+[2025-08-05 20:52:02] ERROR: Courses fetched successfully
+[2025-08-05 20:52:02] ERROR: Fetched concerns successfully
+[2025-08-05 20:52:02] ERROR: Courses fetched successfully
+[2025-08-05 20:52:02] ERROR: Courses fetched successfully
+[2025-08-05 20:53:36] ERROR: Mentor fetched successfully
+[2025-08-05 20:53:36] ERROR: Fetched concerns successfully
+[2025-08-05 20:53:36] ERROR: Notifications fetched
+[2025-08-05 20:53:36] ERROR: Courses fetched successfully
+[2025-08-05 20:53:36] ERROR: Notifications fetched
+[2025-08-05 20:53:36] ERROR: Mentor fetched successfully
+[2025-08-05 20:53:36] ERROR: Courses fetched successfully
+[2025-08-05 20:53:36] ERROR: Fetched concerns successfully
+[2025-08-05 20:53:36] ERROR: Courses fetched successfully
+[2025-08-05 20:53:36] ERROR: Courses fetched successfully
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Fetced categrios0
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Logout Succesfull
+[2025-08-05 20:53:51] ERROR: Fetced categrios0
+[2025-08-05 20:53:51] ERROR: Notifications fetched
+[2025-08-05 20:53:51] ERROR: Notifications fetched
+[2025-08-05 20:54:09] ERROR: 
+[2025-08-05 20:54:09] ERROR: 
+[2025-08-05 20:54:09] ERROR: 
+[2025-08-05 20:54:09] ERROR: 
+[2025-08-05 20:54:09] ERROR: Throwing error:
+[2025-08-05 20:54:09] ERROR: Unhotharized
+[2025-08-05 20:54:09] ERROR: Unhotharized
+[2025-08-05 20:54:09] ERROR: 
+[2025-08-05 20:54:09] ERROR: jwt must be provided
+[2025-08-05 20:54:09] ERROR: jwt must be provided
+[2025-08-05 20:54:09] ERROR: 
+[2025-08-05 20:54:09] ERROR: Throwing error:
+[2025-08-05 20:54:09] ERROR: Unhotharized
+[2025-08-05 20:54:09] ERROR: Unhotharized
+[2025-08-05 20:54:09] ERROR: 
+[2025-08-05 20:54:09] ERROR: 
+[2025-08-05 20:54:09] ERROR: jwt must be provided
+[2025-08-05 20:54:09] ERROR: jwt must be provided

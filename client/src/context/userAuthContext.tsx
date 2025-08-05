@@ -2,7 +2,6 @@
 
 import { createContext, useState, useContext, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { SharedAPIMethods, UserAPIMethods } from "../services/APImethods";
 import { 
   UserContextType, 
   UserProviderProps, 
@@ -13,6 +12,8 @@ import { showErrorToast, showInfoToast } from "../utils/Toast";
 import { IUserCourseProgress } from "../types/userProgressTypes";
 import { INotification } from "../types/notificationsTypes";
 import { IDailyTask } from "../types/dailyTaskTypes";
+import { UserAPIMethods } from "../services/methods/user.api";
+import { SharedAPIMethods } from "../services/methods/shared.api";
 
 export const UserContext = createContext<UserContextType | null>(null);
 
