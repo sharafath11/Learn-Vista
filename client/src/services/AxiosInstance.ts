@@ -69,7 +69,7 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
-        showInfoToast("Please login dsfvdsfagain.");
+        showInfoToast("Session expired. Please login again.");
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

@@ -15,6 +15,8 @@ import sharedRoutes from "../src/routes/shared/shared.Routes"
 import { requestLogger } from "./middlewares/requestLogger";
 import { logger } from "./utils/logger";
 import { CustomError } from "./types/errorTypes";
+import { refreshAccessToken, setTokensInCookies } from "./utils/JWTtoken";
+import { StatusCode } from "./enums/statusCode.enum";
 dotenv.config();
 
 const app = express();
@@ -44,7 +46,9 @@ app.use((err: CustomError, req: Request, res: Response, _next: NextFunction) => 
   console.error(err.stack);
   res.status(500).json({ ok: false, msg: "Something went wrong!" });
 });
-
+app.use("/api/refresh-token", (req: Request, res: Response) => {
+  
+});
 const PORT = process.env.PORT || 4000;
 connectDb();
 httpServer.listen(PORT, () => {

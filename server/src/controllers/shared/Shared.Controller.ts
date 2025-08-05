@@ -23,20 +23,22 @@ export class SharedController implements ISharedController {
     }
   }
   async refeshToken(req: Request, res: Response): Promise<void> {
-     try {
-        const tokens = refreshAccessToken(req.cookies.refreshToken);
-    
-       if (!tokens) {
-         sendResponse(res, StatusCode.OK, "Invalid refresh token", true);
-         return 
-       }
-       setTokensInCookies(res, tokens.accessToken, tokens.refreshToken);
-       sendResponse(res,StatusCode.OK,"Tokens refreshed successfully",true)
-        return
-      } catch (error) {
-        handleControllerError(res,error)
-        return
-      }
+   try {
+    const tokens = refreshAccessToken(req.cookies.refreshToken);
+
+    if (!tokens) {
+       res.status(401).json({ message: "Invalid refresh token" });
+      return
+     
+    }
+
+    setTokensInCookies(res, tokens.accessToken, tokens.refreshToken);
+    res.status(200).json({ ok: true, msg: "Tokens refreshed successfully" });
+    return
+  } catch (error: any) {
+    res.status(StatusCode.UNAUTHORIZED).json({ ok: false, msg: "Failed to refresh token", error: error.message });
+    return
+  }
   }
   async batmanAi(req: Request, res: Response): Promise<void> {
     try {
