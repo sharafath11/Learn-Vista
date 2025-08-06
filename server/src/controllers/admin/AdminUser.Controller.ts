@@ -85,7 +85,8 @@ class AdminUserController implements IAdminUserController {
   }
   async revokCertificate(req: Request, res: Response): Promise<void> {
     try {
-      const { certificateId, isRevoked } = req.body;
+      const certificateId=req.params.certificateId
+      const {isRevoked } = req.body;
       if(!certificateId||!isRevoked) throwError("Somting wrong",StatusCode.BAD_REQUEST)
       await this.adminUserService.revokCertificate(certificateId, isRevoked);
       sendResponse(res,StatusCode.OK,`${isRevoked?"Revocked":"Remove Revocked"}`,true)

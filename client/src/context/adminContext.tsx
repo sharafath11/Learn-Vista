@@ -6,7 +6,6 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { AdminAPIMethods, SharedAPIMethods } from "../services/APImethods";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
 import { AdminContextType } from "../types/adminTypes";
 import { IMentor } from "../types/mentorTypes";
@@ -15,6 +14,8 @@ import { ICategory } from "../types/categoryTypes";
 import { useUserPagination } from "../hooks/useUserPagination";
 import { IConcern } from "../types/concernTypes";
 import { INotification } from "../types/notificationsTypes";
+import { AdminAPIMethods } from "../services/methods/admin.api";
+import { SharedAPIMethods } from "../services/methods/shared.api";
 
 export const AdminContext = createContext<AdminContextType | null>(null);
 

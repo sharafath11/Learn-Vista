@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { AdminAPIMethods } from '../services/APImethods';
 import { showInfoToast } from '../utils/Toast';
 import { IMentor } from '../types/mentorTypes';
+import { AdminAPIMethods } from '../services/methods/admin.api';
 
 type PaginationState = {
   page: number;

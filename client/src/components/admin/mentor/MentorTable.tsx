@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import MentorRow from './MentorRow';
-import { AdminAPIMethods } from '@/src/services/APImethods';
 import { useAdminContext } from '@/src/context/adminContext';
 import { SearchAndFilterBar } from '../SearchAndFilterBar';
 import { User } from 'lucide-react';
+import { AdminAPIMethods } from '@/src/services/methods/admin.api';
 
 interface MentorTableProps {
   theme: string;

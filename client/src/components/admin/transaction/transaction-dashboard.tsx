@@ -4,13 +4,13 @@ import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 
 import { TransactionChart } from "./transaction-chart"
-import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast } from "@/src/utils/Toast"
 import type { IDonation } from "@/src/types/donationTyps"
 import { TransactionStats } from "./transaction-stats"
 import { TransactionFilters } from "./transaction-filters"
 import { TransactionTable } from "./transaction-table"
 import { FilterOptions } from "@/src/types/adminTypes"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 
 
 export default function TransactionDashboard() {

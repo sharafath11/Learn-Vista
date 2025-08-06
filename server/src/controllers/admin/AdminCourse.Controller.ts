@@ -29,7 +29,7 @@ class AdminCourseController implements IAdminCourseController {
   async editCourse(req: Request, res: Response): Promise<void> {
     try {
       const data = req.body;
-      const courseId = data.courseId;
+      const courseId = req.params.courseId;
       const thumbnailBuffer = req.file?.buffer;
       delete data.thumbnail;
 
@@ -75,8 +75,9 @@ class AdminCourseController implements IAdminCourseController {
 
   async blockCourses(req: Request, res: Response): Promise<void> {
     try {
-      const { id, status } = req.body;
-      await this._adminCourseServices.blockCourse(id, status);
+      const courseId=req.params.id
+      const {status } = req.body;
+      await this._adminCourseServices.blockCourse(courseId, status);
       sendResponse(res, StatusCode.OK, `Course status updated to ${status}`, true);
     } catch (error) {
       handleControllerError(res, error);

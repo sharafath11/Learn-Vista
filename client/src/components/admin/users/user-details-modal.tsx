@@ -27,9 +27,9 @@ import {
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Separator } from "@/src/components/shared/components/ui/separator"
 import { Button } from "@/src/components/shared/components/ui/button"
-import { AdminAPIMethods } from "@/src/services/APImethods"
 import Link from "next/link"
 import { CustomAlertDialog } from "../../custom-alert-dialog"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 
 interface UserDetailsModalProps {
   user: IUser | null

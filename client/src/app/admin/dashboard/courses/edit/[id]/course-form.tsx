@@ -89,12 +89,12 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
     data.append('startDate', formData.startDate)
     data.append('endDate', formData.endDate)
     data.append('startTime', formData.startTime);
-    data.append('courseId', courseId);
+   
     if (thumbnailFile) {
       data.append('thumbnail', thumbnailFile)
     }
  
-    const res = await AdminAPIMethods.editCourse( data);
+    const res = await AdminAPIMethods.editCourse(courseId, data);
     if (res.ok) {
       setCourses(prev => prev.map(c =>
         c.id === courseId ? { ...c, ...res.data } : c

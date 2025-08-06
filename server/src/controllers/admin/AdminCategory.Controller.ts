@@ -31,7 +31,8 @@ class AdminCategoryController implements IAdminCategoryController {
 
   async editCategory(req: Request, res: Response): Promise<void> {
     try {
-      const { id, title, discription } = req.body;
+      const id=req.params.id
+      const { title, discription } = req.body;
       const validationError = validateCategory(title, discription);
 
       if (validationError || !id || !title || !discription) {
@@ -80,7 +81,8 @@ class AdminCategoryController implements IAdminCategoryController {
 
   async blockCategory(req: Request, res: Response): Promise<void> {
     try {
-      const { id, status } = req.body;
+      const id=req.params.id
+      const {status } = req.body;
       await this._adminCategoryService.blockCategory(id, status);
       sendResponse(res, StatusCode.OK, "Category status updated successfully", true);
     } catch (error) {

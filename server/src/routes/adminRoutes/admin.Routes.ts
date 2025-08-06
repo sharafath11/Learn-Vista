@@ -26,23 +26,23 @@ route.patch("/users/block", verifyAdmin, adminUsersController.userBlock.bind(adm
 route.get("/mentors", verifyAdmin, adminMentorController.getAllMentors.bind(adminMentorController));
 route.get("/all/mentors",verifyAdmin,adminMentorController.getAllMentorsNotFiltering.bind(adminMentorController))
 route.get("/mentor/:id", verifyAdmin, adminMentorController.mentorDetils.bind(adminMentorController));
-route.patch("/mentor/change-status", verifyAdmin, adminMentorController.changeStatus.bind(adminMentorController));
-route.patch("/mentor/block", verifyAdmin, adminMentorController.blockMentor.bind(adminMentorController));
-route.patch("/course/edit-course",verifyAdmin, uploadImage.single('thumbnail'),adminCourseController.editCourse.bind(adminCourseController))
-route.post("/create-course", verifyAdmin, uploadImage.single('thumbnail'), adminCourseController.createClass.bind(adminCourseController));
+route.patch("/mentor/:mentorId/status", verifyAdmin, adminMentorController.changeStatus.bind(adminMentorController));
+route.patch("/mentor/:mentorId/block", verifyAdmin, adminMentorController.blockMentor.bind(adminMentorController));
+route.patch("/courses/:courseId",verifyAdmin, uploadImage.single('thumbnail'),adminCourseController.editCourse.bind(adminCourseController))
+route.post("/courses", verifyAdmin, uploadImage.single('thumbnail'), adminCourseController.createClass.bind(adminCourseController));
 route.get("/courses",verifyAdmin, adminCourseController.getCourse.bind(adminCourseController));
-route.patch("/block-courses",verifyAdmin,adminCourseController.blockCourses.bind(adminCourseController))
-route.post("/add-categories", verifyAdmin, adminCategoryController.addCategory.bind(adminCategoryController));
+route.patch("/courses/:id/block",verifyAdmin,adminCourseController.blockCourses.bind(adminCourseController))
+route.post("/categories", verifyAdmin, adminCategoryController.addCategory.bind(adminCategoryController));
 route.get("/categories", verifyAdmin, adminCategoryController.getAllCategories.bind(adminCategoryController));
-route.get("/all/categegory",verifyAdmin,adminCategoryController.getCategories.bind(adminCategoryController))
-route.patch("/categorie/block", verifyAdmin, adminCategoryController.blockCategory.bind(adminCategoryController));
-route.patch("/edit/category", verifyAdmin, adminCategoryController.editCategory.bind(adminCategoryController));
-route.get("/concers", verifyAdmin, adminConcernController.getConcernController.bind(adminConcernController))
+route.get("/all/category",verifyAdmin,adminCategoryController.getCategories.bind(adminCategoryController))
+route.patch("/categories/:id/block", verifyAdmin, adminCategoryController.blockCategory.bind(adminCategoryController));
+route.patch("/categories/:id", verifyAdmin, adminCategoryController.editCategory.bind(adminCategoryController));
+route.get("/concerns", verifyAdmin, adminConcernController.getConcernController.bind(adminConcernController))
 route.patch("/concern/:id/status",verifyAdmin,adminConcernController.updateConcernStatus.bind(adminConcernController) );
 route.get("/all/concerns",verifyAdmin,adminConcernController.getAllConcerns.bind(adminConcernController))
 route.get("/donations", verifyAdmin, adminDonationController.getDonations.bind(adminDonationController));
 route.get("/donations/filter", verifyAdmin, adminDonationController.getFilteredDonations.bind(adminDonationController));
 route.get("/user/certificates/:userId",verifyAdmin,adminUsersController.getCertificate.bind(adminUsersController))
-route.patch("/user/certificate/isRevocked", verifyAdmin, adminUsersController.revokCertificate.bind(adminUsersController));
+route.patch("/user/certificates/:certificateId/revoke", verifyAdmin, adminUsersController.revokCertificate.bind(adminUsersController));
 route.get("/course/lessons/:courseId",verifyAdmin,adminCourseController.getLessons.bind(adminCourseController))
 export default route;

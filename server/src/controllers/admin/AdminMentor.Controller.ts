@@ -73,7 +73,8 @@ class AdminMentorController implements IAdminMentorController {
 
   async changeStatus(req: Request, res: Response): Promise<void> {
     try {
-      const { mentorId, status, email } = req.body;
+      const mentorId=req.params.mentorId
+      const { status, email } = req.body;
 
       if (!mentorId || status === undefined || !email) {
         return sendResponse(
