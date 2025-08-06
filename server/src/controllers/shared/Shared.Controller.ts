@@ -27,16 +27,17 @@ export class SharedController implements ISharedController {
     const tokens = refreshAccessToken(req.cookies.refreshToken);
 
     if (!tokens) {
-       res.status(401).json({ message: "Invalid refresh token" });
+      // res.status(401).json({ message: "Invalid refresh token" });
+      sendResponse(res,StatusCode.UNAUTHORIZED,"Invalid token",false)
       return
      
     }
-
-    setTokensInCookies(res, tokens.accessToken, tokens.refreshToken);
-    res.status(200).json({ ok: true, msg: "Tokens refreshed successfully" });
-    return
-  } catch (error: any) {
-    res.status(StatusCode.UNAUTHORIZED).json({ ok: false, msg: "Failed to refresh token", error: error.message });
+     setTokensInCookies(res, tokens.accessToken, tokens.refreshToken);
+     sendResponse(res,StatusCode.OK,"Tokens refreshed successfully",true)
+     return
+  } catch (error) {
+    //  res.status(StatusCode.UNAUTHORIZED).json({ ok: false, msg: "Failed to refresh token", error: error.message });
+     handleControllerError(res,error,StatusCode.UNAUTHORIZED)
     return
   }
   }

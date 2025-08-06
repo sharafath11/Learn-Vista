@@ -85,3 +85,25 @@ export const patchRequest = async <T = any>(
     return null;
   }
 };
+export const putRequest = async <T = any>(
+  url: string,
+  body: object | FormData,
+  options: ApiOptions = defaultOptions
+): Promise<T | null> => {
+  try {
+    const headers: Record<string, string> = {};
+    if (!(body instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
+    }
+    const res = await axiosInstance.put(url, body, { headers });
+
+    if (!res.data.ok) {
+      throw new Error(res.data.msg || 'Request failed');
+    }
+
+    return res.data;
+  } catch (error: any) {
+    handleApiError(error, options);
+    return null;
+  }
+};

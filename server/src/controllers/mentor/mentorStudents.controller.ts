@@ -53,7 +53,8 @@ async getStudentDetilesController(req: Request, res: Response): Promise<void> {
 
     async blockStudentController(req: Request, res: Response): Promise<void> {
       try {
-        const {courseId,userId,status}=req.body
+        const userId=req.params.studentId
+        const {courseId,status}=req.body
            await this._mentorStudentService.studentStatusService(userId, courseId, status);
            sendResponse(res,StatusCode.OK,`Student ${status?"Blocked":"Unblock"}`,true)
        } catch (error) {

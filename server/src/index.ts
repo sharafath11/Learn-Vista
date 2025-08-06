@@ -46,9 +46,6 @@ app.use((err: CustomError, req: Request, res: Response, _next: NextFunction) => 
   console.error(err.stack);
   res.status(500).json({ ok: false, msg: "Something went wrong!" });
 });
-app.use("/api/refresh-token", (req: Request, res: Response) => {
-  
-});
 const PORT = process.env.PORT || 4000;
 connectDb();
 httpServer.listen(PORT, () => {

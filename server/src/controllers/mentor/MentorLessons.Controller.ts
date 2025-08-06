@@ -197,7 +197,8 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
         if (req.method !== 'POST') {
             return sendResponse(res, StatusCode.METHOD_NOT_ALLOWED, 'Method Not Allowed.', false);
         }
-        const { lessonId, videoUrl } = req.body;
+         const lessonId=req.params.lessonId
+        const { videoUrl } = req.body;
         if (!lessonId) {
             return sendResponse(res, StatusCode.BAD_REQUEST, 'Lesson ID is required in the request body.', false);
         }

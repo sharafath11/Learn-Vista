@@ -9,30 +9,30 @@ const patch = patchRequest;
 
 
 export const MentorAPIMethods = {
-  signup: (mentorData: IMentorSignupData) => post("/mentor/signup", mentorData),
-  otpSend: (email: string) => post("/mentor/send-otp", { email }),
-  login: (email: string, password: string) => post("/mentor/login", { email, password }),
-  logout: () => post("/mentor/logout", {}),
-  getMentor: () => get("/mentor/get-mentor"),
-  editProfile: (data: FormData) => post("/mentor/edit-profile", data),
-  forgotPassword: (email: string) => post("/mentor/forget-password", { email }),
-  resetPassword: (token: string, password: string) => post("/mentor/reset-password", { token, password }),
-  changePassword:(password:string,newPassword:string)=>post("/mentor/change/password",{password,newPassword}),
+  signup: (mentorData: IMentorSignupData) => post("/mentor/auth/signup", mentorData),
+  otpSend: (email: string) => post("/mentor/auth/signup/otp", { email }),
+  login: (email: string, password: string) => post("/mentor/auth/login", { email, password }),
+  logout: () => post("/mentor/auth/logout", {}),
+  getMentor: () => get("/mentor/me"),
+  editProfile: (data: FormData) => patch("/mentor/profile", data),
+  forgotPassword: (email: string) => post("/mentor/auth/password/forgot", { email }),
+  resetPassword: (token: string, password: string) => post("/mentor/auth/password/reset", { token, password }),
+  changePassword:(password:string,newPassword:string)=>post("/mentor/me/password",{password,newPassword}),
   getCourses: () => get("/mentor/courses"),
-  courseStatusChange: (courseId: string, status: string, reson: string) => patch("/mentor/course/status-change", { courseId: courseId, status: status, courseRejectReson: reson }),
-  startLiveSession: (courseId: string) => get(`/mentor/live-session/start/${courseId}`),
-  endStream: (liveId: string) => get(`/mentor/end/stream/${liveId}`),
-  getLessons: (courseId: string) => get(`/mentor/courses/lessons/${courseId}`),
-  addLesson: (lesson:FormData) => post("/mentor/add-lessons", lesson),
-  updateLesson: (lessonId: string, updateLesson: FormData) => patch(`/mentor/edit/lessons/${lessonId}`,updateLesson),
-  getS3DirectUploadUrl: (fileName: string, fileType: string) => post("/mentor/generate-s3-upload-url", { fileName, fileType }),
+  courseStatusChange: (courseId: string, status: string, reson: string) => patch(`/mentor/courses/${courseId}/status`, {status: status, courseRejectReson: reson }),
+  startLiveSession: (courseId: string) => get(`/mentor/courses/${courseId}/stream/start`),
+  endStream: (liveId: string) => get(`/mentor/stream/${liveId}/end`),
+  getLessons: (courseId: string) => get(`/mentor/courses/${courseId}/lessons`),
+  addLesson: (lesson:FormData) => post("/mentor/lessons", lesson),
+  updateLesson: (lessonId: string, updateLesson: FormData) => patch(`/mentor/lessons/${lessonId}`,updateLesson),
+  getS3DirectUploadUrl: (fileName: string, fileType: string) => post("/mentor/lessons/upload-url", { fileName, fileType }),
   deleteS3file: (fileUrl: string) => post("/mentor/delete-s3-file", { fileUrl }),
   // uploadFileToS3:(uploadURL: string, file: File)=>post("mentor/uploadfiles-to-s3",{uploadURL}),
-  getCommentsByLessonId:(lessonId:string)=>get(`/mentor/comments/${lessonId}`),
-  getSignedVideoUrl: (lessonId: string, videoUrl: string) => post(`/mentor/play-video`, { lessonId, videoUrl }),
-  addQustion: (data:Omit<IQuestions, "id" | "isCompleted">) => post("/mentor/lessons/add/questions", data),
-  getQustion: (lessonId: string) => get(`/mentor/lesson/questions/${lessonId}`),
-  editQustion: (qustionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/lesson/edit/question/${qustionId}`, data),
+  getCommentsByLessonId:(lessonId:string)=>get(`/mentor/lessons/${lessonId}/comments`),
+  getSignedVideoUrl: (lessonId: string, videoUrl: string) => post(`/mentor/lessons/${lessonId}/video-url`, {videoUrl }),
+  addQustion: (data:Omit<IQuestions, "id" | "isCompleted">) => post("/mentor/lessons/question", data),
+  getQustion: (lessonId: string) => get(`/mentor/lessons/${lessonId}/questions`),
+  editQustion: (qustionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/questions/${qustionId}`, data),
   getCourseStudents: (params: {
   courseId: string;
   page?: number;
@@ -42,7 +42,7 @@ export const MentorAPIMethods = {
     sort?: Record<string, 1 | -1>;
 }) => {
   const { courseId, filters, sort, ...rest } = params;
-  return get(`/mentor/course/students/${courseId}`, {
+  return get(`/mentor/course/${courseId}/students`, {
     params: {
       ...rest,
       filters: JSON.stringify(filters || {}),
@@ -53,9 +53,9 @@ export const MentorAPIMethods = {
    
   },
  
-  blockStudentInCourse: (courseId: string, userId: string, status: boolean) => patch("/mentor/student/block", { courseId, userId, status }),
-  generateOptions: (question: string) => post("/mentor/genarate/options", { question }),
-  riseConcern: (data: FormData) => post("/mentor/raise/concern", data),
+  blockStudentInCourse: (courseId: string, studentId: string, status: boolean) => patch(`/mentor/students/${studentId}/block`, { courseId,status }),
+  generateOptions: (question: string) => post("/mentor/lessons/options", { question }),
+  riseConcern: (data: FormData) => post("/mentor/concerns", data),
  getConcern: (params: {
   search?: string
   status?: string
@@ -75,7 +75,7 @@ getCourseWithFilter: (params: {
   search?: string;
   filters?: Record<string, any>;
   sort?: Record<string, 1 | -1>;
-}) =>  get("/mentor/pagenated/courses", { params }),
+}) =>  get("/mentor/courses/pagenated", { params }),
 
 getAllComments: (params: {
   sortBy?: string
@@ -84,6 +84,6 @@ getAllComments: (params: {
   page?: number
   limit?: number
 }) => get("/mentor/comments", { params }),
-publishCourse:(courseId:string,status:boolean)=>patch(`/mentor/publishCourse/${courseId}`,{status})
+publishCourse:(courseId:string,status:boolean)=>patch(`/mentor/courses/${courseId}/publish`,{status})
 
 } as const;

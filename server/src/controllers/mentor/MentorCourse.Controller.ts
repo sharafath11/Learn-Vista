@@ -31,7 +31,8 @@ export class MentorCourseController implements IMentorCourseController{
   async changeStatus(req: Request, res: Response): Promise<void> {
     try {
       const decoded = decodeToken(req.cookies.token);
-      const { courseId, status, courseRejectReson } = req.body;
+      const courseId=req.params.courseId
+      const { status, courseRejectReson } = req.body;
 
       if (!decoded?.id) {
         return throwError("Unauthorized", StatusCode.UNAUTHORIZED);
