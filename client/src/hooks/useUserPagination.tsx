@@ -1,8 +1,8 @@
 
 import { useState } from 'react';
-import { AdminAPIMethods } from '../services/APImethods';
 import { showInfoToast } from '../utils/Toast';
 import { IUser } from '../types/userTypes';
+import { AdminAPIMethods } from '../services/methods/admin.api';
 
 type PaginationState = {
   page: number;
@@ -62,7 +62,6 @@ export const useUserPagination = (): UseUserPaginationReturn => {
         throw new Error(res.msg || 'Failed to fetch users');
       }
     } catch (error: unknown) {
-      console.error("Failed to fetch users:", error);
       showInfoToast(error instanceof Error ? error.message : 'Failed to fetch users');
     } finally {
       setLoading(false);

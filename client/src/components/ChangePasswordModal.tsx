@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import React from "react"; 
-import { MentorAPIMethods, UserAPIMethods } from "../services/APImethods";
 import { showSuccessToast } from "../utils/Toast";
+import { UserAPIMethods } from "../services/methods/user.api";
+import { MentorAPIMethods } from "../services/methods/mentor.api";
 
 interface ChangePasswordModalProps {
   isOpen: boolean;

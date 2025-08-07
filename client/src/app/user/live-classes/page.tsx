@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { Card } from "@/src/components/shared/components/ui/card"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 import { cn } from "@/src/utils/cn"
@@ -40,7 +40,6 @@ export default function UpcomingSessions() {
         router.push(`/user/live-classes/${res.data}`)
       }
     } catch (error) {
-      console.error("Error joining session:", error)
     } finally {
       setJoiningSession(null)
     }
@@ -106,7 +105,7 @@ export default function UpcomingSessions() {
             <div className="divide-y divide-gray-100">
               {filteredCourses.map((session, index) => (
                 <SessionTableRow
-                  key={session._id}
+                  key={session.id}
                   session={session}
                   index={index}
                   isExpired={isExpired(session.endDate)}
@@ -122,7 +121,7 @@ export default function UpcomingSessions() {
           <div className="lg:hidden space-y-4">
             {filteredCourses.map((session) => (
               <SessionCard
-                key={session._id}
+                key={session.id}
                 session={session}
                 isExpired={isExpired(session.endDate)}
                 joiningSession={joiningSession}

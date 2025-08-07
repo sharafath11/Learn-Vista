@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useCallback, useRef, useEffect } from "react"
 import { Mail, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react"
 import Link from "next/link"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showSuccessToast } from "@/src/utils/Toast"
 
 export default function ForgotPassword() {

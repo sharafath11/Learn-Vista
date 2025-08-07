@@ -13,6 +13,7 @@ import {
   PlayCircle,
   TrendingUp,
 } from "lucide-react"
+import { ICourse } from "@/src/types/courseTypes"
 
 export default function MentorDashboard() {
   const { courses } = useMentorContext()
@@ -26,7 +27,9 @@ export default function MentorDashboard() {
     totalLessons += course?.sessions?.length ?? 0
     completedLessons += course?.sessions?.filter((lesson) => lesson)?.length ?? 0
   })
-
+  let totalCourses = courses.length
+let publishedCourses = courses.filter((course) => course.isActive).length
+ 
   const completionRate = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
 
   return (
@@ -67,14 +70,15 @@ export default function MentorDashboard() {
 
             {/* Active Courses */}
             <MetricCard
-              title="Active Courses"
-              value={courses.length.toString()}
-              subtitle="Currently published"
-              icon={BookOpen}
-              gradient="from-green-500 to-emerald-500"
-              bgGradient="from-green-500/10 to-emerald-500/10"
-              href="/mentor/courses"
-            />
+  title="Published Courses"
+  value={publishedCourses.toString()}
+  subtitle="Visible to students"
+  icon={BookOpen}
+  gradient="from-green-500 to-teal-500"
+  bgGradient="from-green-500/10 to-teal-500/10"
+  href="/mentor/courses"
+/>
+
 
             {/* Total Lessons */}
             <MetricCard
@@ -87,15 +91,19 @@ export default function MentorDashboard() {
               href="/mentor/courses"
             />
 
-            {/* Completion Rate */}
-            {/* <MetricCard
-              title="Completion Rate"
-              value={`${completionRate}%`}
-              subtitle="Average progress"
-              icon={Award}
-              gradient="from-orange-500 to-red-500"
-              bgGradient="from-orange-500/10 to-red-500/10"
-            /> */}
+            {/* Total Courses */}
+<MetricCard
+  title="Total Courses"
+  value={totalCourses.toString()}
+  subtitle="Courses you've created"
+  icon={BookOpen}
+  gradient="from-indigo-500 to-purple-500"
+  bgGradient="from-indigo-500/10 to-purple-500/10"
+  href="/mentor/courses"
+/>
+
+{/* Published Courses */}
+
           </div>
         </section>
 
@@ -258,7 +266,7 @@ function ActionCard({ icon: Icon, title, description, color, bgColor, hoverColor
 }
 
 interface CourseCardProps {
-  course: any
+  course: ICourse
   title: string
   description: string
   progress: number
@@ -303,10 +311,10 @@ function CourseCard({ course, title, description, progress, status, students, le
 
       <div className="flex gap-3">
         <Button variant="outline" size="sm" className="flex-1 bg-transparent">
-          <Link href={`/mentor/courses/${course._id}`}>manage Lessons</Link>
+          <Link href={`/mentor/courses/${course.id}`}>manage Lessons</Link>
         </Button>
         <Button size="sm" className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600">
-          <Link href={`/mentor/courses/students/${course._id}`}>manage Students</Link>
+          <Link href={`/mentor/courses/students/${course.id}`}>manage Students</Link>
         </Button>
       </div>
     </div>

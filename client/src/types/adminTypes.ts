@@ -130,3 +130,14 @@ export interface FilterOptions {
   page: number
   limit: number
 }
+export interface CourseFormData {
+  title: string;
+  description: string;
+  mentorId: string;
+  categoryId: string;
+  language: string;
+  startDate: string; // Format: "YYYY-MM-DD"
+  endDate: string;   // Format: "YYYY-MM-DD"
+  startTime: string; // Format: "HH:mm" or "HH:mm:ss"
+  thumbnail: File | string | null; // File for upload or string if already uploaded
+}

@@ -11,7 +11,7 @@ import Testimonials from "@/src/components/user/Home/Testimonials";
 
 export default function Home() {
   const [showVideo, setShowVideo] = useState(false);
-  const { allCourses } = useUserContext();
+  const { allCourses, } = useUserContext();
 
   const features = [
     {
@@ -79,7 +79,7 @@ export default function Home() {
             {allCourses && allCourses.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {allCourses.map((course: ICourse) => (
-                  <CourseCard key={course.id || course._id} course={course} />
+                  <CourseCard key={course.id || course.id} course={course} />
                 ))}
               </div>
             ) : (

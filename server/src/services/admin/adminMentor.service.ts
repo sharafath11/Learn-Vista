@@ -9,6 +9,7 @@ import { FilterQuery } from "mongoose";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { convertSignedUrlInArray, convertSignedUrlInObject, getSignedS3Url } from "../../utils/s3Utilits";
 
 @injectable()
 export class AdminMentorService implements IAdminMentorServices {
@@ -20,7 +21,8 @@ export class AdminMentorService implements IAdminMentorServices {
   ) { }
   async getAllMentorWithoutFiltring(): Promise<IMentor[]> {
     const result = await this._mentorRepo.findAll();
-    return result
+    const sendData=await convertSignedUrlInArray(result,["profilePicture","cvOrResume"])
+    return sendData
   }
 
   async getAllMentors(
@@ -41,9 +43,10 @@ export class AdminMentorService implements IAdminMentorServices {
     if (!data) {
       throwError("Error fetching mentors", StatusCode.INTERNAL_SERVER_ERROR);
     }
+     const sendData=await convertSignedUrlInArray(data,["profilePicture","cvOrResume"])
   
     return {
-      data,
+      data:sendData,
       total,
       ...(totalPages !== undefined && { totalPages })
     };
@@ -59,7 +62,17 @@ export class AdminMentorService implements IAdminMentorServices {
     if (updated && status) {
       await sendMentorStatusChangeEmail(email, statusString);
     }
-
+     await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [updated.userId as unknown as string],
+    title: status
+      ? "🎉 You're approved as a mentor!"
+      : "⚠️ Your mentor request was rejected",
+    message: status
+      ? "Congratulations! Your mentor profile has been approved. You can now sign up and complete your onboarding on the Mentor Page."
+      : "We're sorry to inform you that your mentor request was rejected by the admin.",
+    type: status ? "success" : "error",
+  });
     return updated;
   }
 
@@ -80,6 +93,7 @@ export class AdminMentorService implements IAdminMentorServices {
   async mentorDetails(id: string): Promise<IMentor> {
     const mentor = await this._mentorRepo.findById(id);
     if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
-    return mentor;
+    const sendData = await convertSignedUrlInObject(mentor, ["profilePicture","cvOrResume"]);
+    return sendData;
   }
 }

@@ -1,4 +1,4 @@
-import { CourseFormData, ICourse } from "@/src/types/adminTypes";
+import { CourseFormData } from "@/src/types/adminTypes";
 
 type ValidationResult = {
     isValid: boolean;
@@ -11,7 +11,6 @@ type ValidationResult = {
       description,
       mentorId,
       categoryId,
-      price,
       language,
       startDate,
       endDate,
@@ -27,11 +26,6 @@ type ValidationResult = {
     if (!startDate) return { isValid: false, message: "Start date is required." };
     if (!endDate) return { isValid: false, message: "End date is required." };
     if (!startTime) return { isValid: false, message: "Start time is required." };
-  
-    const numericPrice = Number(price);
-    if (isNaN(numericPrice) || numericPrice < 0) {
-      return { isValid: false, message: "Price must be a valid non-negative number." };
-    }
     if (!thumbnail) return { isValid: false, message: "Thumbnail image is required." };
     if (new Date(startDate) > new Date(endDate)) {
       return { isValid: false, message: "Start date must be before end date." };

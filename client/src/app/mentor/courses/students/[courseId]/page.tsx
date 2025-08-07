@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import StudentCard from "./studentsCard"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useParams } from "next/navigation"
 import { IUser } from "@/src/types/userTypes"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
@@ -23,6 +22,7 @@ import {
   PaginationNext,
   PaginationLink,
 } from "@/src/components/shared/components/ui/pagination"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 interface FetchParams {
   page?: number

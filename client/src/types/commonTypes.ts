@@ -1,4 +1,3 @@
-import { IMentor } from "./mentorTypes";
 
 export enum Theme {
   DARK = 'dark',

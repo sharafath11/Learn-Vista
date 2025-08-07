@@ -18,7 +18,7 @@ export default function StatsCard() {
       }
     }
     const enrolledCourses = allCourses.filter((course) =>
-      user.enrolledCourses?.some((enrolled) => enrolled.courseId === course._id),
+      user.enrolledCourses?.some((enrolled) => enrolled.courseId === course.id),
     )
 
     let totalProgress = 0
@@ -26,7 +26,7 @@ export default function StatsCard() {
     let inProgressCourses = 0
 
     enrolledCourses.forEach((course) => {
-      const progress = getCourseProgress(course._id, progresses)
+      const progress = getCourseProgress(course.id, progresses)
       totalProgress += progress
 
       if (progress >= 100) {

@@ -16,9 +16,7 @@
       search?: string,
       sort?: Record<string, 1 | -1>
     ): Promise<{ data: U[]; total: number; totalPages: number }>;
-    
-    // // Utility Methods - all public in interface
-    // toDTO(document: T): U;
+
     updateMany(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<number>;
     handleError(error: unknown, message: string): Error;
     updateOne(filter: FilterQuery<T>, update: UpdateQuery<T>): Promise<U | null>;

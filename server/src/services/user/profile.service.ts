@@ -1,46 +1,25 @@
 import { injectable, inject } from "inversify";
 import { JwtPayload } from "jsonwebtoken";
-import cloudinary from "../../config/cloudinary";
 import { Types } from "mongoose";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { IMentor, ISocialLink } from "../../types/mentorTypes";
 import { IProfileService } from "../../core/interfaces/services/user/IUserProfileService";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
-import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudImage";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
+import { deleteFromS3, getSignedS3Url, uploadBufferToS3 } from "../../utils/s3Utilits";
+
 @injectable()
 export class ProfileService implements IProfileService {
   constructor(
     @inject(TYPES.UserRepository) private userRepository: IUserRepository,
     @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
-     @inject(TYPES.NotificationService) private _notificationService: INotificationService 
+    @inject(TYPES.NotificationService) private _notificationService: INotificationService
   ) {}
-
-  private async uploadMentorResume(file: Express.Multer.File, username: string) {
-    return new Promise<{ secure_url: string }>((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          resource_type: "raw",
-          folder: "LearnVista/mentors/resumes",
-          public_id: `mentor-cv-${Date.now()}-${username.replace(/\s+/g, "-")}`,
-          use_filename: true,
-          unique_filename: false,
-          flags: "attachment",
-        },
-        (error, result) => {
-          if (error) return reject(throwError(`File upload failed: ${error.message}`, StatusCode.INTERNAL_SERVER_ERROR));
-          if (!result) return reject(throwError("No result from Cloudinary", StatusCode.INTERNAL_SERVER_ERROR));
-          resolve({ secure_url: result.secure_url });
-        }
-      );
-      uploadStream.end(file.buffer);
-    });
-  }
 
   private validateMentorApplication(userId: string | JwtPayload, email: string) {
     if (!userId) throwError("Authentication required", StatusCode.BAD_REQUEST);
@@ -66,14 +45,22 @@ export class ProfileService implements IProfileService {
     if (existingMentor) throwError("Mentor application already submitted for this email", StatusCode.BAD_REQUEST);
     if (existingUserMentor) throwError("You have already applied", StatusCode.BAD_REQUEST);
 
-    const uploadResult = await this.uploadMentorResume(file, username);
+    let resumeS3Key: string;
+    let signedResumeUrl: string;
+
+    try {
+      resumeS3Key = await uploadBufferToS3(file.buffer, file.mimetype, 'resumes');
+      signedResumeUrl = await getSignedS3Url(resumeS3Key);
+    } catch (error) {
+      throwError("Failed to upload or process resume. Please try again.", StatusCode.INTERNAL_SERVER_ERROR);
+    }
 
     const mentorData: Partial<IMentor> = {
       email: email.trim(),
       username: username.trim(),
       phoneNumber: phoneNumber || "",
       isVerified: false,
-      cvOrResume: uploadResult.secure_url,
+      cvOrResume: resumeS3Key,
       applicationDate: new Date(),
       userId: new Types.ObjectId(userId as string),
       status: "pending",
@@ -92,10 +79,11 @@ export class ProfileService implements IProfileService {
       message: `${username} has applied to become a mentor.`,
       type: "info",
     });
+
     return {
       success: true,
       application,
-      cvUrl: uploadResult.secure_url,
+      cvUrl: signedResumeUrl,
     };
   }
 
@@ -105,29 +93,52 @@ export class ProfileService implements IProfileService {
     if (user.isBlocked) throwError("This user was Blocked", StatusCode.FORBIDDEN);
 
     const updatedUsername = username !== user.username ? username : user.username;
-    const imageUrl = imageBuffer ? await uploadToCloudinary(imageBuffer) : user.profilePicture;
+    let imageS3Key: string | null = user.profilePicture || null;
 
-    if (imageBuffer && user.profilePicture?.includes("cloudinary")) {
-      await deleteFromCloudinary(user.profilePicture).catch((err) =>
-        console.error("Failed to delete old profile picture:", err)
-      );
+    if (imageBuffer) {
+      const newImageKey = await uploadBufferToS3(imageBuffer, 'image/png', 'profile_pictures');
+
+      if (user.profilePicture) {
+        if (user.profilePicture.includes("s3.amazonaws.com")) {
+          const url = new URL(user.profilePicture);
+          const oldImageKey = decodeURIComponent(url.pathname.substring(1));
+          await deleteFromS3(oldImageKey).catch((err) =>
+            console.error("Failed to delete old S3 profile picture (from URL):", err)
+          );
+        } else {
+          await deleteFromS3(user.profilePicture).catch((err) =>
+            console.error("Failed to delete old S3 profile picture (from key):", err)
+          );
+        }
+      }
+
+      imageS3Key = newImageKey;
     }
-
-    const safeImageUrl = imageUrl || "";
 
     await this.userRepository.update(id, {
       username: updatedUsername,
-      profilePicture: safeImageUrl,
+      profilePicture: imageS3Key || "",
     });
+
+    let finalImageUrl: string = "";
+    if (imageS3Key) {
+      try {
+        finalImageUrl = await getSignedS3Url(imageS3Key);
+      } catch (error) {
+        console.error("Failed to generate signed URL for profile picture:", error);
+        finalImageUrl = "";
+      }
+    }
 
     return {
       username: updatedUsername,
-      image: safeImageUrl,
+      image: finalImageUrl,
     };
   }
+
   async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
-    const user = await this.userRepository.findWithPassword({id:userId});
-  
+    const user = await this.userRepository.findWithPassword({ id: userId });
+
     if (!user) {
       throwError("User not found", StatusCode.NOT_FOUND);
     }
@@ -144,12 +155,12 @@ export class ProfileService implements IProfileService {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.userRepository.update(userId, { password: hashedPassword });
     await notifyWithSocket({
-    notificationService: this._notificationService,
-    userIds: [userId],
-    roles: ["user"],
-    title: "🔐 Password Changed",
-    message: "Your password was changed successfully",
-    type: "info",
-  });
+      notificationService: this._notificationService,
+      userIds: [userId],
+      roles: ["user"],
+      title: "🔐 Password Changed",
+      message: "Your password was changed successfully",
+      type: "info",
+    });
   }
 }

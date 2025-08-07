@@ -5,8 +5,8 @@ import { FiUser,FiEye,FiLock,FiUnlock } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import { showInfoToast, showSuccessToast } from '@/src/utils/Toast';
 import { AdminContext } from '@/src/context/adminContext';
-import { AdminAPIMethods } from '@/src/services/APImethods';
 import { IMentor } from '@/src/types/mentorTypes';
+import { AdminAPIMethods } from '@/src/services/methods/admin.api';
 
 interface MentorRowProps {
   mentor: IMentor;

@@ -9,8 +9,8 @@ import Peer from "simple-peer"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Card } from "@/src/components/shared/components/ui/card"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 
 export default function MentorStream({ roomId }: { roomId: string }) {
@@ -75,7 +75,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           });
 
           peer.on("error", err => {
-            console.error(`MentorStream: Peer error for user ${userId} (socket: ${socketId}):`, err);
             removePeer(socketId);
             toast.error(`Viewer ${userId.slice(0,5)} connection error.`);
           });
@@ -116,12 +115,10 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           showInfoToast(msg)
         })
         socket.on('disconnect', (reason: any) => {
-          console.warn(`MentorStream: Socket disconnected: ${reason}`);
           toast.error("Disconnected from server. Please refresh.");
         });
 
       } catch (err) {
-        console.error("MentorStream: Error during initialization:", err);
         toast.error("Failed to initialize stream");
       }
     };
@@ -192,7 +189,6 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         toast.success("Screen sharing started");
       }
     } catch (err) {
-      console.error("MentorStream: Error during screen sharing:", err);
       toast.error("Failed to toggle screen share. Ensure permissions are granted.");
     }
   };

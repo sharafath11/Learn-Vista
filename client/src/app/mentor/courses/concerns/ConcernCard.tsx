@@ -92,14 +92,13 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
         minute: "2-digit"
       })
     } catch (error) {
-      console.error("Error formatting date:", dateString, error)
       return "Invalid Date"
     }
   }
 
   const statusDisplay = getStatusDisplay(concern.status)
   const courseName =
-    courses?.find((c) => c._id === concern.courseId)?.title || concern.courseId
+    courses?.find((c) => c.id === concern.courseId)?.title || concern.courseId
 
   return (
     <>

@@ -14,8 +14,7 @@ export const NotificationListener = ({ userId, role }: Props) => {
 
   useEffect(() => {
     if (!userId || !role) {
-      console.warn("NotificationListener: Missing userId or role");
-      return;
+          return;
     }
 
     const socket = initializeSocket();
@@ -42,7 +41,7 @@ export const NotificationListener = ({ userId, role }: Props) => {
     });
 
     socket.on("disconnect", () => {
-      console.warn("[SOCKET] Disconnected");
+     
     });
 
     return () => {

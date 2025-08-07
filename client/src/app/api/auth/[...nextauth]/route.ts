@@ -27,7 +27,7 @@ const handler = NextAuth({
       try {
         // Validate required fields
         if (!account?.providerAccountId || !user.email) {
-          console.error("Missing required fields for sign-in");
+        
           throw new Error("Missing required user information");
         }
 
@@ -40,10 +40,10 @@ const handler = NextAuth({
           role: "user"
         };
 
-      
+  
 
         const response = await axios.post(
-          ` http://localhost:4000/google/signup`,
+          `http://localhost:4000/api/google/signup`,
           payload,
           {
             withCredentials: true,
@@ -58,7 +58,6 @@ const handler = NextAuth({
 
 
         if (response.status >= 400) {
-          console.error("Backend API error:", response.data);
           throw new Error(response.data.message || "Backend registration failed");
         }
 
@@ -73,12 +72,7 @@ const handler = NextAuth({
 
         return true;
       } catch (error: any) {
-        console.error("Authentication error:", {
-          message: error.message,
-          stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
-          config: error.config,
-          response: error.response?.data
-        });
+       
         let errorMessage = "Authentication failed";
         if (error.code === "ECONNABORTED") {
           errorMessage = "Connection to backend timed out";

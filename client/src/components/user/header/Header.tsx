@@ -2,17 +2,17 @@
 
 import type React from "react"
 import { useState, useEffect, useCallback } from "react"
-import { Menu, X, Home, BookOpen, Video, Heart, Bell, BadgeCheck } from "lucide-react" // Added LogOut icon
+import { Menu, X, Home, BookOpen, Video, Heart, Bell, BadgeCheck, ClipboardList } from "lucide-react" 
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { signOut } from "next-auth/react"
-import { useUserContext } from "@/src/context/userAuthContext" // Assuming this path is correct
-import { UserAPIMethods } from "@/src/services/APImethods" // Assuming this path is correct
-import { cn } from "@/src/utils/cn" // Assuming this path is correct
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast" // Assuming this path is correct
-import { UserDropdown } from "./user-dropdown" // Assuming this path is correct
-import { MobileMenu } from "./mobile-menu" // Assuming this path is correct
+import { useUserContext } from "@/src/context/userAuthContext" 
+import { UserAPIMethods } from "@/src/services/methods/user.api" 
+import { cn } from "@/src/utils/cn" 
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast" 
+import { UserDropdown } from "./user-dropdown"
+import { MobileMenu } from "./mobile-menu" 
 import { NotificationCenter } from "../../notifications/notification-center"
 import { CustomAlertDialog } from "../../custom-alert-dialog"
 
@@ -28,6 +28,7 @@ const NAV_ITEMS: NavItem[] = [
   { name: "Live Classes", path: "/user/live-classes", icon: Video },
   { name: "Donation", path: "/user/donation", icon: Heart },
   { name: "Certificate", path: "/user/certificate", icon: BadgeCheck },
+  { name: "Daily Task", path: "/user/dailytask", icon: ClipboardList },
 ]
 
 export const Header = () => {
@@ -52,8 +53,8 @@ export const Header = () => {
       } else {
         showErrorToast(res.msg || "Logout failed. Please try again.")
       }
-    } catch (error: any) {
-      showErrorToast(error.message || "An unexpected error occurred during logout.")
+    } catch (error) {
+      showErrorToast( "An unexpected error occurred during logout.")
     } finally {
       setShowLogoutConfirm(false) 
     }

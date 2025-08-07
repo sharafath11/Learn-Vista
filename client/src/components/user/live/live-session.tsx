@@ -65,7 +65,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
         socket.on("rtc-offer", async (mentorSocketId: string, offer: any) => {
 
           if (mentorSocketIdRef.current !== mentorSocketId) {
-              console.warn("User: Received offer from unexpected mentor. Updating mentorSocketIdRef.");
               mentorSocketIdRef.current = mentorSocketId;
               if (peerRef.current) {
                 peerRef.current.destroy();
@@ -103,7 +102,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
               stream.getAudioTracks().forEach(track => {
               });
             } else {
-              console.warn("User: Received an empty or null stream!");
             }
           });
 
@@ -111,7 +109,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           });
 
           peer.on("error", (err) => {
-            console.error("User: Peer error:", err);
             peerRef.current = null;
             setMentorStream(null);
             setIsPlaying(false); 
@@ -145,12 +142,10 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           window.location.href="/user/live-classes"
         })
         socket.on('disconnect', (reason: any) => {
-          console.warn(`UserLiveSession: Socket disconnected: ${reason}`);
           toast.error("Disconnected from server. Please refresh.");
         });
 
       } catch (err) {
-        console.error("User: Init error:", err);
         toast.error("Failed to join session");
         window.location.href="/user/live-classes"
       }
@@ -187,7 +182,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
       videoRef.current.play().then(() => {
           setIsPlaying(true); 
       }).catch(e => {
-          console.error("User: Error playing video after user interaction:", e);
           toast.error("Failed to play video. Please ensure browser autoplay settings allow it.");
       });
     }

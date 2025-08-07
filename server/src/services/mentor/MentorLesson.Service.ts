@@ -11,10 +11,6 @@ import {
 } from "../../types/lessons";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
-import {
-  deleteFromCloudinary,
-  uploadToCloudinary,
-} from "../../utils/cloudImage";
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
@@ -22,6 +18,7 @@ import { getGemaniResponse } from "../../config/gemaniAi";
 import { buildMcqOptionsPrompt } from "../../utils/Rportprompt";
 import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
 import { logger } from "../../utils/logger";
+import { convertSignedUrlInArray, uploadThumbnail, deleteFromS3, convertSignedUrlInObject } from "../../utils/s3Utilits";
 
 @injectable()
 export class MentorLessonService implements IMentorLessonService {
@@ -36,13 +33,11 @@ export class MentorLessonService implements IMentorLessonService {
     private _userCourseProgress: IUserCourseProgressRepository
   ) {}
 
-  async getLessons(
-    courseId: string | ObjectId,
-    
-  ): Promise<ILesson[]> {
+  async getLessons(courseId: string | ObjectId): Promise<ILesson[]> {
     const result = await this._lessonRepo.findAll({ courseId });
     if (!result) throwError("Invalid request", StatusCode.BAD_REQUEST);
-    return result;
+    const updatedResult = await convertSignedUrlInArray(result, ["thumbnail"]);
+    return updatedResult;
   }
 
   async addLesson(data: ILesson): Promise<ILesson> {
@@ -59,26 +54,17 @@ export class MentorLessonService implements IMentorLessonService {
         StatusCode.CONFLICT
       );
     }
-
     let imageUrl: string | undefined;
-
     if (Buffer.isBuffer(data.thumbnail)) {
       try {
-        imageUrl = await uploadToCloudinary(
-          data.thumbnail,
-          "lesson_thumbnails"
-        );
+        imageUrl = await uploadThumbnail(data.thumbnail);
       } catch (error) {
-        logger.error("Cloudinary upload failed:", error);
+        logger.error("S3 upload failed:", error);
         throwError(
-          "Failed to upload thumbnail to Cloudinary",
+          "Failed to upload thumbnail to S3",
           StatusCode.INTERNAL_SERVER_ERROR
         );
       }
-    } else if (typeof data.thumbnail === "string") {
-      imageUrl = data.thumbnail;
-    } else {
-      imageUrl = "/placeholder.svg?height=80&width=120";
     }
 
     const lessonData: ILesson = {
@@ -124,46 +110,22 @@ export class MentorLessonService implements IMentorLessonService {
 
     if (updateData.thumbnailFileBuffer) {
       try {
-        newThumbnailUrlForDb = await uploadToCloudinary(
-          updateData.thumbnailFileBuffer,
-          "lesson_thumbnails"
-        );
-
         if (
           typeof existingLesson.thumbnail === "string" &&
-          existingLesson.thumbnail.includes("res.cloudinary.com")
+          existingLesson.thumbnail.includes("thumbnails/")
         ) {
-          await deleteFromCloudinary(existingLesson.thumbnail);
+          await deleteFromS3(existingLesson.thumbnail);
         }
-      } catch (error) {
-        console.error("Thumbnail update failed:", error);
-        throwError(
-          "Failed to update thumbnail",
-          StatusCode.INTERNAL_SERVER_ERROR
+
+        newThumbnailUrlForDb = await uploadThumbnail(
+          updateData.thumbnailFileBuffer,
         );
+      } catch (error) {
+        logger.error("Error during thumbnail upload or deletion in editLesson:", error);
+        throwError("Something went wrong during thumbnail update.", StatusCode.INTERNAL_SERVER_ERROR);
       }
-    } else if (updateData.clearThumbnail === true) {
-      if (
-        typeof existingLesson.thumbnail === "string" &&
-        existingLesson.thumbnail.includes("res.cloudinary.com")
-      ) {
-        await deleteFromCloudinary(existingLesson.thumbnail);
-      }
-      newThumbnailUrlForDb = undefined;
-    } else if (updateData.thumbnail !== undefined) {
-      if (
-        typeof updateData.thumbnail === "string" &&
-        updateData.thumbnail !== newThumbnailUrlForDb &&
-        typeof existingLesson.thumbnail === "string" &&
-        existingLesson.thumbnail.includes("res.cloudinary.com")
-      ) {
-        await deleteFromCloudinary(existingLesson.thumbnail);
-      }
-      newThumbnailUrlForDb =
-        typeof updateData.thumbnail === "string"
-          ? updateData.thumbnail
-          : undefined;
     }
+
     const lessonUpdatePayload: Partial<ILesson> = {
       title: updateData.title,
       description: updateData.description,
@@ -195,8 +157,8 @@ export class MentorLessonService implements IMentorLessonService {
     if (!updated) {
       throwError("Lesson not found or update failed", StatusCode.NOT_FOUND);
     }
-
-    return updated;
+    const sendData=await convertSignedUrlInObject(updated,["thumbnail"])
+    return sendData;
   }
   async getQuestionService(lessonId: string | ObjectId): Promise<IQuestions[]> {
     const result = await this._questionRepository.findAll({ lessonId });
@@ -234,7 +196,6 @@ export class MentorLessonService implements IMentorLessonService {
   }
   async getComments(lessonId: string | ObjectId): Promise<IComment[]> {
     const result = await this._commentRepo.findAll({ lessonId: lessonId });
-
     if (!result) throwError("comments denot found ");
     return result;
   }
@@ -242,35 +203,37 @@ export class MentorLessonService implements IMentorLessonService {
     if (!question.trim()) {
       throwError("Question is required to generate options.");
     }
-
     const prompt = buildMcqOptionsPrompt(question);
     const resultRaw = await getGemaniResponse(prompt);
+let parsed: string[];
 
-    let parsed: string[];
+try {
+  let response = resultRaw;
 
-    try {
-      parsed =
-        typeof resultRaw === "string" ? JSON.parse(resultRaw) : resultRaw;
-    } catch {
-      throwError("Invalid format received. Please enter options manually.");
-    }
-
-    if (!Array.isArray(parsed)) {
-      throwError(
-        "Currently unable to generate options. Please try again later or enter manually."
-      );
-    }
-
+  if (typeof response === "string") {
+    response = response.replace(/```(?:\w+)?\s*([\s\S]*?)\s*```/, "$1").trim();
+    parsed = JSON.parse(response);
+  } else if (Array.isArray(response)) {
+    parsed = response;
+  } else {
+    throw new Error("Unexpected response format");
+  }
+} catch (err) {
+  console.error("Parsing error:", err, resultRaw);
+  throwError("Invalid format received. Please enter options manually.");
+}
     const cleaned = parsed
       .map((opt) => opt.trim())
       .filter((opt) => opt.length > 0);
-
     if (cleaned.length < 2) {
       throwError(
         "Insufficient options generated. Try a more descriptive question."
       );
     }
-
     return cleaned;
   }
 }
+
+
+
+

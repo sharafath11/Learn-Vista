@@ -19,9 +19,9 @@ import { Button } from "@/src/components/shared/components/ui/button"
 import { LayoutDashboard, Calendar, Star, User, LogOut, BookOpen, Menu } from "lucide-react"
 
 import { useMentorContext } from "@/src/context/mentorContext" 
-import { MentorAPIMethods } from "@/src/services/APImethods" 
 import { showInfoToast } from "@/src/utils/Toast" 
 import { MentorNotification } from "./MentorNotification"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 interface NavItem {
   name: string

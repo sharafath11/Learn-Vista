@@ -99,7 +99,7 @@ export interface SocialLink {
 
 export interface IMentor {
   id: string;
-  _id: string;
+
   userId: string;
   username: string;
   email: string;
@@ -116,7 +116,6 @@ export interface IMentor {
   isBlock: boolean;
   isVerified: boolean;
   status: MentorStatus;
-  courseRejectReson?: IReson[];
   applicationDate: string;
   createdAt: string;
   updatedAt: string;

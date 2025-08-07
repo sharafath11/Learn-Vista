@@ -17,8 +17,9 @@ export const UnreadNotifications = ({
   deleteNotification,
   variant = "dark",
 }: UnreadNotificationsProps) => {
-  const unread = notifications.filter((n) => !n.isRead)
-
+const unread = notifications
+  .filter((n) => !n.isRead)
+  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   const itemBgClass = variant === "dark" ? "bg-zinc-700 hover:bg-zinc-600" : "bg-gray-100 hover:bg-gray-200"
   const itemTextClass = variant === "dark" ? "text-white" : "text-gray-900"
   const timeTextClass = variant === "dark" ? "text-gray-400" : "text-gray-500"

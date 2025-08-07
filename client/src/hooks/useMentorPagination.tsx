@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { AdminAPIMethods } from '../services/APImethods';
 import { showInfoToast } from '../utils/Toast';
 import { IMentor } from '../types/mentorTypes';
+import { AdminAPIMethods } from '../services/methods/admin.api';
 
 type PaginationState = {
   page: number;
@@ -62,7 +62,6 @@ export const useMentorPagination = (): UseMentorPaginationReturn => {
         throw new Error(res.msg || 'Failed to fetch mentors');
       }
     } catch (error: unknown) {
-      console.error("Failed to fetch mentors:", error);
       showInfoToast(error instanceof Error ? error.message : 'Failed to fetch mentors');
     } finally {
       setLoading(false);

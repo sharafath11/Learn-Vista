@@ -47,3 +47,12 @@ export type EvaluatedAnswer = {
   marks: number; 
   report?:string
 };
+
+export interface ILessonProgressUpdate {
+  videoWatchedDuration?: number;
+  videoTotalDuration?: number;
+  videoCompleted?: boolean;
+  theoryCompleted?: boolean;
+  practicalCompleted?: boolean;
+  mcqCompleted?: boolean;
+}

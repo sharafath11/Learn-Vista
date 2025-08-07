@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, Mail, Lock, User, Camera, CheckCircle, Loader2, Edit } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 import { useMentorContext } from "@/src/context/mentorContext";
 import { validateMentorProfile } from "@/src/validations/mentorValidation";
@@ -69,14 +69,14 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     setImagePreview(URL.createObjectURL(file));
   }, []);
 
-    const handleAddExpertise = () => { //Added
+    const handleAddExpertise = () => {
         if (newExpertise.trim() && !expertise.includes(newExpertise.trim())) {
             setExpertise([...expertise, newExpertise.trim()]);
             setNewExpertise("");
         }
     };
 
-    const handleRemoveExpertise = (expert: string) => {  //Added
+    const handleRemoveExpertise = (expert: string) => {  
         setExpertise(expertise.filter(e => e !== expert));
     };
 

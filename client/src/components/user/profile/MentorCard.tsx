@@ -1,7 +1,7 @@
 "use client";
 
 import { useUserContext } from "@/src/context/userAuthContext";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { MentorApplyFormData } from "@/src/types/authTypes";
 import { showSuccessToast } from "@/src/utils/Toast";
 import { validateMentorApplyForm } from "@/src/validations/validation";

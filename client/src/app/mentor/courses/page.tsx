@@ -8,14 +8,16 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/src/components/shared/components/ui/avatar"
 import { RaiseConcernDialog } from "./ConcernDialog"
 import {
-  Layers, Calendar, Tag, Clock, BookText, Users, AlertCircle
+  Layers, Calendar, Tag, Clock, BookText, Users, AlertCircle,
+  CheckCircle,
+  XCircle
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast } from "@/src/utils/Toast"
 import { ICourse } from "@/src/types/courseTypes"
 import { ICategory } from "@/src/types/categoryTypes"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 export default function CoursesPage() {
   const [filters, setFilters] = useState({
@@ -68,7 +70,7 @@ export default function CoursesPage() {
   //     courses
   //       .filter((c) => typeof c.categoryId === "object" && c.categoryId !== null)
   //       .map((c) => [
-  //         (c.categoryId as ICategory)._id,
+  //         (c.categoryId as ICategory).id,
   //         c.categoryId as ICategory,
   //       ])
   //   ).values()
@@ -110,7 +112,7 @@ export default function CoursesPage() {
           <>
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-fr">
               {courses.map((course) => (
-                <Card key={course._id} className="group relative bg-gradient-to-br from-gray-800/40 via-gray-800/30 to-gray-800/40 border border-gray-700 hover:shadow-2xl transition-all duration-300 flex flex-col transform hover:-translate-y-1">
+                <Card key={course.id} className="group relative bg-gradient-to-br from-gray-800/40 via-gray-800/30 to-gray-800/40 border border-gray-700 hover:shadow-2xl transition-all duration-300 flex flex-col transform hover:-translate-y-1">
                   <CardHeader className="relative p-0 aspect-video overflow-hidden rounded-t-xl">
                     <Image
                       src={course.thumbnail || "/placeholder.png"}
@@ -118,19 +120,29 @@ export default function CoursesPage() {
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300 group-hover:brightness-100"
                     />
-                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
-                      {/* <Badge className={`${statusVariants[course.mentorStatus]} text-white px-3 py-1.5 text-sm font-bold rounded-full shadow-md`}>
-                        {course.mentorStatus.charAt(0).toUpperCase() + course.mentorStatus.slice(1)}
-                      </Badge> */}
-                      {typeof course.categoryId === "object" && course.categoryId?.title && (
-                        <Badge
-                          variant="secondary"
-                          className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 text-sm font-semibold rounded-full"
-                        >
-                          {course.categoryId.title}
-                        </Badge>
-                      )}
-                    </div>
+                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center gap-2">
+  {typeof course.categoryId === "object" && course.categoryId?.title && (
+    <Badge
+      variant="secondary"
+      className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 text-sm font-semibold rounded-full"
+    >
+      {course.categoryId.title}
+    </Badge>
+  )}
+
+  <Badge
+    variant={course.isActive ? "default" : "secondary"}
+    className={`flex items-center gap-1 px-3 py-1.5 text-sm font-semibold rounded-full ${
+      course.isActive
+        ? "bg-green-600/80 text-white"
+        : "bg-red-600/80 text-white"
+    }`}
+  >
+    {course.isActive ? <CheckCircle size={14} /> : <XCircle size={14} />}
+    {course.isActive ? "Active" : "Inactive"}
+  </Badge>
+</div>
+
                   </CardHeader>
 
                   <CardContent className="flex-grow">
@@ -162,23 +174,23 @@ export default function CoursesPage() {
                   </CardContent>
 
                   <CardFooter className="flex flex-col gap-3 p-4 pt-0">
-                    {course.mentorStatus === "approved" && (
+                   
                       <>
-                        <Link href={`/mentor/courses/${course._id}`} className="w-full">
+                        <Link href={`/mentor/courses/${course.id}`} className="w-full">
                           <Button className="w-full gap-2 h-10 text-base bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white shadow-md rounded-lg">
                             <BookText size={18} /> Manage Course
                           </Button>
                         </Link>
-                        <Link href={`/mentor/courses/students/${course._id}`} className="w-full">
+                        <Link href={`/mentor/courses/students/${course.id}`} className="w-full">
                           <Button className="w-full gap-2 h-10 text-base bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md rounded-lg">
                             <Users size={18} /> View Students
                           </Button>
                         </Link>
                         <div className="w-full flex justify-start mt-2">
-                          <RaiseConcernDialog courseId={course._id} />
+                          <RaiseConcernDialog courseId={course.id} />
                         </div>
                       </>
-                    )}
+                   
                   </CardFooter>
                 </Card>
               ))}

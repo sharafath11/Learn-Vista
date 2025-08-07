@@ -5,11 +5,9 @@ import { IMentor } from "./mentorTypes";
 
 export interface ICourse {
   id: string;
-  _id: string;
   title: string;
   description?: string;
   mentorId: string | IMentor;
-  mentorStatus: "approved" | "rejected" | "pending";
   sessions: string[];
   categoryId: string | ICategory;
   categoryName?:string;
@@ -24,6 +22,7 @@ export interface ICourse {
   startTime: string;
   isStreaming?:boolean
   thumbnail?: string;
+  isActive:boolean
   thumbnailPreview?: string | null;
   Lessons: string[] | ILessons[]
    lessons?:string[]|ILessons[]

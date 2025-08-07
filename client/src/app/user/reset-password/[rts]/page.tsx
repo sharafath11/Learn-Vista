@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast";
 import { Eye, EyeOff } from "lucide-react";
 import { validatePassword } from "@/src/utils/restPasswordValidatior";

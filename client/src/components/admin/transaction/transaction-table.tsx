@@ -132,7 +132,7 @@ export function TransactionTable({
               <TableBody>
                 {transactions.length > 0 ? (
                   transactions.map((transaction, i) => (
-                    <TableRow key={transaction.donorId || i}>
+                    <TableRow key={`${transaction.id}-${transaction.donorId}`}>
                       <TableCell>
                         <div>
                           <div className="font-medium">{transaction.donorName || "Anonymous"}</div>

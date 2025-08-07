@@ -14,7 +14,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { useEffect, useState } from "react"
-import { AdminAPIMethods } from "@/src/services/APImethods"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 import { ICategory } from "@/src/types/categoryTypes"
@@ -36,7 +36,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
      }
      else showErrorToast(res.msg)
    }
-  const course = courses.find((i) => i._id === courseId);
+  const course = courses.find((i) => i.id === courseId);
   if (!course) {
     return <div>Loading...</div>
   }
@@ -44,8 +44,8 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
   const [formData, setFormData] = useState({
     title: course?.title || "",
     description: course?.description || "",
-    mentorId: course?.mentorId?._id || "",
-    categoryId: course?.categoryId?._id || "",
+    mentorId: course?.mentorId?.id || "",
+    categoryId: course?.categoryId?.id || "",
     price: course?.price || 0,
     courseLanguage: course?.courseLanguage || "English",
     startDate: course?.startDate?.split("T")[0] || "",
@@ -89,12 +89,12 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
     data.append('startDate', formData.startDate)
     data.append('endDate', formData.endDate)
     data.append('startTime', formData.startTime);
-    data.append('courseId', courseId);
+   
     if (thumbnailFile) {
       data.append('thumbnail', thumbnailFile)
     }
  
-    const res = await AdminAPIMethods.editCourse( data);
+    const res = await AdminAPIMethods.editCourse(courseId, data);
     if (res.ok) {
       setCourses(prev => prev.map(c =>
         c.id === courseId ? { ...c, ...res.data } : c

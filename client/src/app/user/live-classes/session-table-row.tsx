@@ -60,7 +60,7 @@ export const SessionTableRow = ({
     if (isExpired) {
       return (
         <Button
-          onClick={() => onViewContent(session._id)}
+          onClick={() => onViewContent(session.id)}
           className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
         >
           <div className="flex items-center gap-2">
@@ -74,11 +74,11 @@ export const SessionTableRow = ({
     if (session.isStreaming) {
       return (
         <Button
-          onClick={() => onJoinCall(session._id)}
-          disabled={joiningSession === session._id}
+          onClick={() => onJoinCall(session.id)}
+          disabled={joiningSession === session.id}
           className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 disabled:opacity-50"
         >
-          {joiningSession === session._id ? (
+          {joiningSession === session.id ? (
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               Joining...

@@ -6,7 +6,7 @@ import { CheckCircle, XCircle, RefreshCw, Trophy, Clock, Target, Loader2, AlertT
 import { Card } from "@/src/components/shared/components/ui/card"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showErrorToast } from "@/src/utils/Toast"
 
 interface Question {
@@ -56,7 +56,6 @@ export default function LetsFunPSC() {
         throw new Error("API Error")
       }
     } catch (error) {
-      console.error("Error loading question:", error)
       setApiUnavailable(true)
       showErrorToast("Service temporarily unavailable")
     } finally {

@@ -91,8 +91,52 @@ export class UserController implements IUserController {
         sendResponse(res, StatusCode.OK, "", true, answer);
     } catch (error) {
      handleControllerError(res,error)
-  }
+    }
+      
   
+  }
+  async getDailyTask(req: Request, res: Response): Promise<void> {
+      try {
+          const decoded = decodeToken(req.cookies.token);
+          if (!decoded?.id) throwError("unautheized", StatusCode.UNAUTHORIZED);
+          const result=await this.userService.getDailyTaskSevice(decoded.id)
+    sendResponse(res, StatusCode.OK, "Daily tasks generated", true, result);
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+  }
+async updateDailyTask(req: Request, res: Response): Promise<void> {
+  try {
+    const { taskId, taskType } = req.body;
+    const audioFile = req.file; 
+    const answer = req.body.answer; 
+
+    if (!taskId || !taskType) {
+      throwError("Missing required fields", StatusCode.BAD_REQUEST);
+    }
+
+    const result = await this.userService.updateDailyTask({
+  taskId,
+  taskType,
+  answer,
+  audioFile,
+});
+
+    sendResponse(res, StatusCode.OK, "Task updated", true, result);
+  } catch (error) {
+    handleControllerError(res, error);
+  }
 }
+    async getAllDailyTask(req: Request, res: Response): Promise<void> {
+        try {
+            const decoded = decodeToken(req.cookies.token);
+            if (!decoded?.id) throwError("unauthrized");
+            const result = await this.userService.getAllDailyTasks(decoded?.id as string);
+            sendResponse(res,StatusCode.OK,"fetched all daily task ",true,result)
+        } catch (error) {
+            handleControllerError(res,error)
+        }
+    }
+
 
 }

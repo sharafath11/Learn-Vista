@@ -3,7 +3,7 @@ import { inject, injectable } from "inversify";
 import { IUserCertificateController } from "../../core/interfaces/controllers/user/IUserCertificateController";
 import { IUserCertificateService } from "../../core/interfaces/services/user/IUserCertificateService";
 import { TYPES } from "../../core/types";
-import { handleControllerError, sendResponse } from "../../utils/ResANDError";
+import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { CertificateQueryParams } from "../../types/certificateTypes";
 
@@ -39,21 +39,16 @@ export class UserCertificateController implements IUserCertificateController {
     };
 
     if (!ALLOWED_STATUSES.includes(String(status))) {
-      console.warn(`[GET /certificates] Invalid status '${status}' provided. Defaulting to 'all'.`);
+     throwError(`[GET /certificates] Invalid status '${status}' provided. Defaulting to 'all'.`);
     }
 
-    console.log("[GET /certificates] Resolved filters:", filters);
 
     const { data, total } = await this._userCertificateService.getCertificates(filters);
-
-    console.log("[GET /certificates] Certificates fetched:", { count: data.length, total });
-
     sendResponse(res, StatusCode.OK, "Certificates fetched successfully", true, {
       data,
       total,
     });
   } catch (error) {
-    console.error("[GET /certificates] Error occurred:", error);
     handleControllerError(res, error);
   }
 }

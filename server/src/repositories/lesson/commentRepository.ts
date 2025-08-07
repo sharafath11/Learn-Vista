@@ -6,45 +6,38 @@ import { inject } from "inversify";
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
-import Comment from "../../models/class/comments";
+import CommentModel from "../../models/class/comments";
 
 export class CommentsRepository
   extends BaseRepository<IComment, IComment>
   implements ICommentstRepository
 {
   constructor(
-    @inject(TYPES.CourseRepository)
-      private _courseRepo: ICourseRepository,
-      @inject(TYPES.LessonReportRepository) private _lessonRepo:ILessonsRepository
+    @inject(TYPES.CourseRepository) private _courseRepo: ICourseRepository,
+    @inject(TYPES.LessonReportRepository) private _lessonRepo: ILessonsRepository
   ) {
-    super(Comment);
+    super(CommentModel);
   }
 
   async findWithPagination(
     filter: FilterQuery<IComment>,
     sort: Record<string, SortOrder>,
     page: number,
-      limit: number,
-    mentorId:string|ObjectId
+    limit: number,
+    mentorId: string | ObjectId
   ): Promise<IComment[]> {
-   
-    
+    if (mentorId) {
+      filter.mentorId = mentorId;
+    }
 
-if (mentorId) {
-  filter.mentorId = mentorId
-}
-
-const results = await Comment.find(filter)
-  .sort(sort)
-  .skip((page - 1) * limit)
-  .limit(limit)
-  .lean();
-
-    return results;
+    return CommentModel.find(filter)
+      .sort(sort)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
   }
 
   async countDocuments(filter: FilterQuery<IComment>): Promise<number> {
-    const count = await Comment.countDocuments(filter);
-    return count;
+    return CommentModel.countDocuments(filter);
   }
 }

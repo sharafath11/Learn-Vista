@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { MessageSquare, Search } from "lucide-react"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useMentorContext } from "@/src/context/mentorContext"
 import { IComment } from "@/src/types/lessons"
 import { ICourse } from "@/src/types/courseTypes"
 import CommentCard from "./comment-card"
 import useDebounce from "@/src/hooks/useDebouncing"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 type SortOption = "newest" | "oldest"
 type FilterOption = "all" | string
@@ -41,7 +41,6 @@ export default function ReviewsComponent() {
   const getCourseForLesson = (lessonId: string) => {
     return courseMap[lessonId]
   }
-
   const formatDate = (date: Date | undefined) => {
     if (!date) return "Unknown date"
     return new Date(date).toLocaleDateString("en-US", {
@@ -67,14 +66,14 @@ export default function ReviewsComponent() {
         setComments(res.data.comments)
         setTotalPages(res.data.pagination.totalPages)
       } catch (err) {
-        console.error("Failed to fetch comments", err)
       } finally {
         setLoading(false)
       }
     }
 
     fetchComments()
-  }, [sortBy, filterByCourse, debouncedSearch, page])
+  }, [sortBy, filterByCourse, debouncedSearch, page]);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
@@ -103,7 +102,7 @@ export default function ReviewsComponent() {
               >
                 <option value="all">All Courses</option>
                 {courses.map((course) => (
-                  <option className="text-black" key={course._id} value={course._id}>
+                  <option className="text-black" key={course.id} value={course.id}>
                     {course.title}
                   </option>
                 ))}

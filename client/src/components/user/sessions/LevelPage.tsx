@@ -5,14 +5,14 @@ import { useState, useEffect } from "react"
 import ProgressBar from "./progress-bar"
 import LevelNavigation from "./LevelNavigation"
 import VideoPlayer from "./video-player"
-// Sample level data
+
 const LEVELS: Level[] = [
   {
     id: 1,
     title: "Getting Started",
     description: "Learn the basics and get familiar with the core concepts.",
     videoUrl: "/videos/level-1.mp4",
-    duration: 60, // seconds
+    duration: 60, 
   },
   {
     id: 2,

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { MoreHorizontal, Pencil, Plus } from "lucide-react";
 import { useAdminContext } from "@/src/context/adminContext";
-import { AdminAPIMethods } from "@/src/services/APImethods";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
 import CategoryForm from "./categoriesModal";
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
@@ -22,14 +21,9 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/shared/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/shared/components/ui/badge";
+import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 
-interface Category {
-  _id: string;
-  title: string;
-  description: string;
-  isBlock: boolean;
-  createdAt: string;
-}
+
 
 export default function CategoriesList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,7 +70,6 @@ export default function CategoriesList() {
           setTotalPages(res.data.totalPages);
         }
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
       } finally {
         setIsLoading(false);
       }
@@ -199,7 +192,7 @@ export default function CategoriesList() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                   {categories?.map((category) => (
                     <Card
-                      key={category._id}
+                      key={category.id}
                       className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-all duration-200 hover:border-indigo-100"
                     >
                       <CardHeader className="pb-2">

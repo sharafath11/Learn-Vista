@@ -5,7 +5,7 @@ import CertificateFilters, { CertificateFilterValues } from "./CertificateFilter
 import CertificateCard from "./CertificateCard"
 import { Loader2 } from "lucide-react"
 import { ICertificate } from "@/src/types/certificateTypes"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 
 export default function CertificateListPage() {
   const [certificates, setCertificates] = useState<ICertificate[]>([])
@@ -29,7 +29,6 @@ export default function CertificateListPage() {
       const data = await UserAPIMethods.getCertificates(queryParams)
       setCertificates(data.data.data)
     } catch (error) {
-      console.error("Failed to fetch certificates", error)
     } finally {
       setLoading(false)
     }

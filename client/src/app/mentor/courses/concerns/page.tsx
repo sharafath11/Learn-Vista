@@ -5,12 +5,12 @@ import { AlertCircle } from 'lucide-react'
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Card, CardContent } from "@/src/components/shared/components/ui/card"
 import { Button } from "@/src/components/shared/components/ui/button"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useMentorContext } from "@/src/context/mentorContext"
 import { IConcern } from "@/src/types/concernTypes"
 import ConcernsToolbar from "./ConcernsToolbar"
 import ConcernCard from "./ConcernCard"
 import useDebounce from "@/src/hooks/useDebouncing"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 type ConcernStatus = 'open' | 'in-progress' | 'resolved'
 
@@ -52,7 +52,6 @@ export default function ConcernsPage() {
         }))
       }
     } catch (error) {
-      console.error("Error fetching concerns:", error)
     } finally {
       setIsLoading(false)
     }
@@ -157,7 +156,7 @@ export default function ConcernsPage() {
               ) : (
                 <div className="grid gap-4">
                   {concerns.map(concern => (
-                    <ConcernCard key={concern._id} concern={concern} courses={courses || []} />
+                    <ConcernCard key={concern.id} concern={concern} courses={courses || []} />
                   ))}
                 </div>
               )}

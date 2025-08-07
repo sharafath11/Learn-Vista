@@ -17,7 +17,7 @@ function NotificationWrapper() {
 
   return (
     <NotificationListener
-      userId={user._id || user.id}
+      userId={user.id || user.id}
       role="user"
     />
   );

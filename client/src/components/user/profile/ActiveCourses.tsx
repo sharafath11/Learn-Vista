@@ -17,7 +17,7 @@ const CourseCard = ({ course }: { course: ICourse }) => {
   const router = useRouter()
 
   const lessons = sessions?.length || 0
-  const progress = getCourseProgress(course._id, progresses) || 0
+  const progress = getCourseProgress(course.id, progresses) || 0
   const completedLessons = Math.round((lessons * progress) / 100)
 
   const mentorName = typeof mentorId === "object" && "name" in mentorId ? mentorId.name : "Instructor"
@@ -74,7 +74,7 @@ const CourseCard = ({ course }: { course: ICourse }) => {
 
         <Button
           className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
-          onClick={() => router.push(`/user/sessions/${course._id}`)}
+          onClick={() => router.push(`/user/sessions/${course.id}`)}
         >
           {progress === 0 ? "Start Learning" : progress === 100 ? "Review Course" : "Continue Learning"}
         </Button>
@@ -88,7 +88,7 @@ export default function ActiveCourses() {
   const [showAll, setShowAll] = useState(false)
 
   const userEnrolledCourses =
-    allCourses?.filter((course) => user?.enrolledCourses?.some((i) => i.courseId === course._id)) || []
+    allCourses?.filter((course) => user?.enrolledCourses?.some((i) => i.courseId === course.id)) || []
 
   const displayedCourses = showAll ? userEnrolledCourses : userEnrolledCourses.slice(0, 4)
   const hasMoreCourses = userEnrolledCourses.length > 4
@@ -129,7 +129,7 @@ export default function ActiveCourses() {
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2">
         {displayedCourses.map((course) => (
-          <CourseCard key={course._id} course={course} />
+          <CourseCard key={course.id} course={course} />
         ))}
       </div>
 

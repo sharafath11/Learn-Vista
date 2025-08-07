@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +17,7 @@ import { Button } from "@/src/components/shared/components/ui/button";
 import { useEffect, useState } from "react";
 import { IQuestions, QuestionType } from "@/src/types/lessons";
 import { showInfoToast } from "@/src/utils/Toast";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 
 interface QuestionModalProps {
   open: boolean;
@@ -39,6 +40,7 @@ export function QuestionModal({
   });
 
   const [loadingOptions, setLoadingOptions] = useState(false);
+  const MAX_OPTIONS = 6;
 
   useEffect(() => {
     if (question) {
@@ -61,7 +63,9 @@ export function QuestionModal({
   };
 
   const addOption = () => {
-    setFormData((prev) => ({ ...prev, options: [...prev.options, ""] }));
+    if (formData.options.length < MAX_OPTIONS) {
+      setFormData((prev) => ({ ...prev, options: [...prev.options, ""] }));
+    }
   };
 
   const removeOption = (index: number) => {
@@ -74,13 +78,18 @@ export function QuestionModal({
 
     if (!formData.question.trim()) return;
 
-    const data: any = {
+    const data: Omit<IQuestions, "id" | "isCompleted" | "lessonId"> = {
       question: formData.question.trim(),
       type,
     };
 
     if (type === "mcq") {
-      data.options = formData.options.filter((opt) => opt.trim() !== "");
+      const filteredOptions = formData.options.filter((opt) => opt.trim());
+      if (filteredOptions.length < 2) {
+        showInfoToast("Please provide at least two valid options.");
+        return;
+      }
+      data.options = filteredOptions;
     }
 
     onSave(data);
@@ -88,40 +97,45 @@ export function QuestionModal({
   };
 
   const handleGenerateOptions = async () => {
-  if (!formData.question.trim()) {
-    showInfoToast("Please enter a question first.");
-    return;
-  }
+    if (!formData.question.trim()) {
+      showInfoToast("Please enter a question first.");
+      return;
+    }
 
-  setLoadingOptions(true);
+    setLoadingOptions(true);
 
-  const res = await MentorAPIMethods.generateOptions(formData.question.trim());
+    const res = await MentorAPIMethods.generateOptions(formData.question.trim());
+     setLoadingOptions(false);
+    if (!res.ok ) {
+      showInfoToast(res.msg);
+     
+      return;
+    }
 
-  if (!res.ok) {
-    showInfoToast(res.msg);
+    const data = await res.data;
+
+    if (!Array.isArray(data)) {
+      showInfoToast("Invalid option format received from server.");
+      setLoadingOptions(false);
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      options: data.filter((opt) => opt.trim()),
+    }));
+
     setLoadingOptions(false);
-    return;
-  }
+  };
 
-  const data = await res.data;
-   setLoadingOptions(false)
-  if (!Array.isArray(data)) {
-    showInfoToast("Invalid option format received from server.");
-    setLoadingOptions(false);
-    return;
-  }
-
-  setFormData((prev) => ({
-    ...prev,
-    options: data,
-  }));
-
-  setLoadingOptions(false);
-};
   const isEditing = !!question;
 
   const Icon =
     type === "theory" ? BookOpen : type === "practical" ? Code : ListChecks;
+
+  const isValidMCQ = () =>
+    formData.question.trim() &&
+    formData.options.filter((opt) => opt.trim()).length >= 2;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -160,6 +174,7 @@ export function QuestionModal({
               }
               className="min-h-[100px]"
               required
+              autoFocus
             />
           </div>
 
@@ -189,7 +204,12 @@ export function QuestionModal({
               ))}
 
               <div className="flex flex-wrap gap-2 mt-2">
-                <Button type="button" variant="outline" onClick={addOption}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={addOption}
+                  disabled={formData.options.length >= MAX_OPTIONS}
+                >
                   + Add Option
                 </Button>
                 <Button
@@ -213,7 +233,13 @@ export function QuestionModal({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!formData.question.trim()}>
+            <Button
+              type="submit"
+              disabled={
+                loadingOptions ||
+                (type === "mcq" ? !isValidMCQ() : !formData.question.trim())
+              }
+            >
               {isEditing ? "Update Question" : "Create Question"}
             </Button>
           </DialogFooter>

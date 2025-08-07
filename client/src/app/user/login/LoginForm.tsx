@@ -7,7 +7,7 @@ import { useUserContext } from "@/src/context/userAuthContext";
 import {  showSuccessToast } from "@/src/utils/Toast";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import Link from "next/link";
 
 export default function LoginForm() {

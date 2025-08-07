@@ -1,10 +1,10 @@
-import mongoose, { ObjectId, Types } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { GetLessonsResponse, IUserLessonsService } from "../../core/interfaces/services/user/IUserLessonsService";
 import { IComment, ILessonDetails, ILessonReport, IQuestions, LessonQuestionInput } from "../../types/lessons";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
-import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository"; // Keep for getting course details related to lesson
+import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository"; 
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
@@ -16,15 +16,13 @@ import { buildPrompt } from "../../utils/Rportprompt";
 import { getGemaniResponse } from "../../config/gemaniAi";
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-// import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository"; // REMOVED: Now handled by UserCourseService
-import { toObjectId } from "../../utils/convertStringToObjectId";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { IUserLessonProgress } from "../../types/userLessonProgress";
-// import { ICertificateRepository } from "../../core/interfaces/repositories/course/ICertificateRepository"; // REMOVED: Now handled by UserCourseService
-// import { IUserCertificateService } from "../../core/interfaces/services/user/IUserCertificateService"; // REMOVED: Now handled by UserCourseService
-import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController"; // Import the new service interface
+import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController"; 
 import { IUserLessonProgressRepository } from "../../core/interfaces/repositories/course/IUserLessonProgressRepo";
+import { convertSignedUrlInArray } from "../../utils/s3Utilits";
+import { logger } from "../../utils/logger";
 
 const SECTION_WEIGHTS = {
   video: 0.40,
@@ -33,37 +31,22 @@ const SECTION_WEIGHTS = {
   mcq: 0.20,
 };
 
-const TOTAL_SECTION_WEIGHT =
-  SECTION_WEIGHTS.video +
-  SECTION_WEIGHTS.theory +
-  SECTION_WEIGHTS.practical +
-  SECTION_WEIGHTS.mcq;
 
-if (TOTAL_SECTION_WEIGHT !== 1) {
-  console.warn(
-    "Warning: Section weights in UserLessonsService.ts do not sum to 1. Overall lesson progress calculation might be off."
-  );
-}
 
 @injectable()
 export class UserLessonsService implements IUserLessonsService {
   constructor(
     @inject(TYPES.LessonsRepository) private _lessonRepository: ILessonsRepository,
-    @inject(TYPES.CourseRepository) private _courseRepository: ICourseRepository, // Keep for getting course details related to lesson
+    @inject(TYPES.CourseRepository) private _courseRepository: ICourseRepository, 
     @inject(TYPES.QuestionsRepository) private _qustionRepository: IQuestionsRepository,
     @inject(TYPES.LessonReportRepository) private _lessonReportRepo: ILessonReportRepository,
     @inject(TYPES.CommentsRepository) private _commentsRepo: ICommentstRepository,
     @inject(TYPES.UserRepository) private _userRepo: IUserRepository,
     @inject(TYPES.UserLessonProgressRepository) private _userLessonProgressRepo: IUserLessonProgressRepository,
     @inject(TYPES.NotificationService) private _notificationService: INotificationService,
-    // Inject the new Course Service
     @inject(TYPES.UserCourseService) private _userCourseService: IUserCourseService
-    // REMOVED: Certificate related dependencies are now in UserCourseService
-    // @inject(TYPES.UserCertificateService) private _userCertificateService: IUserCertificateService,
-    // @inject(TYPES.CertificateRepository) private _certificateRepo: ICertificateRepository
   ) {}
 
-  // Helper for S3 Signed URL - remains here as it's lesson-specific
   private async getSignedVideoUrl(videoUrl: string): Promise<string> {
     let s3Key = videoUrl;
     const bucketDomain = `${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`;
@@ -74,7 +57,7 @@ export class UserLessonsService implements IUserLessonsService {
     } else if (videoUrl.startsWith(`https://${pathStyleDomain}/`)) {
       s3Key = videoUrl.substring(`https://${pathStyleDomain}/`.length);
     } else {
-      console.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
+      logger.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
     }
 
     if (!s3Key) {
@@ -87,8 +70,6 @@ export class UserLessonsService implements IUserLessonsService {
     });
     return getSignedUrl(s3, command, { expiresIn: 3600 });
   }
-
-  // Lesson Progress calculation - remains here as it's lesson-specific
   private calculateOverallLessonProgress(lessonProgress: IUserLessonProgress): number {
     let completedWeight = 0;
 
@@ -160,8 +141,8 @@ export class UserLessonsService implements IUserLessonsService {
     }
 
     const lessonProgress = await this._userLessonProgressRepo.findAll({ courseId, userId });
-
-    return { lessons: lessons, progress: lessonProgress };
+    const sendData=await convertSignedUrlInArray(lessons,["thumbnail"])
+    return { lessons: sendData, progress: lessonProgress };
   }
 
   async getQuestions(lessonId: string | ObjectId): Promise<IQuestions[]> {
@@ -236,7 +217,7 @@ export class UserLessonsService implements IUserLessonsService {
 
     const savedComment = await this._commentsRepo.create({
       lessonId,
-      courseId: course.id, // Use course.id directly
+      courseId: course.id, 
       comment,
       mentorId: course.mentorId,
       userId,
@@ -271,7 +252,6 @@ export class UserLessonsService implements IUserLessonsService {
 
     const courseId = lesson.courseId.toString();
     let userLessonProgress = await this._userLessonProgressRepo.findOne({ userId, lessonId });
-
     if (!userLessonProgress) {
       userLessonProgress = await this._userLessonProgressRepo.create({
         userId: new mongoose.Types.ObjectId(userId),
@@ -287,19 +267,14 @@ export class UserLessonsService implements IUserLessonsService {
         videoCompleted: false,
       });
     }
-
     const updatedProgress = this.calculateAndUpdateLessonSectionProgress(userLessonProgress, update);
-
     const finalProgressDoc = await this._userLessonProgressRepo.update(userLessonProgress.id, {
       ...updatedProgress,
       overallProgressPercent: this.calculateOverallLessonProgress(updatedProgress),
     });
-
     if (!finalProgressDoc)
       throwError("Failed to finalize lesson progress update", StatusCode.INTERNAL_SERVER_ERROR);
-
     await this._userCourseService.updateUserCourseProgress(userId, courseId, lessonId);
-
     return finalProgressDoc;
   }
 }

@@ -4,10 +4,11 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import SuccessView from "./SuccessView";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { IDonation } from "@/src/types/donationTyps";
 import { NotificationListener } from "@/src/components/NotificationListener";
 import { useUserContext } from "@/src/context/userAuthContext";
+import { showErrorToast } from "@/src/utils/Toast";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
@@ -24,7 +25,7 @@ export default function SuccessPage() {
       if (res.ok) {
         setSession(res.data);
       } else {
-        console.error("Failed to fetch donation session");
+        showErrorToast("Failed to fetch donation session");
       }
       setLoading(false);
     };
@@ -54,7 +55,7 @@ export default function SuccessPage() {
 
   return (
     <>
-      {user?._id && <NotificationListener userId={user.id} role={"user"} />}
+      {user?.id && <NotificationListener userId={user.id} role={"user"} />}
       <SuccessView session={session} />
     </>
   );

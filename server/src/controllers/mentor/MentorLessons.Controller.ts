@@ -73,7 +73,6 @@ export class MentorLessonsController implements IMentorLessonsController {
     // Generate PUT URL for upload
     s3.getSignedUrl("putObject", uploadParams, (err, signedUploadUrl) => {
       if (err) {
-        console.error("[S3Upload] Error generating upload URL:", err);
         return handleControllerError(res, throwError("Upload URL generation failed.", StatusCode.INTERNAL_SERVER_ERROR));
       }
 
@@ -132,7 +131,6 @@ export class MentorLessonsController implements IMentorLessonsController {
             sendResponse(res, StatusCode.CREATED, "Lesson added successfully", true, createdLesson);
 
         } catch (error: any) {
-            console.error("Error adding lesson:", error);
             handleControllerError(res, error);
         }
     }
@@ -171,7 +169,6 @@ export class MentorLessonsController implements IMentorLessonsController {
     const updatedLesson = await this._mentorLessonsSerive.editLesson(lessonId, updateData);
     sendResponse(res, StatusCode.OK, "Lesson updated successfully", true, updatedLesson);
   } catch (error) {
-    console.error("Error editing lesson:", error);
     handleControllerError(res, error);
   }
 }
@@ -200,7 +197,8 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
         if (req.method !== 'POST') {
             return sendResponse(res, StatusCode.METHOD_NOT_ALLOWED, 'Method Not Allowed.', false);
         }
-        const { lessonId, videoUrl } = req.body;
+         const lessonId=req.params.lessonId
+        const { videoUrl } = req.body;
         if (!lessonId) {
             return sendResponse(res, StatusCode.BAD_REQUEST, 'Lesson ID is required in the request body.', false);
         }
@@ -227,7 +225,6 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
             } else if (videoUrl.startsWith(`https://${pathStyleDomain}/`)) {
                 s3Key = videoUrl.substring(`https://${pathStyleDomain}/`.length);
             } else {
-                console.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
             }
             if (!s3Key) {
                 throwError("Invalid video URL format provided. Could not extract S3 key.", StatusCode.BAD_REQUEST);
@@ -244,7 +241,6 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
             if (error.statusCode && error.message) {
                 return sendResponse(res, error.statusCode, error.message, false);
             }
-            console.error("An unexpected error occurred in getSignedVideoUrl:", error);
             return sendResponse(res, StatusCode.INTERNAL_SERVER_ERROR, 'An unexpected server error occurred.', false);
         }
      }

@@ -49,7 +49,7 @@ export default function SuccessView({ session }: Props) {
 
       await generateReceiptPDF(receiptData)
     } catch (error) {
-      console.error("Error generating PDF:", error)
+     
     } finally {
       setDownloadingPDF(false)
     }

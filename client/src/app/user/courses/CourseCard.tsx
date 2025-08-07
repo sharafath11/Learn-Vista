@@ -10,7 +10,7 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Progress } from "@/src/components/shared/components/ui/progress"
 import type { IPopulatedCourse } from "@/src/types/courseTypes"
 import { useUserContext } from "@/src/context/userAuthContext"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 import { getCourseProgress } from "@/src/utils/getProgress"
@@ -41,7 +41,7 @@ const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
     }
   }
 
-  const isEnrolled = user?.enrolledCourses?.some((enrolledCourse) => enrolledCourse.courseId == course._id)
+  const isEnrolled = user?.enrolledCourses?.some((enrolledCourse) => enrolledCourse.courseId == course.id)
 
   return (
     <motion.div
@@ -124,10 +124,10 @@ const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-gray-600">
               <span>Progress</span>
-              <span>{getCourseProgress(course._id, progresses)}%</span>
+              <span>{getCourseProgress(course.id, progresses)}%</span>
             </div>
             <Progress
-              value={getCourseProgress(course._id, progresses)}
+              value={getCourseProgress(course.id, progresses)}
               className="h-2 bg-gray-100 rounded-full overflow-hidden"
             />
           </div>
@@ -140,7 +140,7 @@ const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
               <Button
                 size="lg"
                 className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
-                onClick={() => router.push(`/user/sessions/${course._id}`)}
+                onClick={() => router.push(`/user/sessions/${course.id}`)}
               >
                 <BookOpen className="w-4 h-4 mr-2" />
                 Continue Learning
@@ -149,7 +149,7 @@ const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
               <Button
                 size="lg"
                 className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-xl"
-                onClick={() => handleStartNewCourse(course._id)}
+                onClick={() => handleStartNewCourse(course.id)}
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Enroll Now

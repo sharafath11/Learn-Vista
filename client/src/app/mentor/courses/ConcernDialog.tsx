@@ -16,8 +16,8 @@ import { useState, useRef, type ChangeEvent } from "react"
 import { MessageCircleWarning, Upload, X, ImageIcon, Mic, Loader2 } from "lucide-react"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import type { ConcernDialogProps, sendAttachement } from "@/src/types/concernTypes"
-import { MentorAPIMethods } from "@/src/services/APImethods"
 import { useMentorContext } from "@/src/context/mentorContext"
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
 export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) {
   const [open, setOpen] = useState(false)
@@ -27,7 +27,7 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { concerns,setConcerns } = useMentorContext()
+  const { concerns, setConcerns } = useMentorContext()
   const concern = concerns.find((i) => i.courseId === courseId)
   const status = concern?.status
 
@@ -42,34 +42,26 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
-    if (!files) return
+    if (!files || files.length === 0) return
 
     const updated: sendAttachement[] = []
 
-    const toBase64 = (file: File) =>
-      new Promise<string>((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result as string)
-        reader.onerror = (error) => reject(error)
-      })
-
     for (const file of Array.from(files)) {
       const type = file.type.startsWith("image") ? "image" : "audio"
-
       if (file.size > 10 * 1024 * 1024) {
         showErrorToast(`${file.name} exceeds 10MB limit`)
         continue
       }
 
-      const base64 = await toBase64(file)
+      const previewUrl = type === "image" ? URL.createObjectURL(file) : undefined
 
       updated.push({
         id: crypto.randomUUID(),
-        file: base64,
+        file,
         name: file.name,
         size: parseFloat((file.size / (1024 * 1024)).toFixed(2)),
         type,
+        previewUrl,
       })
     }
 
@@ -78,7 +70,11 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
   }
 
   const removeAttachment = (id: string) => {
-    setAttachments((prev) => prev.filter((att) => att.id !== id))
+    setAttachments((prev) => {
+      const attachmentToRemove = prev.find(att => att.id === id)
+      if (attachmentToRemove?.previewUrl) URL.revokeObjectURL(attachmentToRemove.previewUrl)
+      return prev.filter((att) => att.id !== id)
+    })
   }
 
   const handleSubmit = async () => {
@@ -92,12 +88,14 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
     }
 
     setIsSubmitting(true)
+
     const formData = new FormData()
     formData.set("title", title)
     formData.set("message", message)
     formData.set("courseId", courseId)
+
     attachments.forEach((att) => {
-      formData.append("attachments", att.file)
+      formData.append("attachments", att.file, att.name)
     })
 
     const res = await MentorAPIMethods.riseConcern(formData)
@@ -111,6 +109,9 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
     showSuccessToast("Concern submitted successfully")
     setTitle("")
     setMessage("")
+    attachments.forEach(att => {
+      if (att.previewUrl) URL.revokeObjectURL(att.previewUrl)
+    })
     setAttachments([])
     setOpen(false)
     onSuccess?.()
@@ -204,7 +205,11 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
                       className="flex items-center justify-between bg-gray-800/50 p-3 rounded-lg"
                     >
                       <div className="flex items-center gap-3">
-                        {getAttachmentIcon(att.type)}
+                        {att.type === "image" && att.previewUrl ? (
+                          <img src={att.previewUrl} alt="preview" className="w-8 h-8 object-cover rounded" />
+                        ) : (
+                          getAttachmentIcon(att.type)
+                        )}
                         <div>
                           <p className="text-gray-200 text-sm font-medium truncate w-44">
                             {att.name}
@@ -235,6 +240,9 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
               setOpen(false)
               setTitle("")
               setMessage("")
+              attachments.forEach(att => {
+                if (att.previewUrl) URL.revokeObjectURL(att.previewUrl)
+              })
               setAttachments([])
             }}
             className="text-gray-300 hover:bg-gray-700"

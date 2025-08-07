@@ -13,14 +13,14 @@ export interface ICourse extends Document {
   sessions: ObjectId[];
   categoryId: ObjectId;
   mentor: IMentor;
-  price?: number;
   students: number;
   categoryName: string;
   courseLanguage?: string;
   isBlock: boolean;
   tags?: string[];
   enrolledUsers: string[];
-  // mentorApproved: boolean
+  endTime?: string;
+  isActive: boolean
   isStreaming?: boolean;
   lessons: ObjectId[] | string[];
   category: ICategory;

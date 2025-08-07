@@ -12,7 +12,7 @@ import { signIn, useSession } from "next-auth/react";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import type { ILogin, IUserRegistration } from "@/src/types/authTypes";
 import { FormOTP } from "./FormOTP";
-import { UserAPIMethods } from "@/src/services/APImethods";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { validateSignup } from "@/src/validations/validation";
 
 interface FormInputProps {
@@ -101,7 +101,6 @@ export default function SignupForm() {
         showSuccessToast("OTP sent to your email");
       }
     } catch (error) {
-      console.error("Send OTP error:", error);
       showErrorToast("Failed to send OTP");
     }
   };
@@ -129,7 +128,6 @@ export default function SignupForm() {
         router.push("/user/login");
       }
     } catch (error) {
-      console.error("Signup error:", error);
       showErrorToast("Signup failed. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -144,7 +142,6 @@ export default function SignupForm() {
         router.push("/");
       }
     } catch (error) {
-      console.error("Google signup error:", error);
       showErrorToast("Signup failed, please try again.");
     }
   };
@@ -170,7 +167,6 @@ export default function SignupForm() {
             router.push("/");
           }
         } catch (error) {
-          console.error("Auto login error:", error);
         }
       }
     };

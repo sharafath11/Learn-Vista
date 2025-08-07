@@ -61,22 +61,28 @@ export class AuthController implements IAuthController {
         }
     }
 
-    async login(req: Request, res: Response) {
-        try {
-            const { email, password, googleId } = req.body;
-            if (!email && !googleId) throwError("Email or Google ID is required", StatusCode.BAD_REQUEST);
-            
-            const { token, refreshToken, user } = await this.authService.loginUser(
-                email, 
-                password, 
-                googleId
-            );
-            setTokensInCookies(res, token, refreshToken);
-            return sendResponse(res, StatusCode.OK, "Login successful", true, user);
-        } catch (error) {
-            handleControllerError(res, error);
+async login(req: Request, res: Response) {
+    try {
+        const { email, password, googleId } = req.body;
+
+        // Require either email/password OR Google ID
+        if ((!email || !password) && !googleId) {
+            throwError("Provide email/password or Google ID", StatusCode.BAD_REQUEST);
         }
+
+        const { token, refreshToken, user } = await this.authService.loginUser(
+            email, 
+            password, 
+            googleId
+        );
+
+        setTokensInCookies(res, token, refreshToken);
+
+        return sendResponse(res, StatusCode.OK, "Login successful", true, user);
+    } catch (error) {
+        handleControllerError(res, error);
     }
+}
 
     async logout(req: Request, res: Response) {
         try {

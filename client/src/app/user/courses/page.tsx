@@ -6,12 +6,11 @@ import { motion } from "framer-motion"
 import { Sparkles, Users, Award, BookOpen, Clock, TrendingUp } from "lucide-react"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { Card, CardContent, CardFooter, CardHeader } from "@/src/components/shared/components/ui/card" 
 import CourseFilter from "./filtringAndSearch"
 import CourseDetailsModal from "./CourseDetailsModal"
 import type { IPopulatedCourse } from "@/src/types/courseTypes"
 import { useUserContext } from "@/src/context/userAuthContext"
-import { UserAPIMethods } from "@/src/services/APImethods"
+import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import type { ICategory } from "@/src/types/categoryTypes"
 import CourseCard from "./CourseCard"
@@ -63,7 +62,6 @@ const Page = () => {
       setCourses(newCourses.filter((i: IPopulatedCourse) => !i.isBlock))
       setTotalPages(totalPages)
     } else {
-      console.error(res.msg)
       setCourses([])
       setTotalPages(0)
     }
@@ -176,7 +174,7 @@ const Page = () => {
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     {courses.map((course, index) => (
       <CourseCard
-        key={course._id}
+        key={course.id}
         course={course}
         index={index}
         onDetailsClick={handleDetailsClick}
@@ -254,21 +252,21 @@ const Page = () => {
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             onEnroll={async () => {
-              const res = await UserAPIMethods.updateCourse(selectedCourse._id)
+              const res = await UserAPIMethods.updateCourse(selectedCourse.id)
               if (res.ok) {
                 showSuccessToast(res.msg)
                 setUser((prev) => {
                   if (!prev) return prev
                   return {
                     ...prev,
-                    enrolledCourses: [...(prev.enrolledCourses || []), { courseId: selectedCourse._id, allowed: true }],
+                    enrolledCourses: [...(prev.enrolledCourses || []), { courseId: selectedCourse.id, allowed: true }],
                   }
                 })
               } else {
                 showErrorToast(res.msg || "Failed to enroll in course.")
               }
             }}
-            isEnrolled={user?.enrolledCourses?.some((enrolledCourse) => enrolledCourse.courseId === selectedCourse._id)}
+            isEnrolled={user?.enrolledCourses?.some((enrolledCourse) => enrolledCourse.courseId === selectedCourse.id)}
           />
         )}
       </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 
 import { useAdminContext } from "@/src/context/adminContext"
-import { AdminAPIMethods } from "@/src/services/APImethods"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/shared/components/ui/dialog"
 import { Input } from "@/src/components/shared/components/ui/input"

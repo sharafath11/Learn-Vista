@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/src/components/shared/components/ui/dialog";
 import { showErrorToast } from "@/src/utils/Toast";
-import { MentorAPIMethods } from "@/src/services/APImethods";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { formatDistanceToNow } from 'date-fns'; 
 import { IComment } from "@/src/types/lessons";
 
@@ -25,7 +25,6 @@ export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
     if (open && lessonId) {
       fetchComments();
     } else {
-      // Clear comments and input when the modal closes
       setComments([]);
       setNewComment("");
     }
@@ -42,7 +41,6 @@ export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
         showErrorToast("Failed to fetch comments. Please try again.");
       }
     } catch (error) {
-      console.error("Error fetching comments:", error);
       showErrorToast("An unexpected error occurred while fetching comments.");
     } finally {
       setLoadingComments(false);

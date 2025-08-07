@@ -31,7 +31,6 @@ export class UserCourseController implements IUserCourseController {
              } else if (value === 'DESC' || value === '-1' || value === -1) {
                sort[key] = -1;
              } else {
-               console.warn(` Invalid sort value for ${key}: ${value}, defaulting to -1`);
                sort[key] = -1;
              }
            }
@@ -64,7 +63,7 @@ export class UserCourseController implements IUserCourseController {
     }
     async updateUserCourse(req: Request, res: Response): Promise<void> {
         try {
-            const { courseId } = req.body;
+          const courseId = req.params.courseId;
             const decoded = decodeToken(req.cookies.token);
 
             if (!decoded?.id) {

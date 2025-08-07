@@ -1,8 +1,11 @@
-import { IAttachment, IConcern } from "../../../../types/concernTypes";
+import { IConcern } from "../../../../types/concernTypes";
 
 export interface IMentorConcernService {
-    addConcern(data: Partial<IConcern>): Promise<IConcern>
-   getConcerns(
+  addConcern(
+    concern: Partial<IConcern>,
+    files?: Express.Multer.File[]
+  ): Promise<IConcern>;
+ getConcerns(
   filters: Record<string, any>,
   sort: Record<string, 1 | -1>,
   skip: number,

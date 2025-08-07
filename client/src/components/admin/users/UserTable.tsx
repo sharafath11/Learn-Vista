@@ -5,9 +5,9 @@ import { FiEye, FiLock, FiUnlock } from "react-icons/fi"
 import { IUser } from "@/src/types/userTypes"
 import { ICertificate } from "@/src/types/certificateTypes"
 import { UserDetailsModal } from "./user-details-modal"
-import { AdminAPIMethods } from "@/src/services/APImethods"
 import { showErrorToast } from "@/src/utils/Toast"
 import type { UserTableProps } from "@/src/types/adminTypes"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 
 export const UserTable = ({ currentUsers, getRoleColor, onBlockToggle }: UserTableProps) => {
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null)

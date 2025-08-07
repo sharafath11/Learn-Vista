@@ -10,12 +10,12 @@ import { Card, CardContent } from "@/src/components/shared/components/ui/card"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 import { SessionTable } from "./SessionTable"
+import { ILessons } from "@/src/types/lessons"
 
 export default function UpcomingSessions() {
   const router = useRouter()
   const [currentTime, setCurrentTime] = useState(new Date())
   const { courses } = useMentorContext()
-  const approvedCourses = courses.filter((i) => i.mentorStatus === "approved")
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000)
@@ -34,7 +34,6 @@ export default function UpcomingSessions() {
       return currentTime >= courseStartDate && currentTime <= courseEndDate && 
              currentTime >= startWindow && currentTime <= endWindow
     } catch (err) {
-      console.error("Error in time eligibility check:", err)
       return false
     }
   }
@@ -47,7 +46,6 @@ export default function UpcomingSessions() {
       const sessionEnd = new Date(sessionEndDate.getFullYear(), sessionEndDate.getMonth(), sessionEndDate.getDate())
       return isBefore(sessionEnd, today)
     } catch (err) {
-      console.error("Error checking if session ended:", err)
       return false
     }
   }
@@ -61,8 +59,8 @@ export default function UpcomingSessions() {
     return "scheduled"
   }
 
-  const upcomingSessions = approvedCourses.filter(session => !isSessionEnded(session.endDate))
-  const endedSessions = approvedCourses.filter(session => isSessionEnded(session.endDate))
+  const upcomingSessions = courses.filter(session => !isSessionEnded(session.endDate))
+  const endedSessions = courses.filter(session => isSessionEnded(session.endDate))
 
   const SessionCards = ({ sessions, isEnded = false }: { sessions: any[]; isEnded?: boolean }) => (
     <div className="space-y-4">
@@ -71,7 +69,7 @@ export default function UpcomingSessions() {
           const status = getSessionStatus(session)
           return (
             <Card
-              key={session._id}
+              key={session.id}
               className={`bg-slate-800/50 backdrop-blur-sm border-slate-700/50 transition-all duration-200 hover:bg-slate-800/70 ${
                 status === "ready" ? "ring-2 ring-emerald-500/50 bg-emerald-900/20" : ""
               } ${isEnded ? "opacity-75" : ""}`}
@@ -148,7 +146,7 @@ export default function UpcomingSessions() {
                     </Button>
                   ) : status === "ready" ? (
                     <Button
-                      onClick={() => handleStartSession(session._id)}
+                      onClick={() => handleStartSession(session.id)}
                       className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
                     >
                       <Play className="w-4 h-4 mr-2" />

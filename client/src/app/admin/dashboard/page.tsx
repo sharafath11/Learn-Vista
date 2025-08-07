@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { AdminAPIMethods } from "@/src/services/APImethods"
 import type { IDonation } from "@/src/types/donationTyps"
 import { showErrorToast } from "@/src/utils/Toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
@@ -9,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/share
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { IndianRupee, Users, Clock, TrendingUp } from "lucide-react"
 import TransactionDashboard from "@/src/components/admin/transaction/transaction-dashboard"
+import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 
 export default function AdminDashboard() {
   const [donations, setDonations] = useState<IDonation[]>([])

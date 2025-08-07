@@ -3,7 +3,7 @@
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { UserTable } from "@/src/components/admin/users/UserTable";
 import { useAdminContext } from "@/src/context/adminContext";
-import { AdminAPIMethods } from "@/src/services/APImethods";
+import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
 import { useEffect, useState } from "react";
 

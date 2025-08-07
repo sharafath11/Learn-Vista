@@ -8,6 +8,7 @@ import { throwError } from "../../utils/ResANDError";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
+import { convertSignedUrlInArray, getSignedS3Url } from "../../utils/s3Utilits";
 
 @injectable()
 export class MentorStudentService implements IMentorStudentService {
@@ -66,9 +67,10 @@ async getStudentDetilesService(
     undefined,
     sort 
   );
+  const sendData=await convertSignedUrlInArray(data,["profilePicture"])
 
   return {
-    students: data,
+    students: sendData,
     total,
     totalPages,
   };
@@ -84,14 +86,11 @@ async studentStatusService(
   courseId: string | Types.ObjectId,
   status: boolean
 ): Promise<void> {
-  
+  console.log(userId,courseId,status)
   const user = await this._userRepo.findById(userId as string);
- 
   if (!user) {
-    
     throwError("User not found");
   }
-
   const updatedCourses = user.enrolledCourses.map((course) => {
     const courseIdStr = course.courseId?.toString();
     const match = courseIdStr === courseId.toString();

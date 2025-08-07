@@ -16,6 +16,7 @@ import { ICertificateRepository } from "../../core/interfaces/repositories/cours
 import { IUserCertificateService } from "../../core/interfaces/services/user/IUserCertificateService"; 
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
+import { convertSignedUrlInArray } from "../../utils/s3Utilits";
 
 @injectable()
 export class UserCourseService implements IUserCourseService {
@@ -46,13 +47,14 @@ export class UserCourseService implements IUserCourseService {
     };
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(queryParams);
     if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
-    return { data, total, totalPages };
+    const sendData=await convertSignedUrlInArray(data,["thumbnail"])
+    return {data:sendData, total, totalPages };
   }
+  
 
   async updateUserCourse(courseId: string, userId: string): Promise<void> {
     const courseObjectId = new mongoose.Types.ObjectId(courseId);
     const userObjectId = new mongoose.Types.ObjectId(userId);
-
     const course = await this._baseCourseRepo.findById(courseId);
     if (!course) {
       throwError("Course not found.", StatusCode.BAD_REQUEST);
@@ -119,7 +121,6 @@ export class UserCourseService implements IUserCourseService {
     const overallProgress = this.calculateOverallProgress(allProgress, totalLessons);
 
     await this.upsertCourseProgress(userId, courseId, overallProgress, completedLessons, totalLessons);
-    console.log("overall progress",overallProgress)
     if (Math.round(overallProgress) === 100) {
       await this.issueCertificateIfNotExists(userId, courseId);
     }

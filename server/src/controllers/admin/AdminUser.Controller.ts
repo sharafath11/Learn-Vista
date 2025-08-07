@@ -42,7 +42,6 @@ class AdminUserController implements IAdminUserController {
           } else if (value === 'desc' || value === '-1' || value === -1) {
             sort[key] = -1;
           } else {
-            console.warn(`Invalid sort value for ${key}: ${value}, defaulting to -1`);
             sort[key] = -1;
           }
         }
@@ -77,7 +76,6 @@ class AdminUserController implements IAdminUserController {
   async getCertificate(req: Request, res: Response): Promise<void> {
    try {
      const userId = req.params.userId
-     console.log(req.params)
       if(!userId) throwError("Somting wrong",StatusCode.BAD_REQUEST)
      const result = await this.adminUserService.getCertifcate(userId);
      sendResponse(res,StatusCode.OK,"fetched certificate",true,result)
@@ -87,8 +85,8 @@ class AdminUserController implements IAdminUserController {
   }
   async revokCertificate(req: Request, res: Response): Promise<void> {
     try {
-      const { certificateId, isRevoked } = req.body;
-      console.log(req.body);
+      const certificateId=req.params.certificateId
+      const {isRevoked } = req.body;
       if(!certificateId||!isRevoked) throwError("Somting wrong",StatusCode.BAD_REQUEST)
       await this.adminUserService.revokCertificate(certificateId, isRevoked);
       sendResponse(res,StatusCode.OK,`${isRevoked?"Revocked":"Remove Revocked"}`,true)
