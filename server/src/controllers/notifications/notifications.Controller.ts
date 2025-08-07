@@ -6,6 +6,7 @@ import { handleControllerError, sendResponse, throwError,  } from "../../utils/R
 import { StatusCode } from "../../enums/statusCode.enum";
 import { INotificationController } from "../../core/interfaces/controllers/notifications/INotifications.Controller";
 import { decodeToken } from "../../utils/JWTtoken";
+import { Messages } from "../../constants/messages";
 @injectable()
 export class NotificationController implements INotificationController {
   constructor(
@@ -17,7 +18,7 @@ export class NotificationController implements INotificationController {
   try {
     const io = req.app.get("io"); 
     await this.notificationService.createNotification(req.body, io);
-    sendResponse(res, StatusCode.CREATED, "Notification created successfully", true);
+    sendResponse(res, StatusCode.CREATED, Messages.NOTIFICATIONS.CREATED, true);
   } catch (error) {
     handleControllerError(res, error);
   }
@@ -26,9 +27,9 @@ export class NotificationController implements INotificationController {
   async getMyNotifications(req: Request, res: Response): Promise<void> {
     try {
       const userId = decodeToken(req.cookies.token)?.id
-      if(!userId)throwError("Unhotharized",StatusCode.UNAUTHORIZED)
+      if(!userId)throwError(Messages.COMMON.UNAUTHORIZED,StatusCode.UNAUTHORIZED)
       const notifications = await this.notificationService.getMyNotifications(userId);
-      sendResponse(res, StatusCode.OK, "Notifications fetched", true, notifications);
+      sendResponse(res, StatusCode.OK,Messages.NOTIFICATIONS.FETCHED, true, notifications);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -38,7 +39,7 @@ export class NotificationController implements INotificationController {
     try {
       const { id } = req.params;
       const result = await this.notificationService.markAsRead(id);
-      sendResponse(res, StatusCode.OK, "Notification marked as read", result);
+      sendResponse(res, StatusCode.OK, Messages.NOTIFICATIONS.MARKED_AS_READ, result);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -47,9 +48,9 @@ export class NotificationController implements INotificationController {
   async markAllAsRead(req: Request, res: Response): Promise<void> {
     try {
       const decoded = decodeToken(req.cookies.token)
-      if(!decoded) throwError("UnHothized",StatusCode.UNAUTHORIZED)
+      if(!decoded) throwError( Messages.COMMON.UNAUTHORIZED,StatusCode.UNAUTHORIZED)
       const count = await this.notificationService.markAllAsRead(decoded?.id);
-      sendResponse(res, StatusCode.OK, `Marked ${count} notifications as read`, true);
+      sendResponse(res, StatusCode.OK,  Messages.NOTIFICATIONS.MARKED_ALL_AS_READ(count), true);
     } catch (error) {
       handleControllerError(res, error);
     }

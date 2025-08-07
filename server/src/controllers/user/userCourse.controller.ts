@@ -6,6 +6,7 @@ import { TYPES } from "../../core/types";
 import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class UserCourseController implements IUserCourseController {
@@ -39,7 +40,7 @@ export class UserCourseController implements IUserCourseController {
            sort.createdAt = -1;
           ;
          }
-       if(!decode) throwError("UnHothrized",StatusCode.UNAUTHORIZED)
+       if(!decode) throwError(Messages.COMMON.UNAUTHORIZED,StatusCode.UNAUTHORIZED)
           const result = await this._userCourseService.getAllCourses(
   page,
   limit,
@@ -48,7 +49,7 @@ export class UserCourseController implements IUserCourseController {
             sort,
   decode.id
 );
-            sendResponse(res, StatusCode.OK, "Courses Fetched", true, result);
+            sendResponse(res, StatusCode.OK, Messages.COURSE.RETRIEVED, true, result);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -56,7 +57,7 @@ export class UserCourseController implements IUserCourseController {
     async getCategories(req: Request, res: Response): Promise<void> {
       try {
         const result=await this._userCourseService.getCategries()
-        sendResponse(res,StatusCode.OK,"Fetced categrios0",true,result)
+        sendResponse(res,StatusCode.OK, Messages.CATEGORY.FETCHED,true,result)
       } catch (error) {
         handleControllerError(res,error)
       }
@@ -67,11 +68,11 @@ export class UserCourseController implements IUserCourseController {
             const decoded = decodeToken(req.cookies.token);
 
             if (!decoded?.id) {
-                return sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized", false);
+                return sendResponse(res, StatusCode.UNAUTHORIZED,  Messages.COMMON.UNAUTHORIZED, false);
             }
         
             await this._userCourseService.updateUserCourse(courseId, decoded.id);
-            sendResponse(res, StatusCode.OK, "Course updated with user", true);
+            sendResponse(res, StatusCode.OK,  Messages.COURSE.UPDATED_WITH_USER, true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -79,9 +80,9 @@ export class UserCourseController implements IUserCourseController {
   async getProgressDetiles(req: Request, res: Response): Promise<void> {
     try {
       const decoded = decodeToken(req.cookies.token)
-      if(!decoded?.id)throwError("Unauthorized",StatusCode.UNAUTHORIZED)
+      if(!decoded?.id)throwError(Messages.COMMON.UNAUTHORIZED,StatusCode.UNAUTHORIZED)
       const progress = await this._userCourseService.getProgress(decoded?.id);
-      sendResponse(res,StatusCode.OK,"Progress fetched succesfully",true,progress)
+      sendResponse(res,StatusCode.OK, Messages.COURSE.PROGRESS_FETCHED,true,progress)
     } catch (error) {
       handleControllerError(res,error)
     }

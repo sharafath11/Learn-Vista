@@ -8,6 +8,7 @@ import { ISocialLink } from "../../types/mentorTypes";
 import { decodeToken, verifyAccessToken } from "../../utils/JWTtoken";
 import { sendResponse, handleControllerError, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class ProfileController implements IProfileController {
@@ -27,7 +28,7 @@ export class ProfileController implements IProfileController {
       }
 
       if (!req.file) {
-        return throwError("No file uploaded", StatusCode.BAD_REQUEST);
+        return throwError(Messages.PROFILE.NO_FILE_UPLOADED, StatusCode.BAD_REQUEST);
       }
 
       let parsedExpertise: string[] = [];
@@ -35,7 +36,7 @@ export class ProfileController implements IProfileController {
         try {
           parsedExpertise = JSON.parse(expertise); 
         } catch (error) {
-          return throwError("Invalid expertise format", StatusCode.BAD_REQUEST);
+          return throwError(Messages.PROFILE.INVALID_EXPERTISE_FORMAT, StatusCode.BAD_REQUEST);
         }
       } else {
         parsedExpertise = expertise; 
@@ -46,7 +47,7 @@ export class ProfileController implements IProfileController {
         try {
           parsedSocialLinks = JSON.parse(socialLinks); 
         } catch (error) {
-          return throwError("Invalid socialLinks format", StatusCode.BAD_REQUEST);
+          return throwError(Messages.PROFILE.INVALID_SOCIAL_LINKS_FORMAT, StatusCode.BAD_REQUEST);
         }
       } else {
         parsedSocialLinks = socialLinks;
@@ -54,7 +55,7 @@ export class ProfileController implements IProfileController {
 
       const decoded = verifyAccessToken(req.cookies.token);
       if (!decoded?.id || decoded.role !== "user") {
-        return throwError("Please login", StatusCode.UNAUTHORIZED);
+        return throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
 
       await this.profileService.applyMentor(
@@ -67,7 +68,7 @@ export class ProfileController implements IProfileController {
         parsedSocialLinks
       );
 
-      sendResponse(res, StatusCode.CREATED, "Application submitted successfully", true);
+      sendResponse(res, StatusCode.CREATED,Messages.PROFILE.APPLICATION_SUBMITTED, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -79,12 +80,12 @@ export class ProfileController implements IProfileController {
       const image = req.file?.buffer;
 
       if (username.trim().length < 6) {
-        return throwError("Username must be at least 6 characters long", StatusCode.FORBIDDEN);
+        return throwError(Messages.PROFILE.USERNAME_TOO_SHORT, StatusCode.FORBIDDEN);
       }
 
       const decoded = decodeToken(req.cookies.token);
       if (!decoded?.id) {
-        return throwError("Invalid token", StatusCode.UNAUTHORIZED);
+        return throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
 
       const result = await this.profileService.editProfileService(
@@ -93,7 +94,7 @@ export class ProfileController implements IProfileController {
         decoded.id
       );
 
-      sendResponse(res, StatusCode.OK, "Profile updated successfully", true, result);
+      sendResponse(res, StatusCode.OK, Messages.PROFILE.PROFILE_UPDATED, true, result);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -103,9 +104,9 @@ export class ProfileController implements IProfileController {
      const { password, newPassword } = req.body;
    
      const decoded = decodeToken(req.cookies.token);
-     if (!decodeToken) throwError("User not found", StatusCode.BAD_REQUEST);
+     if (!decodeToken) throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.BAD_REQUEST);
      await this.profileService.changePassword(decoded?.id as string, password, newPassword);
-     sendResponse(res,StatusCode.OK,"Succesfully change Password ",true)
+     sendResponse(res,StatusCode.OK,Messages.AUTH.CHANGE_PASSWORD,true)
    } catch (error) {
     handleControllerError(res,error)
    }

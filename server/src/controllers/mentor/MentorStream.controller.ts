@@ -6,6 +6,7 @@ import { handleControllerError, sendResponse } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { IMentorStreamService } from "../../core/interfaces/services/mentor/ImentorStream.service";
 import { IMentorStreamController } from "../../core/interfaces/controllers/mentor/IMentorStream.controller";
+import { Messages } from "../../constants/messages";
 @injectable()
 export class MentorStreamController implements IMentorStreamController {
     constructor(
@@ -17,19 +18,19 @@ export class MentorStreamController implements IMentorStreamController {
           const token = req.cookies?.token;
       
           if (!courseId || !token) {
-            return sendResponse(res, StatusCode.BAD_REQUEST, "Missing courseId or token", false);
+            return sendResponse(res, StatusCode.BAD_REQUEST, Messages.STREAM.MISSING_STREAM_DATA, false);
           }
       
           const decoded = decodeToken(token);
           const mentorId = decoded?.id;
       
           if (!mentorId) {
-            return sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized access", false);
+            return sendResponse(res, StatusCode.UNAUTHORIZED,  Messages.COMMON.UNAUTHORIZED, false);
           }
       
           const liveId = await this._mentorStreamService.startStreamSession(courseId, mentorId);
       
-          sendResponse(res, StatusCode.OK, "Live session started", true, { liveId });
+          sendResponse(res, StatusCode.OK, Messages.STREAM.START_SUCCESS, true, { liveId });
         } catch (error) {
           handleControllerError(res, error);
         }
@@ -39,16 +40,16 @@ export class MentorStreamController implements IMentorStreamController {
       const { liveId } = req.params;
       const token = req.cookies?.token;
       if (!liveId || !token) {
-         sendResponse(res, StatusCode.BAD_REQUEST, "Missing LiveId or token", false);
+         sendResponse(res, StatusCode.BAD_REQUEST, Messages.STREAM.MISSING_LIVE_ID, false);
       }
       const decoded = decodeToken(token);
       const mentorId = decoded?.id;
       if (!mentorId) {
-        sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized access", false);
+        sendResponse(res, StatusCode.UNAUTHORIZED, Messages.COMMON.UNAUTHORIZED, false);
         return 
       }
       await this._mentorStreamService.endStream(liveId,mentorId);
-      sendResponse(res, StatusCode.OK, "Live session Ended", true, { liveId });
+      sendResponse(res, StatusCode.OK,Messages.STREAM.END_SUCCESS, true, { liveId });
     } catch (error) {
       handleControllerError(res, error);
     }

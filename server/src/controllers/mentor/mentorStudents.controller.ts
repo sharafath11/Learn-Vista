@@ -6,6 +6,7 @@ import { IMentorStudentService } from "../../core/interfaces/services/mentor/IMe
 import { decodeToken } from "../../utils/JWTtoken";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class MentorStudentsController implements IMentorStudentsController{
@@ -16,7 +17,7 @@ async getStudentDetilesController(req: Request, res: Response): Promise<void> {
   try {
     const decoded = decodeToken(req.cookies.token);
     if (!decoded) {
-      throwError("Invalid request", StatusCode.BAD_REQUEST);
+      throwError(Messages.STUDENTS.INVALID_REQUEST, StatusCode.BAD_REQUEST);
     }
 
     const courseId = req.params.courseId;
@@ -44,7 +45,7 @@ async getStudentDetilesController(req: Request, res: Response): Promise<void> {
       sort: parsedSort,
     });
 
-    sendResponse(res, StatusCode.OK, "Student data fetched successfully", true, result);
+    sendResponse(res, StatusCode.OK, Messages.STUDENTS.FETCHED, true, result);
   } catch (error) {
     handleControllerError(res, error);
   }
@@ -55,8 +56,9 @@ async getStudentDetilesController(req: Request, res: Response): Promise<void> {
       try {
         const userId=req.params.studentId
         const {courseId,status}=req.body
-           await this._mentorStudentService.studentStatusService(userId, courseId, status);
-           sendResponse(res,StatusCode.OK,`Student ${status?"Blocked":"Unblock"}`,true)
+        await this._mentorStudentService.studentStatusService(userId, courseId, status);
+        const message = status ? Messages.STUDENTS.STATUS_UPDATED_BLOCKED : Messages.STUDENTS.STATUS_UPDATED_UNBLOCKED;
+           sendResponse(res,StatusCode.OK,message,true)
        } catch (error) {
         handleControllerError(res,error)
        }

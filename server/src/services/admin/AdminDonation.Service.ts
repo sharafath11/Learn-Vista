@@ -8,7 +8,7 @@ export class AdminDonationService implements IAdminDonationServices{
     constructor(
         @inject(TYPES.DonationRepository) private _donationRepo:IDonationRepoitory
     ) { }
-    async getConcerns(): Promise<IDonation[]> {
+    async getDonation(): Promise<IDonation[]> {
         return await this._donationRepo.findAll()
     }
     async getFilteredDonations(

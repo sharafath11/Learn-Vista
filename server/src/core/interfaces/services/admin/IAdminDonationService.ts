@@ -9,6 +9,6 @@ export interface IAdminDonationServices {
 ): Promise<IDonation[]>;
 
     countFilteredDonations(filters: Record<string, any>): Promise<number>;
-    getConcerns():Promise<IDonation[]>
+    getDonation():Promise<IDonation[]>
 
 }

@@ -7,6 +7,7 @@ import { StatusCode } from '../../enums/statusCode.enum';
 import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Service';
 import { IMentorCourseService } from '../../core/interfaces/services/mentor/IMentorCourse.Service';
 import { IMentorCourseController } from '../../core/interfaces/controllers/mentor/IMentorCourse.controller';
+import { Messages } from '../../constants/messages';
 
 @injectable()
 export class MentorCourseController implements IMentorCourseController{
@@ -18,11 +19,11 @@ export class MentorCourseController implements IMentorCourseController{
       try {
       const decoded = decodeToken(req.cookies.token);
       if (!decoded?.id) {
-        return throwError("Unauthorized", StatusCode.UNAUTHORIZED);
+        return throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
 
       const result = await this._mentorCourseService.getCourses(decoded.id);
-      sendResponse(res, StatusCode.OK, "Courses fetched successfully", true, result);
+      sendResponse(res, StatusCode.OK, Messages.COURSE.FETCHED, true, result);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -35,11 +36,11 @@ export class MentorCourseController implements IMentorCourseController{
       const { status, courseRejectReson } = req.body;
 
       if (!decoded?.id) {
-        return throwError("Unauthorized", StatusCode.UNAUTHORIZED);
+        return throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
 
       await this._mentorCourseService.courseApproveOrReject(decoded.id, courseId, status, courseRejectReson);
-      sendResponse(res, StatusCode.OK, "Course status updated", true);
+      sendResponse(res, StatusCode.OK, Messages.COURSE.STATUS_UPDATED, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -51,7 +52,7 @@ export class MentorCourseController implements IMentorCourseController{
       const query = (req.query as any).params || {};
 
       if (!decoded?.id) {
-        return throwError("Unauthorized", StatusCode.UNAUTHORIZED);
+        return throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
 
       const mentorId = decoded.id;
@@ -78,7 +79,7 @@ export class MentorCourseController implements IMentorCourseController{
         sort,
       });
 
-      sendResponse(res, StatusCode.OK, "Courses fetched", true, {
+      sendResponse(res, StatusCode.OK, Messages.COURSE.FETCHED, true, {
         data,
         total,
         totalPages: Math.ceil(total / limit),
@@ -93,7 +94,7 @@ export class MentorCourseController implements IMentorCourseController{
             const courseId = req.params.courseId;
             const {status}=req.body
             await this._mentorCourseService.publishCourse(courseId,status)
-            sendResponse(res,StatusCode.OK,"Course published succesfully",true)
+            sendResponse(res,StatusCode.OK,Messages.COURSE.PUBLISHED,true)
         } catch (error) {
           handleControllerError(res,error)  
         }

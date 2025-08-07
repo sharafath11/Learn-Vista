@@ -6,7 +6,7 @@ import { IMentorCommentsService } from "../../core/interfaces/services/mentor/IM
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { decodeToken } from "../../utils/JWTtoken";
-import { decode } from "punycode";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class MentorCommentController implements IMentorCommentsController {
@@ -28,7 +28,7 @@ export class MentorCommentController implements IMentorCommentsController {
       const search = rawParams?.search || "";
       const courseId = rawParams?.courseId || undefined;
       const decoded=decodeToken(req.cookies.token)
-     if(!decoded) throwError("unhotherized",StatusCode.OK)
+     if(!decoded) throwError(Messages.COMMON.UNAUTHORIZED,StatusCode.OK)
       const result = await this._commentService.getAllComments({
         page,
         limit,
@@ -41,7 +41,7 @@ export class MentorCommentController implements IMentorCommentsController {
 
      
 
-      sendResponse(res, StatusCode.OK, "Comments fetched successfully", true, result);
+      sendResponse(res, StatusCode.OK, Messages.COMMENT.FETCHED, true, result);
     } catch (error) {
       handleControllerError(res, error);
     }
