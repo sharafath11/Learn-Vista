@@ -10,6 +10,7 @@ import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMe
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { convertSignedUrlInArray, convertSignedUrlInObject, getSignedS3Url } from "../../utils/s3Utilits";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class AdminMentorService implements IAdminMentorServices {
@@ -39,9 +40,8 @@ export class AdminMentorService implements IAdminMentorServices {
       search,
       sort
     );
-  
     if (!data) {
-      throwError("Error fetching mentors", StatusCode.INTERNAL_SERVER_ERROR);
+      throwError(Messages.MENTOR.FETCH_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
     }
      const sendData=await convertSignedUrlInArray(data,["profilePicture","cvOrResume"])
   
@@ -54,23 +54,24 @@ export class AdminMentorService implements IAdminMentorServices {
   
 
   async changeMentorStatus(id: string, status: boolean, email: string): Promise<IMentor | null> {
-    const statusString = status ? "approved" : "rejected";
-
+      const statusString = status ? Messages.MENTOR.STATUS_APPROVED : Messages.MENTOR.STATUS_REJECTED;
     const updated = await this._mentorRepo.update(id, { status });
-    if (!updated) throwError(`Error changing mentor status for ID ${id}`, StatusCode.INTERNAL_SERVER_ERROR);
+    if (!updated) {
+      throwError(Messages.MENTOR.STATUS_CHANGE_FAILED(id), StatusCode.INTERNAL_SERVER_ERROR);
+    }
 
     if (updated && status) {
       await sendMentorStatusChangeEmail(email, statusString);
     }
-     await notifyWithSocket({
+    await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [updated.userId as unknown as string],
     title: status
-      ? "🎉 You're approved as a mentor!"
-      : "⚠️ Your mentor request was rejected",
+      ? Messages.MENTOR.APPROVED_TITLE
+      : Messages.MENTOR.REJECTED_TITLE,
     message: status
-      ? "Congratulations! Your mentor profile has been approved. You can now sign up and complete your onboarding on the Mentor Page."
-      : "We're sorry to inform you that your mentor request was rejected by the admin.",
+      ? Messages.MENTOR.APPROVED_MESSAGE
+      : Messages.MENTOR.REJECTED_MESSAGE,
     type: status ? "success" : "error",
   });
     return updated;
@@ -78,13 +79,15 @@ export class AdminMentorService implements IAdminMentorServices {
 
   async toggleMentorBlock(id: string, isBlock: boolean): Promise<IMentor | null> {
     const updated = await this._mentorRepo.update(id, { isBlock });
-    if (!updated) throwError(`Error toggling block status for mentor ${id}`, StatusCode.INTERNAL_SERVER_ERROR);
-    const statusText = isBlock ? "blocked" : "unblocked";
+    if (!updated) {
+      throwError(Messages.MENTOR.BLOCK_TOGGLE_FAILED(id), StatusCode.INTERNAL_SERVER_ERROR);
+    }
+  const statusText = Messages.MENTOR.BLOCK_STATUS_TEXT(isBlock);
    await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [id],
-    title: ` Your account was ${statusText}`,
-    message: `Your mentor account has been ${statusText} by the admin.`,
+    title: Messages.MENTOR.BLOCK_TITLE(statusText),
+    message: Messages.MENTOR.BLOCK_MESSAGE(statusText),
     type: isBlock ? "error" : "success",
   });
     return updated;
@@ -92,7 +95,9 @@ export class AdminMentorService implements IAdminMentorServices {
 
   async mentorDetails(id: string): Promise<IMentor> {
     const mentor = await this._mentorRepo.findById(id);
-    if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
+    if (!mentor) {
+      throwError(Messages.MENTOR.NOT_FOUND, StatusCode.NOT_FOUND);
+    }
     const sendData = await convertSignedUrlInObject(mentor, ["profilePicture","cvOrResume"]);
     return sendData;
   }

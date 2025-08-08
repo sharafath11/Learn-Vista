@@ -29,8 +29,8 @@ import {
   IUpdateDailyTaskInput,
   TaskType,
 } from "../../types/dailyTaskType";
-import { ISubTaskWithSignedUrl } from "../../types/dailyTaskType";
 import { logger } from "../../utils/logger";
+import { Messages } from "../../constants/messages";
 
 export class UserService implements IUserService {
   constructor(
@@ -45,11 +45,11 @@ export class UserService implements IUserService {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
-      return throwError("User not found", StatusCode.NOT_FOUND);
+      return throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
     }
 
     if (user.isBlocked) {
-      throwError("User was blocked", StatusCode.FORBIDDEN);
+      throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
     }
 
     if (user.profilePicture && !user.profilePicture.startsWith("http")) {
@@ -73,11 +73,11 @@ export class UserService implements IUserService {
     const user = await this.userRepository.findOne({ email });
 
     if (!user) {
-      return throwError("User not found", StatusCode.NOT_FOUND);
+      return throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
     }
 
     if (user.isBlocked) {
-      return throwError("This account was blocked", StatusCode.FORBIDDEN);
+      return throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
     }
 
     const token = generateAccessToken(user.id, "user");
@@ -87,7 +87,7 @@ export class UserService implements IUserService {
 
     if (!result.success) {
       throwError(
-        "Failed to send reset email. Try again later.",
+        Messages.AUTH.EMAIL_FAILED,
         StatusCode.INTERNAL_SERVER_ERROR
       );
     }
@@ -97,7 +97,7 @@ export class UserService implements IUserService {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
-      throwError("User not found", StatusCode.NOT_FOUND);
+      throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -105,13 +105,14 @@ export class UserService implements IUserService {
     await notifyWithSocket({
       notificationService: this._notificationService,
       userIds: [id],
-      title: "Password Reset",
-      message: "Your password has been reset successfull.",
+      title:  Messages.AUTH.PASSWORD_RESET_SUCCESS,
+      message:Messages.AUTH.PASSWORD_RESET_MESSAGE,
       type: "info",
     });
   }
 
-  async getDailyTaskSevice(
+ 
+async getDailyTaskSevice(
     userId: string | Types.ObjectId
   ): Promise<IDailyTask> {
     const userObjectId =
@@ -151,14 +152,12 @@ export class UserService implements IUserService {
         if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
           cleanResponse = geminiResponse.substring(firstBrace, lastBrace + 1);
         } else {
-          throw new Error(
-            "Failed to extract a valid JSON structure from Gemini response."
-          );
+          logger.warn(Messages.GENAI.INVALID_RESPONSE_FORMAT);
         }
       }
       const parsed = JSON.parse(cleanResponse);
       if (!parsed?.tasks || !Array.isArray(parsed.tasks)) {
-        throw new Error("Invalid Gemini response format");
+        logger.warn(Messages.GENAI.INVALID_RESPONSE_FORMAT);
       }
       tasks = parsed.tasks.map((task: any) => ({
         type: task.type,
@@ -169,12 +168,12 @@ export class UserService implements IUserService {
         isCompleted: false,
       }));
     } catch (err) {
-      logger.error("Failed to create task response");
+      logger.error(Messages.DAILY_TASK.GENERATION_FAILED);
       if (geminiResponse) {
         logger.error("Raw Gemini Response:", geminiResponse);
       }
       throwError(
-        "Failed to parse create task ",
+        Messages.GENAI.PARSING_FAILED,
         StatusCode.BAD_REQUEST
       );
     }
@@ -189,13 +188,14 @@ export class UserService implements IUserService {
     await notifyWithSocket({
       notificationService: this._notificationService,
       userIds: [userObjectId.toString()],
-      title: "New Daily Task",
-      message: `Your Day ${day} task is ready!`,
+      title: Messages.DAILY_TASK.NEW_TASK_TITLE,
+      message: Messages.DAILY_TASK.NEW_TASK_MESSAGE(day),
       type: "info",
     });
 
     return newTask;
   }
+
 
   async updateDailyTask({
     taskId,

@@ -17,6 +17,7 @@ import { IComment, ILesson, IQuestions } from "../../types/lessons";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
+import { Messages } from "../../constants/messages";
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter)
 @injectable()
@@ -45,7 +46,7 @@ async getClass(
       sort      
     );
   
-    if (!data) throwError("Failed to fetch courses", StatusCode.INTERNAL_SERVER_ERROR);
+    if (!data) throwError(Messages.COURSE.FETCH_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
    const sendData=await convertSignedUrlInArray(data,["thumbnail"])
     return {
       data:sendData,
@@ -58,11 +59,11 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
   validateCoursePayload(data, thumbnail);
 
   if (!data.mentorId) {
-    throwError("Mentor ID is required", StatusCode.BAD_REQUEST);
+    throwError(Messages.COURSE.MENTOR_ID_REQUIRED, StatusCode.BAD_REQUEST);
   }
 
   if (!data.startDate || !data.endDate || !data.startTime) {
-    throwError("Missing date/time range", StatusCode.BAD_REQUEST);
+    throwError(Messages.COURSE.MISSING_DATETIME, StatusCode.BAD_REQUEST);
   }
 
   const newStartDate = dayjs(data.startDate);
@@ -92,8 +93,9 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
   });
 
   if (hasTimeOverlap) {
-    throwError("This mentor already has a class during this time range.", StatusCode.BAD_REQUEST);
+    throwError(Messages.COURSE.MENTOR_TIME_CONFLICT, StatusCode.BAD_REQUEST);
   }
+
 
   const imageUrl = await uploadThumbnail(thumbnail);
 
@@ -103,17 +105,16 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
   };
 
   const createdCourse = await this._courseRepo.create(courseData);
-
   if (!createdCourse) {
-    throwError("Failed to create course", StatusCode.INTERNAL_SERVER_ERROR);
+    throwError(Messages.COURSE.FAILED_TO_CREATE, StatusCode.INTERNAL_SERVER_ERROR);
   }
 
   await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [createdCourse.mentorId.toString()],
     roles: ["user"],
-    title: "New Course Scheduled",
-    message: `Course "${createdCourse.title}" is scheduled to start at ${createdCourse.startTime}.`,
+    title: Messages.COURSE.CREATED,
+    message: Messages.COURSE.SCHEDULED_NOTIFICATION(createdCourse.title, createdCourse.startTime as string),
     type: "info",
   });
 
@@ -128,7 +129,7 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
   ): Promise<ICourse> {
     const currentCourse = await this._courseRepo.findById(courseId);
     if (!currentCourse) {
-      throwError("Course not found", StatusCode.NOT_FOUND);
+      throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
     }
 
     const updateData: Partial<ICourse> = { ...data };
@@ -148,7 +149,7 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
       const endDate = data.endDate ?? currentCourse.endDate;
       const startTime = data.startTime ?? currentCourse.startTime;
       if (!startDate || !endDate || !startTime) {
-        throwError("Incomplete scheduling data", StatusCode.BAD_REQUEST);
+         throwError(Messages.COURSE.INCOMPLETE_SCHEDULE, StatusCode.BAD_REQUEST);
       }
       const existingCourses = await this._courseRepo.findAll({ mentorId: newMentorId });
       const newStart = new Date(startDate);
@@ -167,7 +168,7 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
       });
 
       if (hasConflict) {
-        throwError("Mentor already has a course at this time", StatusCode.CONFLICT);
+        throwError(Messages.COURSE.MENTOR_COURSE_CONFLICT, StatusCode.CONFLICT);
       }
     }
 
@@ -183,13 +184,13 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
     const updatedCourse = await this._courseRepo.update(courseId, updateData);
     
     if (!updatedCourse) {
-      throwError("Failed to update course", StatusCode.INTERNAL_SERVER_ERROR);
+      throwError(Messages.COURSE.FAILED_TO_UPDATE, StatusCode.INTERNAL_SERVER_ERROR); 
     }
     await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [updatedCourse.mentorId.toString()],
-    title: "Course Updated",
-    message: `Your course "${updatedCourse.title}" has been updated by the admin.`,
+    title: Messages.COURSE.UPDATED,
+    message: Messages.COURSE.UPDATED_NOTIFICATION(updatedCourse.title),
     type: "info",
    });
   const sendData=await convertSignedUrlInObject(updatedCourse,["thumbnail"])
@@ -198,18 +199,19 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
 
   async blockCourse(id: string, isBlock: boolean): Promise<void> {
   if (!id || id.length !== 24) {
-    throwError("Invalid course ID", StatusCode.BAD_REQUEST);
+      throwError(Messages.COURSE.INVALID_ID, StatusCode.BAD_REQUEST);
+
   }
   const updated = await this._courseRepo.update(id, { isBlock });
   if (!updated) {
-    throwError("Failed to update course status", StatusCode.INTERNAL_SERVER_ERROR);
+    throwError(Messages.COURSE.FAILED_TO_UPDATE_STATUS, StatusCode.INTERNAL_SERVER_ERROR);
   }
   const statusText = isBlock ? "blocked" : "unblocked";
 
   if (!updated.mentorId) {
-    throwError("No mentor associated with this course", StatusCode.NOT_FOUND);
+    throwError(Messages.COURSE.NO_MENTOR, StatusCode.NOT_FOUND);
   }
-  await notifyWithSocket({
+ await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [
       updated.mentorId.toString(),
@@ -218,7 +220,7 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
         : []),
     ],
     title: ` Course ${statusText}`,
-    message: `Your ${updated.title} course has been ${statusText} by the admin.`,
+    message: isBlock ? Messages.COURSE.BLOCKED_NOTIFICATION(updated.title) : Messages.COURSE.UNBLOCKED_NOTIFICATION(updated.title),
     type: isBlock ? "error" : "success",
   });
   }
@@ -228,7 +230,7 @@ async getLessons(courseId: string): Promise<{
   questions: IQuestions[];
 }> {
   const result = await this._lessonRepo.findAll({ courseId });
-  if (!result) throwError("Invalid request", StatusCode.BAD_REQUEST);
+  if (!result) throwError(Messages.COMMON.INTERNAL_ERROR, StatusCode.BAD_REQUEST);
   const updatedLessons = await convertSignedUrlInArray(result, ["thumbnail"]);
   const sendData=await generateSignedUrlForVideoFieldInObjects(updatedLessons,["videoUrl"])
   const comments = await this._commentRepo.findAll({ courseId });

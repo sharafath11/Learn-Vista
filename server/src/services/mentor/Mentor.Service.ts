@@ -6,17 +6,18 @@ import { IMentor } from '../../types/mentorTypes';
 import { throwError } from '../../utils/ResANDError'; 
 import { StatusCode } from '../../enums/statusCode.enum'; 
 import { getSignedS3Url } from '../../utils/s3Utilits';
+import { Messages } from '../../constants/messages';
 
 @injectable()
 export class MentorService implements IMentorService {
   constructor(
-    @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
+    @inject(TYPES.MentorRepository) private _mentorRepo: IMentorRepository,
   ) {}
 
   async getMentor(id: string): Promise<Partial<IMentor>> {
-    const mentor = await this.mentorRepo.findById(id);
-    if (!mentor) throwError("Please login", StatusCode.UNAUTHORIZED);
-    if (mentor.isBlock) throwError("Your account was blocked", StatusCode.FORBIDDEN);
+    const mentor = await this._mentorRepo.findById(id);
+    if (!mentor) throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
+    if (mentor.isBlock) throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
 
     let signedUrl = "";
     if (mentor.profilePicture) {

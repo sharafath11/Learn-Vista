@@ -7996,3 +7996,213 @@ Please generate the content for a speaking, listening, and writing task for day 
 [2025-08-07 21:03:11] ERROR: Courses retrieved successfully.
 [2025-08-07 21:03:14] ERROR: Daily tasks generated.
 [2025-08-07 21:03:15] ERROR: Daily tasks generated.
+[2025-08-08 12:22:36] INFO:  Server running on port 4000
+[2025-08-08 13:54:56] ERROR: 
+[2025-08-08 13:54:56] ERROR: 
+[2025-08-08 13:54:56] ERROR: Tokens refreshed successfully.
+[2025-08-08 13:54:56] ERROR: 
+[2025-08-08 13:54:56] ERROR: 
+[2025-08-08 13:54:56] ERROR: Throwing error:
+[2025-08-08 13:54:56] ERROR: Unauthorized access.
+[2025-08-08 13:54:56] ERROR: Unauthorized access.
+[2025-08-08 13:54:56] ERROR: 
+[2025-08-08 13:54:56] ERROR: 
+[2025-08-08 13:54:56] ERROR: Tokens refreshed successfully.
+[2025-08-08 13:54:56] ERROR: Throwing error:
+[2025-08-08 13:54:56] ERROR: Unauthorized access.
+[2025-08-08 13:54:56] ERROR: Unauthorized access.
+[2025-08-08 13:54:56] ERROR: 
+[2025-08-08 13:54:56] ERROR: 
+[2025-08-08 13:54:57] ERROR: Tokens refreshed successfully.
+[2025-08-08 13:54:57] ERROR: Progress fetched successfully.
+[2025-08-08 13:54:57] ERROR: Courses retrieved successfully.
+[2025-08-08 13:54:57] ERROR: Users fetched successfully.
+[2025-08-08 13:54:57] ERROR: Notifications fetched successfully.
+[2025-08-08 13:54:57] WARN: 
+You are an English learning assistant. For day 1, generate 3 tasks for a student learning English at a beginner to intermediate level. Each task should be unique and practical.
+
+Respond with ONLY a single, valid JSON object that contains the tasks. Do NOT include any additional text, explanations, or code blocks outside of the JSON.
+
+The JSON object MUST have the following structure:
+{
+  "day": 1,
+  "tasks": [
+    {
+      "type": "speaking",
+      "title": "Task title here",
+      "description": "Detailed instruction for speaking"
+    },
+    {
+      "type": "listening",
+      "title": "Task title here",
+      "script": "Short audio-like dialogue or passage",
+      "question": "Comprehension question based on script"
+    },
+    {
+      "type": "writing",
+      "title": "Task title here",
+      "description": "Writing instruction with word limit"
+    }
+  ]
+}
+
+Please generate the content for a speaking, listening, and writing task for day 1 following this exact structure.
+
+[2025-08-08 13:54:58] ERROR: Progress fetched successfully.
+[2025-08-08 13:54:58] ERROR: Users fetched successfully.
+[2025-08-08 13:54:58] ERROR: Notifications fetched successfully.
+[2025-08-08 13:54:58] ERROR: Courses retrieved successfully.
+[2025-08-08 13:55:00] ERROR: Daily tasks generated.
+[2025-08-08 13:55:01] ERROR: Daily tasks generated.
+[2025-08-08 14:27:56] INFO:  Server running on port 4000
+[2025-08-08 14:37:39] INFO:  Server running on port 4000
+[2025-08-08 14:38:17] INFO:  Server running on port 4000
+[2025-08-08 14:38:37] INFO:  Server running on port 4000
+[2025-08-08 14:38:52] INFO:  Server running on port 4000
+[2025-08-08 14:39:08] INFO:  Server running on port 4000
+[2025-08-08 14:39:24] INFO:  Server running on port 4000
+[2025-08-08 14:41:18] INFO:  Server running on port 4000
+[2025-08-08 14:41:45] INFO:  Server running on port 4000
+[2025-08-08 14:42:26] INFO:  Server running on port 4000
+[2025-08-08 14:42:54] INFO:  Server running on port 4000
+[2025-08-08 14:43:32] INFO:  Server running on port 4000
+[2025-08-08 14:43:50] INFO:  Server running on port 4000
+[2025-08-08 14:44:33] INFO:  Server running on port 4000
+[2025-08-08 14:45:03] INFO:  Server running on port 4000
+[2025-08-08 14:46:39] INFO:  Server running on port 4000
+[2025-08-08 14:48:43] INFO:  Server running on port 4000
+[2025-08-08 14:49:09] INFO:  Server running on port 4000
+[2025-08-08 14:49:30] INFO:  Server running on port 4000
+[2025-08-08 14:49:43] INFO:  Server running on port 4000
+[2025-08-08 14:50:14] INFO:  Server running on port 4000
+[2025-08-08 14:50:46] INFO:  Server running on port 4000
+[2025-08-08 14:51:00] INFO:  Server running on port 4000
+[2025-08-08 14:51:18] INFO:  Server running on port 4000
+[2025-08-08 14:51:40] INFO:  Server running on port 4000
+[2025-08-08 14:51:56] INFO:  Server running on port 4000
+[2025-08-08 14:52:20] INFO:  Server running on port 4000
+[2025-08-08 14:52:54] INFO:  Server running on port 4000
+[2025-08-08 14:53:21] INFO:  Server running on port 4000
+[2025-08-08 14:53:38] INFO:  Server running on port 4000
+[2025-08-08 14:54:19] INFO:  Server running on port 4000
+[2025-08-08 16:40:39] INFO:  Server running on port 4000
+[2025-08-08 16:41:59] INFO:  Server running on port 4000
+[2025-08-08 16:42:31] INFO:  Server running on port 4000
+[2025-08-08 16:43:06] INFO:  Server running on port 4000
+[2025-08-08 16:46:26] INFO:  Server running on port 4000
+[2025-08-08 16:47:24] INFO:  Server running on port 4000
+[2025-08-08 16:53:58] INFO:  Server running on port 4000
+[2025-08-08 16:54:21] INFO:  Server running on port 4000
+[2025-08-08 16:54:48] INFO:  Server running on port 4000
+[2025-08-08 16:55:06] INFO:  Server running on port 4000
+[2025-08-08 16:56:01] INFO:  Server running on port 4000
+[2025-08-08 16:56:23] INFO:  Server running on port 4000
+[2025-08-08 17:02:28] INFO:  Server running on port 4000
+[2025-08-08 17:08:31] INFO:  Server running on port 4000
+[2025-08-08 17:11:11] INFO:  Server running on port 4000
+[2025-08-08 17:12:00] INFO:  Server running on port 4000
+[2025-08-08 17:14:10] INFO:  Server running on port 4000
+[2025-08-08 17:16:14] INFO:  Server running on port 4000
+[2025-08-08 17:20:38] INFO:  Server running on port 4000
+[2025-08-08 17:21:53] INFO:  Server running on port 4000
+[2025-08-08 17:25:14] INFO:  Server running on port 4000
+[2025-08-08 17:28:28] INFO:  Server running on port 4000
+[2025-08-08 17:29:16] INFO:  Server running on port 4000
+[2025-08-08 17:30:36] INFO:  Server running on port 4000
+[2025-08-08 18:18:26] INFO:  Server running on port 4000
+[2025-08-08 18:18:45] INFO:  Server running on port 4000
+[2025-08-08 18:18:59] INFO:  Server running on port 4000
+[2025-08-08 18:21:24] INFO:  Server running on port 4000
+[2025-08-08 18:23:07] INFO:  Server running on port 4000
+[2025-08-08 18:23:53] INFO:  Server running on port 4000
+[2025-08-08 18:24:37] INFO:  Server running on port 4000
+[2025-08-08 18:25:15] INFO:  Server running on port 4000
+[2025-08-08 18:25:34] INFO:  Server running on port 4000
+[2025-08-08 18:25:52] INFO:  Server running on port 4000
+[2025-08-08 18:40:03] INFO:  Server running on port 4000
+[2025-08-08 19:04:56] ERROR: 
+[2025-08-08 19:04:56] ERROR: 
+[2025-08-08 19:04:56] ERROR: 
+[2025-08-08 19:04:56] ERROR: 
+[2025-08-08 19:04:56] ERROR: Throwing error:
+[2025-08-08 19:04:56] ERROR: Unauthorized access.
+[2025-08-08 19:04:56] ERROR: Unauthorized access.
+[2025-08-08 19:04:56] ERROR: 
+[2025-08-08 19:04:56] ERROR: 
+[2025-08-08 19:04:56] ERROR: 
+[2025-08-08 19:04:56] ERROR: Throwing error:
+[2025-08-08 19:04:56] ERROR: Unauthorized access.
+[2025-08-08 19:04:56] ERROR: Unauthorized access.
+[2025-08-08 19:04:56] ERROR: 
+[2025-08-08 19:04:56] ERROR: Tokens refreshed successfully.
+[2025-08-08 19:04:56] ERROR: Users fetched successfully.
+[2025-08-08 19:04:56] ERROR: Progress fetched successfully.
+[2025-08-08 19:04:56] ERROR: Daily tasks generated.
+[2025-08-08 19:04:56] ERROR: Notifications fetched successfully.
+[2025-08-08 19:04:56] ERROR: Courses retrieved successfully.
+[2025-08-08 19:04:56] ERROR: Users fetched successfully.
+[2025-08-08 19:04:56] ERROR: Progress fetched successfully.
+[2025-08-08 19:04:56] ERROR: Daily tasks generated.
+[2025-08-08 19:04:56] ERROR: Notifications fetched successfully.
+[2025-08-08 19:04:56] ERROR: Courses retrieved successfully.
+[2025-08-08 19:29:50] ERROR: Categories fetched successfully.
+[2025-08-08 19:29:50] ERROR: 
+[2025-08-08 19:29:50] ERROR: 
+[2025-08-08 19:29:50] ERROR: Categories fetched successfully.
+[2025-08-08 19:29:50] ERROR: 
+[2025-08-08 19:29:50] ERROR: Tokens refreshed successfully.
+[2025-08-08 19:29:51] ERROR: Courses retrieved successfully.
+[2025-08-08 19:29:51] ERROR: Courses retrieved successfully.
+[2025-08-08 19:29:51] ERROR: Courses retrieved successfully.
+[2025-08-08 19:30:42] INFO:  Server running on port 4000
+[2025-08-08 19:31:06] INFO:  Server running on port 4000
+[2025-08-08 19:32:18] INFO:  Server running on port 4000
+[2025-08-08 19:35:15] INFO:  Server running on port 4000
+[2025-08-08 19:37:24] INFO:  Server running on port 4000
+[2025-08-08 19:41:59] INFO:  Server running on port 4000
+[2025-08-08 19:43:54] INFO:  Server running on port 4000
+[2025-08-08 19:45:34] INFO:  Server running on port 4000
+[2025-08-08 19:47:43] INFO:  Server running on port 4000
+[2025-08-08 19:47:58] INFO:  Server running on port 4000
+[2025-08-08 19:52:12] INFO:  Server running on port 4000
+[2025-08-08 19:53:01] INFO:  Server running on port 4000
+[2025-08-08 20:01:41] INFO:  Server running on port 4000
+[2025-08-08 20:02:35] INFO:  Server running on port 4000
+[2025-08-08 20:02:51] INFO:  Server running on port 4000
+[2025-08-08 20:04:33] INFO:  Server running on port 4000
+[2025-08-08 20:06:25] INFO:  Server running on port 4000
+[2025-08-08 20:17:20] INFO:  Server running on port 4000
+[2025-08-08 20:18:54] INFO:  Server running on port 4000
+[2025-08-08 20:20:19] INFO:  Server running on port 4000
+[2025-08-08 20:21:35] INFO:  Server running on port 4000
+[2025-08-08 20:23:24] INFO:  Server running on port 4000
+[2025-08-08 20:24:51] INFO:  Server running on port 4000
+[2025-08-08 20:25:27] INFO:  Server running on port 4000
+[2025-08-08 20:26:26] INFO:  Server running on port 4000
+[2025-08-08 20:27:41] INFO:  Server running on port 4000
+[2025-08-08 20:30:30] INFO:  Server running on port 4000
+[2025-08-08 20:31:01] INFO:  Server running on port 4000
+[2025-08-08 20:38:54] INFO:  Server running on port 4000
+[2025-08-08 20:43:10] INFO:  Server running on port 4000
+[2025-08-08 20:44:40] INFO:  Server running on port 4000
+[2025-08-08 20:50:25] INFO:  Server running on port 4000
+[2025-08-08 20:52:08] INFO:  Server running on port 4000
+[2025-08-08 20:54:31] INFO:  Server running on port 4000
+[2025-08-08 20:55:13] INFO:  Server running on port 4000
+[2025-08-08 20:57:04] INFO:  Server running on port 4000
+[2025-08-08 20:57:43] INFO:  Server running on port 4000
+[2025-08-08 20:58:09] INFO:  Server running on port 4000
+[2025-08-08 20:58:50] INFO:  Server running on port 4000
+[2025-08-08 20:59:17] INFO:  Server running on port 4000
+[2025-08-08 21:17:06] INFO:  Server running on port 4000
+[2025-08-08 21:18:16] INFO:  Server running on port 4000
+[2025-08-08 21:18:44] INFO:  Server running on port 4000
+[2025-08-08 21:19:04] INFO:  Server running on port 4000
+[2025-08-08 21:19:27] INFO:  Server running on port 4000
+[2025-08-08 21:21:05] INFO:  Server running on port 4000
+[2025-08-08 21:22:08] INFO:  Server running on port 4000
+[2025-08-08 21:23:06] INFO:  Server running on port 4000
+[2025-08-08 21:25:06] INFO:  Server running on port 4000
+[2025-08-08 21:25:51] INFO:  Server running on port 4000
+[2025-08-08 21:26:58] INFO:  Server running on port 4000
+[2025-08-08 21:27:36] INFO:  Server running on port 4000

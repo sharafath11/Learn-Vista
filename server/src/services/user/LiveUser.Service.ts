@@ -8,6 +8,8 @@ import { ILiveRepository } from "../../core/interfaces/repositories/course/ILive
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
+import { Messages } from "../../constants/messages";
+import { StatusCode } from "../../enums/statusCode.enum";
 
 @injectable()
 export class LiveUserService implements IUserLiveService {
@@ -22,21 +24,30 @@ export class LiveUserService implements IUserLiveService {
     const liveSession = await this.validateLiveSession(courseId);
     await this.addParticipant(liveSession.id, userId);
     const user = await this._userRepo.findById(userId);
-    await notifyWithSocket({
-      notificationService: this._notificationService,
-      userIds: [liveSession.mentorId.toString()],
-      title: `New user joined ${user?.username}`,
-      message: ``,
-      type: "info",
-    });
+await notifyWithSocket({
+  notificationService: this._notificationService,
+  userIds: [liveSession.mentorId.toString()],
+  title: Messages.STREAM.USER_JOINED_NOTIFICATION_TITLE,
+  message: Messages.STREAM.USER_JOINED_NOTIFICATION_MESSAGE(user?.username || "A user"),
+  type: "info",
+});
     return liveSession.liveId;
   }
 
   private async validateLiveSession(courseId: string) {
     const liveSession = await this.liveRepo.findOne({ courseId, isActive: true });
-    if (!liveSession) throwError("Live session not available");
-    if (!liveSession.isActive) throwError("This stream has not started yet");
-    if (liveSession.isEnd) throwError("This stream has ended");
+if (!liveSession) {
+  throwError(Messages.STREAM.NOT_AVAILABLE, StatusCode.NOT_FOUND);
+}
+
+if (!liveSession.isActive) {
+  throwError(Messages.STREAM.NOT_STARTED, StatusCode.BAD_REQUEST);
+}
+
+if (liveSession.isEnd) {
+  throwError(Messages.STREAM.ALREADY_ENDED, StatusCode.BAD_REQUEST);
+}
+
     return liveSession;
   }
 

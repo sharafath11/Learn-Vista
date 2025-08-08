@@ -10,6 +10,7 @@ import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { FilterQuery } from "mongoose";
 import { ICourse } from "../../types/classTypes";
 import { IAdminConcernService } from "../../core/interfaces/services/admin/IAdminConcernService";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class AdminConcernService implements IAdminConcernService {
@@ -24,7 +25,7 @@ export class AdminConcernService implements IAdminConcernService {
 
  async getConcern(): Promise<IConcern[]> {
     const result = await this._concernRepo.findAll();
-    if (!result) throwError("Somthing wrong");
+    if (!result) throwError(Messages.COMMON.INTERNAL_ERROR);
     return result
   }
 
@@ -51,7 +52,7 @@ export class AdminConcernService implements IAdminConcernService {
     }
 
     const concerns = await this._concernRepo.findWithPagination(query, limit, skip, sort);
-    if (!concerns) throwError("Failed to fetch concerns");
+    if (!concerns) throwError(Messages.CONCERN.FETCH_FAILED);
 
     const courses = await this._courseRepo.findAll();
     const signedConcerns = await signConcernAttachmentUrls(concerns);
@@ -60,14 +61,16 @@ export class AdminConcernService implements IAdminConcernService {
 
   async updateConcernStatus(concernId: string, status: 'resolved' | 'in-progress'): Promise<void> {
     const concern = await this._concernRepo.findById(concernId);
-    if (!concern) throwError("Concern not found");
-
+    if (!concern) throwError(Messages.CONCERN.NOT_FOUND);
     const updated = await this._concernRepo.update(concernId, {
       status,
       updatedAt: new Date()
     });
 
-    if (!updated) throwError("Failed to update concern status");
+    if (!updated) throwError(Messages.CONCERN.STATUS_UPDATE_FAILED);
+     const notificationMessage = status === "resolved"
+        ? Messages.CONCERN.RESOLVED_NOTIFICATION(concern.title)
+        : Messages.CONCERN.IN_PROGRESS_NOTIFICATION(concern.title);
 
     if (concern.mentorId) {
       const statusText = status === "resolved" ? "resolved" : "marked as in-progress";
@@ -76,7 +79,7 @@ export class AdminConcernService implements IAdminConcernService {
         notificationService: this._notificationService,
         userIds: [concern.mentorId.toString()],
         title: `Concern ${statusText}`,
-        message: `Your concern "${concern.title}" has been ${statusText} by the admin.`,
+        message: Messages.CONCERN.STATUS_UPDATEDWITHNOT(status),
         type: status === "resolved" ? "success" : "info"
       });
     }
@@ -104,13 +107,13 @@ export class AdminConcernService implements IAdminConcernService {
 
   async updateConcern(concernId: string, updateData: Partial<IConcern>): Promise<void> {
     const concern = await this._concernRepo.findById(concernId);
-    if (!concern) throwError("Concern not found");
+    if (!concern)  throwError(Messages.CONCERN.NOT_FOUND)
 
     const updated = await this._concernRepo.update(concernId, {
       ...updateData,
       updatedAt: new Date()
     });
 
-    if (!updated) throwError("Failed to update concern");
+    if (!updated)throwError(Messages.CONCERN.UPDATE_FAILED);
   }
 }

@@ -3,6 +3,7 @@ import { IAdminAuthService } from "../../core/interfaces/services/admin/IAdminAu
 import { generateAccessToken, generateRefreshToken } from "../../utils/JWTtoken";
 import { throwError } from "../../utils/ResANDError";  
 import { StatusCode } from "../../enums/statusCode.enum"; 
+import { Messages } from "../../constants/messages";
 
 @injectable()
 class AdminAuthService implements IAdminAuthService {
@@ -19,7 +20,7 @@ class AdminAuthService implements IAdminAuthService {
         refreshToken,
       };
     } else {
-      throwError("Invalid credentials", StatusCode.UNAUTHORIZED); 
+      throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED); 
     }
   }
 }

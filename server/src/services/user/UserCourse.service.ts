@@ -17,6 +17,7 @@ import { IUserCertificateService } from "../../core/interfaces/services/user/IUs
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { convertSignedUrlInArray } from "../../utils/s3Utilits";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class UserCourseService implements IUserCourseService {
@@ -57,7 +58,7 @@ export class UserCourseService implements IUserCourseService {
     const userObjectId = new mongoose.Types.ObjectId(userId);
     const course = await this._baseCourseRepo.findById(courseId);
     if (!course) {
-      throwError("Course not found.", StatusCode.BAD_REQUEST);
+      throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.BAD_REQUEST);
     }
     await this._baseCourseRepo.update(courseId, {
       $addToSet: { enrolledUsers: userObjectId },
@@ -79,34 +80,34 @@ export class UserCourseService implements IUserCourseService {
 
   async getProgress(userId: string): Promise<IUserCourseProgress[]> {
     const result = await this._userCourseProgressRepo.findAll({ userId: userId });
-    if (!result) throwError("Something went wrong");
+    if (!result) throwError(Messages.COMMON.INTERNAL_ERROR);
     return result;
   }
 
 
   async validateUserEnrollment(userId: string | ObjectId, courseId: string | ObjectId): Promise<void> {
     const user = await this._baseUserRepo.findById(userId as string);
-    if (!user) throwError("User not found", StatusCode.NOT_FOUND);
+    if (!user) throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
 
     const enrolledCourse = user.enrolledCourses.find(
       (i) => i.courseId.toString() === courseId.toString()
     );
     if (!enrolledCourse) {
-      throwError("User is not enrolled in this course", StatusCode.BAD_REQUEST);
+      throwError(Messages.COURSE.NOT_ENROLLED, StatusCode.BAD_REQUEST);
     }
     if (!enrolledCourse.allowed) {
-      throwError("You are blocked from accessing this course", StatusCode.FORBIDDEN);
+      throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
     }
 
     const course = await this._baseCourseRepo.findById(courseId.toString());
-    if (!course) throwError("Course not found", StatusCode.NOT_FOUND);
+    if (!course) throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
 
     const userObjectId = new mongoose.Types.ObjectId(userId as string);
     const userEnrolled = course.enrolledUsers.some((id) =>
       new mongoose.Types.ObjectId(id.toString()).equals(userObjectId)
     );
     if (!userEnrolled) {
-      throwError("User not listed in course enrollment", StatusCode.BAD_REQUEST);
+      throwError(Messages.COURSE.NOT_IN_ENROLLMENT_LIST, StatusCode.BAD_REQUEST);
     }
   }
 
@@ -173,14 +174,15 @@ export class UserCourseService implements IUserCourseService {
       courseTitle: course.title,
       
     });
-    await notifyWithSocket({
-      notificationService: this._notificationService,
-      userIds: [userId as string],
-      roles: ["admin"],
-      title: "Course Completed!",
-      message: `User ${user.username} has completed the course "${course.title}" and received a certificate.`,
-      type: "success",
-    });
+ await notifyWithSocket({
+  notificationService: this._notificationService,
+  userIds: [userId as string],
+  roles: ["admin"],
+  title: Messages.COURSE.COMPLETED.TITLE,
+  message: Messages.COURSE.COMPLETED.MESSAGE(user.username, course.title),
+  type: "success",
+});
+
   }
 }
 

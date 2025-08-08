@@ -12,6 +12,7 @@ import bcrypt from "bcrypt";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { deleteFromS3, getSignedS3Url, uploadBufferToS3 } from "../../utils/s3Utilits";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class ProfileService implements IProfileService {
@@ -22,8 +23,8 @@ export class ProfileService implements IProfileService {
   ) {}
 
   private validateMentorApplication(userId: string | JwtPayload, email: string) {
-    if (!userId) throwError("Authentication required", StatusCode.BAD_REQUEST);
-    if (!email) throwError("Email is required", StatusCode.BAD_REQUEST);
+    if (!userId) throwError(Messages.AUTH.AUTH_REQUIRED, StatusCode.BAD_REQUEST);
+    if (!email) throwError(Messages.AUTH.EMAIL_REQUIRED, StatusCode.BAD_REQUEST);
   }
 
   async applyMentor(
@@ -41,9 +42,10 @@ export class ProfileService implements IProfileService {
       this.mentorRepo.findOne({ email }),
       this.mentorRepo.findOne({ userId }),
     ]);
+if (existingMentor)throwError(Messages.MENTOR.APPLICATION_ALREADY_EXISTS, StatusCode.BAD_REQUEST);
+if (existingUserMentor) throwError(Messages.MENTOR.USER_ALREADY_APPLIED, StatusCode.BAD_REQUEST);
 
-    if (existingMentor) throwError("Mentor application already submitted for this email", StatusCode.BAD_REQUEST);
-    if (existingUserMentor) throwError("You have already applied", StatusCode.BAD_REQUEST);
+
 
     let resumeS3Key: string;
     let signedResumeUrl: string;
@@ -52,7 +54,8 @@ export class ProfileService implements IProfileService {
       resumeS3Key = await uploadBufferToS3(file.buffer, file.mimetype, 'resumes');
       signedResumeUrl = await getSignedS3Url(resumeS3Key);
     } catch (error) {
-      throwError("Failed to upload or process resume. Please try again.", StatusCode.INTERNAL_SERVER_ERROR);
+      throwError(Messages.RESUME.UPLOAD_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
+
     }
 
     const mentorData: Partial<IMentor> = {
@@ -70,15 +73,17 @@ export class ProfileService implements IProfileService {
 
     const application = await this.userRepository.applyMentor(mentorData);
     const ADMIN_ID = process.env.ADMIN_ID;
-    if (!ADMIN_ID) throwError("Admin ID not configured", StatusCode.INTERNAL_SERVER_ERROR);
+   if (!ADMIN_ID) throwError(Messages.CONFIG.ADMIN_ID_MISSING, StatusCode.INTERNAL_SERVER_ERROR);
 
-    await notifyWithSocket({
-      notificationService: this._notificationService,
-      userIds: [userId.toString(), ADMIN_ID],
-      title: " New Mentor Application",
-      message: `${username} has applied to become a mentor.`,
-      type: "info",
-    });
+
+await notifyWithSocket({
+  notificationService: this._notificationService,
+  userIds: [userId.toString(), ADMIN_ID],
+  title: Messages.USERS.NEW_MENTOR_APPLICATION.TITLE,
+  message: Messages.USERS.NEW_MENTOR_APPLICATION.getMessage(username),
+  type: "info",
+});
+
 
     return {
       success: true,
@@ -89,8 +94,8 @@ export class ProfileService implements IProfileService {
 
   async editProfileService(username: string, imageBuffer: Buffer | undefined, id: string) {
     const user = await this.userRepository.findById(id);
-    if (!user) return throwError("User not found", StatusCode.NOT_FOUND);
-    if (user.isBlocked) throwError("This user was Blocked", StatusCode.FORBIDDEN);
+    if (!user) return throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
+    if (user.isBlocked) throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
 
     const updatedUsername = username !== user.username ? username : user.username;
     let imageS3Key: string | null = user.profilePicture || null;
@@ -140,27 +145,31 @@ export class ProfileService implements IProfileService {
     const user = await this.userRepository.findWithPassword({ id: userId });
 
     if (!user) {
-      throwError("User not found", StatusCode.NOT_FOUND);
+      throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
     }
-    if (!newPassword.match(/[A-Z]/)) {
-      throwError("New password must contain at least one uppercase letter", StatusCode.BAD_REQUEST);
-    }
-    if (!newPassword.match(/[0-9]/)) {
-      throwError("New password must contain at least one number", StatusCode.BAD_REQUEST);
-    }
-    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
-    if (!isPasswordValid) {
-      throwError("Invalid current password", StatusCode.BAD_REQUEST);
-    }
+if (!newPassword.match(/[A-Z]/)) {
+  throwError(Messages.AUTH.MUST_HAVE_UPPERCASE, StatusCode.BAD_REQUEST);
+}
+
+if (!newPassword.match(/[0-9]/)) {
+  throwError(Messages.AUTH.MUST_HAVE_NUMBER, StatusCode.BAD_REQUEST);
+}
+
+const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+if (!isPasswordValid) {
+  throwError(Messages.AUTH.INVALID_CURRENT, StatusCode.BAD_REQUEST);
+}
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await this.userRepository.update(userId, { password: hashedPassword });
-    await notifyWithSocket({
-      notificationService: this._notificationService,
-      userIds: [userId],
-      roles: ["user"],
-      title: "🔐 Password Changed",
-      message: "Your password was changed successfully",
-      type: "info",
-    });
+  await notifyWithSocket({
+  notificationService: this._notificationService,
+  userIds: [userId],
+  roles: ["user"],
+  title: Messages.PROFILE.PASSWORD.CHANGED.TITLE,
+  message: Messages.PROFILE.PASSWORD.CHANGED.MESSAGE,
+  type: "info",
+});
+
   }
 }

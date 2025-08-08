@@ -4,7 +4,7 @@ import { IComment, ILessonDetails, ILessonReport, IQuestions, LessonQuestionInpu
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
-import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository"; 
+import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
@@ -19,10 +19,11 @@ import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRe
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { IUserLessonProgress } from "../../types/userLessonProgress";
-import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController"; 
+import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController";
 import { IUserLessonProgressRepository } from "../../core/interfaces/repositories/course/IUserLessonProgressRepo";
 import { convertSignedUrlInArray } from "../../utils/s3Utilits";
 import { logger } from "../../utils/logger";
+import { Messages } from "../../constants/messages";
 
 const SECTION_WEIGHTS = {
   video: 0.40,
@@ -31,13 +32,11 @@ const SECTION_WEIGHTS = {
   mcq: 0.20,
 };
 
-
-
 @injectable()
 export class UserLessonsService implements IUserLessonsService {
   constructor(
     @inject(TYPES.LessonsRepository) private _lessonRepository: ILessonsRepository,
-    @inject(TYPES.CourseRepository) private _courseRepository: ICourseRepository, 
+    @inject(TYPES.CourseRepository) private _courseRepository: ICourseRepository,
     @inject(TYPES.QuestionsRepository) private _qustionRepository: IQuestionsRepository,
     @inject(TYPES.LessonReportRepository) private _lessonReportRepo: ILessonReportRepository,
     @inject(TYPES.CommentsRepository) private _commentsRepo: ICommentstRepository,
@@ -61,7 +60,7 @@ export class UserLessonsService implements IUserLessonsService {
     }
 
     if (!s3Key) {
-      throwError("Invalid video URL format provided. Could not extract S3 key.", StatusCode.BAD_REQUEST);
+      throwError(Messages.LESSONS.UPLOAD_URL_FAILED, StatusCode.BAD_REQUEST);
     }
 
     const command = new GetObjectCommand({
@@ -70,6 +69,7 @@ export class UserLessonsService implements IUserLessonsService {
     });
     return getSignedUrl(s3, command, { expiresIn: 3600 });
   }
+
   private calculateOverallLessonProgress(lessonProgress: IUserLessonProgress): number {
     let completedWeight = 0;
 
@@ -86,74 +86,72 @@ export class UserLessonsService implements IUserLessonsService {
   }
 
   private calculateAndUpdateLessonSectionProgress(
-  progress: IUserLessonProgress,
-  update: {
-    videoWatchedDuration?: number;
-    videoTotalDuration?: number;
-    theoryCompleted?: boolean;
-    practicalCompleted?: boolean;
-    mcqCompleted?: boolean;
-    videoCompleted?: boolean;
-  }
-): IUserLessonProgress {
-  if (update.videoWatchedDuration !== undefined) {
-    progress.videoWatchedDuration = Math.max(progress.videoWatchedDuration, update.videoWatchedDuration);
-  }
+    progress: IUserLessonProgress,
+    update: {
+      videoWatchedDuration?: number;
+      videoTotalDuration?: number;
+      theoryCompleted?: boolean;
+      practicalCompleted?: boolean;
+      mcqCompleted?: boolean;
+      videoCompleted?: boolean;
+    }
+  ): IUserLessonProgress {
+    if (update.videoWatchedDuration !== undefined) {
+      progress.videoWatchedDuration = Math.max(progress.videoWatchedDuration, update.videoWatchedDuration);
+    }
 
-  if (update.videoTotalDuration !== undefined && update.videoTotalDuration > 0) {
-    progress.videoTotalDuration = update.videoTotalDuration;
-  } else if (progress.videoTotalDuration === 0) {
-    console.warn(
-      `Video total duration is 0 for lesson ${progress.lessonId}. Cannot calculate video progress accurately.`
-    );
+    if (update.videoTotalDuration !== undefined && update.videoTotalDuration > 0) {
+      progress.videoTotalDuration = update.videoTotalDuration;
+    } else if (progress.videoTotalDuration === 0) {
+      console.warn(`Video total duration is 0 for lesson ${progress.lessonId}. Cannot calculate video progress accurately.`);
+    }
+
+    if (update.theoryCompleted !== undefined) {
+      progress.theoryCompleted = update.theoryCompleted;
+    }
+
+    if (update.practicalCompleted !== undefined) {
+      progress.practicalCompleted = update.practicalCompleted;
+    }
+
+    if (update.mcqCompleted !== undefined) {
+      progress.mcqCompleted = update.mcqCompleted;
+    }
+
+    progress.videoWatchedDuration = Math.min(progress.videoWatchedDuration, progress.videoTotalDuration);
+    progress.videoProgressPercent =
+      progress.videoTotalDuration > 0
+        ? Math.min(100, (progress.videoWatchedDuration / progress.videoTotalDuration) * 100)
+        : 0;
+
+    if (update.videoCompleted !== undefined) {
+      progress.videoCompleted = update.videoCompleted;
+    }
+
+    return progress;
   }
-
-  if (update.theoryCompleted !== undefined) {
-    progress.theoryCompleted = update.theoryCompleted;
-  }
-
-  if (update.practicalCompleted !== undefined) {
-    progress.practicalCompleted = update.practicalCompleted;
-  }
-
-  if (update.mcqCompleted !== undefined) {
-    progress.mcqCompleted = update.mcqCompleted;
-  }
-
-  progress.videoWatchedDuration = Math.min(progress.videoWatchedDuration, progress.videoTotalDuration);
-  progress.videoProgressPercent =
-    progress.videoTotalDuration > 0
-      ? Math.min(100, (progress.videoWatchedDuration / progress.videoTotalDuration) * 100)
-      : 0;
-
-  if (update.videoCompleted !== undefined) {
-    progress.videoCompleted = update.videoCompleted;
-  }
-
-  return progress; 
-}
 
   async getLessons(courseId: string | ObjectId, userId: string | ObjectId): Promise<GetLessonsResponse> {
     await this._userCourseService.validateUserEnrollment(userId, courseId);
     const lessons = await this._lessonRepository.findAll({ courseId });
     if (!lessons || lessons.length === 0) {
-      throwError("No lessons found for this course", StatusCode.NOT_FOUND);
+      throwError(Messages.LESSONS.NO_LESSONS_FOUND, StatusCode.NOT_FOUND);
     }
 
     const lessonProgress = await this._userLessonProgressRepo.findAll({ courseId, userId });
-    const sendData=await convertSignedUrlInArray(lessons,["thumbnail"])
+    const sendData = await convertSignedUrlInArray(lessons, ["thumbnail"]);
     return { lessons: sendData, progress: lessonProgress };
   }
 
   async getQuestions(lessonId: string | ObjectId): Promise<IQuestions[]> {
     const questions = await this._qustionRepository.findAll({ lessonId });
-    if (!questions) throwError("Something went wrong", StatusCode.BAD_REQUEST);
+    if (!questions) throwError(Messages.COMMON.INTERNAL_ERROR, StatusCode.BAD_REQUEST);
     return questions;
   }
 
   async getLessonDetils(lessonId: string | ObjectId, userId: string): Promise<ILessonDetails> {
     const lesson = await this._lessonRepository.findById(lessonId.toString());
-    if (!lesson) throwError("Lesson not found", StatusCode.NOT_FOUND);
+    if (!lesson) throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
 
     const [questions, signedUrl, comments, report, lessonProgress] = await Promise.all([
       this._qustionRepository.findAll({ lessonId }),
@@ -171,22 +169,22 @@ export class UserLessonsService implements IUserLessonsService {
     lessonId: string | ObjectId,
     data: LessonQuestionInput
   ): Promise<ILessonReport> {
-    if (!userId) throwError("User not identified", StatusCode.BAD_REQUEST);
+    if (!userId) throwError(Messages.USERS.MISSING_USER_ID, StatusCode.BAD_REQUEST);
 
     const existingReport = await this._lessonReportRepo.findOne({ lessonId, userId });
     if (existingReport) {
-      throwError("You already have a report for this lesson. Please check the report session.", StatusCode.BAD_REQUEST);
+      throwError(Messages.LESSONS.REPORT_ALREADY_EXISTS, StatusCode.BAD_REQUEST);
     }
 
     const lesson = await this._lessonRepository.findById(lessonId as string);
-    if (!lesson) throwError("Invalid lesson", StatusCode.NOT_FOUND);
+    if (!lesson) throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
     const course = await this._courseRepository.findById(lesson.courseId as string);
-    if (!course) throwError("Invalid course", StatusCode.NOT_FOUND);
+    if (!course) throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
 
     const prompt = buildPrompt(data);
     const geminiReport = await getGemaniResponse(prompt);
     if (!geminiReport)
-      throwError("Failed to generate report from AI service. Please try again.", StatusCode.INTERNAL_SERVER_ERROR);
+      throwError(Messages.LESSONS.REPORT_GENERATION_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
 
     const report = await this._lessonReportRepo.create({
       userId: userId,
@@ -202,22 +200,22 @@ export class UserLessonsService implements IUserLessonsService {
 
   async saveComments(userId: string, lessonId: string | ObjectId, comment: string): Promise<IComment> {
     if (!lessonId || !comment || !userId) {
-      throwError("Invalid data provided");
+      throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
     }
 
     const [userData, lesson] = await Promise.all([
       this._userRepo.findById(userId),
       this._lessonRepository.findById(lessonId as string),
     ]);
-    if (!userData) throwError("User not found");
-    if (!lesson) throwError("Lesson not found");
+    if (!userData) throwError(Messages.USERS.USER_NOT_FOUND, StatusCode.NOT_FOUND);
+    if (!lesson) throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
 
     const course = await this._courseRepository.findById(lesson.courseId.toString());
-    if (!course || !course.mentorId) throwError("Course or mentor not found");
+    if (!course || !course.mentorId) throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
 
     const savedComment = await this._commentsRepo.create({
       lessonId,
-      courseId: course.id, 
+      courseId: course.id,
       comment,
       mentorId: course.mentorId,
       userId,
@@ -248,7 +246,7 @@ export class UserLessonsService implements IUserLessonsService {
     }
   ): Promise<IUserLessonProgress> {
     const lesson = await this._lessonRepository.findById(lessonId);
-    if (!lesson) throwError("Lesson not found", StatusCode.NOT_FOUND);
+    if (!lesson) throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
 
     const courseId = lesson.courseId.toString();
     let userLessonProgress = await this._userLessonProgressRepo.findOne({ userId, lessonId });
@@ -273,7 +271,7 @@ export class UserLessonsService implements IUserLessonsService {
       overallProgressPercent: this.calculateOverallLessonProgress(updatedProgress),
     });
     if (!finalProgressDoc)
-      throwError("Failed to finalize lesson progress update", StatusCode.INTERNAL_SERVER_ERROR);
+      throwError(Messages.LESSONS.PROGRESS_UPDATE_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
     await this._userCourseService.updateUserCourseProgress(userId, courseId, lessonId);
     return finalProgressDoc;
   }

@@ -13,27 +13,30 @@ import { validateMentorSignupInput } from '../../validation/mentorValidation';
 import { StatusCode } from '../../enums/statusCode.enum';
 import { INotificationService } from '../../core/interfaces/services/notifications/INotificationService';
 import { notifyWithSocket } from '../../utils/notifyWithSocket';
+import { Messages } from '../../constants/messages';
+
+
 
 @injectable()
 export class MentorAuthService implements IMentorAuthService {
   constructor(
-    @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
-    @inject(TYPES.MentorOtpRepository) private mentorOtpRepo: IMentorOtpRepository,
-    @inject(TYPES.NotificationService) private _notificationService:INotificationService
+    @inject(TYPES.MentorRepository) private _mentorRepo: IMentorRepository,
+    @inject(TYPES.MentorOtpRepository) private _mentorOtpRepo: IMentorOtpRepository,
+    @inject(TYPES.NotificationService) private _notificationService: INotificationService
   ) {}
 
   async loginMentor(
     email: string,
     password: string,
   ): Promise<{ mentor: Partial<IMentor>; token: string; refreshToken: string }> {
-    const mentor = await this.mentorRepo.findWithPassword({ email });
-    if (!mentor) throwError("Mentor not found", StatusCode.NOT_FOUND);
-    if (mentor.isBlock) throwError("This account is blocked", StatusCode.FORBIDDEN);
-    if (mentor.status !== "approved") throwError(`This user is ${mentor?.status}`, StatusCode.FORBIDDEN);
-    if (!mentor.isVerified) throwError("Please signup", StatusCode.BAD_REQUEST);
+    const mentor = await this._mentorRepo.findWithPassword({ email });
+    if (!mentor) throwError(Messages.AUTH.NOT_FOUND, StatusCode.NOT_FOUND);
+    if (mentor.isBlock) throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
+    if (mentor.status !== "approved") throwError(Messages.AUTH.STATUS_PENDING(mentor?.status), StatusCode.FORBIDDEN);
+    if (!mentor.isVerified) throwError(Messages.AUTH.PLEASE_SIGNUP, StatusCode.BAD_REQUEST);
     const isPasswordValid = await bcrypt.compare(password, mentor?.password || "");
     if (!isPasswordValid) {
-      throwError("Invalid email or password", StatusCode.BAD_REQUEST);
+      throwError(Messages.AUTH.INVALID_CREDENTIALS, StatusCode.BAD_REQUEST);
     }
   
     const token = generateAccessToken(mentor.id, "mentor");
@@ -60,31 +63,31 @@ export class MentorAuthService implements IMentorAuthService {
   }
 
   async sendOtp(email: string): Promise<void> {
-    const existingMentor = await this.mentorOtpRepo.findOne({ email });
-    const existMentorInmentor = await this.mentorRepo.findOne({ email, isVerified: true });
+    const existingMentor = await this._mentorOtpRepo.findOne({ email });
+    const existMentorInmentor = await this._mentorRepo.findOne({ email, isVerified: true });
     
-    if (existMentorInmentor) throwError("This mentor is already registered",  StatusCode.BAD_REQUEST);
-    if (existingMentor) throwError("OTP already sent", StatusCode.BAD_REQUEST);
+    if (existMentorInmentor) throwError(Messages.AUTH.ALREADY_REGISTERED, StatusCode.BAD_REQUEST);
+    if (existingMentor) throwError(Messages.AUTH.OTP_ALREADY_SENT, StatusCode.BAD_REQUEST);
     
     const otp = generateOtp();
     sendEmailOtp(email, otp);
-    await this.mentorOtpRepo.create({ email, otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
+    await this._mentorOtpRepo.create({ email, otp, expiresAt: new Date(Date.now() + 5 * 60 * 1000) });
   }
 
   async verifyOtp(email: string, otp: string): Promise<void> {
-    const otpRecord = await this.mentorOtpRepo.findOne({ email, otp });
+    const otpRecord = await this._mentorOtpRepo.findOne({ email, otp });
     if (!otpRecord) {
-      throwError("Invalid OTP",  StatusCode.BAD_REQUEST);
+      throwError(Messages.AUTH.INVALID_OTP, StatusCode.BAD_REQUEST);
     }
   }
 
   async mentorSignup(data: Partial<IMentor>) {
     const { isValid, errorMessage } = validateMentorSignupInput(data);
-    if (!isValid) throwError(errorMessage || "Unknown error occurred during validation", StatusCode.BAD_REQUEST);
-    const existMentor = await this.mentorRepo.findOne({ email: data.email });
-    if (!existMentor) throwError("Please apply to be a mentor", 400);
-    if (existMentor.isVerified) throwError("This mentor is already registered", StatusCode.BAD_REQUEST);
-    if (existMentor.status !== "approved") throwError(`This request is ${existMentor.status}`, StatusCode.BAD_REQUEST);
+    if (!isValid) throwError(errorMessage || Messages.COMMON.INTERNAL_ERROR, StatusCode.BAD_REQUEST);
+    const existMentor = await this._mentorRepo.findOne({ email: data.email });
+    if (!existMentor) throwError(Messages.AUTH.APPLY_FIRST, 400);
+    if (existMentor.isVerified) throwError(Messages.AUTH.ALREADY_REGISTERED, StatusCode.BAD_REQUEST);
+    if (existMentor.status !== "approved") throwError(Messages.AUTH.STATUS_PENDING(existMentor.status), StatusCode.BAD_REQUEST);
   
     const hashedPassword = await bcrypt.hash(data.password!, await bcrypt.genSalt(10));
   
@@ -95,35 +98,36 @@ export class MentorAuthService implements IMentorAuthService {
       password: hashedPassword
     };
     
-    await this.mentorRepo.update(existMentor.id, { ...allowedUpdates, isVerified: true });
+    await this._mentorRepo.update(existMentor.id, { ...allowedUpdates, isVerified: true });
   }
 
   async forgetPassword(email: string): Promise<void> {
-    const mentor = await this.mentorRepo.findOne({ email });
-    if (!mentor) throwError("User not found", StatusCode.NOT_FOUND);
-    if(!mentor.password) throwError ("Please Register then you can change password",StatusCode.BAD_REQUEST)
+    const mentor = await this._mentorRepo.findOne({ email });
+    if (!mentor) throwError(Messages.AUTH.NOT_FOUND, StatusCode.NOT_FOUND);
+    if (!mentor.password) throwError(Messages.AUTH.CHANGE_PASSWORD_NOT_VERIFIED, StatusCode.BAD_REQUEST);
 
     const token = generateAccessToken(mentor.id, "mentor");
     const resetLink = `${process.env.CLIENT_URL}/mentor/reset-password/${token}`;
     
     const result = await sendPasswordResetEmail(mentor.email, resetLink);
     if (!result.success) {
-      throwError("Failed to send reset email. Try again later.",  StatusCode.INTERNAL_SERVER_ERROR);
+      throwError(Messages.AUTH.RESET_EMAIL_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
     }
   }
 
   async resetPassword(id: string, password: string): Promise<void> {
-    const user = await this.mentorRepo.findById(id);
-    if (!user) throwError("Mentor not found",  StatusCode.NOT_FOUND);
+    const user = await this._mentorRepo.findById(id);
+    if (!user) throwError(Messages.AUTH.NOT_FOUND, StatusCode.NOT_FOUND);
     
     const hashedPassword = await bcrypt.hash(password, 10);
-    await this.mentorRepo.update(id, { password: hashedPassword });
+    await this._mentorRepo.update(id, { password: hashedPassword });
     await notifyWithSocket({
-    notificationService: this._notificationService,
-    userIds: [id.toString()],
-    title: " Password Reset",
-    message: "Your password has been reset.",
-    type: "info",
-  });
+      notificationService: this._notificationService,
+      userIds: [id.toString()],
+      title: Messages.AUTH.PASSWORD_RESET_TITLE,
+      message: Messages.AUTH.PASSWORD_RESET_MESSAGE,
+      type: "info",
+    });
   }
 }
+
