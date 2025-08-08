@@ -9,6 +9,8 @@ import { TYPES } from '../../core/types';
 import { throwError } from '../../utils/ResANDError';
 import { toDTOArray } from '../../utils/toDTO';
 import { IMentor } from '../../types/mentorTypes';
+import { Messages } from '../../constants/messages';
+import { StatusCode } from '../../enums/statusCode.enum';
 
 interface CourseQueryParams {
   page?: number;
@@ -185,7 +187,7 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
         totalPages: Math.ceil(total / limit),
       };
     } catch (error) {
-      throwError('Failed to fetch courses', 500);
+      throwError(Messages.COURSE.FETCH_FAILED,StatusCode.INTERNAL_SERVER_ERROR);
     }
   }
 }

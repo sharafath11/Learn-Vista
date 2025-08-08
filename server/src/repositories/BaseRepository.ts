@@ -1,6 +1,7 @@
 import { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
 import { IBaseRepository } from "../core/interfaces/repositories/IBaseRepository";
 import { toDTO } from "../utils/toDTO";
+import { Messages } from "../constants/messages";
 
 export abstract class BaseRepository<T extends Document, U>
   implements IBaseRepository<T, U>
@@ -22,7 +23,7 @@ export abstract class BaseRepository<T extends Document, U>
       const document = await this.model.create(data);
       return toDTO<U>(document);
     } catch (error) {
-      throw this.handleError(error, "Error creating document");
+      throw this.handleError(error, Messages.REPOSITORY.CREATE_ERROR);
     }
   }
 
@@ -30,7 +31,7 @@ export abstract class BaseRepository<T extends Document, U>
     try {
       return await this.model.countDocuments(filter);
     } catch (error) {
-      throw this.handleError(error, "Error counting documents");
+      throw this.handleError(error, Messages.REPOSITORY.COUNT_ERROR);
     }
   }
 
@@ -39,7 +40,7 @@ export abstract class BaseRepository<T extends Document, U>
       const documents = await this.model.find(filter);
       return documents.map((doc) => toDTO<U>(doc));
     } catch (error) {
-      throw this.handleError(error, "Error fetching documents");
+      throw this.handleError(error, Messages.REPOSITORY.FIND_ALL_ERROR);
     }
   }
 
@@ -51,7 +52,7 @@ export abstract class BaseRepository<T extends Document, U>
       const result = await this.model.updateMany(filter, update);
       return result.modifiedCount;
     } catch (error) {
-      throw this.handleError(error, "Failed to update multiple documents");
+      throw this.handleError(error, Messages.REPOSITORY.UPDATE_MANY_ERROR);
     }
   }
 
@@ -86,7 +87,7 @@ export abstract class BaseRepository<T extends Document, U>
 
       return { data, total, totalPages };
     } catch (error) {
-      throw this.handleError(error, "Error fetching paginated documents");
+      throw this.handleError(error, Messages.REPOSITORY.FIND_PAGINATED_ERROR);
     }
   }
 
@@ -100,7 +101,7 @@ export abstract class BaseRepository<T extends Document, U>
       });
       return document ? toDTO<U>(document) : null;
     } catch (error) {
-      throw this.handleError(error, "Error updating document with filter");
+      throw this.handleError(error, Messages.REPOSITORY.UPDATE_ONE_ERROR);
     }
   }
 
@@ -109,7 +110,7 @@ export abstract class BaseRepository<T extends Document, U>
       const document = await this.model.findById(id);
       return document ? toDTO<U>(document) : null;
     } catch (error) {
-      throw this.handleError(error, "Error finding document by ID");
+      throw this.handleError(error, Messages.REPOSITORY.FIND_BY_ID_ERROR);
     }
   }
 
@@ -118,7 +119,7 @@ export abstract class BaseRepository<T extends Document, U>
       const document = await this.model.findOne(condition);
       return document ? toDTO<U>(document) : null;
     } catch (error) {
-      throw this.handleError(error, "Error finding document");
+      throw this.handleError(error, Messages.REPOSITORY.FIND_ONE_ERROR);
     }
   }
 
@@ -126,7 +127,10 @@ export abstract class BaseRepository<T extends Document, U>
     try {
       return await this.model.findOne(condition).select("+password").exec();
     } catch (error) {
-      throw this.handleError(error, "Error finding document with password");
+      throw this.handleError(
+        error,
+        Messages.REPOSITORY.FIND_WITH_PASSWORD_ERROR
+      );
     }
   }
 
@@ -134,7 +138,10 @@ export abstract class BaseRepository<T extends Document, U>
     try {
       return await this.model.findOne(condition).select("+password").exec();
     } catch (error) {
-      throw this.handleError(error, "Error finding document with password");
+      throw this.handleError(
+        error,
+        Messages.REPOSITORY.FIND_WITH_PASSWORD_ERROR
+      );
     }
   }
 
@@ -145,7 +152,7 @@ export abstract class BaseRepository<T extends Document, U>
       });
       return document ? toDTO<U>(document) : null;
     } catch (error) {
-      throw this.handleError(error, "Error updating document");
+      throw this.handleError(error, Messages.REPOSITORY.UPDATE_ERROR);
     }
   }
 
@@ -154,7 +161,7 @@ export abstract class BaseRepository<T extends Document, U>
       const result = await this.model.findByIdAndDelete(id);
       return result !== null;
     } catch (error) {
-      throw this.handleError(error, "Error deleting document");
+      throw this.handleError(error, Messages.REPOSITORY.DELETE_ERROR);
     }
   }
 }

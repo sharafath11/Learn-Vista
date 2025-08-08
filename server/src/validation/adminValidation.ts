@@ -1,18 +1,7 @@
-import { ICourse } from "../types/classTypes";
+import { VALIDATION_MESSAGES } from "../constants/validationMessages";
+import { CoursePayload, ICourse } from "../types/classTypes";
 import { throwError } from "../utils/ResANDError";
 
-export interface CoursePayload {
-  title: string;
-  description: string;
-  mentorId: string;
-  categoryId: string;
-  category: string;
-  courseLanguage: string;
-  tags: string;
-  startDate: string;
-  endDate: string;
-  startTime: string;
-}
 
 export function validateCoursePayload(data: Partial<ICourse>, thumbnail?: Buffer): void {
   const requiredFields = [
@@ -22,28 +11,26 @@ export function validateCoursePayload(data: Partial<ICourse>, thumbnail?: Buffer
 
   for (const field of requiredFields) {
     if (!data[field as keyof CoursePayload]) {
-      throwError(`Missing required field: ${field}`, 400);
+      throwError(VALIDATION_MESSAGES.COURSE.MISSING_FIELD(field), 400);
     }
   }
 
- 
-
   if (!thumbnail || !Buffer.isBuffer(thumbnail)) {
-    throwError("Thumbnail file is required and must be a valid buffer", 400);
+    throwError(VALIDATION_MESSAGES.COURSE.MISSING_THUMBNAIL, 400);
   }
 }
 
 export function validateCategory(title: string, description: string): string | null {
   if (!title || !description) {
-    return "Title and description are required";
+    return VALIDATION_MESSAGES.CATEGORY.REQUIRED;
   }
 
   if (title.length < 3) {
-    return "Title must be at least 3 characters long";
+    return VALIDATION_MESSAGES.CATEGORY.TITLE_MIN_LENGTH;
   }
 
   if (description.length < 10) {
-    return "Description must be at least 10 characters long";
+    return VALIDATION_MESSAGES.CATEGORY.DESCRIPTION_MIN_LENGTH;
   }
 
   return null;

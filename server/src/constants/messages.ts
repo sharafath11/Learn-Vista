@@ -387,5 +387,27 @@ LESSONS: {
     NEW_TASK_TITLE: "New Daily Task",
     NEW_TASK_MESSAGE: (day: number) => `Your Day ${day} task is ready!`,
   },
+    REPOSITORY: {
+  CREATE_ERROR: "Error creating document",
+  COUNT_ERROR: "Error counting documents",
+  FIND_ALL_ERROR: "Error fetching documents",
+  FIND_PAGINATED_ERROR: "Error fetching paginated documents",
+  UPDATE_MANY_ERROR: "Failed to update multiple documents",
+  UPDATE_ONE_ERROR: "Error updating document with filter",
+  FIND_BY_ID_ERROR: "Error finding document by ID",
+  FIND_ONE_ERROR: "Error finding document",
+  FIND_WITH_PASSWORD_ERROR: "Error finding document with password",
+  UPDATE_ERROR: "Error updating document",
+  DELETE_ERROR: "Error deleting document",
+},
+UPLOAD: {
+    ONLY_PDF: "Only PDF files are allowed!",
+    ONLY_IMAGES: (types: string[]) =>
+      `Only image files are allowed (${types.join(', ')})`,
+    ONLY_AUDIO: (received: string) =>
+      `Only audio files are allowed! Received: ${received}`,
+    ONLY_IMAGE_OR_AUDIO: (received: string) =>
+      `Only image/audio files allowed. Received: ${received}`,
+  },
 
 };

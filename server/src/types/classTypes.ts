@@ -5,6 +5,21 @@ export interface ISessionDocument extends ISession, Document {
   _id: ObjectId;
 }
 
+
+export interface CoursePayload {
+  title: string;
+  description: string;
+  mentorId: string;
+  categoryId: string;
+  category: string;
+  courseLanguage: string;
+  tags: string;
+  startDate: string;
+  endDate: string;
+  startTime: string;
+}
+
+
 export interface ICourse extends Document {
   _id: ObjectId;
   title: string;
