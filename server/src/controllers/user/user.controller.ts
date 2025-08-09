@@ -8,6 +8,7 @@ import { handleControllerError, sendResponse, throwError } from "../../utils/Res
 import { StatusCode } from "../../enums/statusCode.enum";
 import { pscPrompt } from "../../utils/Rportprompt";
 import { getGemaniResponse } from "../../config/gemaniAi";
+import { Messages } from "../../constants/messages";
 
 export class UserController implements IUserController {
     constructor(
@@ -18,15 +19,15 @@ export class UserController implements IUserController {
         try {
             const decoded = verifyAccessToken(req.cookies.token);
             if (!decoded?.id) {
-                throwError("Unauthorized - Invalid token", StatusCode.UNAUTHORIZED);
+                throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
             }
 
             const user = await this.userService.getUser(decoded.id);
             if (!user) {
-                throwError("User not found", StatusCode.NOT_FOUND);
+                throwError(Messages.USERS.USER_NOT_FOUND, StatusCode.NOT_FOUND);
             }
          
-            sendResponse(res, StatusCode.OK, "User retrieved successfully", true, user);
+            sendResponse(res, StatusCode.OK, Messages.USERS.FETCHED, true, user);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -36,11 +37,11 @@ export class UserController implements IUserController {
         try {
             const { email } = req.body;
             if (!email) {
-                throwError("Email is required", StatusCode.BAD_REQUEST);
+                throwError(Messages.USERS.USER_NOT_FOUND, StatusCode.BAD_REQUEST);
             }
 
             await this.userService.forgetPassword(email);
-            sendResponse(res, StatusCode.OK, "Password reset email sent if account exists", true);
+            sendResponse(res, StatusCode.OK,Messages.AUTH.FORGOT_PASSWORD_SUCCESS, true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -55,23 +56,23 @@ export class UserController implements IUserController {
                 sendResponse(
                     res,
                     StatusCode.FORBIDDEN,
-                    "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+                    Messages.AUTH.WEAK_PASSWORD,
                     false
                 );
                 return;
             }
 
             if (!token || !password) {
-                throwError("Token and password are required", StatusCode.BAD_REQUEST);
+                throwError(Messages.USERS.MISSING_TOKEN_PASSWORD, StatusCode.BAD_REQUEST);
             }
 
             const decoded = decodeToken(token);
             if (!decoded?.id) {
-                throwError("Invalid or expired token", StatusCode.UNAUTHORIZED);
+                throwError(Messages.AUTH.INVALID_TOKEN, StatusCode.UNAUTHORIZED);
             }
 
             await this.userService.resetPassword(decoded.id, password);
-            sendResponse(res, StatusCode.OK, "Password reset successfully", true);
+            sendResponse(res, StatusCode.OK, Messages.AUTH.PASSWORD_RESET_SUCCESS, true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -82,7 +83,7 @@ export class UserController implements IUserController {
         const number = parseInt(req.query.number as string);
      
       if (isNaN(number)) {
-        res.status(400).json({ ok: false, msg: "Invalid question number" });
+        sendResponse(res,StatusCode.BAD_REQUEST, Messages.USERS.INVALID_QUESTION_NUMBER,false)
         return;
       }
         const prompot=pscPrompt(number)
@@ -98,9 +99,9 @@ export class UserController implements IUserController {
   async getDailyTask(req: Request, res: Response): Promise<void> {
       try {
           const decoded = decodeToken(req.cookies.token);
-          if (!decoded?.id) throwError("unautheized", StatusCode.UNAUTHORIZED);
+          if (!decoded?.id) throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
           const result=await this.userService.getDailyTaskSevice(decoded.id)
-    sendResponse(res, StatusCode.OK, "Daily tasks generated", true, result);
+    sendResponse(res, StatusCode.OK,  Messages.USERS.DAILY_TASKS_GENERATED, true, result);
   } catch (error) {
     handleControllerError(res, error);
   }
@@ -112,7 +113,7 @@ async updateDailyTask(req: Request, res: Response): Promise<void> {
     const answer = req.body.answer; 
 
     if (!taskId || !taskType) {
-      throwError("Missing required fields", StatusCode.BAD_REQUEST);
+      throwError(Messages.COMMON.MISSING_FIELDS, StatusCode.BAD_REQUEST);
     }
 
     const result = await this.userService.updateDailyTask({
@@ -122,7 +123,7 @@ async updateDailyTask(req: Request, res: Response): Promise<void> {
   audioFile,
 });
 
-    sendResponse(res, StatusCode.OK, "Task updated", true, result);
+    sendResponse(res, StatusCode.OK, Messages.USERS.TASK_UPDATED, true, result);
   } catch (error) {
     handleControllerError(res, error);
   }
@@ -130,9 +131,9 @@ async updateDailyTask(req: Request, res: Response): Promise<void> {
     async getAllDailyTask(req: Request, res: Response): Promise<void> {
         try {
             const decoded = decodeToken(req.cookies.token);
-            if (!decoded?.id) throwError("unauthrized");
+            if (!decoded?.id) throwError(Messages.COMMON.UNAUTHORIZED);
             const result = await this.userService.getAllDailyTasks(decoded?.id as string);
-            sendResponse(res,StatusCode.OK,"fetched all daily task ",true,result)
+            sendResponse(res,StatusCode.OK, Messages.USERS.ALL_DAILY_TASKS_FETCHED,true,result)
         } catch (error) {
             handleControllerError(res,error)
         }

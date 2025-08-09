@@ -3,26 +3,39 @@ import { Request, Response } from 'express';
 import { TYPES } from '../../core/types';
 import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
 import { IMentorAuthService } from '../../core/interfaces/services/mentor/IMentorAuth.Service';
-import { clearTokens, decodeToken, setTokensInCookies } from '../../utils/JWTtoken';
-import { handleControllerError, sendResponse, throwError } from '../../utils/ResANDError';
+import {
+  clearTokens,
+  decodeToken,
+  setTokensInCookies,
+} from '../../utils/JWTtoken';
+import {
+  handleControllerError,
+  sendResponse,
+} from '../../utils/ResANDError';
 import { StatusCode } from '../../enums/statusCode.enum';
+import { Messages } from '../../constants/messages';
 
 @injectable()
 export class MentorAuthController implements IMentorAuthController {
   constructor(
-    @inject(TYPES.MentorAuthService) private authService: IMentorAuthService
+    @inject(TYPES.MentorAuthService) private _authService: IMentorAuthService
   ) {}
 
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
       if (!email || !password) {
-        return sendResponse(res, StatusCode.BAD_REQUEST, "Email and password are required", false);
+        return sendResponse(
+          res,
+          StatusCode.BAD_REQUEST,
+          Messages.AUTH.MISSING_CREDENTIALS,
+          false
+        );
       }
 
-      const result = await this.authService.loginMentor(email, password);
+      const result = await this._authService.loginMentor(email, password);
       setTokensInCookies(res, result.token, result.refreshToken);
-      return sendResponse(res, StatusCode.OK, "Login successful", true, result);
+      return sendResponse(res, StatusCode.OK, Messages.AUTH.LOGIN_SUCCESS, true, result);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -30,8 +43,8 @@ export class MentorAuthController implements IMentorAuthController {
 
   async signupController(req: Request, res: Response): Promise<void> {
     try {
-      await this.authService.mentorSignup(req.body);
-      return sendResponse(res, StatusCode.CREATED, "Mentor created successfully", true);
+      await this._authService.mentorSignup(req.body);
+      return sendResponse(res, StatusCode.CREATED, Messages.MENTOR.CREATED, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -39,8 +52,8 @@ export class MentorAuthController implements IMentorAuthController {
 
   async verifyOtp(req: Request, res: Response): Promise<void> {
     try {
-      await this.authService.verifyOtp(req.body.email, req.body.otp);
-      return sendResponse(res, StatusCode.OK, "Verification successful", true);
+      await this._authService.verifyOtp(req.body.email, req.body.otp);
+      return sendResponse(res, StatusCode.OK, Messages.AUTH.VERIFICATION_SUCCESS, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -48,8 +61,8 @@ export class MentorAuthController implements IMentorAuthController {
 
   async mentorOtpControler(req: Request, res: Response): Promise<void> {
     try {
-      await this.authService.sendOtp(req.body.email);
-      return sendResponse(res, StatusCode.OK, "OTP sent successfully", true);
+      await this._authService.sendOtp(req.body.email);
+      return sendResponse(res, StatusCode.OK, Messages.AUTH.OTP_SENT, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -58,7 +71,7 @@ export class MentorAuthController implements IMentorAuthController {
   async logout(req: Request, res: Response): Promise<void> {
     try {
       clearTokens(res);
-       
+      return sendResponse(res, StatusCode.OK, Messages.AUTH.LOGOUT_SUCCESS, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -68,11 +81,11 @@ export class MentorAuthController implements IMentorAuthController {
     try {
       const { email } = req.body;
       if (!email) {
-        return sendResponse(res, StatusCode.BAD_REQUEST, "Email is required", false);
+        return sendResponse(res, StatusCode.BAD_REQUEST, Messages.COMMON.MISSING_FIELDS, false);
       }
 
-      await this.authService.forgetPassword(email);
-      return sendResponse(res, StatusCode.OK, "Password reset email sent if account exists", true);
+      await this._authService.forgetPassword(email);
+      return sendResponse(res, StatusCode.OK, Messages.AUTH.FORGOT_PASSWORD_SUCCESS, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -81,28 +94,29 @@ export class MentorAuthController implements IMentorAuthController {
   async restartPassword(req: Request, res: Response): Promise<void> {
     try {
       const { token, password } = req.body;
-      const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+      const strongPasswordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
       if (!password || !strongPasswordRegex.test(password)) {
         return sendResponse(
           res,
           StatusCode.FORBIDDEN,
-          "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+          Messages.AUTH.WEAK_PASSWORD,
           false
         );
       }
 
       if (!token || !password) {
-        return sendResponse(res, StatusCode.BAD_REQUEST, "Token and password are required", false);
+        return sendResponse(res, StatusCode.BAD_REQUEST, Messages.COMMON.MISSING_FIELDS, false);
       }
 
       const decoded = decodeToken(token);
-      if (!decoded || !decoded.id || decoded.role !== "mentor") {
-        return sendResponse(res, StatusCode.UNAUTHORIZED, "Invalid or expired token", false);
+      if (!decoded || !decoded.id || decoded.role !== 'mentor') {
+        return sendResponse(res, StatusCode.UNAUTHORIZED, Messages.AUTH.INVALID_TOKEN, false);
       }
 
-      await this.authService.resetPassword(decoded.id, password);
-      return sendResponse(res, StatusCode.OK, "Password reset successfully", true);
+      await this._authService.resetPassword(decoded.id, password);
+      return sendResponse(res, StatusCode.OK, Messages.AUTH.PASSWORD_RESET_SUCCESS, true);
     } catch (error) {
       handleControllerError(res, error);
     }

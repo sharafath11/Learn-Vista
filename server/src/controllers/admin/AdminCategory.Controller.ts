@@ -6,12 +6,14 @@ import { handleControllerError, sendResponse } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { validateCategory } from "../../validation/adminValidation";
 import { IAdminCategoryService } from "../../core/interfaces/services/admin/IAdminCategoryService";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 class AdminCategoryController implements IAdminCategoryController {
   constructor(
-  @inject(TYPES.AdminCategoryService) private _adminCategoryService: IAdminCategoryService
-) {}
+    @inject(TYPES.AdminCategoryService)
+    private _adminCategoryService: IAdminCategoryService
+  ) {}
 
   async addCategory(req: Request, res: Response): Promise<void> {
     try {
@@ -19,11 +21,19 @@ class AdminCategoryController implements IAdminCategoryController {
       const validationError = validateCategory(title, discription);
 
       if (validationError || !title || !discription) {
-        return sendResponse(res, StatusCode.BAD_REQUEST, validationError || "Missing fields", false);
+        return sendResponse(
+          res,
+          StatusCode.BAD_REQUEST,
+          validationError || Messages.CATEGORY.MISSING_FIELDS,
+          false
+        );
       }
 
-      const data = await this._adminCategoryService.addCategory(title, discription);
-      sendResponse(res, StatusCode.OK, "Category added successfully", true, data);
+      const data = await this._adminCategoryService.addCategory(
+        title,
+        discription
+      );
+      sendResponse(res, StatusCode.OK, Messages.CATEGORY.CREATED, true, data);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -31,16 +41,25 @@ class AdminCategoryController implements IAdminCategoryController {
 
   async editCategory(req: Request, res: Response): Promise<void> {
     try {
-      const id=req.params.id
+      const id = req.params.id;
       const { title, discription } = req.body;
       const validationError = validateCategory(title, discription);
 
       if (validationError || !id || !title || !discription) {
-        return sendResponse(res, StatusCode.BAD_REQUEST, validationError || "Missing fields", false);
+        return sendResponse(
+          res,
+          StatusCode.BAD_REQUEST,
+          validationError || Messages.CATEGORY.MISSING_FIELDS,
+          false
+        );
       }
 
-      const result = await this._adminCategoryService.editCategory(id, title, discription);
-      sendResponse(res, StatusCode.OK, "Category updated successfully", true, result);
+      const result = await this._adminCategoryService.editCategory(
+        id,
+        title,
+        discription
+      );
+      sendResponse(res, StatusCode.OK, Messages.CATEGORY.UPDATED, true, result);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -63,8 +82,15 @@ class AdminCategoryController implements IAdminCategoryController {
         sort.createdAt = -1;
       }
 
-      const data = await this._adminCategoryService.getCategories(page, limit, search, queryParams.filters, sort);
-      sendResponse(res, StatusCode.OK, "Categories retrieved successfully", true, data);
+      const data = await this._adminCategoryService.getCategories(
+        page,
+        limit,
+        search,
+        queryParams.filters,
+        sort
+      );
+
+      sendResponse(res, StatusCode.OK, Messages.CATEGORY.RETRIEVED, true, data);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -73,7 +99,7 @@ class AdminCategoryController implements IAdminCategoryController {
   async getCategories(req: Request, res: Response): Promise<void> {
     try {
       const result = await this._adminCategoryService.getAllCategories();
-      sendResponse(res, StatusCode.OK, "Categories fetched successfully", true, result);
+      sendResponse(res, StatusCode.OK, Messages.CATEGORY.FETCHED, true, result);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -81,10 +107,10 @@ class AdminCategoryController implements IAdminCategoryController {
 
   async blockCategory(req: Request, res: Response): Promise<void> {
     try {
-      const id=req.params.id
-      const {status } = req.body;
+      const id = req.params.id;
+      const { status } = req.body;
       await this._adminCategoryService.blockCategory(id, status);
-      sendResponse(res, StatusCode.OK, "Category status updated successfully", true);
+      sendResponse(res, StatusCode.OK, Messages.CATEGORY.STATUS_UPDATED, true);
     } catch (error) {
       handleControllerError(res, error);
     }

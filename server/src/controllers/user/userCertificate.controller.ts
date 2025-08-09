@@ -6,6 +6,7 @@ import { TYPES } from "../../core/types";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { CertificateQueryParams } from "../../types/certificateTypes";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class UserCertificateController implements IUserCertificateController {
@@ -39,12 +40,12 @@ export class UserCertificateController implements IUserCertificateController {
     };
 
     if (!ALLOWED_STATUSES.includes(String(status))) {
-     throwError(`[GET /certificates] Invalid status '${status}' provided. Defaulting to 'all'.`);
+     throwError(Messages.CERTIFICATES.INVALID_STATUS(status as string));
     }
 
 
     const { data, total } = await this._userCertificateService.getCertificates(filters);
-    sendResponse(res, StatusCode.OK, "Certificates fetched successfully", true, {
+    sendResponse(res, StatusCode.OK, Messages.CERTIFICATES.FETCHED, true, {
       data,
       total,
     });
@@ -57,9 +58,9 @@ export class UserCertificateController implements IUserCertificateController {
       const certificateId = req.params.certificateId;
       const certificate = await this._userCertificateService.getCertificateById(certificateId);
       if (!certificate) {
-        return sendResponse(res, StatusCode.NOT_FOUND, "Certificate not found", false);
+        return sendResponse(res, StatusCode.NOT_FOUND,  Messages.CERTIFICATES.CERTIFICATE_NOT_FOUND, false);
       }
-      sendResponse(res, StatusCode.OK, "Certificate fetched successfully", true, certificate);
+      sendResponse(res, StatusCode.OK, Messages.CERTIFICATES.FETCHED, true, certificate);
     } catch (error) {
       handleControllerError(res, error);
     }

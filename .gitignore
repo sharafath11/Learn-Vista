@@ -13,6 +13,7 @@ out/
 # Build output
 dist/
 build/
+server/logs/
 
 # Environment variables
 .env*

@@ -4,11 +4,10 @@ import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IMentorConcernService } from "../../core/interfaces/services/mentor/IMentorConcern.Service";
 import { decodeToken } from "../../utils/JWTtoken";
-import { IAttachment } from "../../types/concernTypes";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
-import mongoose from "mongoose";
-import { uploadConcernAttachment, getSignedS3Url } from "../../utils/s3Utilits";
+import { Messages } from "../../constants/messages";
+
 
 @injectable()
 export class MentorConcernController implements IMentorConcernController {
@@ -23,7 +22,7 @@ export class MentorConcernController implements IMentorConcernController {
     const decoded = decodeToken(req.cookies.token);
 
     if (!decoded?.id) {
-      throwError("Unauthorized", StatusCode.UNAUTHORIZED);
+      throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
     }
 
     const files = req.files && Array.isArray(req.files) ? req.files : [];
@@ -35,7 +34,7 @@ export class MentorConcernController implements IMentorConcernController {
      
     }, files, );
 
-    sendResponse(res, StatusCode.OK, "Concern raised successfully", true, concern);
+    sendResponse(res, StatusCode.OK, Messages.CONCERN.RAISED, true, concern);
   } catch (error) {
     handleControllerError(res, error);
   }
@@ -47,7 +46,7 @@ export class MentorConcernController implements IMentorConcernController {
       const decoded = decodeToken(req.cookies.token);
 
       if (!decoded?.id) {
-        throwError("Unauthorized", StatusCode.UNAUTHORIZED);
+        throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
 
       const queryParams = (req.query.params || {}) as Record<string, string>;
@@ -80,7 +79,7 @@ export class MentorConcernController implements IMentorConcernController {
 
       const { data, total } = await this._mentorConcernService.getConcerns(filters, sort, skip, limit);
 
-sendResponse(res, StatusCode.OK, "Fetched concerns successfully", true, {
+sendResponse(res, StatusCode.OK, Messages.CONCERN.FETCHED, true, {
   data,
   total,
   page: parseInt(page),

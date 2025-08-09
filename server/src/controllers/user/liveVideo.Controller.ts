@@ -8,6 +8,7 @@ import { handleControllerError, sendResponse, throwError } from "../../utils/Res
 import { StatusCode } from "../../enums/statusCode.enum";
 import {  IUserLiveController } from "../../core/interfaces/controllers/user/IUserLiveVideoController";
 import { IUserLiveService } from "../../core/interfaces/services/user/IUserLiveService";
+import { Messages } from "../../constants/messages";
 
 export class UserLiveCallController  implements IUserLiveController {
     constructor(
@@ -17,9 +18,9 @@ export class UserLiveCallController  implements IUserLiveController {
         try {
             const { courseId } = req.params;
             const decode = decodeToken(req.cookies.token);
-            if(!decode) throwError("Invalid User",StatusCode.BAD_REQUEST)
+            if(!decode) throwError(Messages.STREAM.INVALID_USER,StatusCode.BAD_REQUEST)
             const result = await this._userLiveService.getRoomIdService(courseId, decode?.id as string);
-            sendResponse(res,StatusCode.OK,"Joined",true,result)
+            sendResponse(res,StatusCode.OK,Messages.STREAM.JOINED_SUCCESS,true,result)
         } catch (error) {
             handleControllerError(res,error)
         }

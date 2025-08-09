@@ -12,7 +12,7 @@ import { TYPES } from "../../core/types";
 import { IUserDonationServices } from "../../core/interfaces/services/user/IUserDonationServices";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { decodeToken } from "../../utils/JWTtoken";
-import { logger } from "../../utils/logger";
+import { Messages } from "../../constants/messages";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-05-28.basil",
 });
@@ -30,13 +30,13 @@ export class UserDonationController implements IUserDonationController {
       const { amount, currency } = req.body;
       if (!amount || typeof amount !== "number" || amount <= 0) {
         throwError(
-          "Invalid amount provided. Amount must be a positive number.",
+         Messages.DONATION.INVALID_AMOUNT,
           StatusCode.BAD_REQUEST
         );
       }
       if (!currency || typeof currency !== "string" || currency.length !== 3) {
         throwError(
-          "Invalid currency provided. Currency must be a 3-letter code.",
+          Messages.DONATION.INVALID_CURRENCY,
           StatusCode.BAD_REQUEST
         );
       }
@@ -65,7 +65,7 @@ export class UserDonationController implements IUserDonationController {
       sendResponse(
         res,
         StatusCode.OK,
-        "Checkout session created successfully.",
+        Messages.DONATION.CHECKOUT_SESSION_CREATED,
         true,
         { id: session.id }
       );
@@ -77,7 +77,7 @@ export class UserDonationController implements IUserDonationController {
     try {
       const sessionId = req.params.sessionId;
       if (!sessionId) {
-        throwError("Missing session_id", StatusCode.BAD_REQUEST);
+        throwError(Messages.DONATION.MISSING_SESSION_ID, StatusCode.BAD_REQUEST);
       }
       const io = req.app.get("io");
       const decoded = decodeToken(req.cookies.token);
@@ -87,7 +87,7 @@ export class UserDonationController implements IUserDonationController {
         io,
         userId
       );
-      sendResponse(res, StatusCode.OK, "Donation verified", true, donation);
+      sendResponse(res, StatusCode.OK,  Messages.DONATION.VERIFIED, true, donation);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -96,13 +96,13 @@ export class UserDonationController implements IUserDonationController {
     try {
       const page = parseInt(req.params.page || "1", 10);
       if (isNaN(page) || page < 1) {
-        throwError("Invalid page number.", StatusCode.BAD_REQUEST);
+        throwError(Messages.DONATION.INVALID_PAGE, StatusCode.BAD_REQUEST);
       }
 
       const decoded = decodeToken(req.cookies.token);
       const userId = decoded?.id;
       if (!userId) {
-        throwError("Unauthorized user", StatusCode.UNAUTHORIZED);
+        throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
 
       const result = await this._donationService.getPaginatedDonations(
@@ -113,7 +113,7 @@ export class UserDonationController implements IUserDonationController {
       sendResponse(
         res,
         StatusCode.OK,
-        "Donations fetched successfully",
+        Messages.DONATION.FETCHED,
         true,
         result
       );

@@ -9,6 +9,7 @@ import {
   throwError,
 } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 class AdminMentorController implements IAdminMentorController {
@@ -16,20 +17,20 @@ class AdminMentorController implements IAdminMentorController {
     @inject(TYPES.AdminMentorService)
     private adminMentorService: IAdminMentorServices
   ) {}
+
   async getAllMentorsNotFiltering(req: Request, res: Response): Promise<void> {
     try {
-      const mentor =
-        await this.adminMentorService.getAllMentorWithoutFiltring();
-      if (!mentor) throwError("Somthing wronet weronfg");
-      sendResponse(res, StatusCode.OK, "", true, mentor);
+      const mentors = await this.adminMentorService.getAllMentorWithoutFiltring();
+      if (!mentors) throwError("Something went wrong");
+      sendResponse(res, StatusCode.OK, Messages.MENTOR.FETCHED, true, mentors);
     } catch (error) {
       handleControllerError(res, error);
     }
   }
+
   async getAllMentors(req: Request, res: Response): Promise<void> {
     try {
       const queryParams = (req.query as any).params || req.query;
-
       const page = Math.max(Number(queryParams.page) || 1, 1);
       const limit = Math.min(Math.max(Number(queryParams.limit) || 10, 1), 100);
       const search = queryParams.search?.toString() || "";
@@ -38,14 +39,8 @@ class AdminMentorController implements IAdminMentorController {
       if (queryParams.sort) {
         for (const key in queryParams.sort) {
           const value = queryParams.sort[key];
-          if (value === "asc" || value === "1" || value === 1) {
-            sort[key] = 1;
-          } else if (value === "desc" || value === "-1" || value === -1) {
-            sort[key] = -1;
-          } else {
-           
-            sort[key] = -1;
-          }
+          sort[key] =
+            value === "asc" || value === "1" || value === 1 ? 1 : -1;
         }
       } else {
         sort.createdAt = -1;
@@ -59,7 +54,7 @@ class AdminMentorController implements IAdminMentorController {
         sort
       );
 
-      sendResponse(res, StatusCode.OK, "Mentor fetched successfully", true, {
+      sendResponse(res, StatusCode.OK, Messages.MENTOR.FETCHED, true, {
         data: result.data,
         total: result.total,
         page,
@@ -73,14 +68,14 @@ class AdminMentorController implements IAdminMentorController {
 
   async changeStatus(req: Request, res: Response): Promise<void> {
     try {
-      const mentorId=req.params.mentorId
+      const mentorId = req.params.mentorId;
       const { status, email } = req.body;
 
       if (!mentorId || status === undefined || !email) {
         return sendResponse(
           res,
           StatusCode.BAD_REQUEST,
-          "mentorId, status, and email are required",
+          Messages.MENTOR.CHANGE_STATUS_MISSING,
           false
         );
       }
@@ -89,7 +84,7 @@ class AdminMentorController implements IAdminMentorController {
       sendResponse(
         res,
         StatusCode.OK,
-        `Mentor status changed to ${status}`,
+        Messages.MENTOR.STATUS_UPDATED(status),
         true
       );
     } catch (error) {
@@ -105,7 +100,7 @@ class AdminMentorController implements IAdminMentorController {
         return sendResponse(
           res,
           StatusCode.BAD_REQUEST,
-          "mentorId and isBlock are required",
+          Messages.MENTOR.CHANGE_STATUS_MISSING,
           false
         );
       }
@@ -117,7 +112,7 @@ class AdminMentorController implements IAdminMentorController {
 
       if (!result) {
         throwError(
-          "Something went wrong while updating mentor status",
+          Messages.MENTOR.BLOCK_FAILED,
           StatusCode.BAD_REQUEST
         );
       }
@@ -125,7 +120,7 @@ class AdminMentorController implements IAdminMentorController {
       sendResponse(
         res,
         StatusCode.OK,
-        `${result.username} ${isBlock ? "Blocked" : "Unblocked"} successfully`,
+        Messages.MENTOR.BLOCK_UPDATED(result.username, isBlock),
         true,
         result
       );
@@ -142,7 +137,7 @@ class AdminMentorController implements IAdminMentorController {
         return sendResponse(
           res,
           StatusCode.BAD_REQUEST,
-          "Mentor ID is required",
+          Messages.MENTOR.ID_REQUIRED,
           false
         );
       }
@@ -150,13 +145,13 @@ class AdminMentorController implements IAdminMentorController {
       const mentor = await this.adminMentorService.mentorDetails(id);
 
       if (!mentor) {
-        throwError("Mentor not found", StatusCode.NOT_FOUND);
+        throwError(Messages.MENTOR.NOT_FOUND, StatusCode.NOT_FOUND);
       }
 
       sendResponse(
         res,
         StatusCode.OK,
-        "Mentor fetched successfully",
+        Messages.MENTOR.FETCHED,
         true,
         mentor
       );

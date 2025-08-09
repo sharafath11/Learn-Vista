@@ -1,4 +1,5 @@
 import multer from "multer";
+import { Messages } from "../constants/messages";
 
 const storage = multer.memoryStorage();
 
@@ -16,7 +17,7 @@ export const upload = multer({
     if (PDF_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only PDF files are allowed!'));
+      cb(new Error(Messages.UPLOAD.ONLY_PDF));
     }
   }
 });
@@ -46,7 +47,7 @@ export const uploadConcernFiles = multer({
     if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error(`Only image/audio files allowed. Received: ${file.mimetype}`));
+     cb(new Error(Messages.UPLOAD.ONLY_IMAGES(IMAGE_MIME_TYPES)));
      
     }
   }
@@ -58,7 +59,7 @@ export const uploadDailyTaskAudio = multer({
     if (AUDIO_MIME_TYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error(`Only audio files are allowed! Received: ${file.mimetype}`));
+      cb(new Error(Messages.UPLOAD.ONLY_AUDIO(file.mimetype)));
     }
   }
 });

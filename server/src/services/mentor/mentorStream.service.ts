@@ -7,6 +7,9 @@ import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMe
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
+import { Messages } from "../../constants/messages";
+import { throwError } from "../../utils/ResANDError";
+
 @injectable()
 export class MentorStreamService implements IMentorStreamService{
     constructor(
@@ -17,7 +20,7 @@ export class MentorStreamService implements IMentorStreamService{
         
     ){}
     async startStreamSession(courseId: string, mentorId: string): Promise<string> {
-        const course=await this._courseRepo.update(courseId,{isStreaming:true})          
+        const course = await this._courseRepo.update(courseId,{isStreaming:true})          
         const liveId = `live-${Date.now()}`;
         const currentDate = new Date();
         await this._baseLiveRepo.create({
@@ -31,7 +34,7 @@ export class MentorStreamService implements IMentorStreamService{
              await notifyWithSocket({
              notificationService: this._notificationService,
              userIds: course.enrolledUsers.map((id) => id.toString()),
-             title: " Live Session Started",
+             title: Messages.STREAM.START_SUCCESS,
              message: `A live session for the course "${course.title}" has just started. Join now!`,
              type: "info",
          });
@@ -41,7 +44,7 @@ export class MentorStreamService implements IMentorStreamService{
     }
     async endStream(liveId: string, mentorId: string): Promise<void> {
         const stream = await this._baseLiveRepo.findOne({ liveId });
-        if (!stream) throw new Error("Live stream not found");
+        if (!stream) throwError("Live stream not found");
         await this._courseRepo.update(stream.courseId as unknown as string,{isStreaming:false})
         await Promise.all([
           this._baseLiveRepo.update(stream.id, { isActive: false, isEnd: true }),
@@ -50,11 +53,9 @@ export class MentorStreamService implements IMentorStreamService{
          await notifyWithSocket({
              notificationService: this._notificationService,
              userIds: stream.participants.map((id) => id.toString()),
-             title: " Live Session ended",
-             message: ``,
+             title: Messages.STREAM.END_SUCCESS,
+             message: Messages.STREAM.END_SUCCESS,
              type: "info",
          });
       }
-    
-    
 }

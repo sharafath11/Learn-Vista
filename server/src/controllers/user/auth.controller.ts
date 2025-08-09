@@ -6,19 +6,19 @@ import { IAuthController } from "../../core/interfaces/controllers/user/IAuthCon
 import { clearTokens, setTokensInCookies } from "../../utils/JWTtoken";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
-// import { sendResponse, handleControllerError, throwError } from "../../utils/errorUtils";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class AuthController implements IAuthController {
     constructor(
-        @inject(TYPES.AuthService) private authService: IAuthService
+        @inject(TYPES.AuthService) private _authService: IAuthService
     ) {}
 
     async signup(req: Request, res: Response) {
         try {
-            if (!req.body) throwError("Request body is missing", StatusCode.BAD_REQUEST);
-            await this.authService.registerUser(req.body);
-            return sendResponse(res, StatusCode.CREATED, "User registration successful", true);
+            if (!req.body) throwError(Messages.AUTH.MISSING_BODY, StatusCode.BAD_REQUEST);
+            await this._authService.registerUser(req.body);
+            return sendResponse(res, StatusCode.CREATED, Messages.AUTH.REGISTRATION_SUCCESS, true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -26,12 +26,12 @@ export class AuthController implements IAuthController {
 
     async googleAuth(req: Request, res: Response) {
         try {
-            if (!req.body) throwError("Request body is missing", 400);
-            const result = await this.authService.googleAuth(req.body);
+            if (!req.body) throwError(Messages.AUTH.MISSING_BODY, 400);
+            const result = await this._authService.googleAuth(req.body);
             setTokensInCookies(res, result.token, result.refreshToken);
             res.status(StatusCode.OK).json({ 
                 ok: true, 
-                msg: "Google authentication successful",
+                msg: Messages.AUTH.GOOGLE_AUTH_SUCCESS,
                 user: result.user,
                 token: result.token,
                 refreshToken: result.refreshToken
@@ -43,9 +43,9 @@ export class AuthController implements IAuthController {
 
     async sendOtp(req: Request, res: Response) {
         try {
-            if (!req.body.email) throwError("Email is required", StatusCode.BAD_REQUEST);
-            await this.authService.sendOtp(req.body.email);
-            sendResponse(res, StatusCode.CREATED, `OTP sent to ${req.body.email}`, true);
+            if (!req.body.email) throwError(Messages.AUTH.MISSING_EMAIL, StatusCode.BAD_REQUEST);
+            await this._authService.sendOtp(req.body.email);
+            sendResponse(res, StatusCode.CREATED, Messages.AUTH.OTP_SENT, true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -53,9 +53,9 @@ export class AuthController implements IAuthController {
 
     async verifyOtp(req: Request, res: Response) {
         try {
-            if (!req.body.email || !req.body.otp) throwError("Email and OTP are required", 400);
-            await this.authService.verifyOtp(req.body.email, req.body.otp);
-            return sendResponse(res, StatusCode.CREATED, "Verification successful", true);
+            if (!req.body.email || !req.body.otp) throwError(Messages.AUTH.MISSING_EMAIL, 400);
+            await this._authService.verifyOtp(req.body.email, req.body.otp);
+            return sendResponse(res, StatusCode.CREATED, Messages.AUTH.VERIFICATION_SUCCESS, true);
         } catch (error) {
             handleControllerError(res, error);
         }
@@ -64,13 +64,11 @@ export class AuthController implements IAuthController {
 async login(req: Request, res: Response) {
     try {
         const { email, password, googleId } = req.body;
-
-        // Require either email/password OR Google ID
         if ((!email || !password) && !googleId) {
-            throwError("Provide email/password or Google ID", StatusCode.BAD_REQUEST);
+            throwError(Messages.AUTH.MISSING_CREDENTIALS, StatusCode.BAD_REQUEST);
         }
 
-        const { token, refreshToken, user } = await this.authService.loginUser(
+        const { token, refreshToken, user } = await this._authService.loginUser(
             email, 
             password, 
             googleId
@@ -78,7 +76,7 @@ async login(req: Request, res: Response) {
 
         setTokensInCookies(res, token, refreshToken);
 
-        return sendResponse(res, StatusCode.OK, "Login successful", true, user);
+        return sendResponse(res, StatusCode.OK, Messages.AUTH.LOGIN_SUCCESS, true, user);
     } catch (error) {
         handleControllerError(res, error);
     }

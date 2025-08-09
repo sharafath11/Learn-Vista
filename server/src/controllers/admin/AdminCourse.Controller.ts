@@ -5,6 +5,7 @@ import { IAdminCourseServices } from "../../core/interfaces/services/admin/IAdmi
 import { IAdminCourseController } from "../../core/interfaces/controllers/admin/IAdminCourse.Controller";
 import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 class AdminCourseController implements IAdminCourseController {
@@ -20,7 +21,7 @@ class AdminCourseController implements IAdminCourseController {
       if (!thumbnail) throwError("Thumbnail image is required", StatusCode.BAD_REQUEST);
 
       const result = await this._adminCourseServices.createClass(data, thumbnail.buffer);
-      sendResponse(res, StatusCode.OK, "Course created successfully", true, result);
+      sendResponse(res, StatusCode.OK, Messages.COURSE.CREATED, true, result);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -34,11 +35,11 @@ class AdminCourseController implements IAdminCourseController {
       delete data.thumbnail;
 
       if (!courseId) {
-        return sendResponse(res, StatusCode.BAD_REQUEST, "Missing courseId", false);
+        return sendResponse(res, StatusCode.BAD_REQUEST, Messages.COURSE.MISSING_ID, false);
       }
 
       const result = await this._adminCourseServices.editCourseService(courseId, data, thumbnailBuffer);
-      sendResponse(res, StatusCode.OK, "Course edited successfully", true, result);
+      sendResponse(res, StatusCode.OK, Messages.COURSE.UPDATED, true, result);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -67,7 +68,7 @@ class AdminCourseController implements IAdminCourseController {
       }
 
       const courses = await this._adminCourseServices.getClass(page, limit, search, sendFilter, sort);
-      sendResponse(res, StatusCode.OK, "Courses retrieved successfully", true, courses);
+      sendResponse(res, StatusCode.OK, Messages.COURSE.FETCHED, true, courses);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -75,10 +76,10 @@ class AdminCourseController implements IAdminCourseController {
 
   async blockCourses(req: Request, res: Response): Promise<void> {
     try {
-      const courseId=req.params.id
-      const {status } = req.body;
+      const courseId = req.params.id;
+      const { status } = req.body;
       await this._adminCourseServices.blockCourse(courseId, status);
-      sendResponse(res, StatusCode.OK, `Course status updated to ${status}`, true);
+      sendResponse(res, StatusCode.OK, Messages.COURSE.STATUS_UPDATED, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -88,9 +89,9 @@ class AdminCourseController implements IAdminCourseController {
     try {
       const courseId = req.params.courseId;
       const result = await this._adminCourseServices.getLessons(courseId as string);
-      sendResponse(res,StatusCode.OK,"Lessons Fetched succesfully",true,result)
+      sendResponse(res, StatusCode.OK, Messages.COURSE.LESSONS_FETCHED, true, result);
     } catch (error) {
-      handleControllerError(res,error)
+      handleControllerError(res, error);
     }
   }
 }

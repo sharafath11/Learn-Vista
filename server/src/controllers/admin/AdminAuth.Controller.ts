@@ -6,11 +6,13 @@ import { IAdminAuthService } from "../../core/interfaces/services/admin/IAdminAu
 import { clearTokens, setTokensInCookies } from "../../utils/JWTtoken";
 import { sendResponse, handleControllerError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 class AdminAuthController implements IAdminAuthController {
   constructor(
-    @inject(TYPES.AdminAuthService) private adminAuthServices: IAdminAuthService
+    @inject(TYPES.AdminAuthService)
+    private adminAuthServices: IAdminAuthService
   ) {}
 
   async login(req: Request, res: Response): Promise<void> {
@@ -21,16 +23,17 @@ class AdminAuthController implements IAdminAuthController {
         return sendResponse(
           res,
           StatusCode.BAD_REQUEST,
-          "Email and password are required",
+          Messages.AUTH.MISSING_CREDENTIALS,
           false
         );
       }
+
       const { accessToken, refreshToken } = await this.adminAuthServices.login(
         email,
         password
       );
       setTokensInCookies(res, accessToken, refreshToken);
-      return sendResponse(res, StatusCode.OK, "Login successful", true);
+      return sendResponse(res, StatusCode.OK, Messages.AUTH.LOGIN_SUCCESS, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -39,6 +42,7 @@ class AdminAuthController implements IAdminAuthController {
   logout(req: Request, res: Response): void {
     try {
       clearTokens(res);
+      sendResponse(res, StatusCode.OK, Messages.AUTH.LOGOUT_SUCCESS, true);
     } catch (error) {
       handleControllerError(res, error);
     }

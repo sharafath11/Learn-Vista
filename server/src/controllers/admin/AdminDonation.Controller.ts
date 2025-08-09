@@ -1,24 +1,28 @@
 import { Request, Response } from "express";
-import { IAdminDonationController } from "../../core/interfaces/controllers/admin/IAdminDonation.Controller";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../../core/types";
+import { IAdminDonationController } from "../../core/interfaces/controllers/admin/IAdminDonation.Controller";
 import { IAdminDonationServices } from "../../core/interfaces/services/admin/IAdminDonationService";
-import { handleControllerError, sendResponse } from "../../utils/ResANDError";
+import { TYPES } from "../../core/types";
+import { sendResponse, handleControllerError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { Messages } from "../../constants/messages";
+
 @injectable()
 export class AdminDonationController implements IAdminDonationController {
   constructor(
     @inject(TYPES.AdminDonationService)
     private _adminDonationService: IAdminDonationServices
   ) {}
+
   async getDonations(req: Request, res: Response): Promise<void> {
     try {
-      const donations = await this._adminDonationService.getConcerns();
-      sendResponse(res, StatusCode.OK, "donations fetched", true, donations);
+      const donations = await this._adminDonationService.getDonation(); 
+      sendResponse(res, StatusCode.OK, Messages.DONATION.FETCHED, true, donations);
     } catch (error) {
       handleControllerError(res, error);
     }
   }
+
   async getFilteredDonations(req: Request, res: Response): Promise<void> {
     try {
       const {
@@ -58,7 +62,7 @@ export class AdminDonationController implements IAdminDonationController {
         this._adminDonationService.countFilteredDonations(filters),
       ]);
 
-      sendResponse(res, StatusCode.OK, "Filtered donations fetched", true, {
+      sendResponse(res, StatusCode.OK, Messages.DONATION.FILTERED_FETCHED, true, {
         transactions: donations,
         totalCount,
       });

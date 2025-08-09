@@ -9,6 +9,7 @@ import { INotificationService } from "../../core/interfaces/services/notificatio
 import { Server } from "socket.io";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import dotenv from "dotenv"
+import { Messages } from "../../constants/messages";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-05-28.basil",
 });
@@ -35,7 +36,8 @@ export class UserDonationServices implements IUserDonationServices {
       ? latestChargeRaw
       : (latestChargeRaw as Stripe.Charge)?.id;
 
-  if (!chargeId) throwError("Could not determine charge ID");
+  if (!chargeId) throwError(Messages.DONATION.MISSING_CHARGE_ID);
+
 
   const charge = await stripe.charges.retrieve(chargeId);
   const receiptUrl = charge.receipt_url || "";
@@ -60,17 +62,18 @@ export class UserDonationServices implements IUserDonationServices {
   };
 
   const ADMIN_ID = process.env.ADMIN_ID;
-  if (!ADMIN_ID) throwError("ADMIN_ID not configured");
+  if (!ADMIN_ID) throwError(Messages.CONFIG.ADMIN_ID_MISSING);
 
   if (userId) {
-    await notifyWithSocket({
-      notificationService: this._notificationService,
-      userIds: [userId, ADMIN_ID],
-      roles: ["admin"],
-      title: "Donation Successful",
-      message: `User donated ₹${donation.amount}. Thank you!`,
-      type: "success",
-    });
+await notifyWithSocket({
+  notificationService: this._notificationService,
+  userIds: [userId, ADMIN_ID],
+  roles: ["admin"],
+  title: Messages.DONATION.SUCCESS_TITLE,
+  message: Messages.DONATION.SUCCESS_MESSAGE(donation.amount),
+  type: "success",
+});
+
   }
   const savedDonation = await this._donationRepo.create(donation);
   return savedDonation;

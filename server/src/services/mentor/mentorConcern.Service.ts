@@ -9,6 +9,8 @@ import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { getSignedS3Url, signConcernAttachmentUrls, uploadConcernAttachment } from "../../utils/s3Utilits";
+import { Messages } from "../../constants/messages";
+import { StatusCode } from "../../enums/statusCode.enum";
 
 @injectable()
 export class MentorConcernService implements IMentorConcernService {
@@ -27,7 +29,7 @@ export class MentorConcernService implements IMentorConcernService {
   });
 
   const hasUnresolved = existingConcern.some((c) => c.status !== "resolved");
-  if (hasUnresolved) throwError("After completing the first concern, you can raise another one.");
+ if (hasUnresolved) throwError(Messages.CONCERN.UNRESOLVED_EXISTS, StatusCode.BAD_REQUEST);
 
   const attachments: IAttachment[] = [];
 
@@ -42,7 +44,7 @@ export class MentorConcernService implements IMentorConcernService {
           type: file.mimetype.startsWith("image") ? "image" : "audio",
         });
       } catch (uploadError: any) {
-        throwError(`Failed to upload attachment ${file.originalname}: ${uploadError.message || "Unknown error"}`);
+        throwError(Messages.CONCERN.ATTACHMENT_UPLOAD_FAILED(file.originalname));
       }
     }
   }
@@ -64,15 +66,15 @@ export class MentorConcernService implements IMentorConcernService {
 
   const course = await this._courseRepo.findById(concern.courseId as string);
   const ADMIN_ID = process.env.ADMIN_ID;
-  if (!ADMIN_ID) throwError("Something went wrong");
+   if (!ADMIN_ID) throwError(Messages.COMMON.INTERNAL_ERROR, StatusCode.INTERNAL_SERVER_ERROR);
+     await notifyWithSocket({
+  notificationService: this._notificationService,
+  userIds: [data.mentorId.toString(), ADMIN_ID],
+  title: Messages.CONCERN.NOTIFICATION.TITLE,
+  message: Messages.CONCERN.NOTIFICATION.MESSAGE(course?.title || ""),
+  type: "warning",
+});
 
-  await notifyWithSocket({
-    notificationService: this._notificationService,
-    userIds: [data.mentorId.toString(), ADMIN_ID],
-    title: "New Concern Raised",
-    message: `A new concern has been raised for course ${course?.title}.`,
-    type: "warning",
-  });
 
   return concern;
 }

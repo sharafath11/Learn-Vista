@@ -19,6 +19,7 @@ import { buildMcqOptionsPrompt } from "../../utils/Rportprompt";
 import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
 import { logger } from "../../utils/logger";
 import { convertSignedUrlInArray, uploadThumbnail, deleteFromS3, convertSignedUrlInObject } from "../../utils/s3Utilits";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class MentorLessonService implements IMentorLessonService {
@@ -35,14 +36,14 @@ export class MentorLessonService implements IMentorLessonService {
 
   async getLessons(courseId: string | ObjectId): Promise<ILesson[]> {
     const result = await this._lessonRepo.findAll({ courseId });
-    if (!result) throwError("Invalid request", StatusCode.BAD_REQUEST);
+    if (!result) throwError(Messages.COMMON.INTERNAL_ERROR, StatusCode.BAD_REQUEST);
     const updatedResult = await convertSignedUrlInArray(result, ["thumbnail"]);
     return updatedResult;
   }
 
   async addLesson(data: ILesson): Promise<ILesson> {
     if (!data.title || !data.videoUrl || !data.courseId || !data.thumbnail) {
-      throwError("All filed are required", StatusCode.BAD_REQUEST);
+      throwError(Messages.COMMON.MISSING_FIELDS, StatusCode.BAD_REQUEST);
     }
     const existingOrder = await this._lessonRepo.findOne({
       order: data.order,
@@ -50,7 +51,7 @@ export class MentorLessonService implements IMentorLessonService {
     });
     if (existingOrder) {
       throwError(
-        "Lesson order must be unique within the course",
+        Messages.LESSONS.ORDER_NOT_UNIQUE,
         StatusCode.CONFLICT
       );
     }
@@ -61,7 +62,7 @@ export class MentorLessonService implements IMentorLessonService {
       } catch (error) {
         logger.error("S3 upload failed:", error);
         throwError(
-          "Failed to upload thumbnail to S3",
+          Messages.LESSONS.UPLOAD_FAILED,
           StatusCode.INTERNAL_SERVER_ERROR
         );
       }
@@ -82,7 +83,7 @@ export class MentorLessonService implements IMentorLessonService {
 
     const createdLesson = await this._lessonRepo.create(lessonData);
     if (!createdLesson) {
-      throwError("Failed to create lesson", StatusCode.INTERNAL_SERVER_ERROR);
+      throwError(Messages.LESSONS.CREATE_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
     }
     await this._courseRepo.update(data.courseId as string, {
       $addToSet: { sessions: createdLesson.id },
@@ -101,7 +102,7 @@ export class MentorLessonService implements IMentorLessonService {
   ): Promise<ILesson> {
     const existingLesson = await this._lessonRepo.findById(lessonId.toString());
     if (!existingLesson) {
-      throwError("Lesson not found", StatusCode.NOT_FOUND);
+      throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
     }
     let newThumbnailUrlForDb: string | undefined;
     if (typeof existingLesson.thumbnail === "string") {
@@ -122,7 +123,7 @@ export class MentorLessonService implements IMentorLessonService {
         );
       } catch (error) {
         logger.error("Error during thumbnail upload or deletion in editLesson:", error);
-        throwError("Something went wrong during thumbnail update.", StatusCode.INTERNAL_SERVER_ERROR);
+        throwError(Messages.LESSONS.THUMBNAIL_UPDATE_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
       }
     }
 
@@ -155,7 +156,7 @@ export class MentorLessonService implements IMentorLessonService {
     );
 
     if (!updated) {
-      throwError("Lesson not found or update failed", StatusCode.NOT_FOUND);
+      throwError(Messages.LESSONS.UPDATE_FAILED, StatusCode.NOT_FOUND);
     }
     const sendData=await convertSignedUrlInObject(updated,["thumbnail"])
     return sendData;
@@ -170,12 +171,12 @@ export class MentorLessonService implements IMentorLessonService {
   ): Promise<void> {
     if (!data.question || !data.type || !data.lessonId) {
       throwError(
-        "Missing required fields for validation.",
+        Messages.COMMON.MISSING_FIELDS,
         StatusCode.BAD_REQUEST
       );
     }
     if (data.question.trim().length < 10)
-      throwError("Make qustion at least 10 charcter");
+      throwError(Messages.QUESTIONS.INVALID_QUESTION);
     await this._questionRepository.update(data.id, data);
     return;
   }
@@ -185,23 +186,23 @@ export class MentorLessonService implements IMentorLessonService {
   ): Promise<IQuestions> {
     if (!data.question || !data.type || !data.lessonId) {
       throwError(
-        "Missing required fields for validation.",
+        Messages.COMMON.MISSING_FIELDS,
         StatusCode.BAD_REQUEST
       );
     }
     if (data.question.trim().length < 10)
-      throwError("Make qustion at least 10 charcter");
+      throwError(Messages.QUESTIONS.INVALID_QUESTION);
     await this._questionRepository.create(data);
     return data;
   }
   async getComments(lessonId: string | ObjectId): Promise<IComment[]> {
     const result = await this._commentRepo.findAll({ lessonId: lessonId });
-    if (!result) throwError("comments denot found ");
+    if (!result) throwError(Messages.COMMENT.NO_COMMENTS_FOUND);
     return result;
   }
   async genrateOptions(question: string): Promise<string[]> {
     if (!question.trim()) {
-      throwError("Question is required to generate options.");
+      throwError(Messages.QUESTIONS.INVALID_GENERATION_INPUT);
     }
     const prompt = buildMcqOptionsPrompt(question);
     const resultRaw = await getGemaniResponse(prompt);
@@ -220,20 +221,16 @@ try {
   }
 } catch (err) {
   console.error("Parsing error:", err, resultRaw);
-  throwError("Invalid format received. Please enter options manually.");
+  throwError(Messages.GENAI.GENERATE_OPTIONS_FAILED);
 }
     const cleaned = parsed
       .map((opt) => opt.trim())
       .filter((opt) => opt.length > 0);
     if (cleaned.length < 2) {
       throwError(
-        "Insufficient options generated. Try a more descriptive question."
+        Messages.QUESTIONS.INSUFFICIENT_OPTIONS
       );
     }
     return cleaned;
   }
 }
-
-
-
-

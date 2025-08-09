@@ -12,6 +12,7 @@ import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { ICertificateRepository } from "../../core/interfaces/repositories/course/ICertificateRepository";
 import { ICertificate } from "../../types/certificateTypes";
 import { convertSignedUrlInArray, convertSignedUrlInObject, getSignedS3Url } from "../../utils/s3Utilits";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class AdminUsersServices implements IAdminUserServices {
@@ -37,9 +38,8 @@ export class AdminUsersServices implements IAdminUserServices {
         search,
         sort
       );
-      
       if (!data) {
-        throwError("Error fetching users", StatusCode.INTERNAL_SERVER_ERROR);
+        throwError(Messages.USERS.FETCH_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
       }
       const userData=await convertSignedUrlInArray(data,["profilePicture"])
       return { 
@@ -53,20 +53,20 @@ export class AdminUsersServices implements IAdminUserServices {
   async blockUserServices(id: ObjectId, status: boolean): Promise<{ ok: boolean; msg: string; data?: IUser }> {
     const updatedUser = await this._userRepo.update(id.toString(), { isBlocked: status });
     if (!updatedUser) {
-      throwError("User not found", StatusCode.NOT_FOUND); 
+      throwError(Messages.USERS.USER_NOT_FOUND, StatusCode.NOT_FOUND); 
     }
-    await notifyWithSocket({
+ await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [id.toString()],
-    title: status ? " Account Blocked" : "Account Unblocked",
-    message: `Your account has been ${status ? "blocked" : "unblocked"} by the admin.`,
+    title: Messages.USERS.BLOCK_TITLE(status),
+    message: Messages.USERS.BLOCK_MESSAGE(status),
     type: status ? "error" : "success",
     });
     const sendData = await convertSignedUrlInObject(updatedUser,["profilePicture"])
     return {
       ok: true,
       data: sendData,
-      msg: `User ${status ? "Blocked" : "Unblocked"} successfully`
+      msg: Messages.USERS.BLOCK_STATUS_UPDATED_NOT(status)
     };
 
   }

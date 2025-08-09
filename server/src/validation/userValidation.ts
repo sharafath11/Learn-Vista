@@ -1,4 +1,7 @@
+import { VALIDATION_MESSAGES } from "../constants/validationMessages";
 import { logger } from "../utils/logger";
+import { throwError } from "../utils/ResANDError";
+
 
 export const validateUserSignupInput = (
   username: string,
@@ -7,26 +10,25 @@ export const validateUserSignupInput = (
   role: string
 ): void => {
   if (!username || username.trim().length === 0) {
-    throw new Error("Name is required");
+    throwError(VALIDATION_MESSAGES.USER.NAME_REQUIRED);
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email || !emailRegex.test(email)) {
-    throw new Error("Please enter a valid email address");
+    throwError(VALIDATION_MESSAGES.USER.EMAIL_INVALID);
   }
 
   const strongPasswordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
   if (!password || !strongPasswordRegex.test(password)) {
-    throw new Error(
-      "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character"
-    );
+    throwError(VALIDATION_MESSAGES.USER.PASSWORD_WEAK);
   }
 
   if (role !== "user") {
-    throw new Error("Invalid role");
+    throwError(VALIDATION_MESSAGES.USER.ROLE_INVALID);
   }
 };
+
 export const validateMentorApplyInput = (
   email: string,
   username: string,
@@ -34,12 +36,17 @@ export const validateMentorApplyInput = (
   file: Express.Multer.File | null,
   expertise: string
 ): { isValid: boolean; errorMessage?: string } => {
-  if (!file) return { isValid: false, errorMessage: "No file uploaded" };
+  if (!file) {
+    return {
+      isValid: false,
+      errorMessage: VALIDATION_MESSAGES.MENTOR.FILE_REQUIRED,
+    };
+  }
 
   if (!email?.trim() || !username?.trim() || !phoneNumber?.trim()) {
     return {
       isValid: false,
-      errorMessage: "Email, username, and phone number are required",
+      errorMessage: VALIDATION_MESSAGES.MENTOR.REQUIRED_FIELDS,
     };
   }
 
@@ -47,43 +54,58 @@ export const validateMentorApplyInput = (
   try {
     parsedExpertise = JSON.parse(expertise);
   } catch (error) {
-    logger.warn(error)
-    return { isValid: false, errorMessage: "Invalid expertise format" };
+    logger.warn(error);
+    return {
+      isValid: false,
+      errorMessage: VALIDATION_MESSAGES.MENTOR.EXPERTISE_INVALID_FORMAT,
+    };
   }
+
   if (!Array.isArray(parsedExpertise) || parsedExpertise.length === 0) {
     return {
       isValid: false,
-      errorMessage: "At least one area of expertise is required",
+      errorMessage: VALIDATION_MESSAGES.MENTOR.EXPERTISE_REQUIRED,
     };
   }
+
   for (const expert of parsedExpertise) {
     if (typeof expert !== "string" || expert.trim().length === 0) {
       return {
         isValid: false,
-        errorMessage: "Each area of expertise must be a non-empty string",
+        errorMessage: VALIDATION_MESSAGES.MENTOR.EXPERTISE_INVALID_ITEM,
       };
     }
   }
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return { isValid: false, errorMessage: "Please enter a valid email" };
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return {
+      isValid: false,
+      errorMessage: VALIDATION_MESSAGES.MENTOR.EMAIL_INVALID,
+    };
   }
 
-  if (!/^[\d\s+()-]{10,15}$/.test(phoneNumber)) {
-  return {
-    isValid: false,
-    errorMessage: "Please enter a valid phone number",
-  };
-}
-
+  const phoneRegex = /^[\d\s+()-]{10,15}$/;
+  if (!phoneRegex.test(phoneNumber)) {
+    return {
+      isValid: false,
+      errorMessage: VALIDATION_MESSAGES.MENTOR.PHONE_INVALID,
+    };
+  }
 
   if (file.mimetype !== "application/pdf") {
-    return { isValid: false, errorMessage: "Only PDF files are accepted" };
+    return {
+      isValid: false,
+      errorMessage: VALIDATION_MESSAGES.MENTOR.FILE_TYPE_INVALID,
+    };
   }
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024;
   if (file.size > MAX_FILE_SIZE) {
-    return { isValid: false, errorMessage: "File must be smaller than 5MB" };
+    return {
+      isValid: false,
+      errorMessage: VALIDATION_MESSAGES.MENTOR.FILE_TOO_LARGE,
+    };
   }
 
   return { isValid: true };

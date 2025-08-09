@@ -6,6 +6,7 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import { TYPES } from "../../core/types";
 import { FilterQuery } from "mongoose";
 import { IAdminCategoryService } from "../../core/interfaces/services/admin/IAdminCategoryService";
+import { Messages } from "../../constants/messages";
 @injectable()
 export class AdminCategoryService implements IAdminCategoryService {
   constructor(
@@ -18,7 +19,7 @@ export class AdminCategoryService implements IAdminCategoryService {
     });
 
     if (existCategory) {
-      throwError("This category already exists", StatusCode.BAD_REQUEST);
+      throwError(Messages.CATEGORY.ALREADY_EXISTS, StatusCode.BAD_REQUEST);
     }
 
     return await this.categoryRepo.create({ title, description });
@@ -36,17 +37,18 @@ export class AdminCategoryService implements IAdminCategoryService {
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: ICategory[]; total: number; totalPages?: number }> {
     const result = await this.categoryRepo.findPaginated(filters, page, limit, search, sort);
-    if (!result.data) throwError("Failed to fetch categories", StatusCode.INTERNAL_SERVER_ERROR);
+    if (!result.data) throwError(Messages.CATEGORY.FAILED_TO_FETCH, StatusCode.INTERNAL_SERVER_ERROR);;
     return result;
   }
 
   async editCategory(categoryId: string, title: string, description: string): Promise<ICategory> {
     if (!categoryId || !title.trim() || !description.trim()) {
-      throwError("Invalid input parameters", StatusCode.BAD_REQUEST);
+      throwError(Messages.CATEGORY.INVALID_INPUT, StatusCode.BAD_REQUEST);
     }
 
     const existingCategory = await this.categoryRepo.findById(categoryId);
-    if (!existingCategory) throwError("Category not found", StatusCode.NOT_FOUND);
+    if (!existingCategory) throwError(Messages.CATEGORY.NOT_FOUND, StatusCode.NOT_FOUND);
+
 
     const updated = await this.categoryRepo.update(categoryId, {
       title,
@@ -54,12 +56,12 @@ export class AdminCategoryService implements IAdminCategoryService {
       updatedAt: new Date()
     });
 
-    if (!updated) throwError("Failed to update category", StatusCode.INTERNAL_SERVER_ERROR);
+    if (!updated) throwError(Messages.CATEGORY.FAILED_TO_UPDATE, StatusCode.INTERNAL_SERVER_ERROR);
     return updated;
   }
 
   async blockCategory(id: string, isBlock: boolean): Promise<void> {
     const updated = await this.categoryRepo.update(id, { isBlock });
-    if (!updated) throwError("Failed to update category status", StatusCode.INTERNAL_SERVER_ERROR);
+    if (!updated) throwError(Messages.CATEGORY.FAILED_TO_UPDATE_STATUS, StatusCode.INTERNAL_SERVER_ERROR);
   }
 }

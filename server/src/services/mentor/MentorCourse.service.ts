@@ -11,6 +11,7 @@ import { convertSignedUrlInArray } from "../../utils/s3Utilits";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class MentorCourseService implements IMentorCourseService {
@@ -24,7 +25,7 @@ export class MentorCourseService implements IMentorCourseService {
 
   async getCourses(mentorId: string): Promise<IPopulatedCourse[]> {
     const courses = await this._courseRepo.findWithMenorIdgetAllWithPopulatedFields(mentorId);
-    if (!courses) throwError("You don't have any courses", StatusCode.NOT_FOUND);
+    if (!courses) throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
     return convertSignedUrlInArray(courses, ["thumbnail"]);
   }
 
@@ -35,7 +36,7 @@ export class MentorCourseService implements IMentorCourseService {
     courseRejectReason?: string
   ): Promise<void> {
     if (!["approved", "rejected"].includes(status)) {
-      throwError("Invalid status", StatusCode.BAD_REQUEST);
+        throwError(Messages.COURSE.INVALID_ID, StatusCode.BAD_REQUEST);
     }
 
     if (status === "approved") {
@@ -47,7 +48,7 @@ export class MentorCourseService implements IMentorCourseService {
     }
 
     if (!courseRejectReason) {
-      throwError("Rejection reason required", StatusCode.BAD_REQUEST);
+       throwError(Messages.COURSE.FAILED_TO_UPDATE_STATUS, StatusCode.BAD_REQUEST);
     }
 
     await this._mentorRepo.update(mentorId, {
@@ -96,18 +97,17 @@ export class MentorCourseService implements IMentorCourseService {
      const users = await this._userRepo.findAll();
    const userIds: string[] = users.map((i) => i.id);
    const ADMIN_ID = process.env.ADMIN_ID;
-  if (!ADMIN_ID) throwError("Something went wrong");
+  if (!ADMIN_ID) throwError(Messages.COURSE.FAILED_TO_UPDATE_STATUS);
  userIds.push( ADMIN_ID)
      if (status) {
     await notifyWithSocket({
-      notificationService: this._notificationService,
-     
-      userIds,
-      roles:["user","admin"],
-      title: "New Course Published!",
-      message: `The course "${coures?.title}"  is now available. Start learning today!`,
-      type: "info",
-    });
+        notificationService: this._notificationService,
+        userIds,
+        roles: ["user", "admin"],
+        title: Messages.COURSE.PUBLISHED,
+        message: Messages.COURSE.PUBLISHED_NOTIFICATION(coures?.title || "Untitled Course"),
+        type: "info"
+      });
   }
  }
 }

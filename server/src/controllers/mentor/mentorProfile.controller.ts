@@ -7,6 +7,7 @@ import { TYPES } from "../../core/types";
 import { IMentorProfileService } from "../../core/interfaces/services/mentor/IMentorProfile.Service";
 import { validateMentorProfile } from "../../validation/mentorValidation";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 export class MentorProfileController implements IMentorProfileController {
@@ -14,43 +15,68 @@ export class MentorProfileController implements IMentorProfileController {
     @inject(TYPES.MentorProfileService) private mentorProfileService: IMentorProfileService
   ) {}
 
-  async editProfile(req: Request, res: Response): Promise<void> {
-    try {
-      const { username, bio,expertise } = req.body;
-      const decoded = decodeToken(req.cookies.token);
+ async editProfile(req: Request, res: Response): Promise<void> {
+  try {
+    const { username, bio, expertise } = req.body;
+    const decoded = decodeToken(req.cookies.token);
 
-      if (!decoded || decoded.role !== "mentor") {
-        return sendResponse(res, StatusCode.UNAUTHORIZED, "Unauthorized", false);
-      }
-
-      validateMentorProfile({
-        username,
-        bio,
-        image: req.file || undefined
-      });
-
-      const updatedData = await this.mentorProfileService.editProfile(
-        username,
-        bio,
-        req.file?.buffer,
-        expertise,
-        decoded.id as string
-      );
-
-      return sendResponse(res, StatusCode.OK, "Profile updated successfully", true, updatedData);
-    } catch (error) {
-      handleControllerError(res, error);
+    if (!decoded || decoded.role !== "mentor") {
+      return sendResponse(res, StatusCode.UNAUTHORIZED, Messages.COMMON.UNAUTHORIZED, false);
     }
+
+    validateMentorProfile({
+      username,
+      bio,
+      image: req.file || undefined,
+    });
+
+    const updatedData = await this.mentorProfileService.editProfile(
+      username,
+      bio,
+      req.file?.buffer,
+      expertise,
+      decoded.id as string
+    );
+
+    return sendResponse(res, StatusCode.OK, Messages.PROFILE.PROFILE_UPDATED, true, updatedData);
+  } catch (error) {
+    handleControllerError(res, error);
   }
+}
+
   async changePassword(req: Request, res: Response): Promise<void> {
-    try {
-     const { password, newPassword } = req.body;
-      const decoded = decodeToken(req.cookies.token);
-      if (!decodeToken) throwError("User not found", StatusCode.BAD_REQUEST);
-      await this.mentorProfileService.changePassword(decoded?.id as string, password, newPassword);
-      sendResponse(res,StatusCode.OK,"Succesfully change Password ",true)
-    } catch (error) {
-     handleControllerError(res,error)
+  try {
+    const { password, newPassword } = req.body;
+
+    if (!password || !newPassword) {
+      return sendResponse(
+        res,
+        StatusCode.BAD_REQUEST,
+        Messages.COMMON.MISSING_FIELDS,
+        false
+      );
     }
-   }
+
+    const decoded = decodeToken(req.cookies.token);
+    if (!decoded) {
+      throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.UNAUTHORIZED);
+    }
+
+    await this.mentorProfileService.changePassword(
+      decoded.id,
+      password,
+      newPassword
+    );
+
+    sendResponse(
+      res,
+      StatusCode.OK,
+      Messages.AUTH.CHANGE_PASSWORD,
+      true
+    );
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+}
+
 }

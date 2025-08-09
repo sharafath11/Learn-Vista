@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
-import { IAdminCourseServices } from "../../core/interfaces/services/admin/IAdminCourseService";
 import { IAdminConcernController } from "../../core/interfaces/controllers/admin/IAdminConcern.Controller";
 import { handleControllerError, sendResponse } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { IAdminConcernService } from "../../core/interfaces/services/admin/IAdminConcernService";
+import { Messages } from "../../constants/messages";
 
 @injectable()
 class AdminConcernController implements IAdminConcernController {
@@ -16,7 +16,7 @@ class AdminConcernController implements IAdminConcernController {
   async getConcernController(req: Request, res: Response): Promise<void> {
     try {
       const concerns = await this._adminCourseServices.getConcern();
-      sendResponse(res, StatusCode.OK, "Concerns fetched successfully", true, concerns);
+      sendResponse(res, StatusCode.OK, Messages.CONCERN.FETCHED, true, concerns);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -28,15 +28,15 @@ class AdminConcernController implements IAdminConcernController {
       const { status, resolution } = req.body;
 
       if (!["resolved", "in-progress"].includes(status)) {
-        return sendResponse(res, StatusCode.BAD_REQUEST, "Invalid status", false);
+        return sendResponse(res, StatusCode.BAD_REQUEST, Messages.CONCERN.INVALID_STATUS, false);
       }
 
       if (!resolution || resolution.trim().length < 10) {
-        return sendResponse(res, StatusCode.BAD_REQUEST, "Resolution must be at least 10 characters", false);
+        return sendResponse(res, StatusCode.BAD_REQUEST, Messages.CONCERN.INVALID_RESOLUTION, false);
       }
 
       await this._adminCourseServices.updateConcernStatus(concernId, status, resolution);
-      sendResponse(res, StatusCode.OK, "Concern status updated", true);
+      sendResponse(res, StatusCode.OK, Messages.CONCERN.STATUS_UPDATED, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -83,7 +83,7 @@ class AdminConcernController implements IAdminConcernController {
 
       const totalPages = Math.ceil(total / limit);
 
-      sendResponse(res, StatusCode.OK, "Concerns fetched successfully", true, {
+      sendResponse(res, StatusCode.OK, Messages.CONCERN.FETCHED, true, {
         data,
         total,
         totalPages,
