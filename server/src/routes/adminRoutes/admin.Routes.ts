@@ -10,6 +10,9 @@ import { uploadImage } from "../../middlewares/upload";
 import { IAdminDonationController } from "../../core/interfaces/controllers/admin/IAdminDonation.Controller";
 import { IAdminConcernController } from "../../core/interfaces/controllers/admin/IAdminConcern.Controller";
 import { IAdminCategoryController } from "../../core/interfaces/controllers/admin/IAdminCategory.Controller";
+import { CreateCategoryDto } from "../../shared/dtos/categories/category.dto";
+import { validateDto } from "../../middlewares/validateDto";
+import { AdminLoginDto } from "../../shared/dtos/auth/login.dto";
 const route = express.Router();
 
 const adminMentorController = container.get<IAdminMentorController>(TYPES.AdminMentorController);
@@ -19,7 +22,7 @@ const adminCourseController = container.get<IAdminCourseController>(TYPES.AdminC
 const adminDonationController = container.get<IAdminDonationController>(TYPES.AdminDonationCOntroller)
 const adminConcernController = container.get<IAdminConcernController>(TYPES.AdminConcernController)
 const adminCategoryController=container.get<IAdminCategoryController>(TYPES.AdminCategoryController)
-route.post("/login", adminAuthController.login.bind(adminAuthController));
+route.post("/login",validateDto(AdminLoginDto), adminAuthController.login.bind(adminAuthController));
 route.post("/logout", verifyAdmin, adminAuthController.logout.bind(adminAuthController));
 route.get("/users", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));
 route.patch("/users/block", verifyAdmin, adminUsersController.userBlock.bind(adminUsersController));
@@ -32,7 +35,7 @@ route.patch("/courses/:courseId",verifyAdmin, uploadImage.single('thumbnail'),ad
 route.post("/courses", verifyAdmin, uploadImage.single('thumbnail'), adminCourseController.createClass.bind(adminCourseController));
 route.get("/courses",verifyAdmin, adminCourseController.getCourse.bind(adminCourseController));
 route.patch("/courses/:id/block",verifyAdmin,adminCourseController.blockCourses.bind(adminCourseController))
-route.post("/categories", verifyAdmin, adminCategoryController.addCategory.bind(adminCategoryController));
+route.post("/categories", verifyAdmin, validateDto(CreateCategoryDto), adminCategoryController.addCategory.bind(adminCategoryController));
 route.get("/categories", verifyAdmin, adminCategoryController.getAllCategories.bind(adminCategoryController));
 route.get("/all/category",verifyAdmin,adminCategoryController.getCategories.bind(adminCategoryController))
 route.patch("/categories/:id/block", verifyAdmin, adminCategoryController.blockCategory.bind(adminCategoryController));

@@ -57,6 +57,7 @@ export interface IPopulatedCourse
 }
 
 export interface ICategory extends Document {
+    _id: Types.ObjectId;
   title: string;
   description: string;
   isBlock: boolean;

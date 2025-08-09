@@ -19,21 +19,13 @@ class AdminAuthController implements IAdminAuthController {
     try {
       const { email, password } = req.body;
 
-      if (!email || !password) {
-        return sendResponse(
-          res,
-          StatusCode.BAD_REQUEST,
-          Messages.AUTH.MISSING_CREDENTIALS,
-          false
-        );
-      }
-
       const { accessToken, refreshToken } = await this.adminAuthServices.login(
         email,
         password
       );
+
       setTokensInCookies(res, accessToken, refreshToken);
-      return sendResponse(res, StatusCode.OK, Messages.AUTH.LOGIN_SUCCESS, true);
+      sendResponse(res, StatusCode.OK, Messages.AUTH.LOGIN_SUCCESS, true);
     } catch (error) {
       handleControllerError(res, error);
     }
@@ -42,7 +34,6 @@ class AdminAuthController implements IAdminAuthController {
   logout(req: Request, res: Response): void {
     try {
       clearTokens(res);
-      sendResponse(res, StatusCode.OK, Messages.AUTH.LOGOUT_SUCCESS, true);
     } catch (error) {
       handleControllerError(res, error);
     }

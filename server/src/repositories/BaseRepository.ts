@@ -1,7 +1,7 @@
 import { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
 import { IBaseRepository } from "../core/interfaces/repositories/IBaseRepository";
-import { toDTO } from "../utils/toDTO";
 import { Messages } from "../constants/messages";
+import { toDTO } from "../utils/toDTO";
 
 export abstract class BaseRepository<T extends Document, U>
   implements IBaseRepository<T, U>
@@ -38,7 +38,7 @@ export abstract class BaseRepository<T extends Document, U>
   async findAll(filter: FilterQuery<T> = {}): Promise<U[]> {
     try {
       const documents = await this.model.find(filter);
-      return documents.map((doc) => toDTO<U>(doc));
+      return documents.map(doc => toDTO<U>(doc));
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.FIND_ALL_ERROR);
     }
@@ -59,13 +59,12 @@ export abstract class BaseRepository<T extends Document, U>
   async findPaginated(
     filter: FilterQuery<T> = {},
     page: number = 1,
-    limit?: number,
+    limit: number = 2,
     search?: string,
     sort: Record<string, 1 | -1> = { createdAt: -1 }
   ): Promise<{ data: U[]; total: number; totalPages: number }> {
     try {
-      const finalLimit = 2;
-      const skip = (page - 1) * finalLimit;
+      const skip = (page - 1) * limit;
 
       if (search) {
         const searchRegex = new RegExp(search, "i");
@@ -78,14 +77,16 @@ export abstract class BaseRepository<T extends Document, U>
       }
 
       const [documents, total] = await Promise.all([
-        this.model.find(filter).sort(sort).skip(skip).limit(finalLimit),
+        this.model.find(filter).sort(sort).skip(skip).limit(limit),
         this.model.countDocuments(filter),
       ]);
 
-      const data = documents.map((doc) => toDTO<U>(doc));
-      const totalPages = Math.ceil(total / finalLimit);
-
-      return { data, total, totalPages };
+      const totalPages = Math.ceil(total / limit);
+      return {
+        data: documents.map(doc => toDTO<U>(doc)),
+        total,
+        totalPages,
+      };
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.FIND_PAGINATED_ERROR);
     }
@@ -96,9 +97,7 @@ export abstract class BaseRepository<T extends Document, U>
     update: UpdateQuery<T>
   ): Promise<U | null> {
     try {
-      const document = await this.model.findOneAndUpdate(filter, update, {
-        new: true,
-      });
+      const document = await this.model.findOneAndUpdate(filter, update, { new: true });
       return document ? toDTO<U>(document) : null;
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.UPDATE_ONE_ERROR);
@@ -147,9 +146,7 @@ export abstract class BaseRepository<T extends Document, U>
 
   async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
     try {
-      const document = await this.model.findByIdAndUpdate(id, data, {
-        new: true,
-      });
+      const document = await this.model.findByIdAndUpdate(id, data, { new: true });
       return document ? toDTO<U>(document) : null;
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.UPDATE_ERROR);

@@ -15,29 +15,16 @@ class AdminCategoryController implements IAdminCategoryController {
     private _adminCategoryService: IAdminCategoryService
   ) {}
 
-  async addCategory(req: Request, res: Response): Promise<void> {
-    try {
-      const { title, discription } = req.body;
-      const validationError = validateCategory(title, discription);
-
-      if (validationError || !title || !discription) {
-        return sendResponse(
-          res,
-          StatusCode.BAD_REQUEST,
-          validationError || Messages.CATEGORY.MISSING_FIELDS,
-          false
-        );
-      }
-
-      const data = await this._adminCategoryService.addCategory(
-        title,
-        discription
-      );
-      sendResponse(res, StatusCode.OK, Messages.CATEGORY.CREATED, true, data);
-    } catch (error) {
-      handleControllerError(res, error);
-    }
+async addCategory(req: Request, res: Response): Promise<void> {
+  try {
+    const { title, discription } = req.body;
+    const data = await this._adminCategoryService.addCategory(title, discription);
+    sendResponse(res, StatusCode.OK, Messages.CATEGORY.CREATED, true, data);
+  } catch (error) {
+    handleControllerError(res, error);
   }
+}
+
 
   async editCategory(req: Request, res: Response): Promise<void> {
     try {

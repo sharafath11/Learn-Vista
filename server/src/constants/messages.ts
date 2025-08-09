@@ -3,11 +3,11 @@ export const Messages = {
     LOGIN_SUCCESS: "Login successful.",
     LOGOUT_SUCCESS: "Logout successful.",
     MISSING_CREDENTIALS: "Email and password are required.",
-     EMAIL_REQUIRED: "Email is required.",
+    EMAIL_REQUIRED: "Email is required.",
     VERIFICATION_SUCCESS: "Verification successful.",
     OTP_SENT: "OTP sent successfully.",
     FORGOT_PASSWORD_SUCCESS: "Password reset email sent if account exists.",
-      AUTH_REQUIRED: "Authentication required.",
+    AUTH_REQUIRED: "Authentication required.",
 
     PASSWORD_RESET_SUCCESS: "Password reset successfully.",
     CHANGE_PASSWORD: "Password changed successfully.",
@@ -43,10 +43,11 @@ export const Messages = {
     INVALID_GOOGLE_PROFILE: "Invalid Google profile data.",
     PASSWORD_NOT_SET: "Password not set for this account.",
     USER_UPDATE_FAILED: "User creation/update failed.",
-        MUST_HAVE_UPPERCASE: "New password must contain at least one uppercase letter.",
+    MUST_HAVE_UPPERCASE:
+      "New password must contain at least one uppercase letter.",
     MUST_HAVE_NUMBER: "New password must contain at least one number.",
     INVALID_CURRENT: "Invalid current password.",
-      EMAIL_FAILED: "Failed to send reset email. Try again later.",
+    EMAIL_FAILED: "Failed to send reset email. Try again later.",
   },
   USERS: {
     FETCHED: "Users fetched successfully.",
@@ -69,9 +70,10 @@ export const Messages = {
       `Account ${status ? "Blocked" : "Unblocked"}`,
     BLOCK_MESSAGE: (status: boolean) =>
       `Your account has been ${status ? "blocked" : "unblocked"} by the admin.`,
-     NEW_MENTOR_APPLICATION: {
+    NEW_MENTOR_APPLICATION: {
       TITLE: "New Mentor Application",
-      getMessage: (username: string) => `${username} has applied to become a mentor.`,
+      getMessage: (username: string) =>
+        `${username} has applied to become a mentor.`,
     },
   },
   CERTIFICATES: {
@@ -112,8 +114,6 @@ export const Messages = {
     UPDATE_FAILED: "Failed to update concern.",
     RAISED: "Concern raised successfully.",
     INVALID_PAYLOAD: "Invalid concern payload.",
-
-    // Dynamic messages (functions)
     STATUS_UPDATEDWITHNOT: (status: string) =>
       `Concern status changed to ${status}.`,
     RESOLVED_NOTIFICATION: (title: string) =>
@@ -122,8 +122,6 @@ export const Messages = {
       `Your concern "${title}" has been marked as in-progress by the admin.`,
     ATTACHMENT_UPLOAD_FAILED: (filename: string) =>
       `Failed to upload attachment ${filename}.`,
-
-    // Notification title & body (used with notifyWithSocket)
     NOTIFICATION: {
       TITLE: "New Concern Raised",
       MESSAGE: (courseTitle: string) =>
@@ -146,7 +144,7 @@ export const Messages = {
     NOT_FOUND: "Course not found.",
     FAILED_TO_UPDATE: "Failed to update course.",
     FAILED_TO_UPDATE_STATUS: "Failed to update course status.",
-     NOT_IN_ENROLLMENT_LIST: "User not listed in course enrollment",
+    NOT_IN_ENROLLMENT_LIST: "User not listed in course enrollment",
     INVALID_ID: "Invalid course ID.",
     NO_MENTOR: "No mentor associated with this course.",
     MENTOR_ID_REQUIRED: "Mentor ID is required.",
@@ -168,16 +166,14 @@ export const Messages = {
       `Your ${title} course has been unblocked by the admin.`,
     STATUS_TEXT: (isBlock: boolean) => (isBlock ? "blocked" : "unblocked"),
     COMPLETED: {
-        TITLE: "Course Completed!",
-        MESSAGE: (username: string, courseTitle: string) =>
-          `User ${username} has completed the course "${courseTitle}" and received a certificate.`,
-      },
-    // Publish notification
+      TITLE: "Course Completed!",
+      MESSAGE: (username: string, courseTitle: string) =>
+        `User ${username} has completed the course "${courseTitle}" and received a certificate.`,
+    },
     PUBLISHED_NOTIFICATION: (title: string) =>
       `The course "${title}" is now available. Start learning today!`,
-     NOT_ENROLLED: "User is not enrolled in this course",
+    NOT_ENROLLED: "User is not enrolled in this course",
   },
-
   COMMON: {
     INTERNAL_ERROR: "Something went wrong. Please try again later.",
     MISSING_FIELDS: "Required fields are missing.",
@@ -213,47 +209,46 @@ export const Messages = {
     BLOCK_TITLE: (statusText: string) => `Your account was ${statusText}.`,
     BLOCK_MESSAGE: (statusText: string) =>
       `Your mentor account has been ${statusText} by the admin.`,
-      APPLICATION_ALREADY_EXISTS: "A mentor application has already been submitted for this email.",
-  USER_ALREADY_APPLIED: "You have already submitted a mentor application.",
-  APPLICATION_SUBMITTED: "Mentor application submitted successfully.",
-  APPROVAL_SUCCESS: "Mentor approved successfully.",
-  REJECTION_SUCCESS: "Mentor application rejected successfully.",
+    APPLICATION_ALREADY_EXISTS:
+      "A mentor application has already been submitted for this email.",
+    USER_ALREADY_APPLIED: "You have already submitted a mentor application.",
+    APPLICATION_SUBMITTED: "Mentor application submitted successfully.",
+    APPROVAL_SUCCESS: "Mentor approved successfully.",
+    REJECTION_SUCCESS: "Mentor application rejected successfully.",
   },
-LESSONS: {
-  FETCHED: "Lessons successfully fetched.",
-  FETCHED_SUCCESSFULLY: "Lesson details successfully fetched.",
-  ADDED: "Lesson successfully added.",
-  UPDATED: "Lesson successfully updated.",
-  CREATE_FAILED: "Failed to add lesson.",
-  UPDATE_FAILED: "Failed to update lesson or lesson not found.",
-  NOT_FOUND: "Lesson not found.",
-  ORDER_NOT_UNIQUE: "Lesson order must be unique within the course.",
-
-  VIDEO_URL_SIGNED: "Signed video upload URL generated successfully.",
-  SIGNED_URL_GENERATED: "Signed video access URL generated successfully.",
-  UPLOAD_URL_FAILED: "Failed to generate upload URL.",
-  UPLOAD_FAILED: "Failed to upload thumbnail to S3.",
-  THUMBNAIL_UPDATE_FAILED: "Failed to update thumbnail.",
-  FILE_DELETED: "File deleted successfully.",
-
-  AWS_CONFIG_ERROR: "Server error: Missing AWS credentials or bucket name.",
-  MISSING_FIELDS: "Missing required fields: title, video URL, and course ID.",
-  INVALID_ID: "Lesson ID is required for update.",
-
-  REPORT_SUBMITTED: "Report submitted successfully.",
-  COMMENT_ADDED: "Comment added successfully.",
-
-  PROGRESS_UPDATED: "Lesson progress updated successfully.",
-  INVALID_VIDEO_DURATION: "Invalid value for videoTotalDuration.",
-  INVALID_VIDEO_WATCHED_DURATION: "Invalid value for videoWatchedDuration.",
-  VIDEO_TOTAL_DURATION_REQUIRED: "videoTotalDuration is required to update video progress.",
-    REPORT_ALREADY_EXISTS: "You already have a report for this lesson. Please check the report section.",
-    REPORT_GENERATION_FAILED: "Failed to generate report from AI service. Please try again.",
+  LESSONS: {
+    FETCHED: "Lessons successfully fetched.",
+    FETCHED_SUCCESSFULLY: "Lesson details successfully fetched.",
+    ADDED: "Lesson successfully added.",
+    UPDATED: "Lesson successfully updated.",
+    CREATE_FAILED: "Failed to add lesson.",
+    UPDATE_FAILED: "Failed to update lesson or lesson not found.",
+    NOT_FOUND: "Lesson not found.",
+    ORDER_NOT_UNIQUE: "Lesson order must be unique within the course.",
+    VIDEO_URL_SIGNED: "Signed video upload URL generated successfully.",
+    SIGNED_URL_GENERATED: "Signed video access URL generated successfully.",
+    UPLOAD_URL_FAILED: "Failed to generate upload URL.",
+    UPLOAD_FAILED: "Failed to upload thumbnail to S3.",
+    THUMBNAIL_UPDATE_FAILED: "Failed to update thumbnail.",
+    FILE_DELETED: "File deleted successfully.",
+    AWS_CONFIG_ERROR: "Server error: Missing AWS credentials or bucket name.",
+    MISSING_FIELDS: "Missing required fields: title, video URL, and course ID.",
+    INVALID_ID: "Lesson ID is required for update.",
+    REPORT_SUBMITTED: "Report submitted successfully.",
+    COMMENT_ADDED: "Comment added successfully.",
+    PROGRESS_UPDATED: "Lesson progress updated successfully.",
+    INVALID_VIDEO_DURATION: "Invalid value for videoTotalDuration.",
+    INVALID_VIDEO_WATCHED_DURATION: "Invalid value for videoWatchedDuration.",
+    VIDEO_TOTAL_DURATION_REQUIRED:
+      "videoTotalDuration is required to update video progress.",
+    REPORT_ALREADY_EXISTS:
+      "You already have a report for this lesson. Please check the report section.",
+    REPORT_GENERATION_FAILED:
+      "Failed to generate report from AI service. Please try again.",
     PROGRESS_UPDATE_FAILED: "Failed to finalize lesson progress update.",
     NO_LESSONS_FOUND: "No lessons found for this course",
     INVALID_DATA: "Invalid data provided",
-},
-
+  },
   QUESTIONS: {
     FETCHED: "Questions fetched successfully.",
     ADDED: "Question added successfully.",
@@ -271,7 +266,6 @@ LESSONS: {
       "Insufficient options generated. Try a more descriptive question.",
     INVALID_QUESTION_ID: "Question ID is required.",
   },
-
   COMMENT: {
     FETCHED: "Comments fetched successfully.",
     MISSING_MENTOR: "Mentor authentication failed.",
@@ -295,7 +289,7 @@ LESSONS: {
     FILTERED_FETCHLED: "Filtered donations fetched successfully.",
     FILTERED_FETCH_FAILED: "Failed to fetch filtered donations.",
     COUNT_FAILED: "Failed to count filtered donations.",
-     SUCCESS_TITLE: "Donation Successful",
+    SUCCESS_TITLE: "Donation Successful",
     SUCCESS_MESSAGE: (amount: number) => `User donated ₹${amount}. Thank you!`,
     MISSING_CHARGE_ID: "Could not determine charge ID.",
   },
@@ -307,21 +301,18 @@ LESSONS: {
     PARSING_FAILED: "Failed to parse AI-generated response.",
   },
   STREAM: {
-  START_SUCCESS: "Live session started successfully.",
-  END_SUCCESS: "Live session ended successfully.",
-  JOINED_SUCCESS: "User joined the session successfully.",
-  
-  MISSING_STREAM_DATA: "Missing course ID or token.",
-  MISSING_LIVE_ID: "Missing live session ID or token.",
-  INVALID_USER: "Invalid user.",
-
-  USER_JOINED_NOTIFICATION_TITLE: "New User Joined",
-  USER_JOINED_NOTIFICATION_MESSAGE: (username: string) =>
+    START_SUCCESS: "Live session started successfully.",
+    END_SUCCESS: "Live session ended successfully.",
+    JOINED_SUCCESS: "User joined the session successfully.",
+    MISSING_STREAM_DATA: "Missing course ID or token.",
+    MISSING_LIVE_ID: "Missing live session ID or token.",
+    INVALID_USER: "Invalid user.",
+    USER_JOINED_NOTIFICATION_TITLE: "New User Joined",
+    USER_JOINED_NOTIFICATION_MESSAGE: (username: string) =>
       `${username} has joined the live session.`,
-  
     NOT_AVAILABLE: "Live session is not available.",
-  NOT_STARTED: "This live session has not started yet.",
-  ALREADY_ENDED: "This live session has already ended.",
+    NOT_STARTED: "This live session has not started yet.",
+    ALREADY_ENDED: "This live session has already ended.",
   },
   STUDENTS: {
     FETCHED: "Student data fetched successfully.",
@@ -371,43 +362,44 @@ LESSONS: {
     PASSWORD_CHANGE_MESSAGE: "Your password has been changed.",
   },
   CONFIG: {
-  ADMIN_ID_MISSING: "Admin ID is not configured.",
-  AWS_CREDENTIALS_MISSING: "AWS credentials or bucket name is not configured.",
-  ENV_VARIABLE_MISSING: (variable: string) => `${variable} environment variable is missing.`,
-},
-
-  RESUME: {
-  UPLOAD_FAILED: "Failed to upload or process resume. Please try again.",
-  INVALID_FORMAT: "Unsupported resume format. Please upload a PDF or DOCX file.",
-  MISSING_FILE: "No resume file provided.",
-  PARSE_ERROR: "Failed to extract data from resume.",
+    ADMIN_ID_MISSING: "Admin ID is not configured.",
+    AWS_CREDENTIALS_MISSING:
+      "AWS credentials or bucket name is not configured.",
+    ENV_VARIABLE_MISSING: (variable: string) =>
+      `${variable} environment variable is missing.`,
   },
-    DAILY_TASK: {
+  RESUME: {
+    UPLOAD_FAILED: "Failed to upload or process resume. Please try again.",
+    INVALID_FORMAT:
+      "Unsupported resume format. Please upload a PDF or DOCX file.",
+    MISSING_FILE: "No resume file provided.",
+    PARSE_ERROR: "Failed to extract data from resume.",
+  },
+  DAILY_TASK: {
     GENERATION_FAILED: "Failed to generate or parse the daily task.",
     NEW_TASK_TITLE: "New Daily Task",
     NEW_TASK_MESSAGE: (day: number) => `Your Day ${day} task is ready!`,
   },
-    REPOSITORY: {
-  CREATE_ERROR: "Error creating document",
-  COUNT_ERROR: "Error counting documents",
-  FIND_ALL_ERROR: "Error fetching documents",
-  FIND_PAGINATED_ERROR: "Error fetching paginated documents",
-  UPDATE_MANY_ERROR: "Failed to update multiple documents",
-  UPDATE_ONE_ERROR: "Error updating document with filter",
-  FIND_BY_ID_ERROR: "Error finding document by ID",
-  FIND_ONE_ERROR: "Error finding document",
-  FIND_WITH_PASSWORD_ERROR: "Error finding document with password",
-  UPDATE_ERROR: "Error updating document",
-  DELETE_ERROR: "Error deleting document",
-},
-UPLOAD: {
+  REPOSITORY: {
+    CREATE_ERROR: "Error creating document",
+    COUNT_ERROR: "Error counting documents",
+    FIND_ALL_ERROR: "Error fetching documents",
+    FIND_PAGINATED_ERROR: "Error fetching paginated documents",
+    UPDATE_MANY_ERROR: "Failed to update multiple documents",
+    UPDATE_ONE_ERROR: "Error updating document with filter",
+    FIND_BY_ID_ERROR: "Error finding document by ID",
+    FIND_ONE_ERROR: "Error finding document",
+    FIND_WITH_PASSWORD_ERROR: "Error finding document with password",
+    UPDATE_ERROR: "Error updating document",
+    DELETE_ERROR: "Error deleting document",
+  },
+  UPLOAD: {
     ONLY_PDF: "Only PDF files are allowed!",
     ONLY_IMAGES: (types: string[]) =>
-      `Only image files are allowed (${types.join(', ')})`,
+      `Only image files are allowed (${types.join(", ")})`,
     ONLY_AUDIO: (received: string) =>
       `Only audio files are allowed! Received: ${received}`,
     ONLY_IMAGE_OR_AUDIO: (received: string) =>
       `Only image/audio files allowed. Received: ${received}`,
   },
-
 };
