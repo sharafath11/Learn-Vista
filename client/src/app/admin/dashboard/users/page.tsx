@@ -39,6 +39,7 @@ const User = () => {
       page: currentPage,
       search: debouncedSearchTerm,
       filters,
+      limit:2,
       sort,
     });
   }, [currentPage, debouncedSearchTerm, statusFilter, sortOrder]);

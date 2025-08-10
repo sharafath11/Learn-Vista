@@ -2,6 +2,6 @@ export interface ICategoryResponseDto {
   id: string;
   title: string;
   description?: string;
-    createdAt?: Date; 
-    isBlock:boolean
+  createdAt?: Date; 
+  isBlock:boolean
 }

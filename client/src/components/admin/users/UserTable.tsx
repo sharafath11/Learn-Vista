@@ -36,7 +36,6 @@ export const UserTable = ({ currentUsers, getRoleColor, onBlockToggle }: UserTab
             <tr className="text-left bg-gray-100">
               <th className="p-4">User</th>
               <th className="p-4">Email</th>
-              <th className="p-4">Role</th>
               <th className="p-4">Joined</th>
               <th className="p-4">Status</th>
               <th className="p-4 text-right">Actions</th>
@@ -62,11 +61,6 @@ export const UserTable = ({ currentUsers, getRoleColor, onBlockToggle }: UserTab
                     </div>
                   </td>
                   <td className="p-4">{user.email}</td>
-                  <td className="p-4">
-                    <span className={`px-3 py-1 rounded-full text-sm ${getRoleColor(user.role)}`}>
-                      {user.role}
-                    </span>
-                  </td>
                   <td className="p-4">{new Date(user.createdAt||"").toLocaleDateString()}</td>
                   <td className="p-4">
                     <span

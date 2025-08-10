@@ -8,9 +8,10 @@ import { IConcern } from "../../types/concernTypes";
 import { signConcernAttachmentUrls } from "../../utils/s3Utilits";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { FilterQuery } from "mongoose";
-import { ICourse } from "../../types/classTypes";
 import { IAdminConcernService } from "../../core/interfaces/services/admin/IAdminConcernService";
 import { Messages } from "../../constants/messages";
+import { AdminConcernCourseResponseDto, ConcernResponseDto } from "../../shared/dtos/concern/concern-response.dto";
+import { ConcernMapper } from "../../shared/dtos/concern/concern.mapper";
 
 @injectable()
 export class AdminConcernService implements IAdminConcernService {
@@ -23,10 +24,12 @@ export class AdminConcernService implements IAdminConcernService {
     private _notificationService: INotificationService
   ) {}
 
- async getConcern(): Promise<IConcern[]> {
+ async getConcern(): Promise<ConcernResponseDto[]> {
     const result = await this._concernRepo.findAll();
-    if (!result) throwError(Messages.COMMON.INTERNAL_ERROR);
-    return result
+   if (!result) throwError(Messages.COMMON.INTERNAL_ERROR);
+       const signedConcerns : IConcern[]= await signConcernAttachmentUrls(result);
+    const sendData = signedConcerns.map((i) => ConcernMapper.toResponseDto(i))
+    return sendData
   }
 
   async getAllConcerns(
@@ -38,7 +41,7 @@ export class AdminConcernService implements IAdminConcernService {
     limit: number,
     skip: number,
     sort: Record<string, 1 | -1>
-  ): Promise<{ concerns: IConcern[]; courses: ICourse[] }> {
+  ): Promise<{ concerns: ConcernResponseDto[]; courses: AdminConcernCourseResponseDto[] }> {
     const query: FilterQuery<IConcern> = {};
 
     if (filters.status) query.status = filters.status;
@@ -55,8 +58,10 @@ export class AdminConcernService implements IAdminConcernService {
     if (!concerns) throwError(Messages.CONCERN.FETCH_FAILED);
 
     const courses = await this._courseRepo.findAll();
-    const signedConcerns = await signConcernAttachmentUrls(concerns);
-    return { concerns: signedConcerns, courses };
+    const signedConcerns : IConcern[]= await signConcernAttachmentUrls(concerns);
+    const sendData = signedConcerns.map((i) => ConcernMapper.toResponseDto(i))
+    const sendCourse=courses.map((i)=>ConcernMapper.toResponseCourseInConcern(i))
+    return { concerns: sendData, courses:sendCourse };
   }
 
   async updateConcernStatus(concernId: string, status: 'resolved' | 'in-progress'): Promise<void> {
@@ -68,9 +73,7 @@ export class AdminConcernService implements IAdminConcernService {
     });
 
     if (!updated) throwError(Messages.CONCERN.STATUS_UPDATE_FAILED);
-     const notificationMessage = status === "resolved"
-        ? Messages.CONCERN.RESOLVED_NOTIFICATION(concern.title)
-        : Messages.CONCERN.IN_PROGRESS_NOTIFICATION(concern.title);
+
 
     if (concern.mentorId) {
       const statusText = status === "resolved" ? "resolved" : "marked as in-progress";
@@ -105,7 +108,7 @@ export class AdminConcernService implements IAdminConcernService {
     return this._concernRepo.count(query);
   }
 
-  async updateConcern(concernId: string, updateData: Partial<IConcern>): Promise<void> {
+  async updateConcern(concernId: string, updateData: ConcernResponseDto): Promise<void> {
     const concern = await this._concernRepo.findById(concernId);
     if (!concern)  throwError(Messages.CONCERN.NOT_FOUND)
 

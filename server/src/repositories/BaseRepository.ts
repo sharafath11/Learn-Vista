@@ -1,7 +1,6 @@
 import { Model, Document, FilterQuery, UpdateQuery } from "mongoose";
 import { IBaseRepository } from "../core/interfaces/repositories/IBaseRepository";
 import { Messages } from "../constants/messages";
-import { toDTO } from "../utils/toDTO";
 
 export abstract class BaseRepository<T extends Document, U>
   implements IBaseRepository<T, U>
@@ -20,8 +19,9 @@ export abstract class BaseRepository<T extends Document, U>
 
   async create(data: Partial<T>): Promise<U> {
     try {
-      const document = await this.model.create(data);
-      return toDTO<U>(document);
+      const result = await this.model.create(data);
+      return result as unknown  as U
+     
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.CREATE_ERROR);
     }
@@ -37,8 +37,8 @@ export abstract class BaseRepository<T extends Document, U>
 
   async findAll(filter: FilterQuery<T> = {}): Promise<U[]> {
     try {
-      const documents = await this.model.find(filter);
-      return documents.map(doc => toDTO<U>(doc));
+    return await this.model.find(filter).lean().exec() as unknown as U[];
+      
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.FIND_ALL_ERROR);
     }
@@ -77,13 +77,13 @@ export abstract class BaseRepository<T extends Document, U>
       }
 
       const [documents, total] = await Promise.all([
-        this.model.find(filter).sort(sort).skip(skip).limit(limit),
+        this.model.find(filter).sort(sort).skip(skip).limit(limit).lean().exec(),
         this.model.countDocuments(filter),
       ]);
 
       const totalPages = Math.ceil(total / limit);
       return {
-        data: documents.map(doc => toDTO<U>(doc)),
+        data: documents as unknown as U[],
         total,
         totalPages,
       };
@@ -97,8 +97,8 @@ export abstract class BaseRepository<T extends Document, U>
     update: UpdateQuery<T>
   ): Promise<U | null> {
     try {
-      const document = await this.model.findOneAndUpdate(filter, update, { new: true });
-      return document ? toDTO<U>(document) : null;
+      return await this.model.findOneAndUpdate(filter, update, { new: true });
+      
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.UPDATE_ONE_ERROR);
     }
@@ -106,8 +106,7 @@ export abstract class BaseRepository<T extends Document, U>
 
   async findById(id: string): Promise<U | null> {
     try {
-      const document = await this.model.findById(id);
-      return document ? toDTO<U>(document) : null;
+      return await this.model.findById(id);
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.FIND_BY_ID_ERROR);
     }
@@ -115,8 +114,8 @@ export abstract class BaseRepository<T extends Document, U>
 
   async findOne(condition: FilterQuery<T>): Promise<U | null> {
     try {
-      const document = await this.model.findOne(condition);
-      return document ? toDTO<U>(document) : null;
+      return await this.model.findOne(condition);
+      
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.FIND_ONE_ERROR);
     }
@@ -146,8 +145,8 @@ export abstract class BaseRepository<T extends Document, U>
 
   async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
     try {
-      const document = await this.model.findByIdAndUpdate(id, data, { new: true });
-      return document ? toDTO<U>(document) : null;
+    return await this.model.findByIdAndUpdate(id, data, { new: true });
+    
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.UPDATE_ERROR);
     }

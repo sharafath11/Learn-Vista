@@ -138,6 +138,7 @@ localStorage.removeItem("role")
     page?: number;
     search?: string;
     filters?: Record<string, unknown>;
+    limit?: number;
     sort?: Record<string, 1 | -1>;
   }) => {
     await fetchUsers(params ?? {});

@@ -13,6 +13,8 @@ import { ICertificateRepository } from "../../core/interfaces/repositories/cours
 import { ICertificate } from "../../types/certificateTypes";
 import { convertSignedUrlInArray, convertSignedUrlInObject, getSignedS3Url } from "../../utils/s3Utilits";
 import { Messages } from "../../constants/messages";
+import { UserMapper } from "../../shared/dtos/user/user.mapper";
+import { AdminUserCertificate, AdminUserResponseDto } from "../../shared/dtos/user/user-response.dto";
 
 @injectable()
 export class AdminUsersServices implements IAdminUserServices {
@@ -29,7 +31,7 @@ export class AdminUsersServices implements IAdminUserServices {
     search?: string,
     filters: FilterQuery<IUser> = {},
     sort: Record<string, 1 | -1> = { username: -1 }
-  ): Promise<{ data: IUser[]; total: number; totalPages?: number }> {
+  ): Promise<{ data: AdminUserResponseDto[]; total: number; totalPages?: number }> {
 
       const { data, total, totalPages } = await this._userRepo.findPaginated(
         filters,
@@ -41,9 +43,10 @@ export class AdminUsersServices implements IAdminUserServices {
       if (!data) {
         throwError(Messages.USERS.FETCH_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
       }
-      const userData=await convertSignedUrlInArray(data,["profilePicture"])
+    const userData = await convertSignedUrlInArray(data, ["profilePicture"])
+    const sendData=userData.map((i)=>UserMapper.toResponsAdminUsereDto(i))
       return { 
-        data:userData, 
+        data:sendData, 
         total,
         ...(totalPages !== undefined && { totalPages }) 
       };
@@ -55,7 +58,7 @@ export class AdminUsersServices implements IAdminUserServices {
     if (!updatedUser) {
       throwError(Messages.USERS.USER_NOT_FOUND, StatusCode.NOT_FOUND); 
     }
- await notifyWithSocket({
+   await notifyWithSocket({
     notificationService: this._notificationService,
     userIds: [id.toString()],
     title: Messages.USERS.BLOCK_TITLE(status),
@@ -73,8 +76,10 @@ export class AdminUsersServices implements IAdminUserServices {
   async revokCertificate(certificateId: string | ObjectId, isRevocked: boolean): Promise<void> {
     await this._certificateRepo.update(certificateId as string,{isRevoked:isRevocked})
   }
-  async getCertifcate(userId: string | ObjectId): Promise<ICertificate[]> {
-    return await this._certificateRepo.findAll({userId})
+  async getCertifcate(userId: string | ObjectId): Promise<AdminUserCertificate[]> {
+    const result = await this._certificateRepo.findAll({ userId })
+    const sendData = result.map((i) => UserMapper.toResponsAdminUserCertificateDto(i));
+    return sendData
   }
 }
 

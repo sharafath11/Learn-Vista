@@ -28,7 +28,7 @@ export const useUserPagination = (): UseUserPaginationReturn => {
   const [users, setUsers] = useState<IUser[]>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
-    limit: 10,
+    limit: 2,
     total: 0,
     totalPages: 1,
     search: '',

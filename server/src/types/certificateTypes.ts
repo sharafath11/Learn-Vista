@@ -1,6 +1,7 @@
 import { Document, ObjectId, Types } from "mongoose"
 
 export interface ICertificate extends Document {
+  _id: ObjectId | string
   userId: ObjectId|string
   userName: string
   courseId: ObjectId |string

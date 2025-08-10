@@ -84,6 +84,7 @@ export interface AdminContextType {
     page?: number;
     search?: string;
     filters?: Record<string, unknown>;
+    limit?:number
     sort?: Record<string, 1 | -1>;
   }) => Promise<void>;
   courses: IPopulatedCourse[];

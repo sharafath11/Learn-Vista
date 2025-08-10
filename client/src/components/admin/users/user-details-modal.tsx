@@ -113,12 +113,7 @@ export const UserDetailsModal = ({
                         {user.isBlocked ? "Blocked" : "Active"}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Verification:</span>
-                      <Badge variant={user.isVerified ? "default" : "secondary"}>
-                        {user.isVerified ? "Verified" : "Unverified"}
-                      </Badge>
-                    </div>
+
                   </div>
                 </div>
               </div>
@@ -156,7 +151,7 @@ export const UserDetailsModal = ({
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
                             <div><span className="font-medium">Certificate ID:</span> {c.certificateId}</div>
                             <div><span className="font-medium">Issued:</span> {c.issuedDateFormatted}</div>
-                            <div><span className="font-medium">Course ID:</span> {c.courseId}</div>
+                           
                             {c.qrCodeUrl && (
                               <div>
                                 <span className="font-medium">QR:</span>{" "}

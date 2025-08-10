@@ -8,7 +8,7 @@ import { IUser } from "../../types/userTypes";
 import { inject } from "inversify";
 import { TYPES } from "../../core/types";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
-import { toDTO } from "../../utils/toDTO";
+
 
 
 @injectable()
@@ -31,8 +31,8 @@ export class UserRepository extends BaseRepository<IUser , IUser> implements IUs
     const applyData = { ...mentorData, experties: expertise };
   
     const result = await this.mentorRepo.create(applyData as Partial<IMentor>);
-    const dtoData=toDTO<IMentor>(result)
-    return dtoData
+  
+    return result
     
   }
   

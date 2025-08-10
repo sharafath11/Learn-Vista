@@ -6,7 +6,7 @@ export class CategoryMapper {
     return {
       id: category._id.toString(),
       title: category.title,
-        description: category.description,
+      description: category.description,
       isBlock:category.isBlock,
       createdAt: category.createdAt
     };

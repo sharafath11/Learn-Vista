@@ -23,8 +23,8 @@ export class ConcernRepository extends BaseRepository<IConcern, IConcern> implem
         .lean(),
       ConcernModel.countDocuments(filters)
     ]);
-     const dtoData = toDTOArray<IConcern>(data);
-    return { data:dtoData, total };
+     
+    return { data,total };
     }
   async findWithPagination(
   filter: FilterQuery<IConcern>,
@@ -38,7 +38,7 @@ export class ConcernRepository extends BaseRepository<IConcern, IConcern> implem
     .skip(skip)
     .limit(limit)
     .lean();
-   return toDTOArray<IConcern>(results);
+   return results;
 }
 
 async count(filter: FilterQuery<IConcern>): Promise<number> {

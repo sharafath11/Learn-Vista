@@ -1,8 +1,7 @@
 // types/services/IConcernService.ts
 
 import { ObjectId } from "mongoose";
-import { IConcern } from "../../../../types/concernTypes";
-import { ICourse } from "../../../../types/classTypes";
+import { AdminConcernCourseResponseDto, ConcernResponseDto } from "../../../../shared/dtos/concern/concern-response.dto";
 
 type ConcernFilter = {
   status?: 'open' | 'in-progress' | 'resolved';
@@ -12,8 +11,8 @@ type ConcernFilter = {
 type SortOrder = 1 | -1;
 
 export interface IAdminConcernService {
-  getConcern():Promise<IConcern[]>;
-  updateConcern(concernId: string, updateData: Partial<IConcern>): Promise<void>;
+  getConcern():Promise<ConcernResponseDto[]>;
+  updateConcern(concernId: string, updateData: Partial<ConcernResponseDto>): Promise<void>;
   updateConcernStatus(
     concernId: string | ObjectId,
     status: 'resolved' | 'in-progress',
@@ -24,6 +23,6 @@ export interface IAdminConcernService {
     limit: number,
     skip: number,
     sort: Record<string, SortOrder>
-  ): Promise<{ concerns: IConcern[]; courses: ICourse[] }>;
+  ): Promise<{ concerns: ConcernResponseDto[]; courses: AdminConcernCourseResponseDto[] }>;
   countAllConcerns(filters: ConcernFilter): Promise<number>;
 }
