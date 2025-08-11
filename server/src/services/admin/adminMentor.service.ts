@@ -9,8 +9,10 @@ import { FilterQuery } from "mongoose";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
-import { convertSignedUrlInArray, convertSignedUrlInObject, getSignedS3Url } from "../../utils/s3Utilits";
+import { convertSignedUrlInArray, convertSignedUrlInObject} from "../../utils/s3Utilits";
 import { Messages } from "../../constants/messages";
+import { MentorMapper} from "../../shared/dtos/mentor/mentor.mapper";
+import { IAdminAddCourseMentorsDto, IAdminMentorResponseDto } from "../../shared/dtos/mentor/mentor-response.dto";
 
 @injectable()
 export class AdminMentorService implements IAdminMentorServices {
@@ -20,10 +22,11 @@ export class AdminMentorService implements IAdminMentorServices {
     @inject(TYPES.NotificationService)
     private _notificationService: INotificationService
   ) { }
-  async getAllMentorWithoutFiltring(): Promise<IMentor[]> {
+  async getAllMentorWithoutFiltring(): Promise<IAdminAddCourseMentorsDto[]> {
     const result = await this._mentorRepo.findAll();
-    const sendData=await convertSignedUrlInArray(result,["profilePicture","cvOrResume"])
-    return sendData
+    const sendData = await convertSignedUrlInArray(result, ["profilePicture", "cvOrResume"]);
+    const mentorDetails=sendData.map((i)=>MentorMapper.toAdminCourseMentorDet(i))
+    return mentorDetails
   }
 
   async getAllMentors(
@@ -32,7 +35,7 @@ export class AdminMentorService implements IAdminMentorServices {
     search?: string,
     filters: FilterQuery<IMentor> = {},
     sort: Record<string, 1 | -1> = { createdAt: -1 }
-  ): Promise<{ data: IMentor[]; total: number; totalPages?: number }> {
+  ): Promise<{ data:  IAdminMentorResponseDto[]; total: number; totalPages?: number }> {
     const { data, total, totalPages } = await this._mentorRepo.findPaginated(
       filters,
       page,
@@ -43,10 +46,11 @@ export class AdminMentorService implements IAdminMentorServices {
     if (!data) {
       throwError(Messages.MENTOR.FETCH_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
     }
-     const sendData=await convertSignedUrlInArray(data,["profilePicture","cvOrResume"])
+    const sendData = await convertSignedUrlInArray(data, ["profilePicture", "cvOrResume"])
+    const mappingDatas=sendData.map((i)=>MentorMapper.toResponseAdminDto(i))
   
     return {
-      data:sendData,
+      data:mappingDatas,
       total,
       ...(totalPages !== undefined && { totalPages })
     };
@@ -77,7 +81,7 @@ export class AdminMentorService implements IAdminMentorServices {
     return updated;
   }
 
-  async toggleMentorBlock(id: string, isBlock: boolean): Promise<IMentor | null> {
+  async toggleMentorBlock(id: string, isBlock: boolean): Promise<IAdminMentorResponseDto | null> {
     const updated = await this._mentorRepo.update(id, { isBlock });
     if (!updated) {
       throwError(Messages.MENTOR.BLOCK_TOGGLE_FAILED(id), StatusCode.INTERNAL_SERVER_ERROR);
@@ -89,16 +93,19 @@ export class AdminMentorService implements IAdminMentorServices {
     title: Messages.MENTOR.BLOCK_TITLE(statusText),
     message: Messages.MENTOR.BLOCK_MESSAGE(statusText),
     type: isBlock ? "error" : "success",
-  });
-    return updated;
+   });
+    const sendData=MentorMapper.toResponseAdminDto(updated)
+    return sendData
   }
 
-  async mentorDetails(id: string): Promise<IMentor> {
+  async mentorDetails(id: string): Promise<IAdminMentorResponseDto> {
     const mentor = await this._mentorRepo.findById(id);
     if (!mentor) {
       throwError(Messages.MENTOR.NOT_FOUND, StatusCode.NOT_FOUND);
     }
-    const sendData = await convertSignedUrlInObject(mentor, ["profilePicture","cvOrResume"]);
-    return sendData;
+    const sendData = await convertSignedUrlInObject(mentor, ["profilePicture", "cvOrResume"]);
+     const mentorDetails=MentorMapper.toResponseAdminDto(sendData)
+    return mentorDetails
+
   }
 }

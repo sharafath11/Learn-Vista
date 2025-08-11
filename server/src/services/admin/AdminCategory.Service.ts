@@ -8,7 +8,7 @@ import { FilterQuery } from "mongoose";
 import { IAdminCategoryService } from "../../core/interfaces/services/admin/IAdminCategoryService";
 import { Messages } from "../../constants/messages";
 import { CategoryMapper } from "../../shared/dtos/categories/category.mapper";
-import { ICategoryResponseDto } from "../../shared/dtos/categories/category-response.dto";
+import { ICategoryResponseDto,ICategoryCoursePopulated } from "../../shared/dtos/categories/category-response.dto";
 @injectable()
 export class AdminCategoryService implements IAdminCategoryService {
   constructor(
@@ -27,7 +27,7 @@ export class AdminCategoryService implements IAdminCategoryService {
     const result = await this.categoryRepo.create({ title, description });
     return CategoryMapper.toResponseDto(result)
   }
-async getAllCategories(): Promise<ICategoryResponseDto[]> {
+async getAllCategories(): Promise<ICategoryCoursePopulated[]> {
   const result = await this.categoryRepo.findAll();
   return result.map((i) => CategoryMapper.toResponseDto(i));
 }
@@ -35,14 +35,14 @@ async getAllCategories(): Promise<ICategoryResponseDto[]> {
 
 async getCategories(
   page = 1,
-  limit = 10,
+  limit = 2,
   search?: string,
   filters: FilterQuery<ICategory> = {},
   sort: Record<string, 1 | -1> = { createdAt: -1 }
 ): Promise<{ data: ICategoryResponseDto[]; total: number; totalPages: number }> {
   const result = await this.categoryRepo.findPaginated(filters, page, limit, search, sort);
 
-  if (!result.data || result.data.length === 0) {
+  if (!result.data ) {
     throwError(Messages.CATEGORY.FAILED_TO_FETCH, StatusCode.INTERNAL_SERVER_ERROR);
   }
 

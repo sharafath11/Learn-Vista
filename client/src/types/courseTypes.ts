@@ -31,6 +31,8 @@ export interface ICourse {
 }
 
 export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId'> {
+  category?:string
+  mentor?:string
   mentorId: IMentor;
   categoryId: ICategory;
 }

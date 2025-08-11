@@ -186,9 +186,9 @@ export default function CoursesAdminPage() {
                       {course.description}
                     </p>
                     <strong>category:</strong>
-                    <span>{course.categoryId?.title}</span> <br />
+                    <span>{course.category}</span> <br />
                     <strong>Mentor:</strong>
-                    <span>{course?.mentorId?.username}</span>
+                    <span>{course?.mentor}</span>
                     {!course?.isActive && (
                       <div className="mt-2 p-2 rounded-md bg-yellow-50 dark:bg-yellow-900/20">
                         <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
@@ -211,13 +211,19 @@ export default function CoursesAdminPage() {
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4">
-  <Button
-    variant="outline"
-    size="sm"
-    onClick={() => toggleCourseStatus(course.id, course.isBlock)}
-  >
-    {course.isBlock ? "Unblock" : "Block"}
-  </Button>
+<Button
+  variant="outline"
+  size="sm"
+  className={
+    course.isBlock
+      ? "border-green-500 text-green-600 hover:bg-green-50"
+      : "border-red-500 text-red-600 hover:bg-red-50"
+  }
+  onClick={() => toggleCourseStatus(course.id, course.isBlock)}
+>
+  {course.isBlock ? "Unblock" : "Block"}
+</Button>
+
 
  <Button
     size="sm"

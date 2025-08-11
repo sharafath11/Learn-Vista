@@ -69,7 +69,7 @@ export function TransactionTable({
         t.donorName || "Anonymous",
         t.donorEmail || "",
         t.amount?.toString() || "0",
-        formatDate(t.createdAt || ""),
+        formatDate(t.date || ""),
         t.status || "completed",
         t.donorId || "",
       ]),
@@ -126,7 +126,6 @@ export function TransactionTable({
                   <TableHead>Amount</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[50px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -140,27 +139,9 @@ export function TransactionTable({
                         </div>
                       </TableCell>
                       <TableCell className="font-medium">{formatCurrency(transaction.amount || 0)}</TableCell>
-                      <TableCell>{formatDate(transaction.createdAt || "")}</TableCell>
+                      <TableCell>{formatDate(transaction.date || "")}</TableCell>
                       <TableCell>{getStatusBadge(transaction.status || "succeeded")}</TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Eye className="h-4 w-4 mr-2" />
-                              View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Download className="h-4 w-4 mr-2" />
-                              Download Receipt
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+                      
                     </TableRow>
                   ))
                 ) : (

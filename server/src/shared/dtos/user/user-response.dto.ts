@@ -1,4 +1,4 @@
-export interface UserResponseDto {
+export interface IUserResponseDto {
   id: string;
   username: string;
   email: string;
@@ -6,26 +6,27 @@ export interface UserResponseDto {
   profilePicture?: string | null;
   isBlocked: boolean;
   isVerified: boolean;
-  enrolledCourses: string[]; 
+  enrolledCourses: string[];
   createdAt?: Date;
   updatedAt?: Date;
   googleUser: boolean;
-  googleId: string;
+  googleId?: string;
 }
-export class AdminUserResponseDto {
-  id!:string;
-  username!: string;
-  email!: string;
-  createdAt!: Date;
-  status!: boolean; 
+
+export interface IAdminUserResponseDto {
+  id: string;
+  username: string;
+  email: string;
+  createdAt: Date;
+  status: boolean;
   profilePicture?: string | null;
 }
-export class AdminUserCertificate{
-  id!: string
-  courseTitle!: string
-  certificateId!: string
-  issuedDateFormatted!: string;
-  qrCodeUrl!: string;
-  isRevoked!: boolean;
 
+export interface IAdminUserCertificate {
+  id: string;
+  courseTitle: string;
+  certificateId: string;
+  issuedDateFormatted: string;
+  qrCodeUrl: string;
+  isRevoked: boolean;
 }

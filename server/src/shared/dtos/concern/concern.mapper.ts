@@ -1,9 +1,9 @@
 import { ICourse } from "../../../types/classTypes";
 import { IConcern } from "../../../types/concernTypes";
-import { AdminConcernCourseResponseDto, ConcernResponseDto } from "./concern-response.dto";
+import { IAdminConcernCourseResponseDto, IConcernResponseDto } from "./concern-response.dto";
 
 export class ConcernMapper {
-  static toResponseDto(concern: IConcern): ConcernResponseDto {
+  static toResponseDto(concern: IConcern): IConcernResponseDto {
     return {
       id: concern._id.toString(),
       title: concern.title,
@@ -16,7 +16,7 @@ export class ConcernMapper {
     };
   }
 
-  static toResponseCourseInConcern(course: ICourse): AdminConcernCourseResponseDto {
+  static toResponseCourseInConcern(course: ICourse): IAdminConcernCourseResponseDto {
     return {
       id: course._id.toString(),
       title: course.title,

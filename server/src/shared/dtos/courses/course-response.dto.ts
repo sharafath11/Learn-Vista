@@ -1,32 +1,45 @@
 import { IMentor } from "../../../types/mentorTypes";
-import { ICategoryResponseDto } from "../categories/category-response.dto";
+import { ICategoryCoursePopulated, ICategoryResponseDto } from "../categories/category-response.dto";
 
-export class CourseResponseDto {
-  id!: string;
-  title!: string;
+export interface ICourseResponseDto {
+  id: string;
+  title: string;
   description?: string;
-  mentorId!: string;
-  sessions!: string[];
-  categoryId!: string;
-  mentor!: IMentor;
-  students!: number;
-  categoryName!: string;
+  mentorId: string;
+  sessions: string[];
+  categoryId: string;
+  mentor: IMentor;
+  students: number;
+  categoryName: string;
   courseLanguage?: string;
-  isBlock!: boolean;
+  isBlock: boolean;
   tags?: string[];
-  enrolledUsers!: string[];
+  enrolledUsers: string[];
   endTime?: string;
-  isActive!: boolean;
+  isActive: boolean;
   isStreaming?: boolean;
-  lessons!: string[];
-  category!: ICategoryResponseDto;
-  mentorStatus!: "approved" | "rejected" | "pending";
-  isCompleted!: boolean;
+  lessons: number;
+  category: ICategoryCoursePopulated;
+  mentorStatus: "approved" | "rejected" | "pending";
+  isCompleted: boolean;
   currentTag?: string;
   startDate?: string;
   endDate?: string;
   startTime?: string;
   thumbnail?: string; 
-  createdAt!: Date;
-  updatedAt!: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+export interface ICourseAdminResponse {
+  id:string
+  title: string;       
+  category: string;   
+  mentor: string;      
+  startDate: string;   
+  endDate: string;     
+  thumbnail:string
+  startTime: string;   
+  isBlock:boolean
+  isActive: boolean
+  description?:string
 }

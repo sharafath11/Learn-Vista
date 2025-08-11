@@ -1,5 +1,5 @@
-export interface IDonation{
-  id:string
+export interface IDonationResponseDto {
+  id: string;
   donorName: string;
   donorEmail: string;
   amount: number;
@@ -8,17 +8,17 @@ export interface IDonation{
   status: "processing" | "succeeded" | "failed" | "canceled";
   paymentIntentId: string;
   stripeCustomerId?: string;
+  transactionId?: string;
   receiptUrl?: string;
   donorId?: string;
-  date:Date
   createdAt: Date;
   updatedAt: Date;
 }
-export interface IStripeSuccessSession {
-  id?:string
-  customer_email: string;
-  amount_total: number;
-  receipt_url: string;
-  payment_intent?: string
-  paymentIntentId:string
+
+export interface IAdminDonationResponseDto {
+  id: string;
+  donorName: string;
+  amount: number;
+  date: Date;
+  status: "processing" | "succeeded" | "failed" | "canceled";
 }

@@ -34,8 +34,7 @@ export default function CourseBasicInfo({
   mentors,
   categories,
 }: CourseBasicInfoProps) {
-
-  return (
+   return (
     <Card>
       <CardHeader>
         <CardTitle>Basic Information</CardTitle>

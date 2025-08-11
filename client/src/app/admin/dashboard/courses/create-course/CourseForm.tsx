@@ -154,6 +154,8 @@ export default function CourseForm({
     await onSubmit(formData)
   }
 
+  console.log("vasic",mentors)
+
   return (
     <form onSubmit={handleSubmit} className="p-8 space-y-8">
      <CourseBasicInfo

@@ -10,7 +10,7 @@ import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { FilterQuery } from "mongoose";
 import { IAdminConcernService } from "../../core/interfaces/services/admin/IAdminConcernService";
 import { Messages } from "../../constants/messages";
-import { AdminConcernCourseResponseDto, ConcernResponseDto } from "../../shared/dtos/concern/concern-response.dto";
+import { IAdminConcernCourseResponseDto, IConcernResponseDto } from "../../shared/dtos/concern/concern-response.dto";
 import { ConcernMapper } from "../../shared/dtos/concern/concern.mapper";
 
 @injectable()
@@ -24,7 +24,7 @@ export class AdminConcernService implements IAdminConcernService {
     private _notificationService: INotificationService
   ) {}
 
- async getConcern(): Promise<ConcernResponseDto[]> {
+ async getConcern(): Promise<IConcernResponseDto[]> {
     const result = await this._concernRepo.findAll();
    if (!result) throwError(Messages.COMMON.INTERNAL_ERROR);
        const signedConcerns : IConcern[]= await signConcernAttachmentUrls(result);
@@ -41,7 +41,7 @@ export class AdminConcernService implements IAdminConcernService {
     limit: number,
     skip: number,
     sort: Record<string, 1 | -1>
-  ): Promise<{ concerns: ConcernResponseDto[]; courses: AdminConcernCourseResponseDto[] }> {
+  ): Promise<{ concerns: IConcernResponseDto[]; courses: IAdminConcernCourseResponseDto[] }> {
     const query: FilterQuery<IConcern> = {};
 
     if (filters.status) query.status = filters.status;
@@ -108,7 +108,7 @@ export class AdminConcernService implements IAdminConcernService {
     return this._concernRepo.count(query);
   }
 
-  async updateConcern(concernId: string, updateData: ConcernResponseDto): Promise<void> {
+  async updateConcern(concernId: string, updateData: IConcernResponseDto): Promise<void> {
     const concern = await this._concernRepo.findById(concernId);
     if (!concern)  throwError(Messages.CONCERN.NOT_FOUND)
 

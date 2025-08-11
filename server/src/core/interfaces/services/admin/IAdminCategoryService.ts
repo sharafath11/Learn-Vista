@@ -1,8 +1,7 @@
-import { ICategoryResponseDto } from "../../../../shared/dtos/categories/category-response.dto";
-import { ICategory } from "../../../../types/classTypes";
+import { ICategoryCoursePopulated, ICategoryResponseDto } from "../../../../shared/dtos/categories/category-response.dto";
 export interface IAdminCategoryService {
   addCategory(title: string, description: string): Promise<ICategoryResponseDto>;
-  getAllCategories(): Promise<ICategoryResponseDto[]>;
+  getAllCategories(): Promise<ICategoryCoursePopulated[]>;
   getCategories(
     page?: number,
     limit?: number,

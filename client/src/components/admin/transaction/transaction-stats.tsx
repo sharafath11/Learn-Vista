@@ -40,7 +40,7 @@ export function TransactionStats({ transactions, loading }: TransactionStatsProp
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const todayTransactions = transactions.filter((t) => {
-    const transactionDate = new Date(t.createdAt || "")
+    const transactionDate = new Date(t.date || "")
     return transactionDate >= today
   })
   const todayAmount = todayTransactions.reduce((sum, t) => sum + (t.amount || 0), 0)
@@ -50,7 +50,7 @@ export function TransactionStats({ transactions, loading }: TransactionStatsProp
   thisMonth.setDate(1)
   thisMonth.setHours(0, 0, 0, 0)
   const monthTransactions = transactions.filter((t) => {
-    const transactionDate = new Date(t.createdAt || "")
+    const transactionDate = new Date(t.date || "")
     return transactionDate >= thisMonth
   })
   const monthAmount = monthTransactions.reduce((sum, t) => sum + (t.amount || 0), 0)

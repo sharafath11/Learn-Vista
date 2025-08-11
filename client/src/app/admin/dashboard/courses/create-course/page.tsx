@@ -30,6 +30,7 @@ export default function CreateCoursePage() {
   
   const fetchAllMentors = async () => {
     const res = await AdminAPIMethods.getAllMentor();
+    console.log("dsfdsfsdf",res)
     if (res.ok) {
       
       setMentors(res.data)
@@ -86,7 +87,7 @@ export default function CreateCoursePage() {
         </div>
 
         <CourseForm
-          mentors={mentors?.filter((i)=>!i.isBlock&&i.isVerified&&i.status=="approved")||[]}
+          mentors={mentors?.filter((i)=>!i.isBlock&&i.isVerified)||[]}
           categories={categories}
           languages={languages}
           onSubmit={handleSubmit}

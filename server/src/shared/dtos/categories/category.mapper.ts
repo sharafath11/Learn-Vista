@@ -1,5 +1,5 @@
 import { ICategory } from "../../../types/classTypes";
-import { ICategoryResponseDto } from "./category-response.dto";
+import { ICategoryCoursePopulated, ICategoryResponseDto } from "./category-response.dto";
 
 export class CategoryMapper {
   static toResponseDto(category: ICategory): ICategoryResponseDto {
@@ -10,5 +10,12 @@ export class CategoryMapper {
       isBlock:category.isBlock,
       createdAt: category.createdAt
     };
+  }
+  static toResponsePopulatedAdminCourse(category: ICategory):ICategoryCoursePopulated {
+    return {
+      id: category.id,
+      title: category.title,
+      
+    }
   }
 }

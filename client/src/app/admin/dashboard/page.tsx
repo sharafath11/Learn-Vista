@@ -35,14 +35,14 @@ export default function AdminDashboard() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const todayDonations = donations.filter((d) => {
-    const donationDate = new Date(d.createdAt || "")
+    const donationDate = new Date(d.date || "")
     return donationDate >= today
   })
   const todayAmount = todayDonations.reduce((sum, d) => sum + (d.amount || 0), 0)
   const todayCount = todayDonations.length
 
   const latestDonation = donations.length
-    ? [...donations].sort((a, b) => new Date(b.createdAt || "").getTime() - new Date(a.createdAt || "").getTime())[0]
+    ? [...donations].sort((a, b) => new Date(b.date || "").getTime() - new Date(a.date || "").getTime())[0]
     : null
 
   const formatCurrency = (amount: number) =>
@@ -130,7 +130,7 @@ export default function AdminDashboard() {
               <CardContent className="flex justify-between items-center p-4 bg-gray-50 rounded-md">
                 <div>
                   <p className="font-medium">{latestDonation.donorName || latestDonation.donorEmail || "Anonymous"}</p>
-                  <p className="text-xs text-muted-foreground">{formatDate(latestDonation.createdAt || "")}</p>
+                  <p className="text-xs text-muted-foreground">{formatDate(latestDonation.date || "")}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-bold text-green-600">{formatCurrency(latestDonation.amount || 0)}</p>

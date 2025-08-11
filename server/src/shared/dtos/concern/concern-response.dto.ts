@@ -1,14 +1,15 @@
-export class ConcernResponseDto {
-  id!: string;
-  title!: string;
-  message!: string;
+export interface IConcernResponseDto {
+  id: string;
+  title: string;
+  message: string;
   courseId?: string;
-  status!: string;
+  status: string;
   resolution?: string;
-  createdAt!: Date;
-  updatedAt!: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
-export class AdminConcernCourseResponseDto{
-    id!: string;
-    title!:string
+
+export interface IAdminConcernCourseResponseDto {
+  id: string;
+  title: string;
 }

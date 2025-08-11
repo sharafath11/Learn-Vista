@@ -3,6 +3,7 @@ import { Document } from "mongoose";
 import { IUserLessonProgress } from "./userLessonProgress";
 
 export interface ILesson extends Document {
+  _id:string | ObjectId
     title: string;
     videoUrl: string; 
      thumbnail?: string | Buffer;
@@ -30,12 +31,15 @@ export interface ILessonCreationData extends Partial<ILesson> {
 export type QuestionType = 'theory' | 'practical' | 'mcq';
 
 export interface IQuestions extends Document {
+  _id:string|ObjectId
   lessonId: string;
   question: string;
   type: QuestionType;
   isCompleted: boolean;
   options?: string[]; 
   correctAnswer?: string | string[]; 
+  createdAt?: Date
+  
 }
 
 export interface LessonQuestionEvaluation {
@@ -63,6 +67,7 @@ export type LessonQuestionInput = {
   studentAnswer: string;
 };
 export interface IComment extends Document {
+  _id:string|ObjectId
   lessonId: ObjectId | string;
   userId?: ObjectId | string;
   userName: string;

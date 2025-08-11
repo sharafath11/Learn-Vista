@@ -51,7 +51,7 @@ export function TransactionChart({ transactions, loading, filters }: Transaction
   // Prepare data for charts
   const dailyData = transactions.reduce(
     (acc, transaction) => {
-      const date = new Date(transaction.createdAt || "").toLocaleDateString("en-IN")
+      const date = new Date(transaction.date || "").toLocaleDateString("en-IN")
       if (!acc[date]) {
         acc[date] = { date, amount: 0, count: 0 }
       }

@@ -65,7 +65,6 @@ export abstract class BaseRepository<T extends Document, U>
   ): Promise<{ data: U[]; total: number; totalPages: number }> {
     try {
       const skip = (page - 1) * limit;
-
       if (search) {
         const searchRegex = new RegExp(search, "i");
         filter.$or = [
@@ -145,8 +144,8 @@ export abstract class BaseRepository<T extends Document, U>
 
   async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
     try {
-    return await this.model.findByIdAndUpdate(id, data, { new: true });
-    
+    const updated = await this.model.findByIdAndUpdate(id, data, { new: true }).lean().exec();
+    return updated as U
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.UPDATE_ERROR);
     }

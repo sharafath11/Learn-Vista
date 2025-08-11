@@ -1,10 +1,10 @@
 
 import { ICertificate } from "../../../types/certificateTypes";
 import { IUser } from "../../../types/userTypes";
-import { AdminUserCertificate, AdminUserResponseDto, UserResponseDto } from "./user-response.dto";
+import { IAdminUserCertificate, IAdminUserResponseDto, IUserResponseDto } from "./user-response.dto";
 
 export class UserMapper {
-  static toResponseDto(user: IUser): UserResponseDto {
+  static toResponseDto(user: IUser): IUserResponseDto {
     return {
       id: user._id.toString(),
       username: user.username,
@@ -20,8 +20,7 @@ export class UserMapper {
       googleId: user.googleId
     };
   }
-  static toResponsAdminUsereDto(user: IUser): AdminUserResponseDto {
-      console.log(user)
+  static toResponsAdminUsereDto(user: IUser): IAdminUserResponseDto {
       return {
       id:user._id.toString(),
       username: user.username,
@@ -32,7 +31,7 @@ export class UserMapper {
       
     };
   }
-static toResponsAdminUserCertificateDto(certificate: ICertificate): AdminUserCertificate {
+static toResponsAdminUserCertificateDto(certificate: ICertificate): IAdminUserCertificate {
   return {
     id: certificate._id.toString(),
     courseTitle: certificate.courseTitle,

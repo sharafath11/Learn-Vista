@@ -65,7 +65,7 @@ localStorage.removeItem("role")
     sort?: Record<string, 1 | -1>;
     filters?: Record<string, any>;
   }) {
-    const res = await AdminAPIMethods.getGetegories( params|| {});
+    const res = await AdminAPIMethods.getGetegories( params|| {limit:2});
     if (res.ok) setCat(res.data.data);
     else showInfoToast(res.msg);
   }
@@ -87,7 +87,7 @@ localStorage.removeItem("role")
     sort?: Record<string, 1 | -1>;
     filters?: Record<string, any>;
   }) {
-    const res = await AdminAPIMethods.fetchMentor(params || {});
+    const res = await AdminAPIMethods.fetchMentor(params || {limit:2});
     
     if (res.ok) {
       setMentors(res.data.data);

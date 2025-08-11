@@ -17,7 +17,7 @@ export class DonationRepoitory
 
   async findByPaymentIntentId(paymentIntentId: string): Promise<IDonation | null> {
     const doc = await DonationModel.findOne({ paymentIntentId }).exec();
-    return doc ? toDTO<IDonation>(doc) : null;
+    return doc 
   }
 
   async findManyWithFilter(
@@ -26,8 +26,8 @@ export class DonationRepoitory
     skip: number,
     limit: number
   ): Promise<IDonation[]> {
-    const docs = await DonationModel.find(filters).sort(sort).skip(skip).limit(limit);
-    return docs.map(doc => toDTO<IDonation>(doc));
+    const docs = await DonationModel.find(filters).sort(sort).skip(skip).limit(limit).lean().exec();
+    return docs
   }
 
   async countFiltered(filters: FilterQuery<IDonation>): Promise<number> {

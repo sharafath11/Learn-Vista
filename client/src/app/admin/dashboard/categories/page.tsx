@@ -38,7 +38,7 @@ export default function CategoriesList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const categoriesPerPage = 6;
+  const categoriesPerPage = 2;
 
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -1,6 +1,7 @@
-import { Document, Types } from "mongoose";
+import { Document, ObjectId, Types } from "mongoose";
 
 export interface IDonation extends Document {
+  _id:string |ObjectId
   donorName: string;
   donorEmail: string;
   amount: number;

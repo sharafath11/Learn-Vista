@@ -13,11 +13,18 @@ import { INotificationService } from "../../core/interfaces/services/notificatio
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { IComment, ILesson, IQuestions } from "../../types/lessons";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
 import { Messages } from "../../constants/messages";
+import { ICourseAdminResponse } from "../../shared/dtos/courses/course-response.dto";
+import { CourseMapper } from "../../shared/dtos/courses/course.mapping";
+import { LessonMapper } from "../../shared/dtos/lessons/lesson.mapper";
+import { IAdminLessonResponseDto} from "../../shared/dtos/lessons/lessonResponse.dto";
+import { IAdminCommentResponseDto } from "../../shared/dtos/comment/commentResponse.dto";
+import { CommentMapper } from "../../shared/dtos/comment/comment.mapper";
+import { IQuestionAdminResponseDto } from "../../shared/dtos/question/question-response.dto";
+import { QuestionMapper } from "../../shared/dtos/question/question.mapper";
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter)
 @injectable()
@@ -36,7 +43,7 @@ async getClass(
     search?: string,
     filters: FilterQuery<ICourse> = {},
     sort: Record<string, 1 | -1> = { createdAt: -1 }
-  ): Promise<{ data: ICourse[]; total: number; totalPages?: number }> {
+  ): Promise<{ data: ICourseAdminResponse[]; total: number; totalPages?: number }> {
    
     const { data, total, totalPages } = await this._courseRepo.AdmingetClassRepo(
       page,     
@@ -47,15 +54,16 @@ async getClass(
     );
   
     if (!data) throwError(Messages.COURSE.FETCH_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
-   const sendData=await convertSignedUrlInArray(data,["thumbnail"])
+  const sendData = await convertSignedUrlInArray(data, ["thumbnail"]);
+  const mapperData=sendData.map((i)=>CourseMapper.toResponsePopulatedAdminCourse(i))
     return {
-      data:sendData,
+      data:mapperData,
       total,
       ...(totalPages !== undefined && { totalPages })
     };
   }
   
-async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
+async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourseAdminResponse> {
   validateCoursePayload(data, thumbnail);
 
   if (!data.mentorId) {
@@ -119,14 +127,15 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourse> {
   });
 
   const sendData = await convertSignedUrlInObject(createdCourse, ["thumbnail"]);
-  return sendData;
+   const mapperData=CourseMapper.toResponsePopulatedAdminCourse(sendData)
+  return mapperData;
 }
 
   async editCourseService(
     courseId: string,
     data: Partial<ICourse>,
     thumbnail?: Buffer
-  ): Promise<ICourse> {
+  ): Promise<ICourseAdminResponse> {
     const currentCourse = await this._courseRepo.findById(courseId);
     if (!currentCourse) {
       throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
@@ -182,7 +191,6 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
     }
     
     const updatedCourse = await this._courseRepo.update(courseId, updateData);
-    
     if (!updatedCourse) {
       throwError(Messages.COURSE.FAILED_TO_UPDATE, StatusCode.INTERNAL_SERVER_ERROR); 
     }
@@ -193,8 +201,9 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
     message: Messages.COURSE.UPDATED_NOTIFICATION(updatedCourse.title),
     type: "info",
    });
-  const sendData=await convertSignedUrlInObject(updatedCourse,["thumbnail"])
-    return sendData;
+    const sendData = await convertSignedUrlInObject(updatedCourse, ["thumbnail"]);
+     const mapperData=CourseMapper.toResponsePopulatedAdminCourse(sendData)
+    return mapperData;
   }
 
   async blockCourse(id: string, isBlock: boolean): Promise<void> {
@@ -225,23 +234,26 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
   });
   }
 async getLessons(courseId: string): Promise<{
-  lessons: ILesson[];
-  comments: IComment[];
-  questions: IQuestions[];
+  lessons: IAdminLessonResponseDto[];
+  comments: IAdminCommentResponseDto[];
+  questions: IQuestionAdminResponseDto[];
 }> {
   const result = await this._lessonRepo.findAll({ courseId });
   if (!result) throwError(Messages.COMMON.INTERNAL_ERROR, StatusCode.BAD_REQUEST);
   const updatedLessons = await convertSignedUrlInArray(result, ["thumbnail"]);
   const sendData=await generateSignedUrlForVideoFieldInObjects(updatedLessons,["videoUrl"])
   const comments = await this._commentRepo.findAll({ courseId });
-  const lessonIds = updatedLessons.map((l) => l.id.toString());
+  const lessonIds = updatedLessons.map((l) => l._id.toString());
   const questions = await this._qustionRepo.findAll({
   lessonId: { $in: lessonIds },
-});
+  });
+  const mapperData = sendData.map((i) => LessonMapper.toAdminLessonResponseDto(i))
+  const sendComment = comments.map((i) => CommentMapper.toAdminCommentResponseDto(i))
+  const sendQuestion=questions.map((i)=>QuestionMapper.toQuestionAdminResponseDto(i))
   return {
-    lessons: sendData,
-    comments,
-    questions,
+    lessons: mapperData,
+    comments:sendComment,
+    questions:sendQuestion,
   };
 }
 

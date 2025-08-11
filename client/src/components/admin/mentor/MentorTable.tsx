@@ -41,6 +41,7 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
     }
   
     const res = await AdminAPIMethods.fetchMentor({
+      limit:2,
       page: currentPage,
       search: debouncedSearchTerm,
       sort: { username: sortOrder === 'asc' ? 1 : -1 },

@@ -21,7 +21,8 @@ import { ICategory } from "@/src/types/categoryTypes"
 import { IMentor } from "@/src/types/mentorTypes"
 
 export function CourseFormDesign({ courseId }: { courseId: string }) {
-  const { courses, avilbleMentors,setCourses ,categories} = useAdminContext();
+  const { courses, avilbleMentors, setCourses, categories } = useAdminContext();
+  console.log("coudvsdf",courses)
   const [mentors, setMentors] = useState<IMentor[]>();
    useEffect(() => {
      fetchAllMentors()
@@ -146,14 +147,14 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Mentor * { course.mentorId.username}</Label>
+                  <Label>Mentor * { course.mentor}</Label>
                   <Select 
                     value={formData.mentorId}
                     onValueChange={(value) => handleSelectChange("mentorId", value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select mentor">
-                        {avilbleMentors.find(m => m.id === formData.mentorId)?.username || "Select mentor"}
+                        {avilbleMentors.find(m => m.id === formData.mentorId)?.id || "Select mentor"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
@@ -167,7 +168,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Category *{ course.categoryId.title}</Label>
+                  <Label>Category *{ course.category}</Label>
                   <Select 
                     value={formData.categoryId}
                     onValueChange={(value) => handleSelectChange("categoryId", value)}

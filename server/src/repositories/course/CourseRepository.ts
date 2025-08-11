@@ -179,10 +179,10 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
         this.model.countDocuments(filters),
       ]);
 
-      const data = toDTOArray<ICourse>(documents);
+      
     
       return {
-        data,
+        data:documents,
         total,
         totalPages: Math.ceil(total / limit),
       };
