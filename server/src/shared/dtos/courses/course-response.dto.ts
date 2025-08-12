@@ -43,3 +43,17 @@ export interface ICourseAdminResponse {
   isActive: boolean
   description?:string
 }
+export interface ICourseMentorResponseDto{
+  id: String,
+  title: string,
+  description: string,
+  mentor: string,
+  sessions: number,
+  categoryName: string;
+  thumbnail: string;
+  totelStudent?:number
+  isActive: boolean;
+  startDate: string;
+  endDate: string,
+  startTime:string
+}

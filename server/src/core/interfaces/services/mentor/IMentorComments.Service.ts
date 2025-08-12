@@ -1,4 +1,6 @@
 import { ObjectId } from "mongoose";
+import { IGetAllCommentsResponse, PaginationMeta } from "../../../../types/lessons";
+import { IMentorCommentResponseDto } from "../../../../shared/dtos/comment/commentResponse.dto";
 
 
 export interface GetAllCommentsParams {
@@ -13,5 +15,6 @@ export interface GetAllCommentsParams {
 }
 
 export interface IMentorCommentsService {
-  getAllComments(params: GetAllCommentsParams,): Promise<any>;
-}
+  getAllComments(params: GetAllCommentsParams,):Promise <IGetAllCommentsResponse>
+};
+

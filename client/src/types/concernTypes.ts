@@ -38,10 +38,11 @@ export interface IConcern {
   id: string;
   title:string
   message: string;
-  attachments?: ConcernAttachment[]; // These are the attachments AFTER upload to S3
+  attachments?: ConcernAttachment[]; 
   courseId: string;
   mentorId: string;
-  resolution:string,
+  resolution: string,
+  courseTitle?:string
   status: 'open' | 'in-progress' | 'resolved';
   createdAt: string;
   updatedAt: string;

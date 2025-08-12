@@ -1,5 +1,5 @@
 import { IQuestions } from "../../../types/lessons";
-import { IQuestionAdminResponseDto, IQuestionResponseDto } from "./question-response.dto";
+import { IMentorQustionsDto, IQuestionAdminResponseDto, IQuestionResponseDto } from "./question-response.dto";
 
 
 export class QuestionMapper {
@@ -23,8 +23,16 @@ export class QuestionMapper {
       id: question._id.toString(),
       question: question.question,
       type: question.type,
+      options:question.options,
       lessonId:question.lessonId
     };
+  }
+  static toImentorQustionResponseDto(q: IQuestions): IMentorQustionsDto{
+    return {
+      question: q.question,
+      type: q.type,
+      options:q.options
+    }
   }
 
 }

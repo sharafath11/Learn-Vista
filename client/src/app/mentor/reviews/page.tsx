@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { MessageSquare, Search } from "lucide-react"
 import { useMentorContext } from "@/src/context/mentorContext"
-import { IComment } from "@/src/types/lessons"
+import { IComment, IMentorComments } from "@/src/types/lessons"
 import { ICourse } from "@/src/types/courseTypes"
 import CommentCard from "./comment-card"
 import useDebounce from "@/src/hooks/useDebouncing"
@@ -15,7 +15,7 @@ type FilterOption = "all" | string
 const LIMIT = 2
 
 export default function ReviewsComponent() {
-  const [comments, setComments] = useState<IComment[]>([])
+  const [comments, setComments] = useState<IMentorComments[]>([])
   const [sortBy, setSortBy] = useState<SortOption>("newest")
   const [filterByCourse, setFilterByCourse] = useState<FilterOption>("all")
   const [searchTerm, setSearchTerm] = useState("")
@@ -26,21 +26,8 @@ export default function ReviewsComponent() {
   const debouncedSearch = useDebounce(searchTerm, 500)
   const { courses } = useMentorContext()
 
-  const courseMap = useMemo(() => {
-    const map: { [key: string]: ICourse } = {}
-    courses?.forEach((course) => {
-      const lessons = course.sessions || course.Lessons || []
-      lessons.forEach((lesson: any) => {
-        const id = typeof lesson === "string" ? lesson : lesson.id
-        if (id) map[id] = course
-      })
-    })
-    return map
-  }, [courses])
 
-  const getCourseForLesson = (lessonId: string) => {
-    return courseMap[lessonId]
-  }
+
   const formatDate = (date: Date | undefined) => {
     if (!date) return "Unknown date"
     return new Date(date).toLocaleDateString("en-US", {
@@ -54,7 +41,6 @@ export default function ReviewsComponent() {
 
   useEffect(() => {
     const fetchComments = async () => {
-      setLoading(true)
       try {
         const res = await MentorAPIMethods.getAllComments({
           sortBy,
@@ -149,11 +135,11 @@ export default function ReviewsComponent() {
           ) : comments?.length > 0 ? (
             comments?.map((comment) => (
               <CommentCard
-                key={comment.id || `${comment.lessonId}-${comment.userId}-${comment.createdAt}`}
+                key={comment.comment}
                 comment={comment}
-                course={getCourseForLesson(comment.lessonId)}
+                course={comment.courseTitle}
                 formatDate={formatDate}
-                lessonTitle={""}
+                lessonTitle={comment.lessonTitle}
               />
             ))
           ) : (

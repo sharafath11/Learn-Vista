@@ -2,9 +2,13 @@ import  { Document, Types } from "mongoose";
 import { Request } from "express";
 
 type UserRole = "user" | "mentor"
-interface IEnrolledCourse {
+export interface IEnrolledCourse {
   courseId: Types.ObjectId;
   allowed: boolean;
+}
+export interface IMentorStudentEnroledCourse {
+  courseId: string;
+  allowed:boolean
 }
 export interface IUser extends Document {
   _id: Types.ObjectId;

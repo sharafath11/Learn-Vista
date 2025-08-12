@@ -8,7 +8,7 @@ export interface ICourse {
   title: string;
   description?: string;
   mentorId: string | IMentor;
-  sessions: string[];
+  sessions: string[]|number;
   categoryId: string | ICategory;
   mentor:string
   categoryName?:string;
@@ -32,6 +32,7 @@ export interface ICourse {
 }
 
 export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId'> {
+  totelStudent?:number
   category?:string
    mentorId: IMentor;
   categoryId: ICategory;

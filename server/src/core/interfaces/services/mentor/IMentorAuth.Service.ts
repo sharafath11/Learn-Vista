@@ -1,5 +1,5 @@
-import { Response } from 'express';
 import { IMentor } from '../../../../types/mentorTypes';
+import { IMentorMentorResponseDto } from '../../../../shared/dtos/mentor/mentor-response.dto';
 
 
 
@@ -7,7 +7,7 @@ export interface IMentorAuthService {
   loginMentor(
     email: string,
     password: string,
-  ): Promise<{ mentor: Partial<IMentor>; token: string; refreshToken: string }>;
+  ): Promise<{ mentor: IMentorMentorResponseDto; token: string; refreshToken: string }>;
   
   sendOtp(email: string): Promise<void>;
   verifyOtp(email: string, otp: string): Promise<void>;

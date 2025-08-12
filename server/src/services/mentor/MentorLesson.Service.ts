@@ -20,6 +20,12 @@ import { IUserCourseProgressRepository } from "../../core/interfaces/repositorie
 import { logger } from "../../utils/logger";
 import { convertSignedUrlInArray, uploadThumbnail, deleteFromS3, convertSignedUrlInObject } from "../../utils/s3Utilits";
 import { Messages } from "../../constants/messages";
+import { IMentorLessonResponseDto } from "../../shared/dtos/lessons/lessonResponse.dto";
+import { LessonMapper } from "../../shared/dtos/lessons/lesson.mapper";
+import { IMentorQustionsDto } from "../../shared/dtos/question/question-response.dto";
+import { QuestionMapper } from "../../shared/dtos/question/question.mapper";
+import { IMentorCommentResponseAtLesson } from "../../shared/dtos/comment/commentResponse.dto";
+import { CommentMapper } from "../../shared/dtos/comment/comment.mapper";
 
 @injectable()
 export class MentorLessonService implements IMentorLessonService {
@@ -34,14 +40,14 @@ export class MentorLessonService implements IMentorLessonService {
     private _userCourseProgress: IUserCourseProgressRepository
   ) {}
 
-  async getLessons(courseId: string | ObjectId): Promise<ILesson[]> {
+  async getLessons(courseId: string | ObjectId): Promise<IMentorLessonResponseDto[]> {
     const result = await this._lessonRepo.findAll({ courseId });
     if (!result) throwError(Messages.COMMON.INTERNAL_ERROR, StatusCode.BAD_REQUEST);
     const updatedResult = await convertSignedUrlInArray(result, ["thumbnail"]);
-    return updatedResult;
+    return updatedResult.map((i)=>LessonMapper.toMentorLessonResponseDto(i));
   }
 
-  async addLesson(data: ILesson): Promise<ILesson> {
+  async addLesson(data: ILesson): Promise<IMentorLessonResponseDto> {
     if (!data.title || !data.videoUrl || !data.courseId || !data.thumbnail) {
       throwError(Messages.COMMON.MISSING_FIELDS, StatusCode.BAD_REQUEST);
     }
@@ -93,13 +99,13 @@ export class MentorLessonService implements IMentorLessonService {
       { courseId: data.courseId },
       { $inc: { totalLessons: 1 } }
     );
-    return createdLesson;
+    return LessonMapper.toMentorLessonResponseDto(createdLesson);
   }
 
   async editLesson(
     lessonId: string | ObjectId,
     updateData: ILessonUpdateData
-  ): Promise<ILesson> {
+  ): Promise<IMentorLessonResponseDto> {
     const existingLesson = await this._lessonRepo.findById(lessonId.toString());
     if (!existingLesson) {
       throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
@@ -159,11 +165,11 @@ export class MentorLessonService implements IMentorLessonService {
       throwError(Messages.LESSONS.UPDATE_FAILED, StatusCode.NOT_FOUND);
     }
     const sendData=await convertSignedUrlInObject(updated,["thumbnail"])
-    return sendData;
+    return LessonMapper.toMentorLessonResponseDto(sendData);
   }
-  async getQuestionService(lessonId: string | ObjectId): Promise<IQuestions[]> {
+  async getQuestionService(lessonId: string | ObjectId): Promise<IMentorQustionsDto[]> {
     const result = await this._questionRepository.findAll({ lessonId });
-    return result;
+    return result.map((i)=>QuestionMapper.toImentorQustionResponseDto(i));
   }
   async editQuestionService(
     questionId: string,
@@ -178,12 +184,13 @@ export class MentorLessonService implements IMentorLessonService {
     if (data.question.trim().length < 10)
       throwError(Messages.QUESTIONS.INVALID_QUESTION);
     await this._questionRepository.update(data.id, data);
+
     return;
   }
   async addQuestionService(
     lessonId: string | ObjectId,
     data: IQuestions
-  ): Promise<IQuestions> {
+  ): Promise<IMentorQustionsDto> {
     if (!data.question || !data.type || !data.lessonId) {
       throwError(
         Messages.COMMON.MISSING_FIELDS,
@@ -192,13 +199,13 @@ export class MentorLessonService implements IMentorLessonService {
     }
     if (data.question.trim().length < 10)
       throwError(Messages.QUESTIONS.INVALID_QUESTION);
-    await this._questionRepository.create(data);
-    return data;
+    const updated=await this._questionRepository.create(data);
+    return QuestionMapper.toImentorQustionResponseDto(updated) ;
   }
-  async getComments(lessonId: string | ObjectId): Promise<IComment[]> {
+  async getComments(lessonId: string | ObjectId): Promise<IMentorCommentResponseAtLesson[]> {
     const result = await this._commentRepo.findAll({ lessonId: lessonId });
     if (!result) throwError(Messages.COMMENT.NO_COMMENTS_FOUND);
-    return result;
+    return result.map((i)=>CommentMapper.toMentorCommentResponseAtLessonDto(i));
   }
   async genrateOptions(question: string): Promise<string[]> {
     if (!question.trim()) {

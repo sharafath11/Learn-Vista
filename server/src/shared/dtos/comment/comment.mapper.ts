@@ -1,5 +1,6 @@
+import { format } from "path";
 import { IComment } from "../../../types/lessons";
-import { IAdminCommentResponseDto, ICommentResponseDto } from "./commentResponse.dto";
+import { IAdminCommentResponseDto, ICommentResponseDto, IMentorCommentResponseAtLesson, IMentorCommentResponseDto } from "./commentResponse.dto";
 
 
 export class CommentMapper {
@@ -23,5 +24,21 @@ export class CommentMapper {
         userName: comment.userName,
         lessonId:comment.lessonId.toString()
     };
+  }
+    static toMentorResponseComment(comment: IComment,courseTitle:string,lessonTitle:string): IMentorCommentResponseDto {
+    return {
+      userName: comment.userName,
+      createdAt: comment.createdAt||new Date ,
+      courseTitle,
+      lessonTitle,
+      comment: comment.comment
+    };
+    }
+  static toMentorCommentResponseAtLessonDto(c: IComment): IMentorCommentResponseAtLesson{
+    return {
+      comment: c.comment,
+      createdAt: c.createdAt || new Date(),
+      userName:c.userName
+    }
   }
 }

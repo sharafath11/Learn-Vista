@@ -1,7 +1,7 @@
-import { ICategory, ICourse } from "../../../types/classTypes";
+import { ICategory, ICourse, IPopulatedCourse } from "../../../types/classTypes";
 import { IMentor } from "../../../types/mentorTypes";
 import { CategoryMapper } from "../categories/category.mapper";
-import { ICourseAdminResponse, ICourseResponseDto } from "./course-response.dto";
+import { ICourseAdminResponse, ICourseMentorResponseDto, ICourseResponseDto } from "./course-response.dto";
 
 export class CourseMapper {
   static toResponseDto(course: ICourse): ICourseResponseDto {
@@ -52,5 +52,20 @@ export class CourseMapper {
  
   }
 }
-
+  static toResponseMentorCourse(course: IPopulatedCourse):ICourseMentorResponseDto {
+       return {
+      id: course._id.toString(),
+      title: course.title,
+      description: course.description||"",
+      mentor: course.mentorId?.toString() || "",
+      sessions: course.sessions?.length || 0,
+      categoryName: course.categoryName,
+      thumbnail: course.thumbnail || "",
+         isActive: course.isActive ?? false,
+      totelStudent:course.enrolledUsers.length,
+      startDate: course.startDate||"",
+      endDate: course.endDate||"",
+      startTime: course.startTime || "",
+    };
+}
 }

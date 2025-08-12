@@ -11,6 +11,8 @@ import { ICourseRepository } from "../../core/interfaces/repositories/course/ICo
 import { getSignedS3Url, signConcernAttachmentUrls, uploadConcernAttachment } from "../../utils/s3Utilits";
 import { Messages } from "../../constants/messages";
 import { StatusCode } from "../../enums/statusCode.enum";
+import { ConcernMapper } from "../../shared/dtos/concern/concern.mapper";
+import { IConernMentorResponse } from "../../shared/dtos/concern/concern-response.dto";
 
 @injectable()
 export class MentorConcernService implements IMentorConcernService {
@@ -21,7 +23,7 @@ export class MentorConcernService implements IMentorConcernService {
     @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository
   ) {}
 
-  async addConcern(data: IConcern , files?: Express.Multer.File[] ): Promise<IConcern> {
+  async addConcern(data: IConcern , files?: Express.Multer.File[] ): Promise<IConernMentorResponse> {
   validateConcernPayload(data);
   const existingConcern = await this._concernRepo.findAll({ 
     courseId: data.courseId,
@@ -74,18 +76,25 @@ export class MentorConcernService implements IMentorConcernService {
   message: Messages.CONCERN.NOTIFICATION.MESSAGE(course?.title || ""),
   type: "warning",
 });
-
-
-  return concern;
+ 
+ return ConcernMapper.toMentorResponseConcern(concern, course?.title as string);
+ 
 }
  async getConcerns(
   filters: Record<string, unknown>,
   sort: Record<string, 1 | -1>,
   skip: number,
   limit: number
-): Promise<{ data: IConcern[]; total: number }> {
+): Promise<{ data: IConernMentorResponse[]; total: number }> {
   const { data, total } = await this._concernRepo.findMany(filters, sort, skip, limit);
- const sendData=await signConcernAttachmentUrls(data)
-  return { data:sendData, total };
+  const signedConcerns = await signConcernAttachmentUrls(data);
+  const responses = await Promise.all(
+    signedConcerns.map(async (concern: IConcern) => {
+      const course = await this._courseRepo.findById(concern.courseId as string);
+      const courseTitle = course?.title || "Unknown Course";
+      return ConcernMapper.toMentorResponseConcern(concern, courseTitle);
+    })
+  );
+  return { data:responses, total };
 }
 }

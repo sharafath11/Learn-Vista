@@ -21,11 +21,11 @@ export default function MentorDashboard() {
   let totalStudent = 0
   let totalLessons = 0
   let completedLessons = 0
-
+console.log("from mentor",courses)
   courses.forEach((course) => {
-    totalStudent += course.enrolledUsers?.length ?? 0
-    totalLessons += course?.sessions?.length ?? 0
-    completedLessons += course?.sessions?.filter((lesson) => lesson)?.length ?? 0
+    totalStudent += course.totelStudent as number
+    totalLessons += course?.sessions as number
+    completedLessons += course?.isActive? 1:0
   })
   let totalCourses = courses.length
 let publishedCourses = courses.filter((course) => course.isActive).length
@@ -176,7 +176,7 @@ let publishedCourses = courses.filter((course) => course.isActive).length
                         progress={Math.floor(Math.random() * 100)}
                         status={index === 0 ? "Active" : index === 1 ? "New" : "Draft"}
                         students={course.enrolledUsers?.length || 0}
-                        lessons={course.sessions?.length || 0}
+                        lessons={course.sessions as number || 0}
                       />
                     ))}
                   </div>

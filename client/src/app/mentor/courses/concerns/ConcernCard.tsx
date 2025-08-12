@@ -28,10 +28,10 @@ type ConcernStatus = "open" | "in-progress" | "resolved"
 
 interface ConcernCardProps {
   concern: IConcern
-  courses: ICourse[]
+  
 }
 
-const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
+const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null)
   const [playingFile, setPlayingFile] = useState<string | null>(null)
   const [previewImage, setPreviewImage] = useState<string | null>(null)
@@ -97,9 +97,6 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
   }
 
   const statusDisplay = getStatusDisplay(concern.status)
-  const courseName =
-    courses?.find((c) => c.id === concern.courseId)?.title || concern.courseId
-
   return (
     <>
       <Card className="bg-gray-800/50 border border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl">
@@ -116,7 +113,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern, courses }) => {
                   </div>
                 </Badge>
                 <Badge className="bg-gray-700/50 text-gray-300 border-gray-600/50 px-3 py-1.5 text-xs font-semibold">
-                  {courseName}
+                  {concern.courseTitle}
                 </Badge>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-400">

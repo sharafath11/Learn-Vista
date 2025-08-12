@@ -19,3 +19,10 @@ export interface IAdminLessonResponseDto{
   description: string
   thumbnail:string
 }
+export interface IMentorLessonResponseDto {
+   id: string;
+  title: string
+  videoUrl: string
+  description: string
+  thumbnail:string
+}

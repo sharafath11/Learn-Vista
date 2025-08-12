@@ -97,10 +97,7 @@ export default function StudentDetailsModal({ student, isOpen, onClose }: Studen
             <div className="space-y-4">
               {userCourses && userCourses.length > 0 && (
                 <div>
-                  <div className="flex items-center gap-3 mb-2">
-                    <BookMarked className="text-muted-foreground h-5 w-5" />
-                    <p className="text-sm text-muted-foreground">Enrolled Courses</p>
-                  </div>
+
                   <div className="space-y-2">
                     {userCourses.map((course) => (
                       <div key={course?.id} className="flex justify-between items-center bg-muted/50 p-2 rounded">

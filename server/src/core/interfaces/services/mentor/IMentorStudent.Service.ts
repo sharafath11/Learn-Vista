@@ -1,5 +1,6 @@
 import { ObjectId, Types } from "mongoose";
 import { IUser } from "../../../../types/userTypes";
+import { IMentorStudentResposnse } from "../../../../shared/dtos/user/user-response.dto";
 
 export interface IMentorStudentService {
   getStudentDetilesService(
@@ -12,7 +13,7 @@ export interface IMentorStudentService {
       sort?: Record<string, 1 | -1>;
     }
   ): Promise<{
-    students: IUser[];
+    students: IMentorStudentResposnse[];
     total: number;
   }>;
   

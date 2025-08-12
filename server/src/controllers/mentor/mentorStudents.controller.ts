@@ -55,7 +55,8 @@ async getStudentDetilesController(req: Request, res: Response): Promise<void> {
     async blockStudentController(req: Request, res: Response): Promise<void> {
       try {
         const userId=req.params.studentId
-        const {courseId,status}=req.body
+        const { courseId, status } = req.body
+        
         await this._mentorStudentService.studentStatusService(userId, courseId, status);
         const message = status ? Messages.STUDENTS.STATUS_UPDATED_BLOCKED : Messages.STUDENTS.STATUS_UPDATED_UNBLOCKED;
            sendResponse(res,StatusCode.OK,message,true)

@@ -1,7 +1,8 @@
 
+import { userInfo } from "os";
 import { ICertificate } from "../../../types/certificateTypes";
-import { IUser } from "../../../types/userTypes";
-import { IAdminUserCertificate, IAdminUserResponseDto, IUserResponseDto } from "./user-response.dto";
+import { IMentorStudentEnroledCourse, IUser } from "../../../types/userTypes";
+import { IAdminUserCertificate, IAdminUserResponseDto, IMentorStudentResposnse, IUserResponseDto } from "./user-response.dto";
 
 export class UserMapper {
   static toResponseDto(user: IUser): IUserResponseDto {
@@ -41,5 +42,17 @@ static toResponsAdminUserCertificateDto(certificate: ICertificate): IAdminUserCe
     isRevoked: certificate.isRevoked,
   };
 }
+  static toResponseMentorStudent(user: IUser,enrolledCourses:IMentorStudentEnroledCourse[]): IMentorStudentResposnse{
+    return {
+      id:user._id.toString(),
+      email: user.email,
+      isBlocked: user.isBlocked,
+      isVerified: user.isVerified,
+      profilePicture: user.profilePicture||"",
+      username: user.username,
+      enrolledCourses
+            
+    }
+  }
 
 }

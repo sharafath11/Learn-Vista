@@ -56,3 +56,10 @@ export interface ILessonProgressUpdate {
   practicalCompleted?: boolean;
   mcqCompleted?: boolean;
 }
+export interface IMentorComments{
+  userName:string
+createdAt:Date
+courseTitle:string
+lessonTitle:string
+comment:string
+}

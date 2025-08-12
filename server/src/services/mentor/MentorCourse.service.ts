@@ -12,6 +12,8 @@ import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { Messages } from "../../constants/messages";
+import { ICourseMentorResponseDto } from "../../shared/dtos/courses/course-response.dto";
+import { CourseMapper } from "../../shared/dtos/courses/course.mapping";
 
 @injectable()
 export class MentorCourseService implements IMentorCourseService {
@@ -23,10 +25,12 @@ export class MentorCourseService implements IMentorCourseService {
     @inject(TYPES.UserRepository) private _userRepo:IUserRepository
   ) {}
 
-  async getCourses(mentorId: string): Promise<IPopulatedCourse[]> {
+  async getCourses(mentorId: string): Promise<ICourseMentorResponseDto[]> {
     const courses = await this._courseRepo.findWithMenorIdgetAllWithPopulatedFields(mentorId);
     if (!courses) throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
-    return convertSignedUrlInArray(courses, ["thumbnail"]);
+    const singendCourse = await convertSignedUrlInArray(courses, ["thumbnail"]);
+    return singendCourse.map((i)=>CourseMapper.toResponseMentorCourse(i))
+    
   }
 
   async courseApproveOrReject(
@@ -79,7 +83,7 @@ export class MentorCourseService implements IMentorCourseService {
     search?: string;
     filters?: Record<string, unknown>;
     sort?: Record<string, 1 | -1>;
-  }): Promise<{ data: IPopulatedCourse[]; total: number; categories: ICategory[] }> {
+  }): Promise<{ data: ICourseMentorResponseDto[]; total: number; categories: ICategory[] }> {
     const { data, total } = await this._courseRepo.fetchMentorCoursesWithFilters({
       mentorId,
       page,
@@ -90,7 +94,8 @@ export class MentorCourseService implements IMentorCourseService {
     });
     const categories = await this._catRepo.findAll();
     const sendCourses = await convertSignedUrlInArray(data, ["thumbnail"]);
-    return { data: sendCourses, total, categories };
+    const sendData=sendCourses.map((i)=>CourseMapper.toResponseMentorCourse(i))
+    return { data: sendData, total, categories };
   }
  async publishCourse(courseId: string,status:boolean): Promise<void> {
      const coures = await this._courseRepo.update(courseId, { isActive: status });

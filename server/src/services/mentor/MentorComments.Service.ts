@@ -2,14 +2,20 @@ import { inject, injectable } from "inversify";
 import { IMentorCommentsService, GetAllCommentsParams } from "../../core/interfaces/services/mentor/IMentorComments.Service";
 import { TYPES } from "../../core/types";
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
+import { IGetAllCommentsResponse } from "../../types/lessons";
+import { CommentMapper } from "../../shared/dtos/comment/comment.mapper";
+import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
+import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
 
 @injectable()
 export class MentorCommentsService implements IMentorCommentsService {
   constructor(
-      @inject(TYPES.CommentsRepository) private _commentRepo: ICommentstRepository,
+    @inject(TYPES.CommentsRepository) private _commentRepo: ICommentstRepository,
+    @inject(TYPES.CourseRepository) private _courseRepo: ICourseRepository,
+    @inject (TYPES.LessonsRepository) private _lessonRepo:ILessonsRepository
   ) {}
 
-  async getAllComments(params: GetAllCommentsParams) {
+  async getAllComments(params: GetAllCommentsParams):Promise<IGetAllCommentsResponse> {
   const {
     page = 1,
     limit = 2,
@@ -41,9 +47,19 @@ export class MentorCommentsService implements IMentorCommentsService {
     this._commentRepo.findWithPagination(filter, sort, page, limit, mentorId),
     this._commentRepo.countDocuments(filter),
   ]);
+    
+const sendData = await Promise.all(
+  comments.map(async (c) => {
+    const [course, lesson] = await Promise.all([
+      this._courseRepo.findById(c.courseId as string),
+      this._lessonRepo.findById(c.lessonId as string),
+    ]);
+    return CommentMapper.toMentorResponseComment(c, course?.title||"", lesson?.title||"");
+  })
+);
 
   return {
-    comments,
+    comments:sendData,
     pagination: {
       total,
       page,

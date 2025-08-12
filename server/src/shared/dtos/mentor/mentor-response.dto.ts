@@ -24,11 +24,28 @@ export interface IMentorResponseDto {
   isVerified: boolean;
   cvOrResume: string;
   createdAt: Date;
-  courseRejectReson?: any;
+  
 }
+export interface IMentorMentorResponseDto {
+  id: string;
+  username: string;
+  email: string;
+  expertise: string[];
+  experience: number;
+  bio: string;
+  applicationDate: Date;
+  phoneNumber: string;
+  profilePicture: string;
+  socialLinks: ISocialLink[] |string
+  liveClasses: string;
+  coursesCreated: string;
+  reviews: string;
+}
+
 export interface IAdminMentorResponseDto {
   id: string;
   username: string;
+  coursesCreated:string
   expertise: string[];
   status: 'pending' | 'approved' | 'rejected';
     students: number;

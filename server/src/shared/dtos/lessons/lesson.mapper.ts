@@ -1,5 +1,5 @@
 import { ILesson } from "../../../types/lessons";
-import { IAdminLessonResponseDto, ILessonResponseDto} from "./lessonResponse.dto";
+import { IAdminLessonResponseDto, ILessonResponseDto, IMentorLessonResponseDto} from "./lessonResponse.dto";
 
 
 export class LessonMapper {
@@ -20,6 +20,15 @@ export class LessonMapper {
     };
   }
   static toAdminLessonResponseDto(lesson: ILesson):IAdminLessonResponseDto {
+    return {
+      id: lesson._id.toString(),
+      title: lesson.title,
+      description: lesson?.description||"",
+      thumbnail: lesson.thumbnail as string,
+      videoUrl:lesson.videoUrl
+    }
+  }
+  static toMentorLessonResponseDto(lesson: ILesson): IMentorLessonResponseDto{
     return {
       id: lesson._id.toString(),
       title: lesson.title,

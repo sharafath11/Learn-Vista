@@ -16,5 +16,11 @@ export interface IQuestionAdminResponseDto {
   id: string;
   question: string;
   type: QuestionType;
+  options?:string[]
   lessonId:string
+}
+export interface IMentorQustionsDto{
+  question: string;
+  options?:string[]
+  type: QuestionType;
 }

@@ -1,7 +1,8 @@
+import { ICourseMentorResponseDto } from "../../../../shared/dtos/courses/course-response.dto";
 import { ICategory, IPopulatedCourse } from "../../../../types/classTypes";
 
 export interface IMentorCourseService {
-  getCourses(mentorId: string): Promise<IPopulatedCourse[]>;
+  getCourses(mentorId: string): Promise<ICourseMentorResponseDto[]>;
   courseApproveOrReject(
     mentorId: string,
     courseId: string,
@@ -16,7 +17,7 @@ export interface IMentorCourseService {
     filters?: Record<string, unknown>;
     sort?: Record<string, 1 | -1>;
   }): Promise<{
-    data: IPopulatedCourse[];
+    data: ICourseMentorResponseDto[];
     total: number;
     categories: ICategory[];
   }>;

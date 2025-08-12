@@ -1,6 +1,6 @@
 import { ICourse } from "../../../types/classTypes";
 import { IConcern } from "../../../types/concernTypes";
-import { IAdminConcernCourseResponseDto, IConcernResponseDto } from "./concern-response.dto";
+import { IAdminConcernCourseResponseDto, IConcernResponseDto, IConernMentorResponse, IMentorConcernAttachment } from "./concern-response.dto";
 
 export class ConcernMapper {
   static toResponseDto(concern: IConcern): IConcernResponseDto {
@@ -23,4 +23,27 @@ export class ConcernMapper {
       title: course.title,
     };
   }
+    static toMentorResponseConcern(
+    concern: IConcern,
+    courseTitle: string
+  ): IConernMentorResponse {
+      return {
+  createdAt:concern.createdAt||new Date,
+    id: concern._id.toString(),
+    title: concern.title,
+    message: concern.message,
+    attachments: mapAttachment(concern.attachments),
+    courseTitle,
+    status: concern.status || "open",
+    resolution: concern.resolution,
+  };
+  }
+}
+function mapAttachment(attachments?: IConcern["attachments"]): IMentorConcernAttachment[] {
+  if (!attachments) return [];
+  return attachments.map(att => ({
+    url: att.url,
+    type: att.type,
+    filename: att.filename,
+  }));
 }

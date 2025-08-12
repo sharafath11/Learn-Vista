@@ -14,6 +14,9 @@ import { StatusCode } from '../../enums/statusCode.enum';
 import { INotificationService } from '../../core/interfaces/services/notifications/INotificationService';
 import { notifyWithSocket } from '../../utils/notifyWithSocket';
 import { Messages } from '../../constants/messages';
+import { IMentorMentorResponseDto } from '../../shared/dtos/mentor/mentor-response.dto';
+import { MentorMapper } from '../../shared/dtos/mentor/mentor.mapper';
+import { getSignedS3Url } from '../../utils/s3Utilits';
 
 
 
@@ -28,7 +31,7 @@ export class MentorAuthService implements IMentorAuthService {
   async loginMentor(
     email: string,
     password: string,
-  ): Promise<{ mentor: Partial<IMentor>; token: string; refreshToken: string }> {
+  ): Promise<{ mentor: IMentorMentorResponseDto; token: string; refreshToken: string }> {
     const mentor = await this._mentorRepo.findWithPassword({ email });
     if (!mentor) throwError(Messages.AUTH.NOT_FOUND, StatusCode.NOT_FOUND);
     if (mentor.isBlock) throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
@@ -41,22 +44,10 @@ export class MentorAuthService implements IMentorAuthService {
   
     const token = generateAccessToken(mentor.id, "mentor");
     const refreshToken = generateRefreshToken(mentor.id, "mentor");
-  
+    const signedUrl=await getSignedS3Url(mentor.profilePicture as string)
+    const sendData=MentorMapper.toMentorMentorResponse(mentor,signedUrl)
     return {
-      mentor: {
-        id: mentor.id,
-        username: mentor.username,
-        email: mentor.email,
-        expertise: mentor.expertise,
-        experience: mentor.experience,
-        bio: mentor.bio,
-        phoneNumber: mentor?.phoneNumber || "",
-        socialLinks: mentor.socialLinks,
-        liveClasses: mentor.liveClasses,
-        coursesCreated: mentor.coursesCreated,
-        reviews: mentor.reviews,
-        profilePicture: mentor.profilePicture
-      },
+      mentor:sendData,
       token,
       refreshToken,
     };

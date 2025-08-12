@@ -2,7 +2,9 @@ import { inject, injectable } from "inversify";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { TYPES } from "../../core/types";
 import { INotificationRepository } from "../../core/interfaces/repositories/notifications/INotificationsRepository";
-import { ICreateNotification, INotification } from "../../types/notificationsTypes";
+import { ICreateNotification } from "../../types/notificationsTypes";
+import { INotificationResponse } from "../../shared/dtos/notification/notification-response.dto";
+import { NotifcationWrapper } from "../../shared/dtos/notification/notification.mapper";
 
 @injectable()
 export class NotificationService implements INotificationService {
@@ -15,9 +17,9 @@ export class NotificationService implements INotificationService {
     await this._notificationRepo.create(data);
   }
 
-  async getMyNotifications(userId: string): Promise<INotification[]> {
+  async getMyNotifications(userId: string): Promise<INotificationResponse[]> {
     const notification = await this._notificationRepo.findAll({ userId });
-    return notification
+    return notification.map((i)=>NotifcationWrapper.notifcationResponseDto(i))
   }
 
   async markAsRead(id: string): Promise<boolean> {

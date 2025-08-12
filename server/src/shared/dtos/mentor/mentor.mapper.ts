@@ -1,5 +1,5 @@
 import { IMentor } from "../../../types/mentorTypes";
-import { IMentorResponseDto, IAdminMentorResponseDto, IAdminAddCourseMentorsDto } from "./mentor-response.dto";
+import { IMentorResponseDto, IAdminMentorResponseDto, IAdminAddCourseMentorsDto, IMentorMentorResponseDto } from "./mentor-response.dto";
 
 export class MentorMapper {
   static toResponseDto(mentor: IMentor): IMentorResponseDto {
@@ -33,6 +33,7 @@ export class MentorMapper {
     return {
       id: mentor._id.toString(),
       username: mentor.username,
+      coursesCreated:mentor.coursesCreated.toString(),
       expertise: mentor.expertise,
       status: mentor.status,
       students: mentor.courses ? mentor.courses.reduce((total, course) => total + (course.students || 0), 0) : 0,
@@ -55,5 +56,23 @@ export class MentorMapper {
       expertise:mentor.expertise
     }
   }
+static toMentorMentorResponse(mentor: IMentor, signedUrl?: string): IMentorMentorResponseDto {
+  return {
+    id: mentor.id,
+    username: mentor.username,
+    email: mentor.email,
+    expertise: mentor.expertise,
+    experience: mentor.experience,
+    bio: mentor.bio||"",
+    applicationDate: mentor.applicationDate,
+    phoneNumber: mentor.phoneNumber || "",
+    profilePicture:signedUrl||"",
+    socialLinks: mentor.socialLinks,
+    liveClasses: mentor.liveClasses.toString(),
+    coursesCreated: mentor.coursesCreated.toString(),
+    reviews: mentor.reviews.toString()
+  };
+}
+
 
 }

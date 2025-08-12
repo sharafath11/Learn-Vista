@@ -43,6 +43,7 @@ export default function Page() {
     page: 1,
     search: "",
     filters: {},
+    limit:2,
     sort: { createdAt: -1 },
   })
 

@@ -15,3 +15,15 @@ export interface IAdminCommentResponseDto {
     comment: string
     lessonId:string
 }
+export interface IMentorCommentResponseDto {
+  userName: string;           
+  createdAt: Date;          
+  courseTitle: string;        
+  lessonTitle: string;        
+  comment: string;         
+}
+export interface IMentorCommentResponseAtLesson{
+  userName: string
+  createdAt: Date
+  comment: string;     
+}

@@ -156,7 +156,7 @@ export default function ConcernsPage() {
               ) : (
                 <div className="grid gap-4">
                   {concerns.map(concern => (
-                    <ConcernCard key={concern.id} concern={concern} courses={courses || []} />
+                    <ConcernCard key={concern.id} concern={concern} />
                   ))}
                 </div>
               )}

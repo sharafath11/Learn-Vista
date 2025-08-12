@@ -7,6 +7,8 @@ import { throwError } from '../../utils/ResANDError';
 import { StatusCode } from '../../enums/statusCode.enum'; 
 import { getSignedS3Url } from '../../utils/s3Utilits';
 import { Messages } from '../../constants/messages';
+import { IMentorMentorResponseDto } from '../../shared/dtos/mentor/mentor-response.dto';
+import { MentorMapper } from '../../shared/dtos/mentor/mentor.mapper';
 
 @injectable()
 export class MentorService implements IMentorService {
@@ -14,7 +16,7 @@ export class MentorService implements IMentorService {
     @inject(TYPES.MentorRepository) private _mentorRepo: IMentorRepository,
   ) {}
 
-  async getMentor(id: string): Promise<Partial<IMentor>> {
+  async getMentor(id: string): Promise<IMentorMentorResponseDto> {
     const mentor = await this._mentorRepo.findById(id);
     if (!mentor) throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
     if (mentor.isBlock) throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
@@ -24,21 +26,7 @@ export class MentorService implements IMentorService {
       signedUrl = await getSignedS3Url(mentor.profilePicture as string);
     }
 
-    return {
-      id: mentor.id,
-      username: mentor.username,
-      email: mentor.email,
-      expertise: mentor.expertise,
-      experience: mentor.experience,
-      bio: mentor.bio,
-      applicationDate: mentor.applicationDate,
-      phoneNumber: mentor.phoneNumber || "",
-      profilePicture: signedUrl || mentor.profilePicture,
-      socialLinks: mentor.socialLinks,
-      liveClasses: mentor.liveClasses,
-      coursesCreated: mentor.coursesCreated,
-      reviews: mentor.reviews
-    };
+    return MentorMapper.toMentorMentorResponse(mentor,signedUrl)
   }
 }
 

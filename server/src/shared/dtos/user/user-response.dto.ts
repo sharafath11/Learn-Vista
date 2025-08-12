@@ -1,3 +1,5 @@
+import { IEnrolledCourse, IMentorStudentEnroledCourse } from "../../../types/userTypes";
+
 export interface IUserResponseDto {
   id: string;
   username: string;
@@ -29,4 +31,13 @@ export interface IAdminUserCertificate {
   issuedDateFormatted: string;
   qrCodeUrl: string;
   isRevoked: boolean;
+}
+export interface IMentorStudentResposnse{
+  id: string,
+  username: string,
+  email: string,
+  profilePicture: string,
+  isBlocked: boolean;
+  enrolledCourses: IMentorStudentEnroledCourse[];
+  isVerified:boolean
 }

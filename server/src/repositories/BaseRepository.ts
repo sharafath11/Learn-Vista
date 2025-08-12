@@ -49,7 +49,7 @@ export abstract class BaseRepository<T extends Document, U>
     update: UpdateQuery<T>
   ): Promise<number> {
     try {
-      const result = await this.model.updateMany(filter, update);
+      const result = await this.model.updateMany(filter, update).lean().exec();
       return result.modifiedCount;
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.UPDATE_MANY_ERROR);
@@ -96,8 +96,7 @@ export abstract class BaseRepository<T extends Document, U>
     update: UpdateQuery<T>
   ): Promise<U | null> {
     try {
-      return await this.model.findOneAndUpdate(filter, update, { new: true });
-      
+      return await this.model.findOneAndUpdate(filter, update, { new: true }).lean().exec() as unknown as U;
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.UPDATE_ONE_ERROR);
     }
@@ -105,7 +104,7 @@ export abstract class BaseRepository<T extends Document, U>
 
   async findById(id: string): Promise<U | null> {
     try {
-      return await this.model.findById(id);
+      return await this.model.findById(id).lean().exec()as unknown as U;;
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.FIND_BY_ID_ERROR);
     }
@@ -113,7 +112,7 @@ export abstract class BaseRepository<T extends Document, U>
 
   async findOne(condition: FilterQuery<T>): Promise<U | null> {
     try {
-      return await this.model.findOne(condition);
+      return await this.model.findOne(condition) as unknown as U;;
       
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.FIND_ONE_ERROR);

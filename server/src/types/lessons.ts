@@ -1,9 +1,10 @@
 import mongoose, { ObjectId } from "mongoose";
 import { Document } from "mongoose";
 import { IUserLessonProgress } from "./userLessonProgress";
+import { IMentorCommentResponseDto } from "../shared/dtos/comment/commentResponse.dto";
 
 export interface ILesson extends Document {
-  _id:string | ObjectId
+    _id:string | ObjectId
     title: string;
     videoUrl: string; 
      thumbnail?: string | Buffer;
@@ -76,6 +77,17 @@ export interface IComment extends Document {
   courseId:ObjectId | string;
   createdAt?: Date;
   updatedAt?: Date;
+}
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface IGetAllCommentsResponse {
+  comments: IMentorCommentResponseDto[];
+  pagination: PaginationMeta;
 }
 export interface ILessonDetails {
   lesson: ILesson;

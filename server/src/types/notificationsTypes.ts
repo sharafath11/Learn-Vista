@@ -5,6 +5,7 @@ import { INotificationService } from "../core/interfaces/services/notifications/
 export type NotificationType = "info" | "success" | "error" | "warning"
 
 export interface INotification extends Document {
+  _id:Types.ObjectId|string
   userId: Types.ObjectId|string,
   title: string
   message?: string

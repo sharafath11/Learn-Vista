@@ -1,11 +1,11 @@
 "use client"
 import { ICourse } from "@/src/types/courseTypes"
-import { IComment } from "@/src/types/lessons"
+import { IComment, IMentorComments } from "@/src/types/lessons"
 import { User, Clock, BookOpen } from "lucide-react"
 
 interface CommentCardProps {
-  comment: IComment
-  course?: ICourse 
+  comment: IMentorComments
+  course?: string 
   lessonTitle: string
   formatDate: (date: Date | undefined) => string
 }
@@ -27,12 +27,12 @@ export default function CommentCard({ comment, course, lessonTitle, formatDate }
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-slate-400">
               <span className="flex items-center">
                 <Clock className="h-3 w-3 mr-1" />
-                {formatDate(comment.createdAt)}
+                {formatDate(comment.createdAt || "")}
               </span>
               {course && (
                 <span className="flex items-center">
                   <BookOpen className="h-3 w-3 mr-1" />
-                  {course.title}
+                  {course}
                 </span>
               )}
             </div>
@@ -43,7 +43,7 @@ export default function CommentCard({ comment, course, lessonTitle, formatDate }
         {course && (
           <div className="flex flex-col items-end gap-2">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-500/30">
-              {course.title}
+              {course}
             </span>
             <span className="text-xs text-slate-500">{lessonTitle}</span>
           </div>
@@ -59,9 +59,7 @@ export default function CommentCard({ comment, course, lessonTitle, formatDate }
       <div className="flex items-center justify-between pt-4 border-t border-white/10">
         <div className="flex items-center gap-4 text-sm text-slate-400">
           <span>Lesson: {lessonTitle}</span>
-          {comment.updatedAt && comment.updatedAt !== comment.createdAt && (
-            <span className="text-xs">Edited {formatDate(comment.updatedAt)}</span>
-          )}
+          
         </div>
         {/* Removed Reply and Flag buttons */}
       </div>
