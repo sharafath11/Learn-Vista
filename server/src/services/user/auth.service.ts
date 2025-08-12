@@ -12,6 +12,8 @@ import { generateAccessToken, generateRefreshToken } from "../../utils/JWTtoken"
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { Messages } from "../../constants/messages";
+import { IUserResponseUser } from "../../shared/dtos/user/user-response.dto";
+import { UserMapper } from "../../shared/dtos/user/user.mapper";
 
 @injectable()
 export class AuthService implements IAuthService {
@@ -20,7 +22,7 @@ export class AuthService implements IAuthService {
     @inject(TYPES.OtpRepository) private otpRepository: IOtpRepository
   ) {}
 
-  async registerUser(userData: IUser): Promise<Partial<IUser>> {
+  async registerUser(userData: IUser): Promise<IUserResponseUser> {
     const { username, email, password, role } = userData;
 
     validateUserSignupInput(username, email, password, role);
@@ -36,7 +38,8 @@ export class AuthService implements IAuthService {
       isVerified: userData.isVerified,
     };
 
-    return this.userRepository.create(userToCreate);
+    const user = await this.userRepository.create(userToCreate);
+    return UserMapper.toResponseUserDto(user)
   }
 
   async sendOtp(email: string): Promise<void> {
@@ -71,7 +74,7 @@ export class AuthService implements IAuthService {
   ): Promise<{
     token: string;
     refreshToken: string;
-    user:  Partial<IUser>;
+    user: {id:string, role:string};
   }> {
     let user;
 
@@ -100,7 +103,7 @@ export class AuthService implements IAuthService {
 
     const token = generateAccessToken(userId, user.role);
     const refreshToken = generateRefreshToken(userId, user.role);
-
+    
     return {
       token,
       refreshToken,
@@ -114,7 +117,7 @@ export class AuthService implements IAuthService {
   async googleAuth(profile: GooglePayload): Promise<{
     token: string;
     refreshToken: string;
-    user:  Partial<IUser>;
+    user: {id:string, role:string};
   }> {
     if (!profile.email || !profile.googleId) {
       throwError(Messages.AUTH.INVALID_GOOGLE_PROFILE, StatusCode.BAD_REQUEST);

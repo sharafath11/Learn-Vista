@@ -1,8 +1,8 @@
 
 import { userInfo } from "os";
 import { ICertificate } from "../../../types/certificateTypes";
-import { IMentorStudentEnroledCourse, IUser } from "../../../types/userTypes";
-import { IAdminUserCertificate, IAdminUserResponseDto, IMentorStudentResposnse, IUserResponseDto } from "./user-response.dto";
+import { IMentorStudentEnroledCourse, IUser, userEnrolled } from "../../../types/userTypes";
+import { IAdminUserCertificate, IAdminUserResponseDto, IMentorStudentResposnse, IUserResponseDto, IUserResponseUser } from "./user-response.dto";
 
 export class UserMapper {
   static toResponseDto(user: IUser): IUserResponseDto {
@@ -54,5 +54,18 @@ static toResponsAdminUserCertificateDto(certificate: ICertificate): IAdminUserCe
             
     }
   }
+  static toResponseUserDto(u: IUser): IUserResponseUser{
+    return {
+      id: u._id.toString(),
+      email: u.email,
+      enrolledCourses:  u.enrolledCourses.map(course => ({
+      courseId: course.courseId.toString(),
+      allowed: course.allowed,
+      })),
+      profilePicture:u.profilePicture||"",
+      username: u.username,
+      
+    }
+  } 
 
 }

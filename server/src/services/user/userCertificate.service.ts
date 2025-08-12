@@ -5,6 +5,9 @@ import { TYPES } from "../../core/types"
 
 import { CreateCertificateInput, ICertificate } from "../../types/certificateTypes"
 import { formatIssuedDate, generateCertificateId, generateQRCode } from "../../utils/ certificateUtils"
+import { ICertificateResponseDto } from "../../shared/dtos/certificate/certificate-response.dto"
+import { CertificateMapper } from "../../shared/dtos/certificate/certificate.mapper"
+import { throwError } from "../../utils/ResANDError"
 
 @injectable()
 export class UserCertificateService implements IUserCertificateService {
@@ -13,7 +16,7 @@ export class UserCertificateService implements IUserCertificateService {
     private _certificateRepo: ICertificateRepository
   ) {}
 
-  async createCertificate(data: CreateCertificateInput): Promise<ICertificate> {
+  async createCertificate(data: CreateCertificateInput): Promise<ICertificateResponseDto> {
       const certificateId = generateCertificateId()
     const qrCodeUrl = await generateQRCode(certificateId)
 
@@ -29,7 +32,8 @@ export class UserCertificateService implements IUserCertificateService {
       issuedAt: new Date(),
     }
 
-    return await this._certificateRepo.create(newCertificate as ICertificate)
+    const certificate = await this._certificateRepo.create(newCertificate as ICertificate);
+   return CertificateMapper.certificateResponseDto(certificate)
   }
    async getCertificates(filters: {
     search?: string;
@@ -37,12 +41,15 @@ export class UserCertificateService implements IUserCertificateService {
     page: number;
     limit: number;
     isRevoked?: boolean;
-  }): Promise<{ data: ICertificate[]; total: number }> {
-    const { data, total } = await this._certificateRepo.findCertificatesWithFilter(filters);
-    return { data, total };
+  }): Promise<{ data: ICertificateResponseDto[]; total: number }> {
+     const { data, total } = await this._certificateRepo.findCertificatesWithFilter(filters);
+     const sendData=data.map((i)=>CertificateMapper.certificateResponseDto(i))
+    return { data:sendData, total };
   }
-  async getCertificateById(id: string): Promise<ICertificate | null> {
-    return await this._certificateRepo.findOne({certificateId:id})
+  async getCertificateById(id: string): Promise<ICertificateResponseDto | null> {
+    const certificate = await this._certificateRepo.findOne({ certificateId: id });
+    if(!certificate) return null
+     return CertificateMapper.certificateResponseDto(certificate)
   }
 
 }

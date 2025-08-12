@@ -31,6 +31,10 @@ import {
 } from "../../types/dailyTaskType";
 import { logger } from "../../utils/logger";
 import { Messages } from "../../constants/messages";
+import { UserMapper } from "../../shared/dtos/user/user.mapper";
+import { IUserResponseDto, IUserResponseUser } from "../../shared/dtos/user/user-response.dto";
+import { IDailyTaskResponseDto } from "../../shared/dtos/daily-task/dailyTask-response.dto";
+import { DailyTaskMapper } from "../../shared/dtos/daily-task/dailyTask.mapper";
 
 export class UserService implements IUserService {
   constructor(
@@ -41,7 +45,7 @@ export class UserService implements IUserService {
     private _dailyTaskRepo: IDailyTaskRepository
   ) {}
 
-  async getUser(id: string): Promise<IUser> {
+  async getUser(id: string): Promise<IUserResponseUser> {
     const user = await this.userRepository.findById(id);
 
     if (!user) {
@@ -66,7 +70,7 @@ export class UserService implements IUserService {
       user.profilePicture = "/default-avatar.png";
     }
 
-    return user;
+    return UserMapper.toResponseUserDto(user);
   }
 
   async forgetPassword(email: string): Promise<void> {
@@ -114,7 +118,7 @@ export class UserService implements IUserService {
  
 async getDailyTaskSevice(
     userId: string | Types.ObjectId
-  ): Promise<IDailyTask> {
+  ): Promise<IDailyTaskResponseDto> {
     const userObjectId =
       typeof userId === "string" ? new Types.ObjectId(userId) : userId;
     const startOfDay = new Date();
@@ -129,7 +133,7 @@ async getDailyTaskSevice(
       const sendData = await updateDailyTaskWithSignedUrls(
         existingTask as IDailyTask
       );
-      return sendData;
+      return DailyTaskMapper.dailyTaskResponseDto(sendData);
     }
     const userTasks = await this._dailyTaskRepo.findAll(userObjectId);
     const day = userTasks.length + 1;
@@ -192,8 +196,8 @@ async getDailyTaskSevice(
       message: Messages.DAILY_TASK.NEW_TASK_MESSAGE(day),
       type: "info",
     });
-
-    return newTask;
+    
+    return DailyTaskMapper.dailyTaskResponseDto(newTask);
   }
 
 
@@ -296,7 +300,7 @@ async getDailyTaskSevice(
     }
     return updatedSubtask;
   }
-  async getAllDailyTasks(userId: string): Promise<IDailyTask[]> {
+  async getAllDailyTasks(userId: string): Promise<IDailyTaskResponseDto[]> {
     const result = await this._dailyTaskRepo.findAll({ userId });
 
     const sendData: IDailyTask[] = await Promise.all(
@@ -310,6 +314,10 @@ async getDailyTaskSevice(
       })
     );
 
-    return sendData;
+  return sendData
+  .map((i) => DailyTaskMapper.dailyTaskResponseDto(i))
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+;
   }
 }

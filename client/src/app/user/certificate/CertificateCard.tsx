@@ -1,14 +1,17 @@
 import Link from "next/link"
+
+
+import { CalendarIcon, GraduationCapIcon, AwardIcon} from "lucide-react"
+import { ICertificate } from "@/src/types/certificateTypes"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { CalendarIcon, GraduationCapIcon, AwardIcon } from "lucide-react" 
-import { ICertificate } from "@/src/types/certificateTypes"
+
 
 export default function CertificateCard({ certificate }: { certificate: ICertificate }) {
   return (
     <Link href={`/user/certificate/${certificate.certificateId}`} className="group">
       <Card className="h-full transform cursor-pointer overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl">
-        <CardHeader className="relative flex flex-col items-start justify-center overflow-hidden bg-gradient-to-br from-card-header-start to-card-header-end p-6 text-white">
+        <CardHeader className="relative flex flex-col items-start justify-center overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-white">
           <div
             className="absolute inset-0 opacity-10"
             style={{
@@ -23,7 +26,7 @@ export default function CertificateCard({ certificate }: { certificate: ICertifi
               {certificate.courseTitle}
             </CardTitle>
           </div>
-          <CardDescription className="relative z-10 mt-2 text-base font-medium text-card-header-text opacity-90">
+          <CardDescription className="relative z-10 mt-2 text-base font-medium text-white/90 opacity-90">
             <GraduationCapIcon className="inline-block h-4 w-4 mr-1 -mt-0.5" />
             Issued to {certificate.userName}
           </CardDescription>

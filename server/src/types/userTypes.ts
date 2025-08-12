@@ -10,6 +10,7 @@ export interface IMentorStudentEnroledCourse {
   courseId: string;
   allowed:boolean
 }
+export interface userEnrolled extends IMentorStudentEnroledCourse{}
 export interface IUser extends Document {
   _id: Types.ObjectId;
   username: string;

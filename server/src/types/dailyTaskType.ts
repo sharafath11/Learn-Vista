@@ -1,4 +1,4 @@
-import { Schema, model, Types, Document, Model } from 'mongoose';
+import { Types, Document } from 'mongoose';
 
 export type TaskType = "listening" | "speaking" | "writing";
 
@@ -12,6 +12,7 @@ export interface ISubTask {
 }
 
 export interface IDailyTask extends Document {
+  _id:Types.ObjectId|string
   userId: Types.ObjectId;
   date: string;
   tasks: ISubTask[];

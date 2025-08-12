@@ -1,4 +1,5 @@
-import { IEnrolledCourse, IMentorStudentEnroledCourse } from "../../../types/userTypes";
+import { IReson } from "../../../types/mentorTypes";
+import { IEnrolledCourse, IMentorStudentEnroledCourse, userEnrolled } from "../../../types/userTypes";
 
 export interface IUserResponseDto {
   id: string;
@@ -40,4 +41,11 @@ export interface IMentorStudentResposnse{
   isBlocked: boolean;
   enrolledCourses: IMentorStudentEnroledCourse[];
   isVerified:boolean
+}
+export interface IUserResponseUser{
+  id: string,
+  username: string,
+  email: string,
+  enrolledCourses: userEnrolled[]
+  profilePicture:string
 }
