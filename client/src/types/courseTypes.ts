@@ -10,6 +10,7 @@ export interface ICourse {
   mentorId: string | IMentor;
   sessions: string[];
   categoryId: string | ICategory;
+  mentor:string
   categoryName?:string;
   price?: number;
   courseLanguage?: string;
@@ -32,8 +33,7 @@ export interface ICourse {
 
 export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId'> {
   category?:string
-  mentor?:string
-  mentorId: IMentor;
+   mentorId: IMentor;
   categoryId: ICategory;
 }
 

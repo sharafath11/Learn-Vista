@@ -20,7 +20,7 @@ export abstract class BaseRepository<T extends Document, U>
   async create(data: Partial<T>): Promise<U> {
     try {
       const result = await this.model.create(data);
-      return result as unknown  as U
+      return result.toObject() as U
      
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.CREATE_ERROR);

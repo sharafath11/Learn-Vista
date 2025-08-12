@@ -7,6 +7,7 @@ export interface IConcernResponseDto {
   resolution?: string;
   createdAt: Date;
   updatedAt: Date;
+  mentorId:string
 }
 
 export interface IAdminConcernCourseResponseDto {

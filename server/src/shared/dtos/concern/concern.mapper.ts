@@ -13,6 +13,7 @@ export class ConcernMapper {
       resolution: concern.resolution,
       createdAt: concern.createdAt ? new Date(concern.createdAt) : new Date(),
       updatedAt: concern.updatedAt ? new Date(concern.updatedAt) : new Date(),
+      mentorId:concern.mentorId.toString()
     };
   }
 
