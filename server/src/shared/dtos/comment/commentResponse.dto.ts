@@ -27,3 +27,10 @@ export interface IMentorCommentResponseAtLesson{
   createdAt: Date
   comment: string;     
 }
+
+export interface IUserCommentResponseAtLesson{
+  userName: string
+  createdAt: Date
+  comment: string;     
+
+}

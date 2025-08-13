@@ -15,8 +15,9 @@ import sharedRoutes from "../src/routes/shared/shared.Routes"
 import { requestLogger } from "./middlewares/requestLogger";
 import { logger } from "./utils/logger";
 import { CustomError } from "./types/errorTypes";
-import { refreshAccessToken, setTokensInCookies } from "./utils/JWTtoken";
 import { StatusCode } from "./enums/statusCode.enum";
+import { sendResponse } from "./utils/ResANDError";
+import { Messages } from "./constants/messages";
 dotenv.config();
 
 const app = express();
@@ -44,10 +45,10 @@ app.use("/api/shared",sharedRoutes)
 app.use(requestLogger);
 app.use((err: CustomError, req: Request, res: Response, _next: NextFunction) => {
   console.error(err.stack);
-  res.status(500).json({ ok: false, msg: "Something went wrong!" });
+  sendResponse(res,StatusCode.INTERNAL_SERVER_ERROR,Messages.COMMON.INTERNAL_ERROR,true)
 });
 const PORT = process.env.PORT || 4000;
 connectDb();
 httpServer.listen(PORT, () => {
-  logger.info(` Server running on port ${PORT}`);
+  logger.info(Messages.CONFIG.RUN(PORT));
 });

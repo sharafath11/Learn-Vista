@@ -3,7 +3,6 @@ import { BaseRepository } from "../BaseRepository";
 import { IDonation } from "../../types/donationTypes";
 import { IDonationRepoitory } from "../../core/interfaces/repositories/donation/IDonationRepoitory";
 import { FilterQuery } from "mongoose";
-import { toDTO } from "../../utils/toDTO";
 import { DonationModel } from "../../models/class/donation.model";
 
 @injectable()

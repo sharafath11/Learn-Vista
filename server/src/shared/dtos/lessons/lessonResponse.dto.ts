@@ -1,3 +1,5 @@
+import { LessonQuestionEvaluation } from "../../../types/lessons";
+
 // dto/lessonResponse.dto.ts
 export interface ILessonResponseDto {
   id: string;
@@ -25,4 +27,33 @@ export interface IMentorLessonResponseDto {
   videoUrl: string
   description: string
   thumbnail:string
+}
+
+
+//user ;lesson
+export interface IUserLessonProgressDto {
+  id:string,
+  courseId: string;
+  lessonId: string;
+  videoProgressPercent: number;
+  videoWatchedDuration: number;
+  videoTotalDuration: number;
+  theoryCompleted: boolean;
+  practicalCompleted: boolean;
+  mcqCompleted: boolean;
+  overallProgressPercent: number;
+  videoCompleted: boolean;
+}
+export interface IUserLessonResponseDto {
+  id: string;
+  title: string;
+  videoUrl: string;
+  thumbnail?: string;
+  duration?: string;
+  description?: string;
+  courseId: string;
+}
+export interface IUserLessonReportResponse {
+    report: LessonQuestionEvaluation |string;
+    createdAt?: Date;
 }

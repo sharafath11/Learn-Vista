@@ -10,6 +10,8 @@ import { Server } from "socket.io";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import dotenv from "dotenv"
 import { Messages } from "../../constants/messages";
+import { DonationMapper } from "../../shared/dtos/donation/donation.mapper";
+import { IUSerDonationResponseDto } from "../../shared/dtos/donation/donation-response.dto";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-05-28.basil",
 });
@@ -21,7 +23,7 @@ export class UserDonationServices implements IUserDonationServices {
     @inject(TYPES.NotificationService) private _notificationService: INotificationService
   ) {}
 
-  async verifyDonation(sessionId: string, io?: Server, userId?: string): Promise<IDonation> {
+  async verifyDonation(sessionId: string, io?: Server, userId?: string): Promise<IUSerDonationResponseDto> {
   if (!sessionId) throwError("Missing session_id");
 
   const session = await stripe.checkout.sessions.retrieve(sessionId, {
@@ -43,7 +45,7 @@ export class UserDonationServices implements IUserDonationServices {
   const receiptUrl = charge.receipt_url || "";
   const existing = await this._donationRepo.findByPaymentIntentId(paymentIntent.id);
   if (existing) {
-    return existing;
+    return DonationMapper.toUserDonationResponseDto(existing)
   }
   const donation: CreateDonationInput = {
     donorName: session.customer_details?.name || "Anonymous",
@@ -76,28 +78,21 @@ await notifyWithSocket({
 
   }
   const savedDonation = await this._donationRepo.create(donation);
-  return savedDonation;
+  return DonationMapper.toUserDonationResponseDto(savedDonation);
   }
 async getPaginatedDonations(userId: string, page: number): Promise<{
-  data: IDonation[];
+  data: IUSerDonationResponseDto[];
   total: number;
   hasMore: boolean;
 }> {
   const limit = 10;
   const skip = (page - 1) * limit;
-
   const filters = { donorId: userId };
   const sort: Record<string, 1 | -1> = { createdAt: -1 };
-
   const data = await this._donationRepo.findManyWithFilter(filters, sort, skip, limit);
   const total = await this._donationRepo.count(filters);
   const hasMore = skip + data.length < total;
-
-  return { data, total, hasMore };
+  const sendData=data.map((i)=>DonationMapper.toUserDonationResponseDto(i))
+  return { data:sendData, total, hasMore };
 }
-
-
-
-
-
 }

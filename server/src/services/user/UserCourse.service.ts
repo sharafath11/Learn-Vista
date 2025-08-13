@@ -16,8 +16,12 @@ import { ICertificateRepository } from "../../core/interfaces/repositories/cours
 import { IUserCertificateService } from "../../core/interfaces/services/user/IUserCertificateService"; 
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
-import { convertSignedUrlInArray } from "../../utils/s3Utilits";
+import { convertSignedUrlInArray, getSignedS3Url } from "../../utils/s3Utilits";
 import { Messages } from "../../constants/messages";
+import { ICourseUserResponseDto, IUserCourseProgressResponse } from "../../shared/dtos/courses/course-response.dto";
+import { CourseMapper } from "../../shared/dtos/courses/course.mapping";
+import { ICategoryUserCourseResponse } from "../../shared/dtos/categories/category-response.dto";
+import { CategoryMapper } from "../../shared/dtos/categories/category.mapper";
 
 @injectable()
 export class UserCourseService implements IUserCourseService {
@@ -38,7 +42,7 @@ export class UserCourseService implements IUserCourseService {
     search?: string,
     filters: FilterQuery<IPopulatedCourse> = {},
     sort: Record<string, 1 | -1> = { createdAt: -1 }
-  ): Promise<{ data: IPopulatedCourse[]; total: number; totalPages?: number }> {
+  ): Promise<{ data: ICourseUserResponseDto[]; total: number; totalPages?: number }> {
     const queryParams = {
       page,
       limit,
@@ -46,10 +50,19 @@ export class UserCourseService implements IUserCourseService {
       filters,
       sort: sort,
     };
+    
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(queryParams);
-    if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
-    const sendData=await convertSignedUrlInArray(data,["thumbnail"])
-    return {data:sendData, total, totalPages };
+       if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
+    const sendData = await convertSignedUrlInArray(data, ["thumbnail"]);
+  
+    const sendDatas = await Promise.all(
+  sendData.map(async (i) => {
+    const photo = await getSignedS3Url(i.mentorId.profilePicture as string);
+    return CourseMapper.toResponseUserCourse(i, photo);
+  })
+    );
+    console.log(sendDatas)
+    return {data:sendDatas, total, totalPages };
   }
   
 
@@ -73,15 +86,17 @@ export class UserCourseService implements IUserCourseService {
     });
   }
 
-  async getCategries(): Promise<ICategory[]> {
-    const result = await this._categoriesRepo.findAll();
-    return result;
+  async getCategries(): Promise<ICategoryUserCourseResponse[]> {
+    const result = await this._categoriesRepo.findAll();  
+    return result.map((i)=>CategoryMapper.toResponseCategoryInUser(i))
+   
   }
 
-  async getProgress(userId: string): Promise<IUserCourseProgress[]> {
+  async getProgress(userId: string): Promise<IUserCourseProgressResponse[]> {
     const result = await this._userCourseProgressRepo.findAll({ userId: userId });
     if (!result) throwError(Messages.COMMON.INTERNAL_ERROR);
-    return result;
+    return result.map((i)=>CourseMapper.toResponseUserCourseProgress(i))
+
   }
 
 

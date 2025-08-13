@@ -22,3 +22,13 @@ export interface IAdminDonationResponseDto {
   date: Date;
   status: "processing" | "succeeded" | "failed" | "canceled";
 }
+export interface IUSerDonationResponseDto{
+  id: string,
+  donorName: string,
+  status: string,
+  paymentIntentId: string,
+  transactionId?: string,
+  createdAt: Date,
+  amount:number,
+  donorEmail:string
+}

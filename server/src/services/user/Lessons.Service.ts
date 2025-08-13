@@ -1,6 +1,6 @@
 import mongoose, { ObjectId } from "mongoose";
 import { GetLessonsResponse, IUserLessonsService } from "../../core/interfaces/services/user/IUserLessonsService";
-import { IComment, ILessonDetails, ILessonReport, IQuestions, LessonQuestionInput } from "../../types/lessons";
+import {ILessonDetails, LessonQuestionInput } from "../../types/lessons";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
@@ -24,6 +24,12 @@ import { IUserLessonProgressRepository } from "../../core/interfaces/repositorie
 import { convertSignedUrlInArray } from "../../utils/s3Utilits";
 import { logger } from "../../utils/logger";
 import { Messages } from "../../constants/messages";
+import { LessonMapper } from "../../shared/dtos/lessons/lesson.mapper";
+import { IUserQustionsDto } from "../../shared/dtos/question/question-response.dto";
+import { QuestionMapper } from "../../shared/dtos/question/question.mapper";
+import { CommentMapper } from "../../shared/dtos/comment/comment.mapper";
+import { IUserCommentResponseAtLesson } from "../../shared/dtos/comment/commentResponse.dto";
+import { IUserLessonProgressDto, IUserLessonReportResponse } from "../../shared/dtos/lessons/lessonResponse.dto";
 
 const SECTION_WEIGHTS = {
   video: 0.40,
@@ -140,13 +146,15 @@ export class UserLessonsService implements IUserLessonsService {
 
     const lessonProgress = await this._userLessonProgressRepo.findAll({ courseId, userId });
     const sendData = await convertSignedUrlInArray(lessons, ["thumbnail"]);
-    return { lessons: sendData, progress: lessonProgress };
+    const convetData = sendData.map((i) => LessonMapper.toLessonUserResponseDto(i))
+    const progressData=lessonProgress.map((i)=>LessonMapper.toLessonProgressUser(i))
+    return { lessons: convetData, progress: progressData };
   }
 
-  async getQuestions(lessonId: string | ObjectId): Promise<IQuestions[]> {
+  async getQuestions(lessonId: string | ObjectId): Promise<IUserQustionsDto[]> {
     const questions = await this._qustionRepository.findAll({ lessonId });
     if (!questions) throwError(Messages.COMMON.INTERNAL_ERROR, StatusCode.BAD_REQUEST);
-    return questions;
+    return questions.map((i)=>QuestionMapper.toUserQustionResponse(i));
   }
 
   async getLessonDetils(lessonId: string | ObjectId, userId: string): Promise<ILessonDetails> {
@@ -160,15 +168,19 @@ export class UserLessonsService implements IUserLessonsService {
       this._lessonReportRepo.findOne({ lessonId, userId }),
       this._userLessonProgressRepo.findOne({ userId, lessonId }),
     ]);
-
-    return { questions, videoUrl: signedUrl, lesson, comments, report, lessonProgress };
+    const sendQ = questions.map((i) => QuestionMapper.toUserQustionResponse(i));
+    const sendL = LessonMapper.toLessonUserResponseDto(lesson);
+    const sendC = comments.map((i) => CommentMapper.toUserCommentResponseAtLessonDto(i));
+    const sendR = report ? LessonMapper.lessonReportToresponse(report) : report
+    const sendP=lessonProgress?LessonMapper.toLessonProgressUser(lessonProgress):lessonProgress
+    return { questions:sendQ, videoUrl: signedUrl, lesson:sendL, comments:sendC, report:sendR, lessonProgress:sendP };
   }
 
   async lessonReport(
     userId: string | ObjectId,
     lessonId: string | ObjectId,
     data: LessonQuestionInput
-  ): Promise<ILessonReport> {
+  ): Promise<IUserLessonReportResponse> {
     if (!userId) throwError(Messages.USERS.MISSING_USER_ID, StatusCode.BAD_REQUEST);
 
     const existingReport = await this._lessonReportRepo.findOne({ lessonId, userId });
@@ -195,43 +207,53 @@ export class UserLessonsService implements IUserLessonsService {
     });
     await this._userCourseService.updateUserCourseProgress(userId as string, course.id as string, lessonId as string);
 
-    return report;
+    return LessonMapper.lessonReportToresponse(report);
+  }
+async saveComments(
+  userId: string,
+  lessonId: string | ObjectId,
+  comment: string
+): Promise<IUserCommentResponseAtLesson> {
+  if (!lessonId || !comment || !userId) {
+    throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
   }
 
-  async saveComments(userId: string, lessonId: string | ObjectId, comment: string): Promise<IComment> {
-    if (!lessonId || !comment || !userId) {
-      throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
-    }
+  const [userData, lesson] = await Promise.all([
+    this._userRepo.findById(userId),
+    this._lessonRepository.findById(lessonId.toString()),
+  ]);
 
-    const [userData, lesson] = await Promise.all([
-      this._userRepo.findById(userId),
-      this._lessonRepository.findById(lessonId as string),
-    ]);
-    if (!userData) throwError(Messages.USERS.USER_NOT_FOUND, StatusCode.NOT_FOUND);
-    if (!lesson) throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
+  if (!userData) throwError(Messages.USERS.USER_NOT_FOUND, StatusCode.NOT_FOUND);
+  if (!lesson) throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
 
-    const course = await this._courseRepository.findById(lesson.courseId.toString());
-    if (!course || !course.mentorId) throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
+  const course = await this._courseRepository.findById(
+    lesson.courseId.toString()
+  );
 
-    const savedComment = await this._commentsRepo.create({
-      lessonId,
-      courseId: course.id,
-      comment,
-      mentorId: course.mentorId,
-      userId,
-      userName: userData.username,
-    });
-
-    await notifyWithSocket({
-      notificationService: this._notificationService,
-      userIds: [course.mentorId.toString()],
-      title: `New Comment ${course.title} on ${lesson.title}`,
-      message: `${userData.username} commented on "${lesson.title}": "${comment.slice(0, 50)}..."`,
-      type: "info",
-    });
-
-    return savedComment;
+  if (!course || !course.mentorId) {
+    throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
   }
+
+  const savedComment = await this._commentsRepo.create({
+    lessonId: lesson._id.toString(),
+    courseId: course._id.toString(), 
+    comment,
+    mentorId: course.mentorId.toString(),
+    userId,
+    userName: userData.username,
+  });
+
+  await notifyWithSocket({
+    notificationService: this._notificationService,
+    userIds: [course.mentorId.toString()],
+    title: `New Comment ${course.title} on ${lesson.title}`,
+    message: `${userData.username} commented on "${lesson.title}": "${comment.slice(0, 50)}..."`,
+    type: "info",
+  });
+
+  return CommentMapper.toUserCommentResponseAtLessonDto(savedComment);
+}
+
 
   async updateLessonProgress(
     userId: string,
@@ -244,7 +266,7 @@ export class UserLessonsService implements IUserLessonsService {
       mcqCompleted?: boolean;
       videoCompleted?: boolean;
     }
-  ): Promise<IUserLessonProgress> {
+  ): Promise<IUserLessonProgressDto> {
     const lesson = await this._lessonRepository.findById(lessonId);
     if (!lesson) throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
 
@@ -273,6 +295,6 @@ export class UserLessonsService implements IUserLessonsService {
     if (!finalProgressDoc)
       throwError(Messages.LESSONS.PROGRESS_UPDATE_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
     await this._userCourseService.updateUserCourseProgress(userId, courseId, lessonId);
-    return finalProgressDoc;
+    return LessonMapper.toLessonProgressUser(finalProgressDoc);
   }
 }

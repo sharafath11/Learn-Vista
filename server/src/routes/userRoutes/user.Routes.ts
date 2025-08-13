@@ -1,30 +1,10 @@
 import express from "express";
-import container from "../../core/di/container";
-import AuthController from "../../controllers/user/auth.controller";
-import { TYPES } from "../../core/types";
-import { ProfileController } from "../../controllers/user/profile.controller";
 import { authenticateToken } from "../../middlewares/authenticateToken";
 import upload, { uploadDailyTaskAudio, uploadImage } from "../../middlewares/upload";
-import { IUserController } from "../../core/interfaces/controllers/user/IUserController";
-import { IUserCourseController } from "../../core/interfaces/controllers/user/IUserCourseController";
-import { IUserLiveController } from "../../core/interfaces/controllers/user/IUserLiveVideoController";
-import { IUserLessonsController } from "../../core/interfaces/controllers/user/IUserLessonsContoller";
-import { IUserDonationController } from "../../core/interfaces/controllers/user/IUserDonationController";
-import { UserLessonsController } from "../../controllers/user/userLessons.controller";
-import { IUserCertificateController } from "../../core/interfaces/controllers/user/IUserCertificateController";
+import { authController, profileController, userCertificateController, userController, userCourseController, userDonationController, userLessonsController, userLiveController } from "./userControllers";
 
 
 const router = express.Router();
-
-const authController = container.get<AuthController>(TYPES.AuthController);
-const profileController = container.get<ProfileController>(TYPES.ProfileController);
-const userController = container.get<IUserController>(TYPES.UserController);
-const userCourseController = container.get<IUserCourseController>(TYPES.UserCourseController)
-const userLiveController = container.get<IUserLiveController>(TYPES.UserLiveCOntroller)
-const userLessonsController = container.get<IUserLessonsController>(TYPES.UserLessonsController)
-const userDonationController = container.get<IUserDonationController>(TYPES.UserDonationController);
-const userCertificateController=container.get<IUserCertificateController>(TYPES.UserCertificateController)
-
 router.post("/signup", authController.signup.bind(authController));
 router.post("/google/signup", authController.googleAuth.bind(authController));
 router.post("/otp", authController.sendOtp.bind(authController));

@@ -3,7 +3,6 @@ import { IConcernRepository } from "../../core/interfaces/repositories/concern/I
 import ConcernModel from "../../models/class/concernModel";
 import { IConcern } from "../../types/concernTypes";
 import { BaseRepository } from "../BaseRepository";
-import { toDTOArray } from "../../utils/toDTO";
 
 export class ConcernRepository extends BaseRepository<IConcern, IConcern> implements IConcernRepository{
     constructor() {

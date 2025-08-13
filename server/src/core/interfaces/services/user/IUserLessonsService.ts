@@ -1,16 +1,19 @@
 import { ObjectId } from "mongoose";
-import { IComment, ILesson, ILessonDetails, ILessonReport, IQuestions, LessonQuestionInput } from "../../../../types/lessons";
+import { IComment,  ILessonDetails, ILessonReport, IQuestions, LessonQuestionInput } from "../../../../types/lessons";
 import { IUserLessonProgress } from "../../../../types/userLessonProgress";
+import { IUserLessonProgressDto, IUserLessonReportResponse, IUserLessonResponseDto } from "../../../../shared/dtos/lessons/lessonResponse.dto";
+import { IUserQustionsDto } from "../../../../shared/dtos/question/question-response.dto";
+import { IUserCommentResponseAtLesson } from "../../../../shared/dtos/comment/commentResponse.dto";
 export interface GetLessonsResponse {
-  lessons: ILesson[];
-  progress: IUserLessonProgress[];
+  lessons: IUserLessonResponseDto[];
+  progress: IUserLessonProgressDto[];
 }
 export interface IUserLessonsService {
     getLessons(courseId: string|ObjectId, userId: string): Promise<GetLessonsResponse>
-    getQuestions(lessonId: string | ObjectId): Promise<IQuestions[]>
+    getQuestions(lessonId: string | ObjectId): Promise<IUserQustionsDto[]>
     getLessonDetils(lessonId:string|ObjectId,userId:string|ObjectId):Promise<ILessonDetails>
-    lessonReport(userId: string | ObjectId, lessonId: string, data: LessonQuestionInput): Promise<ILessonReport>
-  saveComments(userId: string, lessonId: string | ObjectId, commant: string): Promise<IComment>
+    lessonReport(userId: string | ObjectId, lessonId: string, data: LessonQuestionInput): Promise<IUserLessonReportResponse>
+  saveComments(userId: string, lessonId: string | ObjectId, commant: string): Promise<IUserCommentResponseAtLesson>
 updateLessonProgress(
         userId: string,
         lessonId: string,
@@ -22,5 +25,5 @@ updateLessonProgress(
             mcqCompleted?: boolean;
             videoCompleted?:boolean
         }
-    ): Promise<IUserLessonProgress | null>;
+    ): Promise<IUserLessonProgressDto | null>;
 }

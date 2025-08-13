@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Progress } from "@/src/components/shared/components/ui/progress"
-import type { IPopulatedCourse } from "@/src/types/courseTypes"
+import type { IcourseFromResponse, IPopulatedCourse } from "@/src/types/courseTypes"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
@@ -16,9 +16,9 @@ import { useRouter } from "next/navigation"
 import { getCourseProgress } from "@/src/utils/getProgress"
 
 interface CourseCardProps {
-  course: IPopulatedCourse
+  course: IcourseFromResponse
   index: number
-  onDetailsClick: (course: IPopulatedCourse) => void
+  onDetailsClick: (course: IcourseFromResponse) => void
 }
 
 const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
@@ -67,7 +67,7 @@ const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
 
           {/* Category Badge */}
           <Badge className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm text-gray-800 px-3 py-1.5 rounded-xl text-xs font-semibold shadow-lg border-0">
-            {course.categoryId?.title || "General"}
+            {course.categoryName || "General"}
           </Badge>
 
           {/* Hover Overlay */}
@@ -89,13 +89,20 @@ const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
             {course.title}
           </CardTitle>
           <CardDescription className="flex items-center gap-3 text-gray-600 font-medium">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white flex items-center justify-center text-sm font-bold shadow-md">
-              {course.mentorId?.username?.charAt(0).toUpperCase() || "U"}
-            </div>
+           <div className="w-8 h-8 rounded-full overflow-hidden shadow-md">
+  <Image
+    src={course.mentorPhoto}
+    alt=""
+    width={32}
+    height={32}
+    className="object-cover w-full h-full"
+  />
+</div>
+
             <span className="text-sm">
               By{" "}
               <span className="font-semibold text-gray-700">
-                {course.mentorId?.username || "Unknown Instructor"}
+                {course.Mentorusername|| "Unknown Instructor"}
               </span>
             </span>
           </CardDescription>
@@ -106,16 +113,16 @@ const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
           <div className="flex items-center justify-between mb-4 text-sm">
             <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg">
               <Users className="h-4 w-4 mr-2 text-blue-500" />
-              <span className="font-medium">{course.enrolledUsers?.length || 0} Students</span>
+              <span className="font-medium">{course.students || 0} Students</span>
             </div>
             <div className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium tracking-wide w-fit">
-              {course.categoryId.title}
+              {course.categoryName}
             </div>
           </div>
 
           <div className="flex items-center text-gray-600 text-sm mb-4 bg-gray-50 px-3 py-2 rounded-lg">
             <Clock className="h-4 w-4 mr-2 text-green-500" />
-            <span className="font-medium">{course.sessions?.length || 0} Lessons</span>
+            <span className="font-medium">{course.sessions} Lessons</span>
             <span className="mx-3 text-gray-400">•</span>
             <span className="font-medium">{course.courseLanguage}</span>
           </div>

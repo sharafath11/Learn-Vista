@@ -1,7 +1,6 @@
 import { inject } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import { IUser } from "../../types/userTypes";
 import { IUserService } from "../../core/interfaces/services/user/IUserService";
 import { sendPasswordResetEmail } from "../../utils/emailService";
 import { generateAccessToken } from "../../utils/JWTtoken";
@@ -32,8 +31,8 @@ import {
 import { logger } from "../../utils/logger";
 import { Messages } from "../../constants/messages";
 import { UserMapper } from "../../shared/dtos/user/user.mapper";
-import { IUserResponseDto, IUserResponseUser } from "../../shared/dtos/user/user-response.dto";
-import { IDailyTaskResponseDto } from "../../shared/dtos/daily-task/dailyTask-response.dto";
+import {  IUserResponseUser } from "../../shared/dtos/user/user-response.dto";
+import { IDailySubTaskResponseDto, IDailyTaskResponseDto } from "../../shared/dtos/daily-task/dailyTask-response.dto";
 import { DailyTaskMapper } from "../../shared/dtos/daily-task/dailyTask.mapper";
 
 export class UserService implements IUserService {
@@ -206,13 +205,13 @@ async getDailyTaskSevice(
     taskType,
     answer,
     audioFile,
-  }: IUpdateDailyTaskInput): Promise<ISubTask> {
+  }: IUpdateDailyTaskInput): Promise<IDailySubTaskResponseDto> {
     const task = await this._dailyTaskRepo.findById(taskId);
-    if (!task) throwError("Task not found", StatusCode.NOT_FOUND);
+    if (!task) throwError(Messages.DAILY_TASK.TASK_NOT_FOUND, StatusCode.NOT_FOUND);
 
     const subtaskIndex = task.tasks.findIndex((t) => t.type === taskType);
     if (subtaskIndex === -1)
-      throwError("Task type not found", StatusCode.NOT_FOUND);
+      throwError(Messages.DAILY_TASK.TASK_NOT_FOUND, StatusCode.NOT_FOUND);
 
     const subtask = task.tasks[subtaskIndex];
     if (subtask.isCompleted) return subtask;
@@ -223,7 +222,7 @@ async getDailyTaskSevice(
 
     if (taskType === "speaking") {
       if (!audioFile)
-        throwError("Audio file is required", StatusCode.BAD_REQUEST);
+        throwError(Messages.DAILY_TASK.AUDIO_FILE_REQUIRE, StatusCode.BAD_REQUEST);
 
       const { buffer, mimetype } = audioFile;
       userResponseToDB = await uploadDailyTaskAudio(buffer, mimetype);
@@ -235,7 +234,7 @@ async getDailyTaskSevice(
     }
 
     if (!userTextForEvaluation) {
-      throwError("Answer is required for evaluation", StatusCode.BAD_REQUEST);
+      throwError(Messages.DAILY_TASK.ANSWER_REQUIRED, StatusCode.BAD_REQUEST);
     }
 
     let aiFeedback = "No feedback available.";
@@ -262,7 +261,7 @@ async getDailyTaskSevice(
       }
     } catch (err) {
       throwError(
-        "Failed to get or parse AI evaluation.",
+        Messages.GENAI.PARSING_FAILED,
         StatusCode.INTERNAL_SERVER_ERROR
       );
     }
@@ -296,9 +295,10 @@ async getDailyTaskSevice(
 
     if (signedUrl) {
       const responseSubtask = { ...updatedSubtask, userResponse: signedUrl };
-      return responseSubtask;
+      return DailyTaskMapper.subTaskResponseDto(responseSubtask)
     }
-    return updatedSubtask;
+   return DailyTaskMapper.subTaskResponseDto(updatedSubtask)
+
   }
   async getAllDailyTasks(userId: string): Promise<IDailyTaskResponseDto[]> {
     const result = await this._dailyTaskRepo.findAll({ userId });

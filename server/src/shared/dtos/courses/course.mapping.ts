@@ -1,7 +1,9 @@
 import { ICategory, ICourse, IPopulatedCourse } from "../../../types/classTypes";
 import { IMentor } from "../../../types/mentorTypes";
+import { IUserCourseProgress } from "../../../types/userCourseProgress";
+import { getSignedS3Url } from "../../../utils/s3Utilits";
 import { CategoryMapper } from "../categories/category.mapper";
-import { ICourseAdminResponse, ICourseMentorResponseDto, ICourseResponseDto } from "./course-response.dto";
+import { ICourseAdminResponse, ICourseMentorResponseDto, ICourseResponseDto, ICourseUserResponseDto, IUserCourseProgressResponse } from "./course-response.dto";
 
 export class CourseMapper {
   static toResponseDto(course: ICourse): ICourseResponseDto {
@@ -67,5 +69,36 @@ export class CourseMapper {
       endDate: course.endDate||"",
       startTime: course.startTime || "",
     };
-}
+  }
+ static  toResponseUserCourse(c: IPopulatedCourse,mentorPhoto:string): ICourseUserResponseDto {
+  return {
+    id: c._id.toString(),
+    title: c.title,
+    description: c.description ?? "",
+    mentorEmail: c.mentorId?.email ?? "",
+    Mentorusername: c.mentorId?.username ?? "",
+    mentorPhoto, 
+    mentorExpertise: c.mentorId?.expertise ?? [], 
+    sessions: c.sessions?.length ?? 0,
+    categoryName: c.category?.title ?? c.categoryName ?? "",
+    thumbnail: c.thumbnail ?? "",
+    students: c.enrolledUsers.length ?? 0,
+    isBlock: c.isBlock,
+    tags:c.tags,
+    courseLanguage:c.courseLanguage,
+    startDate: c.startDate ? new Date(c.startDate) : new Date(),
+    endDate: c.endDate ? new Date(c.endDate) : new Date(),
+    startTime: c.startTime ?? ""
+  };
+ }
+  static toResponseUserCourseProgress(p: IUserCourseProgress): IUserCourseProgressResponse{
+    return {
+      id:p._id.toString(),
+      courseId: p.courseId.toString(),
+      completedLessons: p.completedLessons.map((i)=>i.toString()),
+      overallProgressPercent: p.overallProgressPercent,
+      totalLessons:p.totalLessons,
+    }
+  }
+
 }

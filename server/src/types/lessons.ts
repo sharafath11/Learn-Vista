@@ -1,7 +1,9 @@
 import mongoose, { ObjectId } from "mongoose";
 import { Document } from "mongoose";
 import { IUserLessonProgress } from "./userLessonProgress";
-import { IMentorCommentResponseDto } from "../shared/dtos/comment/commentResponse.dto";
+import { IMentorCommentResponseDto, IUserCommentResponseAtLesson } from "../shared/dtos/comment/commentResponse.dto";
+import { IUserQustionsDto } from "../shared/dtos/question/question-response.dto";
+import { IUserLessonProgressDto, IUserLessonReportResponse, IUserLessonResponseDto } from "../shared/dtos/lessons/lessonResponse.dto";
 
 export interface ILesson extends Document {
     _id:string | ObjectId
@@ -90,10 +92,10 @@ export interface IGetAllCommentsResponse {
   pagination: PaginationMeta;
 }
 export interface ILessonDetails {
-  lesson: ILesson;
+  lesson: IUserLessonResponseDto;
   videoUrl: string;
-  lessonProgress: IUserLessonProgress | null;
-  report?: ILessonReport| null;
-  questions: IQuestions[];
-  comments: IComment[];
+  lessonProgress: IUserLessonProgressDto | null;
+  report?: IUserLessonReportResponse| null;
+  questions: IUserQustionsDto[];
+  comments: IUserCommentResponseAtLesson[];
 }

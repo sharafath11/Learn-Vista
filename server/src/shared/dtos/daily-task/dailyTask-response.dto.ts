@@ -1,4 +1,4 @@
-import { ISubTask,} from "../../../types/dailyTaskType";
+import { ISubTask, TaskType,} from "../../../types/dailyTaskType";
 
 export interface IDailyTaskResponseDto{
      id:string
@@ -6,4 +6,12 @@ export interface IDailyTaskResponseDto{
      tasks: ISubTask[];
      overallScore?: number;
      createdAt?: Date;
+}
+export interface IDailySubTaskResponseDto {
+  type: TaskType;
+  prompt: string;
+  userResponse?: string | null;
+  isCompleted: boolean;
+  aiFeedback?: string;
+  score?: number;
 }

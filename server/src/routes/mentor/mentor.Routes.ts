@@ -1,27 +1,9 @@
 import express from 'express';
-import { TYPES } from '../../core/types';
 import { verifyMentor } from '../../middlewares/mentorVerify';
-import { IMentorController } from '../../core/interfaces/controllers/mentor/IMentor.Controller';
-import { IMentorAuthController } from '../../core/interfaces/controllers/mentor/IMentorAuth.Controller';
-import container from '../../core/di/container';
-import { IMentorProfileController } from '../../core/interfaces/controllers/mentor/IMentorProfile.controller';
 import  { uploadConcernFiles, uploadImage } from '../../middlewares/upload';
-import {  IMentorStreamController } from '../../core/interfaces/controllers/mentor/IMentorStream.controller';
-import { IMentorLessonsController } from '../../core/interfaces/controllers/mentor/IMentorLesson.Controller';
-import { IMentorStudentsController } from '../../core/interfaces/controllers/mentor/ImentorStudent.controller';
-import { IMentorConcernController } from '../../core/interfaces/controllers/mentor/IMentorConcern.Controller';
-import { IMentorCommentsController } from '../../core/interfaces/controllers/mentor/IMentorComments.controller';
-import { IMentorCourseController } from '../../core/interfaces/controllers/mentor/IMentorCourse.controller';
+import { mentorAuthController, mentorProfileController, mentorController, _mentorCourseController, mentorStreamController, mentorLessonController, mentorStudentsController, _mentorConcernControler, _mentorCommentController } from './mentorController';
 const router = express.Router();
-const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);
-const mentorController = container.get<IMentorController>(TYPES.MentorController);
-const mentorProfileController = container.get<IMentorProfileController>(TYPES.MentorProfileController)
-const mentorLessonController=container.get<IMentorLessonsController>(TYPES.MentorLessonsController)
-const mentorStreamController = container.get<IMentorStreamController>(TYPES.MentorStreamController)
-const mentorStudentsController = container.get<IMentorStudentsController>(TYPES.MentorStudentsController)
-const _mentorConcernControler = container.get<IMentorConcernController>(TYPES.mentorConcernController)
-const _mentorCommentController = container.get<IMentorCommentsController>(TYPES.MentorCommentController)
-const _mentorCourseController=container.get<IMentorCourseController>(TYPES.MentorCourseController)
+
 router.post('/auth/signup', (req, res) => mentorAuthController.signupController(req, res));
 router.post('/auth/signup/otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
 router.post('/auth/signup/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));

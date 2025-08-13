@@ -1,27 +1,13 @@
 import express from "express";
 import verifyAdmin from "../../middlewares/authVerifyAdmin";
-import container from "../../core/di/container";
-import { TYPES } from "../../core/types";
-import { IAdminUserController } from "../../core/interfaces/controllers/admin/IAdminUser.controller";
-import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IAdminAuth.Controller";
-import { IAdminMentorController } from "../../core/interfaces/controllers/admin/IAdminMentor.Controller";
-import { IAdminCourseController } from "../../core/interfaces/controllers/admin/IAdminCourse.Controller";
 import { uploadImage } from "../../middlewares/upload";
-import { IAdminDonationController } from "../../core/interfaces/controllers/admin/IAdminDonation.Controller";
-import { IAdminConcernController } from "../../core/interfaces/controllers/admin/IAdminConcern.Controller";
-import { IAdminCategoryController } from "../../core/interfaces/controllers/admin/IAdminCategory.Controller";
 import { CreateCategoryDto } from "../../shared/dtos/categories/category.dto";
 import { validateDto } from "../../middlewares/validateDto";
 import { AdminLoginDto } from "../../shared/dtos/auth/login.dto";
+import { adminAuthController, adminUsersController, adminMentorController, adminCourseController, adminCategoryController, adminConcernController, adminDonationController } from "./adminController";
 const route = express.Router();
 
-const adminMentorController = container.get<IAdminMentorController>(TYPES.AdminMentorController);
-const adminUsersController = container.get<IAdminUserController>(TYPES.AdminUserController); 
-const adminAuthController = container.get<IAdminAuthController>(TYPES.AdminAuthController)
-const adminCourseController = container.get<IAdminCourseController>(TYPES.AdminCourseController)
-const adminDonationController = container.get<IAdminDonationController>(TYPES.AdminDonationCOntroller)
-const adminConcernController = container.get<IAdminConcernController>(TYPES.AdminConcernController)
-const adminCategoryController=container.get<IAdminCategoryController>(TYPES.AdminCategoryController)
+
 route.post("/login",validateDto(AdminLoginDto), adminAuthController.login.bind(adminAuthController));
 route.post("/logout", verifyAdmin, adminAuthController.logout.bind(adminAuthController));
 route.get("/users", verifyAdmin, adminUsersController.getAllUsers.bind(adminUsersController));

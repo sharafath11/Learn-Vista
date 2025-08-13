@@ -367,6 +367,7 @@ export const Messages = {
       "AWS credentials or bucket name is not configured.",
     ENV_VARIABLE_MISSING: (variable: string) =>
       `${variable} environment variable is missing.`,
+    RUN:(port:number|string)=>`Server running on ${port}`
   },
   RESUME: {
     UPLOAD_FAILED: "Failed to upload or process resume. Please try again.",
@@ -379,6 +380,9 @@ export const Messages = {
     GENERATION_FAILED: "Failed to generate or parse the daily task.",
     NEW_TASK_TITLE: "New Daily Task",
     NEW_TASK_MESSAGE: (day: number) => `Your Day ${day} task is ready!`,
+    TASK_NOT_FOUND: "Task not Found",
+    AUDIO_FILE_REQUIRE: "Audio file is required",
+    ANSWER_REQUIRED:"Answer is required for evaluation"
   },
   REPOSITORY: {
     CREATE_ERROR: "Error creating document",

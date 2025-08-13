@@ -6,7 +6,7 @@ import Image from "next/image"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Progress } from "@/src/components/shared/components/ui/progress"
-import { IPopulatedCourse } from "@/src/types/courseTypes"
+import { IcourseFromResponse, IPopulatedCourse } from "@/src/types/courseTypes"
 import { format } from "date-fns"
 import { useEffect, useState } from "react"
 import { ILessons } from "@/src/types/lessons"
@@ -14,7 +14,7 @@ import { useUserContext } from "@/src/context/userAuthContext"
 import { useRouter } from "next/navigation"
 
 interface CourseDetailsModalProps {
-  course: IPopulatedCourse
+  course: IcourseFromResponse
   isOpen: boolean
   onClose: () => void
   onEnroll: () => void
@@ -59,7 +59,7 @@ const CourseDetailsModal = ({
                 <div className="flex-1">
                   <div className="flex flex-wrap gap-2 mb-4">
                     <Badge variant="secondary">
-                      {course.categoryId?.title || "General"}
+                      {course.categoryName || "General"}
                     </Badge>
                     {course.tags?.map((tag, index) => (
                       <Badge key={index} variant="outline">
@@ -76,7 +76,7 @@ const CourseDetailsModal = ({
                     
                     <div className="flex items-center text-sm">
                       <Users size={16} className="mr-1" />
-                      {course.enrolledUsers?.length || 0} students
+                      {course.students|| 0} students
                     </div>
                     
                     {course.courseLanguage && (
@@ -109,32 +109,26 @@ const CourseDetailsModal = ({
                         <BookOpen className="h-5 w-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
                         <div>
                           <h4 className="font-medium">Sessions</h4>
-                          <p className="text-sm text-gray-600">{course.sessions?.length || 0} sessions</p>
+                          <p className="text-sm text-gray-600">{course.sessions || 0} sessions</p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <h4 className="font-medium">Status</h4>
-                          <p className="text-sm text-gray-600 capitalize">{course.mentorStatus}</p>
-                        </div>
-                      </div>
+                      
                       
                       <div className="flex items-start">
                         <Tag className="h-5 w-5 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
                         <div>
                           <h4 className="font-medium">Category</h4>
-                          <p className="text-sm text-gray-600">{course.categoryId?.title || "Not specified"}</p>
+                          <p className="text-sm text-gray-600">{course.categoryName|| "Not specified"}</p>
                         </div>
                       </div>
                       
                       <div className="flex items-start">
                         <Calendar className="h-5 w-5 text-orange-500 mr-2 mt-0.5 flex-shrink-0" />
                         <div>
-                          <h4 className="font-medium">Created</h4>
+                          <h4 className="font-medium">Live starting Date</h4>
                           <p className="text-sm text-gray-600">
-                            {format(new Date(course.createdAt), 'MMM d, yyyy')}
+                            {format(new Date(course.startDate), 'MMM d, yyyy')}
                           </p>
                         </div>
                       </div>
@@ -162,13 +156,22 @@ const CourseDetailsModal = ({
                     <h3 className="text-xl font-semibold mb-4">Mentor Information</h3>
                     <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                       <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                        {course.mentorId?.username?.charAt(0).toUpperCase() || "M"}
+                      <div className="w-8 h-8 overflow-hidden shadow-md">
+  <Image
+    src={course.mentorPhoto}
+    alt=""
+    width={32}
+    height={32}
+    className="object-cover w-full h-full"
+  />
+</div>
+
                       </div>
                       <div>
-                        <h4 className="font-medium">{course.mentorId?.username || "Mentor"}</h4>
-                        <p className="text-sm text-gray-600">{course.mentorId?.email || "No contact information"}</p>
+                        <h4 className="font-medium">{course.Mentorusername || "Mentor"}</h4>
+                        <p className="text-sm text-gray-600">{course.mentorEmail || "No contact information"}</p>
                         <p className="text-sm text-gray-600 mt-1">
-                          Experties: <span className="capitalize">{course.mentorId.expertise}</span>
+                          Experties: <span className="capitalize">{course.mentorExpertise}</span>
                         </p>
                       </div>
                     </div>

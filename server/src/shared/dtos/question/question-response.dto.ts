@@ -24,3 +24,9 @@ export interface IMentorQustionsDto{
   options?:string[]
   type: QuestionType;
 }
+export interface IUserQustionsDto{
+  id:string
+  question: string;
+  options?:string[]
+  type: QuestionType;
+}

@@ -9,5 +9,8 @@ export interface ICategoryResponseDto {
 export interface ICategoryCoursePopulated {
   id: string;
   title: string;
-  
+}
+export interface ICategoryUserCourseResponse{
+  id: String,
+  title:string
 }

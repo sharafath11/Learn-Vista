@@ -16,7 +16,8 @@ export class LiveUserService implements IUserLiveService {
   constructor(
     @inject(TYPES.CourseRepository) private courseRepo: ICourseRepository,
     @inject(TYPES.LiveRepository) private liveRepo: ILiveRepository,
-    @inject(TYPES.NotificationService) private _notificationService: INotificationService,
+    @inject(TYPES.NotificationService)
+    private _notificationService: INotificationService,
     @inject(TYPES.UserRepository) private _userRepo: IUserRepository
   ) {}
 
@@ -24,34 +25,42 @@ export class LiveUserService implements IUserLiveService {
     const liveSession = await this.validateLiveSession(courseId);
     await this.addParticipant(liveSession.id, userId);
     const user = await this._userRepo.findById(userId);
-await notifyWithSocket({
-  notificationService: this._notificationService,
-  userIds: [liveSession.mentorId.toString()],
-  title: Messages.STREAM.USER_JOINED_NOTIFICATION_TITLE,
-  message: Messages.STREAM.USER_JOINED_NOTIFICATION_MESSAGE(user?.username || "A user"),
-  type: "info",
-});
+    await notifyWithSocket({
+      notificationService: this._notificationService,
+      userIds: [liveSession.mentorId.toString()],
+      title: Messages.STREAM.USER_JOINED_NOTIFICATION_TITLE,
+      message: Messages.STREAM.USER_JOINED_NOTIFICATION_MESSAGE(
+        user?.username || "A user"
+      ),
+      type: "info",
+    });
     return liveSession.liveId;
   }
 
   private async validateLiveSession(courseId: string) {
-    const liveSession = await this.liveRepo.findOne({ courseId, isActive: true });
-if (!liveSession) {
-  throwError(Messages.STREAM.NOT_AVAILABLE, StatusCode.NOT_FOUND);
-}
+    const liveSession = await this.liveRepo.findOne({
+      courseId,
+      isActive: true,
+    });
+    if (!liveSession) {
+      throwError(Messages.STREAM.NOT_AVAILABLE, StatusCode.NOT_FOUND);
+    }
 
-if (!liveSession.isActive) {
-  throwError(Messages.STREAM.NOT_STARTED, StatusCode.BAD_REQUEST);
-}
+    if (!liveSession.isActive) {
+      throwError(Messages.STREAM.NOT_STARTED, StatusCode.BAD_REQUEST);
+    }
 
-if (liveSession.isEnd) {
-  throwError(Messages.STREAM.ALREADY_ENDED, StatusCode.BAD_REQUEST);
-}
+    if (liveSession.isEnd) {
+      throwError(Messages.STREAM.ALREADY_ENDED, StatusCode.BAD_REQUEST);
+    }
 
     return liveSession;
   }
 
-  private async addParticipant(liveId: Types.ObjectId, userId: string): Promise<void> {
+  private async addParticipant(
+    liveId: Types.ObjectId,
+    userId: string
+  ): Promise<void> {
     await this.liveRepo.update(liveId.toString(), {
       $addToSet: { participants: new Types.ObjectId(userId) },
     });

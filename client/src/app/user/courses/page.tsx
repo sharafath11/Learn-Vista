@@ -8,7 +8,7 @@ import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import CourseFilter from "./filtringAndSearch"
 import CourseDetailsModal from "./CourseDetailsModal"
-import type { IPopulatedCourse } from "@/src/types/courseTypes"
+import type { IcourseFromResponse, IPopulatedCourse } from "@/src/types/courseTypes"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
@@ -16,7 +16,7 @@ import type { ICategory } from "@/src/types/categoryTypes"
 import CourseCard from "./CourseCard"
 const Page = () => {
   const { user, setUser, progresses } = useUserContext() 
-  const [courses, setCourses] = useState<IPopulatedCourse[]>([])
+  const [courses, setCourses] = useState<IcourseFromResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -25,7 +25,7 @@ const Page = () => {
     category: "",
     sort: "newest",
   })
-  const [selectedCourse, setSelectedCourse] = useState<IPopulatedCourse | null>(null)
+  const [selectedCourse, setSelectedCourse] = useState<IcourseFromResponse | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [categories, setCategories] = useState<ICategory[]>([])
 
@@ -46,7 +46,6 @@ const Page = () => {
     } else if (filters.sort === "DESC") {
       mongoSort = { createdAt: 1 }
     }
-
     const res = await UserAPIMethods.fetchAllCourse({
       page,
       limit: 3,
@@ -72,7 +71,7 @@ const Page = () => {
     fetchCourses()
   }, [page, filters])
 
-  const handleDetailsClick = (course: IPopulatedCourse) => {
+  const handleDetailsClick = (course: IcourseFromResponse) => {
     setSelectedCourse(course)
     setIsModalOpen(true)
   }

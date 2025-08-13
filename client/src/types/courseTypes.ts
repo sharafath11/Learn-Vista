@@ -34,7 +34,8 @@ export interface ICourse {
 export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId'> {
   totelStudent?:number
   category?:string
-   mentorId: IMentor;
+  mentorId: IMentor;
+  
   categoryId: ICategory;
 }
 
@@ -65,4 +66,23 @@ export interface ClassSession {
   }[];
   topic: string;
   description?: string;
+}
+export interface IcourseFromResponse {
+   id: string,
+  title: string,
+  mentorPhoto:string
+  description: string;
+  mentorEmail: string,
+  Mentorusername: string,
+  mentorExpertise: string[],
+  sessions: number,
+  categoryName: string,
+  thumbnail: string,
+  students:number,
+  isBlock:boolean
+  startDate: Date,
+  endDate: Date,
+  tags:string[]
+  courseLanguage:string
+  startTime:string
 }

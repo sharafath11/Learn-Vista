@@ -7,7 +7,6 @@ import CourseModel from '../../models/class/courseModel';
 import { ICategoriesRepository } from '../../core/interfaces/repositories/course/ICategoriesRepository';
 import { TYPES } from '../../core/types';
 import { throwError } from '../../utils/ResANDError';
-import { toDTOArray } from '../../utils/toDTO';
 import { IMentor } from '../../types/mentorTypes';
 import { Messages } from '../../constants/messages';
 import { StatusCode } from '../../enums/statusCode.enum';
@@ -47,61 +46,70 @@ export class CourseRepository extends BaseRepository<ICourse, ICourse> implement
       .populate('mentorId')
       .populate('categoryId')
       .lean<IPopulatedCourse[]>();
-        const toDtoData=toDTOArray<IPopulatedCourse>(courses)
+    
 
-    return toDtoData.map(course => ({
+    return courses.map(course => ({
       ...course,
       mentorId: course.mentorId as IMentor,
       categoryId: course.categoryId as ICategory,
     }));
   }
 
-  async fetchAllCoursesWithFilters(params: CourseQueryParams): Promise<{
-    data: IPopulatedCourse[];
-    total: number;
-    totalPages: number;
-  }> {
-    const { page = 1,  search, filters,limit = 10, sort } = params;
-    const query: FilterQuery<ICourse> = {};
-   
+ async fetchAllCoursesWithFilters(params: CourseQueryParams): Promise<{
+  data: IPopulatedCourse[];
+  total: number;
+  totalPages: number;
+}> {
+  const { page = 1, search, filters, limit = 10, sort } = params;
+  const query: FilterQuery<ICourse> = {};
 
-    if (search) {
-      query.title = { $regex: search, $options: 'i' };
-    }
-
-    if (filters?.categoryId && filters.categoryId !== 'All') {
-      const categoryDoc = await this._catRepo.findById(filters.categoryId);
-      if (categoryDoc) {
-        query.categoryId = categoryDoc.id;
-      } else {
-        return { data: [], total: 0, totalPages: 0 };
-      }
-    }
-
-    let courseQuery = CourseModel.find(query)
-      .populate('mentorId')
-      .populate('categoryId');
-
-    courseQuery = sort && Object.keys(sort).length
-      ? courseQuery.sort(sort)
-      : courseQuery.sort({ createdAt: -1 });
-
-    const allCourses = await courseQuery.lean<IPopulatedCourse[]>();
-
-    const filteredCourses = allCourses
-      .map(course => ({
-        ...course,
-        mentorId: course.mentorId as IMentor,
-        categoryId: course.categoryId as ICategory,
-      }))
-      .filter(course => !course.isBlock && !course.categoryId.isBlock && course.isActive);
-
-    const total = filteredCourses.length;
-    const totalPages = Math.ceil(total / limit);
-    const paginatedCourses = filteredCourses.slice((page - 1) * limit, page * limit);
-     
-    return { data: paginatedCourses , total, totalPages };
+  if (search) {
+    query.title = { $regex: search, $options: "i" };
   }
+
+  if (filters?.categoryId && filters.categoryId !== "All") {
+    const categoryDoc = await this._catRepo.findById(filters.categoryId);
+    if (categoryDoc) {
+      query.categoryId = categoryDoc._id;
+    } else {
+      return { data: [], total: 0, totalPages: 0 };
+    }
+  }
+
+  let courseQuery = CourseModel.find(query)
+    .populate("mentorId")
+    .populate("categoryId");
+
+  courseQuery = sort && Object.keys(sort).length
+    ? courseQuery.sort(sort)
+    : courseQuery.sort({ createdAt: -1 });
+
+  const allCourses = await courseQuery.lean<IPopulatedCourse[]>();
+
+  const filteredCourses = allCourses
+    .map((course) => ({
+      ...course,
+      mentorId: course.mentorId as IMentor,
+      categoryId: course.categoryId as ICategory,
+    }))
+    .filter(
+      (course) =>
+        !course.isBlock &&
+        !course.categoryId?.isBlock &&
+        course.isActive
+    );
+
+  const total = filteredCourses.length;
+  const totalPages = Math.ceil(total / limit);
+  const paginatedCourses = filteredCourses.slice(
+    (page - 1) * limit,
+    page * limit
+  );
+
+  return { data: paginatedCourses, total, totalPages };
+}
+
+
 
   async fetchMentorCoursesWithFilters({
     mentorId,

@@ -1,12 +1,8 @@
 import express from "express";
-import container from "../../core/di/container";
-import { TYPES } from "../../core/types";
-import { INotificationController } from "../../core/interfaces/controllers/notifications/INotifications.Controller";
-import { ISharedController } from "../../core/interfaces/controllers/shared/ISharedController";
+import { notificationController, sharedController } from "./sharedController";
 
 const router = express.Router();
-const notificationController = container.get<INotificationController>(TYPES.NotificationController);
-const sharedController = container.get<ISharedController>(TYPES.SharedController);
+
 router
   .route("/notifications")
   .get(notificationController.getMyNotifications.bind(notificationController))

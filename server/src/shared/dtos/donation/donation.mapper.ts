@@ -1,5 +1,5 @@
 import { IDonation } from "../../../types/donationTypes";
-import { IDonationResponseDto, IAdminDonationResponseDto } from "./donation-response.dto";
+import { IDonationResponseDto, IAdminDonationResponseDto, IUSerDonationResponseDto } from "./donation-response.dto";
 
 export class DonationMapper {
   static toResponseDto(donation: IDonation): IDonationResponseDto {
@@ -30,4 +30,16 @@ export class DonationMapper {
            
         }
     }
+  static toUserDonationResponseDto(d: IDonation): IUSerDonationResponseDto{
+    return {
+      id: d._id.toString(),
+      donorEmail: d.donorEmail,
+      donorName: d.donorName,
+      createdAt: d.createdAt,
+      amount:d.amount, 
+      paymentIntentId: d.paymentIntentId,
+      status: d.status,
+      transactionId:d.transactionId
+    }
+  }
 }

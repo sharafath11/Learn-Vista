@@ -57,3 +57,29 @@ export interface ICourseMentorResponseDto{
   endDate: string,
   startTime:string
 }
+export interface ICourseUserResponseDto{
+  id: string,
+  title: string,
+  description: string;
+  mentorEmail: string,
+  Mentorusername: string,
+  mentorExpertise: string[],
+  mentorPhoto?:string
+  courseLanguage?:string
+  sessions: number,
+  tags?:string[]
+  categoryName: string,
+  thumbnail: string,
+  students:number,
+  isBlock:boolean
+  startDate: Date,
+  endDate: Date,
+  startTime:string
+}
+export interface IUserCourseProgressResponse{
+  id:string
+  courseId: string;
+  completedLessons: string[];
+  totalLessons: number;
+  overallProgressPercent: number;
+}
