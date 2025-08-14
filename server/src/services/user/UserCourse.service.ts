@@ -166,7 +166,7 @@ export class UserCourseService implements IUserCourseService {
     };
 
     if (existing) {
-      await this._userCourseProgressRepo.update(existing.id, progressData);
+      await this._userCourseProgressRepo.update(existing._id.toString(), progressData);
     } else {
       await this._userCourseProgressRepo.create(progressData);
     }

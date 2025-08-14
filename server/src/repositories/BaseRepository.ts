@@ -112,7 +112,7 @@ export abstract class BaseRepository<T extends Document, U>
 
   async findOne(condition: FilterQuery<T>): Promise<U | null> {
     try {
-      return await this.model.findOne(condition) as unknown as U;;
+      return await this.model.findOne(condition).lean().exec() as unknown as U;;
       
     } catch (error) {
       throw this.handleError(error, Messages.REPOSITORY.FIND_ONE_ERROR);
@@ -141,14 +141,15 @@ export abstract class BaseRepository<T extends Document, U>
     }
   }
 
-  async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
-    try {
-    const updated = await this.model.findByIdAndUpdate(id, data, { new: true }).lean().exec();
+async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
+  try {
+    const updated = await this.model.findByIdAndUpdate(id, data, { new: true }).exec();
+    console.log("baserepo updated console",updated)
     return updated as U
-    } catch (error) {
-      throw this.handleError(error, Messages.REPOSITORY.UPDATE_ERROR);
-    }
+  } catch (error) {
+    throw this.handleError(error, Messages.REPOSITORY.UPDATE_ERROR);
   }
+}
 
   async delete(id: string): Promise<boolean> {
     try {

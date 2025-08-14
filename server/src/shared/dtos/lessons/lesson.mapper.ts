@@ -39,6 +39,7 @@ export class LessonMapper {
     }
   }
   static toLessonUserResponseDto(lesson: ILesson): IUserLessonResponseDto{
+    console.log("lesson",lesson)
      return {
       id: lesson._id.toString(),
       title: lesson.title,
@@ -49,7 +50,8 @@ export class LessonMapper {
       courseId: lesson.courseId.toString(),
     };
   }
-static toLessonProgressUser(p: IUserLessonProgress): IUserLessonProgressDto {
+  static toLessonProgressUser(p: IUserLessonProgress): IUserLessonProgressDto {
+  console.log("progress",p)
   return {
     id: p._id.toString(),
     courseId: p.courseId.toString(),
@@ -65,6 +67,7 @@ static toLessonProgressUser(p: IUserLessonProgress): IUserLessonProgressDto {
   };
 }
   static lessonReportToresponse(l: ILessonReport): IUserLessonReportResponse{
+    
     return {
       report: l.report 
   }

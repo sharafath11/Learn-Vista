@@ -76,66 +76,7 @@ export class UserLessonsService implements IUserLessonsService {
     return getSignedUrl(s3, command, { expiresIn: 3600 });
   }
 
-  private calculateOverallLessonProgress(lessonProgress: IUserLessonProgress): number {
-    let completedWeight = 0;
 
-    if (lessonProgress.videoTotalDuration > 0) {
-      const videoCompletionRatio = Math.min(1, lessonProgress.videoWatchedDuration / lessonProgress.videoTotalDuration);
-      completedWeight += videoCompletionRatio * SECTION_WEIGHTS.video;
-    }
-
-    if (lessonProgress.theoryCompleted) completedWeight += SECTION_WEIGHTS.theory;
-    if (lessonProgress.practicalCompleted) completedWeight += SECTION_WEIGHTS.practical;
-    if (lessonProgress.mcqCompleted) completedWeight += SECTION_WEIGHTS.mcq;
-
-    return Math.min(100, Math.max(0, completedWeight * 100));
-  }
-
-  private calculateAndUpdateLessonSectionProgress(
-    progress: IUserLessonProgress,
-    update: {
-      videoWatchedDuration?: number;
-      videoTotalDuration?: number;
-      theoryCompleted?: boolean;
-      practicalCompleted?: boolean;
-      mcqCompleted?: boolean;
-      videoCompleted?: boolean;
-    }
-  ): IUserLessonProgress {
-    if (update.videoWatchedDuration !== undefined) {
-      progress.videoWatchedDuration = Math.max(progress.videoWatchedDuration, update.videoWatchedDuration);
-    }
-
-    if (update.videoTotalDuration !== undefined && update.videoTotalDuration > 0) {
-      progress.videoTotalDuration = update.videoTotalDuration;
-    } else if (progress.videoTotalDuration === 0) {
-      console.warn(`Video total duration is 0 for lesson ${progress.lessonId}. Cannot calculate video progress accurately.`);
-    }
-
-    if (update.theoryCompleted !== undefined) {
-      progress.theoryCompleted = update.theoryCompleted;
-    }
-
-    if (update.practicalCompleted !== undefined) {
-      progress.practicalCompleted = update.practicalCompleted;
-    }
-
-    if (update.mcqCompleted !== undefined) {
-      progress.mcqCompleted = update.mcqCompleted;
-    }
-
-    progress.videoWatchedDuration = Math.min(progress.videoWatchedDuration, progress.videoTotalDuration);
-    progress.videoProgressPercent =
-      progress.videoTotalDuration > 0
-        ? Math.min(100, (progress.videoWatchedDuration / progress.videoTotalDuration) * 100)
-        : 0;
-
-    if (update.videoCompleted !== undefined) {
-      progress.videoCompleted = update.videoCompleted;
-    }
-
-    return progress;
-  }
 
   async getLessons(courseId: string | ObjectId, userId: string | ObjectId): Promise<GetLessonsResponse> {
     await this._userCourseService.validateUserEnrollment(userId, courseId);
@@ -201,7 +142,7 @@ export class UserLessonsService implements IUserLessonsService {
     const report = await this._lessonReportRepo.create({
       userId: userId,
       lessonId: lessonId,
-      courseId: course.id,
+      courseId: course._id,
       mentorId: course.mentorId,
       report: geminiReport,
     });
@@ -253,48 +194,140 @@ async saveComments(
 
   return CommentMapper.toUserCommentResponseAtLessonDto(savedComment);
 }
+private calculateOverallLessonProgress(lessonProgress: IUserLessonProgress): number {
+  let completedWeight = 0;
 
-
-  async updateLessonProgress(
-    userId: string,
-    lessonId: string,
-    update: {
-      videoWatchedDuration?: number;
-      videoTotalDuration?: number;
-      theoryCompleted?: boolean;
-      practicalCompleted?: boolean;
-      mcqCompleted?: boolean;
-      videoCompleted?: boolean;
-    }
-  ): Promise<IUserLessonProgressDto> {
-    const lesson = await this._lessonRepository.findById(lessonId);
-    if (!lesson) throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
-
-    const courseId = lesson.courseId.toString();
-    let userLessonProgress = await this._userLessonProgressRepo.findOne({ userId, lessonId });
-    if (!userLessonProgress) {
-      userLessonProgress = await this._userLessonProgressRepo.create({
-        userId: new mongoose.Types.ObjectId(userId),
-        courseId: new mongoose.Types.ObjectId(courseId),
-        lessonId: new mongoose.Types.ObjectId(lessonId),
-        videoWatchedDuration: 0,
-        videoTotalDuration: 0,
-        videoProgressPercent: 0,
-        theoryCompleted: false,
-        practicalCompleted: false,
-        mcqCompleted: false,
-        overallProgressPercent: 0,
-        videoCompleted: false,
-      });
-    }
-    const updatedProgress = this.calculateAndUpdateLessonSectionProgress(userLessonProgress, update);
-    const finalProgressDoc = await this._userLessonProgressRepo.update(userLessonProgress.id, {
-      ...updatedProgress,
-      overallProgressPercent: this.calculateOverallLessonProgress(updatedProgress),
-    });
-    if (!finalProgressDoc)
-      throwError(Messages.LESSONS.PROGRESS_UPDATE_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
-    await this._userCourseService.updateUserCourseProgress(userId, courseId, lessonId);
-    return LessonMapper.toLessonProgressUser(finalProgressDoc);
+  if (lessonProgress.videoTotalDuration > 0) {
+    const videoCompletionRatio = Math.min(
+      1,
+      lessonProgress.videoWatchedDuration / lessonProgress.videoTotalDuration
+    );
+      completedWeight += videoCompletionRatio * SECTION_WEIGHTS.video;
   }
+
+  if (lessonProgress.theoryCompleted) {
+    completedWeight += SECTION_WEIGHTS.theory;
+    }
+
+  if (lessonProgress.practicalCompleted) {
+    completedWeight += SECTION_WEIGHTS.practical;
+     }
+
+  if (lessonProgress.mcqCompleted) {
+    completedWeight += SECTION_WEIGHTS.mcq;
+     }
+
+  const overall = Math.round(Math.min(100, Math.max(0, completedWeight * 100)));
+  return overall;
+}
+
+private calculateAndUpdateLessonSectionProgress(
+  progress: IUserLessonProgress,
+  update: {
+    videoWatchedDuration?: number;
+    videoTotalDuration?: number;
+    theoryCompleted?: boolean;
+    practicalCompleted?: boolean;
+    mcqCompleted?: boolean;
+    videoCompleted?: boolean;
+  }
+): IUserLessonProgress {
+   if (update.videoWatchedDuration !== undefined) {
+    progress.videoWatchedDuration = Math.max(progress.videoWatchedDuration, update.videoWatchedDuration);
+    }
+
+  if (update.videoTotalDuration !== undefined && update.videoTotalDuration > 0) {
+    progress.videoTotalDuration = update.videoTotalDuration;
+   
+  } else if (progress.videoTotalDuration === 0) {
+    console.warn(`⚠ Video total duration is 0 for lesson ${progress.lessonId}. Cannot calculate video progress accurately.`);
+  }
+
+  if (update.theoryCompleted !== undefined) {
+    progress.theoryCompleted = update.theoryCompleted;
+  }
+
+  if (update.practicalCompleted !== undefined) {
+    progress.practicalCompleted = update.practicalCompleted;
+  }
+
+  if (update.mcqCompleted !== undefined) {
+    progress.mcqCompleted = update.mcqCompleted;
+  }
+
+  progress.videoWatchedDuration = Math.min(progress.videoWatchedDuration, progress.videoTotalDuration);
+  progress.videoProgressPercent =
+    progress.videoTotalDuration > 0
+      ? Math.min(100, (progress.videoWatchedDuration / progress.videoTotalDuration) * 100)
+      : 0;
+
+  if (update.videoCompleted !== undefined) {
+    progress.videoCompleted = update.videoCompleted;
+  }
+
+  return progress;
+}
+
+// This is the corrected, working version of your code.
+async updateLessonProgress(
+  userId: string,
+  lessonId: string,
+  update: {
+    videoWatchedDuration?: number;
+    videoTotalDuration?: number;
+    theoryCompleted?: boolean;
+    practicalCompleted?: boolean;
+    mcqCompleted?: boolean;
+    videoCompleted?: boolean;
+  }
+): Promise<IUserLessonProgressDto> {
+  const lesson = await this._lessonRepository.findById(lessonId);
+  if (!lesson) {
+    throwError(Messages.LESSONS.NOT_FOUND, StatusCode.NOT_FOUND);
+  }
+  const courseId = lesson.courseId.toString();
+  let userLessonProgress = await this._userLessonProgressRepo.findOne({ userId, lessonId });
+
+  if (!userLessonProgress) {
+    userLessonProgress = await this._userLessonProgressRepo.create({
+      userId: new mongoose.Types.ObjectId(userId),
+      courseId: new mongoose.Types.ObjectId(courseId),
+      lessonId: new mongoose.Types.ObjectId(lessonId),
+      videoWatchedDuration: 0,
+      videoTotalDuration: 0,
+      videoProgressPercent: 0,
+      theoryCompleted: false,
+      practicalCompleted: false,
+      mcqCompleted: false,
+      overallProgressPercent: 0,
+      videoCompleted: false,
+    });
+   
+  } 
+  const updatedProgress = this.calculateAndUpdateLessonSectionProgress(userLessonProgress, update);
+  const overallProgress = this.calculateOverallLessonProgress(updatedProgress);
+  const updatePayload = {
+    videoProgressPercent: updatedProgress.videoProgressPercent,
+    videoWatchedDuration: updatedProgress.videoWatchedDuration,
+    videoTotalDuration: updatedProgress.videoTotalDuration,
+    theoryCompleted: updatedProgress.theoryCompleted,
+    practicalCompleted: updatedProgress.practicalCompleted,
+    mcqCompleted: updatedProgress.mcqCompleted,
+    videoCompleted: updatedProgress.videoCompleted,
+    overallProgressPercent: overallProgress, 
+  };
+  const finalProgressDoc = await this._userLessonProgressRepo.update(
+    userLessonProgress._id.toString(),
+    {
+      $set: updatePayload 
+    }
+  );
+
+  if (!finalProgressDoc) {
+  
+    throwError(Messages.LESSONS.PROGRESS_UPDATE_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
+  }
+  await this._userCourseService.updateUserCourseProgress(userId, courseId, lessonId);
+  return LessonMapper.toLessonProgressUser(finalProgressDoc);
+}
 }

@@ -26,8 +26,11 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [dailyTask, setDailyTask] = useState<IDailyTask | null>(null)
 
-  localStorage.removeItem("role")
-  localStorage.setItem("role","user")
+useEffect(() => {
+  localStorage.removeItem("role");
+  localStorage.setItem("role", "user");
+}, []);
+
   const router = useRouter();
 
   const fetchUserData = useCallback(async () => {
