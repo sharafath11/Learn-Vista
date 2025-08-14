@@ -38,7 +38,7 @@ export class CourseMapper {
     };
   }
   static toResponsePopulatedAdminCourse(course: ICourse): ICourseAdminResponse {
-      console.log(course)
+      console.log("responseeesssseeeeee",course)
     return {
     id:course._id.toString(),
     title: course.title,

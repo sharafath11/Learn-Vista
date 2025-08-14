@@ -154,9 +154,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
                           <p className="text-gray-200 text-sm font-medium truncate">
                             {att.filename}
                           </p>
-                          <p className="text-gray-500 text-xs">
-                            {(att.size / 1024).toFixed(1)} KB
-                          </p>
+                          
                         </div>
                       </div>
 

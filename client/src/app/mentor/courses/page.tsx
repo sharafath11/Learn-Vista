@@ -152,7 +152,7 @@ export default function CoursesPage() {
                     <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-300 pt-2">
                       <div className="flex items-center gap-2">
                         <Layers className="w-4 h-4 text-purple-400" />
-                        <span>{course.sessions?.length || "0"} Lessons</span>
+                        <span>{course.sessions || "0"} Lessons</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-pink-400" />

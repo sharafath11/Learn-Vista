@@ -64,11 +64,12 @@ export class AdminConcernService implements IAdminConcernService {
     return { concerns: sendData, courses:sendCourse };
   }
 
-  async updateConcernStatus(concernId: string, status: 'resolved' | 'in-progress'): Promise<void> {
+  async updateConcernStatus(concernId: string, status: 'resolved' | 'in-progress',resolution:string): Promise<void> {
     const concern = await this._concernRepo.findById(concernId);
     if (!concern) throwError(Messages.CONCERN.NOT_FOUND);
     const updated = await this._concernRepo.update(concernId, {
       status,
+      resolution,
       updatedAt: new Date()
     });
 

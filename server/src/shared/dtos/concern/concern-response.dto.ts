@@ -7,6 +7,7 @@ export interface IConcernResponseDto {
   courseId?: string;
   status: string;
   resolution?: string;
+  attachments?:IAttachment[]
   createdAt: Date;
   updatedAt: Date;
   mentorId:string
@@ -29,5 +30,6 @@ export interface IConernMentorResponse{
   courseTitle: string
   status: string
   createdAt:Date
-  resolution:string
+  resolution: string
+  courseId:string
 }

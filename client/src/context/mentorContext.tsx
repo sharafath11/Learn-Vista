@@ -11,7 +11,6 @@ import { IMentor, IMentorContext, } from "../types/mentorTypes";
 
 import { useRouter } from "next/navigation";
 import { IPopulatedCourse } from "../types/courseTypes";
-import { ILessons } from "../types/lessons";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
 import { IConcern } from "../types/concernTypes";
 import { INotification } from "../types/notificationsTypes";
@@ -26,8 +25,10 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   const [mentorNotification, setMentorNotifications] = useState<INotification[]>([])
   const [mentorUnreadNotification,setMentorUnreadNotification]=useState<number>(0)
   const [concerns, setConcerns] = useState<IConcern[]>([])
-  localStorage.removeItem("role")
+  useEffect(() => {
+    localStorage.removeItem("role")
   localStorage.setItem("role","mentor")
+},[])
   const router = useRouter();
 
   const getMentorDetils = useCallback(async () => {

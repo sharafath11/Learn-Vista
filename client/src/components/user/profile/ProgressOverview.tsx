@@ -4,10 +4,11 @@ import { useMemo } from "react"
 import { BookOpen, TrendingUp, Award, Target } from "lucide-react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { getCourseProgress } from "@/src/utils/getProgress"
+import { useRouter } from "next/navigation"
 
 export default function ProgressOverview() {
   const { progresses, allCourses, user } = useUserContext()
-
+ const route=useRouter()
   const progressData = useMemo(() => {
     if (!progresses || !allCourses || !user?.enrolledCourses) {
       return {
@@ -25,11 +26,11 @@ export default function ProgressOverview() {
 
     enrolledCourses.forEach((course) => {
       const progress = getCourseProgress(course.id, progresses)
-      const lessons = course.sessions?.length || 0
-      const completed = Math.round((lessons * progress) / 100)
+      const lessons = course.sessions || 0 
+      const completed = Math.round((lessons as number * progress) / 100)
 
       totalProgress += progress
-      totalLessons += lessons
+      totalLessons += lessons as number
       completedLessons += completed
 
       // Group by category
@@ -37,7 +38,7 @@ export default function ProgressOverview() {
       if (!categoryProgress[category]) {
         categoryProgress[category] = { total: 0, completed: 0, courses: 0 }
       }
-      categoryProgress[category].total += lessons
+      categoryProgress[category].total += lessons as number
       categoryProgress[category].completed += completed
       categoryProgress[category].courses += 1
     })
@@ -241,7 +242,7 @@ export default function ProgressOverview() {
 
       {/* Achievement Summary */}
       {progressData.overall.percentage > 0 && (
-        <div className="mt-8 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+        <div className="mt-8 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200" >
           <div className="flex items-center">
             <Award className="h-6 w-6 text-green-600 mr-3 flex-shrink-0" />
             <div>

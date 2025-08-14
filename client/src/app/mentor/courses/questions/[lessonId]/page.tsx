@@ -273,7 +273,7 @@ export default function MentorQuestionManagePage() {
           </TabsList>
 
           {questionTypes.map((type) => (
-            <TabsContent key={type} value={type} className="space-y-4">
+            <TabsContent key={type.length} value={type} className="space-y-4">
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-semibold text-slate-100">
                   {type.charAt(0).toUpperCase() + type.slice(1)} Questions

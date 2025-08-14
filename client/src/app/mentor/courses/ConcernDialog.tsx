@@ -27,7 +27,8 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { concerns, setConcerns } = useMentorContext()
+  const { concerns,setConcerns } = useMentorContext();
+  console.log(concerns)
   const concern = concerns.find((i) => i.courseId === courseId)
   const status = concern?.status
 
@@ -105,6 +106,7 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
       showErrorToast(res.msg)
       return
     }
+    setConcerns((prev)=>[...prev,res.data])
 
     showSuccessToast("Concern submitted successfully")
     setTitle("")
@@ -135,7 +137,7 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
               className={`${getStatusButtonClass()} shadow-md rounded-full px-3 py-1.5 flex items-center gap-1.5 transition-all bg-transparent text-sm`}
             >
               <MessageCircleWarning size={16} />
-              {status === "resolved" || !status ? "Raise Concern" : `Concern: ${status}`}
+              {status === "resolved" ||status !=="open"|| !status ? "Raise Concern" : `Concern: ${status}`}
             </Button>
           </DialogTrigger>
         ) : (

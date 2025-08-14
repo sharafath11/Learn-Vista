@@ -4,10 +4,11 @@ import { useMemo } from "react"
 import { BookOpen, TrendingUp, Award, Target } from "lucide-react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { getCourseProgress } from "@/src/utils/getProgress"
+import { useRouter } from "next/navigation"
 
 export default function StatsCard() {
   const { progresses, allCourses, user } = useUserContext()
-
+  const route=useRouter()
   const overallStats = useMemo(() => {
     if (!progresses || !allCourses || !user?.enrolledCourses) {
       return {
@@ -177,7 +178,7 @@ export default function StatsCard() {
 
       {/* Achievement Message */}
       {overallStats.completedCourses > 0 && (
-        <div className="mt-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+        <div className="mt-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200" onClick={()=>route.push("/user/certificate")}>
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Award className="h-5 w-5 text-green-600" />

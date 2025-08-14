@@ -143,13 +143,17 @@ export abstract class BaseRepository<T extends Document, U>
 
 async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
   try {
-    const updated = await this.model.findByIdAndUpdate(id, data, { new: true }).exec();
-    console.log("baserepo updated console",updated)
-    return updated as U
+    const updated = await this.model
+      .findByIdAndUpdate(id, data, { new: true })
+      .lean()
+      .exec(); 
+    console.log("baserepo updated console", updated);
+    return updated as U;
   } catch (error) {
     throw this.handleError(error, Messages.REPOSITORY.UPDATE_ERROR);
   }
 }
+
 
   async delete(id: string): Promise<boolean> {
     try {

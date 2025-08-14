@@ -11,6 +11,7 @@ export class ConcernMapper {
       courseId: concern.courseId ? concern.courseId.toString() : undefined,
       status: concern?.status || "open",
       resolution: concern.resolution,
+      attachments:concern.attachments||[],
       createdAt: concern.createdAt ? new Date(concern.createdAt) : new Date(),
       updatedAt: concern.updatedAt ? new Date(concern.updatedAt) : new Date(),
       mentorId:concern.mentorId.toString()
@@ -35,7 +36,8 @@ export class ConcernMapper {
     attachments: mapAttachment(concern.attachments),
     courseTitle,
     status: concern.status || "open",
-    resolution: concern.resolution,
+        resolution: concern.resolution,
+    courseId:concern.courseId.toString()
   };
   }
 }

@@ -164,7 +164,7 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
       const newStart = new Date(startDate);
       const newEnd = new Date(endDate);
       const hasConflict = existingCourses.some(course => {
-        if (course.id === courseId) return false;
+        if (course._id.toString() === courseId) return false;
         if (!course.startDate || !course.endDate || !course.startTime) return false;
 
         const courseStart = new Date(course.startDate);
@@ -191,6 +191,7 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
     }
     
     const updatedCourse = await this._courseRepo.update(courseId, updateData);
+
     if (!updatedCourse) {
       throwError(Messages.COURSE.FAILED_TO_UPDATE, StatusCode.INTERNAL_SERVER_ERROR); 
     }
@@ -201,7 +202,9 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
     message: Messages.COURSE.UPDATED_NOTIFICATION(updatedCourse.title),
     type: "info",
    });
-    const sendData = await convertSignedUrlInObject(updatedCourse, ["thumbnail"]);
+    const sendData = (await convertSignedUrlInObject(updatedCourse, ["thumbnail"]));
+
+    console.log("servioce layerfjgnjfn ", sendData)
      const mapperData=CourseMapper.toResponsePopulatedAdminCourse(sendData)
     return mapperData;
   }

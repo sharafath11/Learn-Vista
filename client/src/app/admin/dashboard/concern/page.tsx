@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 
-import { Calendar, AlertCircle, Search, ChevronDown, Layers } from "lucide-react"
+import { Calendar, AlertCircle, Search, ChevronDown, Layers, ImageIcon, FileIcon } from "lucide-react"
 import { ConcernModal } from "../courses/concernModal"
 
 import { cn } from "@/lib/utils"
@@ -16,6 +16,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Card } from "@/src/components/shared/components/ui/card"
 import { Badge } from "@/src/components/shared/components/ui/badge"
+import { MediaModal } from "@/src/components/MediaModal"
 
 export default function ConcernsPage() {
   const [concerns, setConcerns] = useState<IConcern[]>([])
@@ -30,7 +31,11 @@ export default function ConcernsPage() {
   const [selectedConcernId, setSelectedConcernId] = useState<string | null>(null)
   const [mentors,setMentors]=useState<IMentor[]>([])
   const concernsPerPage = 2
-  const totalPages = Math.ceil(totalConcerns / concernsPerPage)
+  const totalPages = Math.ceil(totalConcerns / concernsPerPage);
+  const [open, setOpen] = useState(false);
+const [mediaUrl, setMediaUrl] = useState("");
+const [mediaType, setMediaType] = useState<"image" | "video" | "audio" | "pdf" | "other">("image");
+
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearchTerm(searchTerm), 300)
@@ -186,63 +191,148 @@ export default function ConcernsPage() {
       </div>
 
       {concerns.length === 0 ? (
-        <div className="w-full text-center mt-24 text-muted-foreground text-sm">
-          🚫 No concerns found for the selected filters.
-        </div>
+  <div className="flex flex-col items-center justify-center py-12 text-center">
+    <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+    <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300">
+      No concerns found
+    </h3>
+    <p className="text-sm text-muted-foreground mt-2">
+      Try adjusting your search or filter criteria
+    </p>
+  </div>
+) : (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {concerns.map((concern) => {
+      const course = courses.find((c) => c.id === concern.courseId);
+      const mentor = mentors.find((m) => m.id === concern.mentorId);
+
+      return (
+        <Card
+          key={concern.id}
+          className="p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer group"
+          onClick={() => setSelectedConcernId(concern.id)}
+        >
+          {/* Header with status and date */}
+          <div className="flex items-center justify-between mb-3">
+  <Badge
+    variant={
+      concern.status === "resolved" ? "success" :
+      concern.status === "in-progress" ? "default" :
+      "destructive"
+    }
+    className="capitalize"
+  >
+    {concern.status}
+  </Badge>
+  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+    <Calendar className="w-3 h-3" />
+    {formatDate(concern.createdAt)}
+  </div>
+</div>
+
+          {/* Title with icon */}
+          <div className="flex items-start gap-2 mb-2">
+            <AlertCircle className="w-4 h-4 mt-0.5 text-red-500 flex-shrink-0" />
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-white line-clamp-2">
+              {concern.title}
+            </h3>
+          </div>
+
+          {/* Message preview */}
+          <p className="text-xs text-muted-foreground line-clamp-3 mb-3">
+            {concern.message}
+          </p>
+
+          {/* Attachments */}
+          {concern.attachments&&concern.attachments?.length > 0 && (
+            <div className="mb-3 space-y-2">
+              <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                📎 Attachments ({concern.attachments.length})
+              </p>
+              <div className="flex flex-wrap gap-2">
+  {concern.attachments.map((attachment, idx) => (
+    <div key={attachment.filename || idx} className="flex-shrink-0">
+      {attachment.type === "image" ? (
+        <Button
+          size="sm"
+          variant="outline"
+          className="gap-1"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMediaUrl(attachment.url||"");
+            setMediaType("image");
+            setOpen(true);
+          }}
+        >
+          <ImageIcon className="w-3 h-3" />
+          Image
+        </Button>
+      ) : attachment.type === "audio" ? (
+        <Button
+          size="sm"
+          variant="outline"
+          className="gap-1"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMediaUrl(attachment.url||"");
+            setMediaType("audio");
+            setOpen(true);
+          }}
+        >
+          <FileIcon className="w-3 h-3" />
+          Audio
+        </Button>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {concerns.map((c) => {
-            const course = courses.find((course) => course.id === c.courseId)
-            const mentor = mentors.find((m) => m.id === c.mentorId)
-
-            return (
-              <Card
-                key={c.id}
-                className="p-4 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 cursor-pointer"
-                onClick={() => setSelectedConcernId(c.id)}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <Badge
-                    className={cn(
-                      "text-xs px-3 py-1 rounded-full capitalize",
-                      c.status === "open" && "bg-yellow-100 text-yellow-800",
-                      c.status === "in-progress" && "bg-blue-100 text-blue-800",
-                      c.status === "resolved" && "bg-green-100 text-green-800"
-                    )}
-                  >
-                    {c.status}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    {formatDate(c.createdAt)}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm font-semibold mb-2 text-gray-800 dark:text-white">
-                  <AlertCircle className="w-4 h-4 text-red-500" />
-                  {c.title}
-                </div>
-
-                <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
-                  {c.message}
-                </p>
-
-                <div className="text-xs text-gray-500 space-y-1">
-                  <div>
-                    <strong>Mentor:</strong> {mentor?.username || "Unknown"}
-                  </div>
-                  <div>
-                    <strong>Course:</strong> {course?.title || "Unknown"}
-                  </div>
-                  <div>
-                    <strong>Reselution:</strong> {c?.resolution || "No Reselution"}
-                  </div>
-                </div>
-              </Card>
-            )
-          })}
-        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          className="gap-1"
+          onClick={(e) => {
+            e.stopPropagation();
+            setMediaUrl(attachment.url||"");
+            if (attachment.type === "audio") {
+              setMediaType("audio");
+            } else {
+              setMediaType("image");
+            }
+            setOpen(true);
+          }}
+        >
+          <FileIcon className="w-3 h-3" />
+          File
+        </Button>
       )}
+    </div>
+  ))}
+
+  {/* Global modal for preview */}
+  <MediaModal open={open} onClose={() => setOpen(false)} url={mediaUrl} type={mediaType} />
+</div>
+            </div>
+          )}
+
+          {/* Metadata */}
+          <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1.5">
+            <div className="flex items-start gap-1">
+              <span className="font-medium">Mentor:</span>
+              <span>{mentor?.username || "Unknown"}</span>
+            </div>
+            <div className="flex items-start gap-1">
+              <span className="font-medium">Course:</span>
+              <span>{course?.title || "Unknown"}</span>
+            </div>
+            <div className="flex items-start gap-1">
+              <span className="font-medium">Resolution:</span>
+              <span className={!concern.resolution ? "text-gray-400 italic" : ""}>
+                {concern.resolution || "No resolution"}
+              </span>
+            </div>
+          </div>
+        </Card>
+      );
+    })}
+  </div>
+)}
 
       {totalPages > 1 && (
         <div className="flex justify-center mt-6 gap-2">
