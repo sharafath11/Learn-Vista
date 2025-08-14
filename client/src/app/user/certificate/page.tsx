@@ -53,7 +53,7 @@ export default function CertificateListPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
             {certificates.map((cert) => (
-              <CertificateCard key={cert.id?.toString()} certificate={cert} />
+              <CertificateCard key={cert.certificateId} certificate={cert} />
             ))}
           </div>
         )}

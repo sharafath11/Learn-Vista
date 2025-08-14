@@ -23,7 +23,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { name: "Home", path: "/", icon: Home },
+  { name: "Home", path: "/user", icon: Home },
   { name: "Courses", path: "/user/courses", icon: BookOpen },
   { name: "Live Classes", path: "/user/live-classes", icon: Video },
   { name: "Donation", path: "/user/donation", icon: Heart },

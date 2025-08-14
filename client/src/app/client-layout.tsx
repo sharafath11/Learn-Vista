@@ -1,34 +1,34 @@
 "use client";
 
 import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
 import { ToastContainer } from "react-toastify";
-import AdminProvider from "@/src/context/adminContext"; 
+import AIAssistant from "../components/user/AIAssistant";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import RouteLoader from "@/src/components/RouteLoader";
+import RouteLoader from "../components/RouteLoader";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isRouteChanging, setIsRouteChanging] = useState(false);
 
   useEffect(() => {
+
     setIsRouteChanging(true);
-    const timer = setTimeout(() => setIsRouteChanging(false), 1000);
+
+    const timer = setTimeout(() => setIsRouteChanging(false), 1200);
     return () => clearTimeout(timer);
   }, [pathname]);
 
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {isRouteChanging && <RouteLoader />}
-        <AdminProvider>
-          <ToastContainer />
-          {children}
-        </AdminProvider>
-      </body>
-    </html>
+    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <ToastContainer />
+      {isRouteChanging && <RouteLoader />}
+      {children}
+      <AIAssistant />
+    </body>
   );
 }

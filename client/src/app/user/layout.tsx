@@ -6,6 +6,7 @@ import { UserProvider, useUserContext } from "@/src/context/userAuthContext";
 import { SessionProvider } from "next-auth/react";
 import { NotificationListener } from "@/src/components/NotificationListener";
 import { Header } from "@/src/components/user/header/Header";
+import ClientLayout from "../client-layout";
 
 interface UserLayoutProps {
   children: ReactNode;
@@ -31,7 +32,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
         <NotificationWrapper />
         <div className="min-h-screen flex flex-col bg-white overflow-x-hidden">
           <Header />
-          <main className="flex-grow">{children}</main>
+          <main className="flex-grow"> <ClientLayout>{children}</ClientLayout></main>
           <Footer />
         </div>
       </UserProvider>

@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { FiHome, FiUsers, FiBook, FiSettings, FiLogOut, FiX, FiAlertCircle, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { FaChalkboardTeacher } from 'react-icons/fa';
 import { SideBarProps } from '@/src/types/adminTypes';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { postRequest } from '@/src/services/api';
 
 const SideBar: React.FC<SideBarProps> = ({ sidebarOpen, setSidebarOpen }) => {
   const pathname = usePathname();
@@ -18,8 +19,11 @@ const SideBar: React.FC<SideBarProps> = ({ sidebarOpen, setSidebarOpen }) => {
     { name: 'Category', icon: <FiBook className="text-white" />, href: '/admin/dashboard/categories' },
     { name: 'Concern', icon: <FiAlertCircle className="text-white" />, href: '/admin/dashboard/concern' },
   ];
-
-  // Close sidebar on mobile when route changes
+  const route=useRouter()
+  async function handleLogout() {
+      await postRequest("/admin/logout", {})
+      route.push("/admin")
+    }
   useEffect(() => {
     setSidebarOpen(false);
   }, [pathname, setSidebarOpen]);
@@ -110,7 +114,7 @@ const SideBar: React.FC<SideBarProps> = ({ sidebarOpen, setSidebarOpen }) => {
 
         {/* Bottom section */}
         <div className={`absolute bottom-0 w-full p-4 border-t border-white/10 ${isCollapsed ? 'flex justify-center' : ''}`}>
-          <button className="flex items-center hover:bg-white/10 p-3 rounded-lg transition-colors w-full justify-center">
+          <button className="flex items-center hover:bg-white/10 p-3 rounded-lg transition-colors w-full justify-center" onClick={handleLogout}>
             <FiLogOut className="text-white" />
             {!isCollapsed && <span className="ml-3 font-medium">Logout</span>}
           </button>
