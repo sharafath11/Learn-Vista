@@ -41,9 +41,10 @@ export class MentorAuthService implements IMentorAuthService {
     if (!isPasswordValid) {
       throwError(Messages.AUTH.INVALID_CREDENTIALS, StatusCode.BAD_REQUEST);
     }
+    console.log(mentor)
   
-    const token = generateAccessToken(mentor.id, "mentor");
-    const refreshToken = generateRefreshToken(mentor.id, "mentor");
+    const token = generateAccessToken(mentor._id.toString(), "mentor");
+    const refreshToken = generateRefreshToken(mentor._id.toString(), "mentor");
     const signedUrl=await getSignedS3Url(mentor.profilePicture as string)
     const sendData=MentorMapper.toMentorMentorResponse(mentor,signedUrl)
     return {
@@ -89,7 +90,7 @@ export class MentorAuthService implements IMentorAuthService {
       password: hashedPassword
     };
     
-    await this._mentorRepo.update(existMentor.id, { ...allowedUpdates, isVerified: true });
+    await this._mentorRepo.update(existMentor._id.toString(), { ...allowedUpdates, isVerified: true });
   }
 
   async forgetPassword(email: string): Promise<void> {

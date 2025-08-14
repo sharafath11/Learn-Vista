@@ -23,7 +23,7 @@ export default function LoginForm() {
 
   useEffect(() => {
     setIsMounted(true);
-     if(user) router.push("/")
+     if(user) router.push("/user")
   }, []);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function LoginForm() {
       if (res.ok) {
         setUser(res.data);
         showSuccessToast(res.msg);
-        router.push("/");
+        router.push("/user");
       }
       
       setIsLoading(false);

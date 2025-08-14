@@ -88,7 +88,7 @@ export class AuthService implements IAuthService {
       if (!user) throwError(Messages.AUTH.INVALID_CREDENTIALS, StatusCode.BAD_REQUEST);
     }
 
-    const userId = user?.id as string;
+    const userId = user?._id.toString();
 
     if (googleId) {
       if (user.googleId !== googleId) throwError(Messages.AUTH.INVALID_GOOGLE_CREDENTIALS, StatusCode.BAD_REQUEST);
@@ -150,7 +150,7 @@ export class AuthService implements IAuthService {
     if (!user) return throwError(Messages.AUTH.USER_UPDATE_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
     if (user.isBlocked) throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
 
-    const userId = user.id as string;
+    const userId = user._id.toString();
     const token = generateAccessToken(userId, user.role);
     const refreshToken = generateRefreshToken(userId, user.role);
 

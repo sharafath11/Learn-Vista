@@ -63,6 +63,7 @@ export interface ICourseUserResponseDto{
   description: string;
   mentorEmail: string,
   Mentorusername: string,
+  enrolledUsers:string[]
   mentorExpertise: string[],
   mentorPhoto?:string
   courseLanguage?:string

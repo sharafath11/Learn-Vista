@@ -58,7 +58,7 @@ export default function LoginPage() {
     
         const res = await MentorAPIMethods.login(formData.email, formData.password);
         if (res.ok) {
-         
+          console.log("data from backend",res.data.mentor)
           setMentor(res.data.mentor);
           router.push("/mentor/home");
           showSuccessToast(res.msg);

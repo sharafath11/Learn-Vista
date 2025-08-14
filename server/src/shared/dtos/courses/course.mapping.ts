@@ -80,6 +80,7 @@ export class CourseMapper {
     mentorPhoto, 
     mentorExpertise: c.mentorId?.expertise ?? [], 
     sessions: c.sessions?.length ?? 0,
+    enrolledUsers:c.enrolledUsers.map((i)=>i.toString()),
     categoryName: c.category?.title ?? c.categoryName ?? "",
     thumbnail: c.thumbnail ?? "",
     students: c.enrolledUsers.length ?? 0,
