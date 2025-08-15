@@ -42,7 +42,6 @@ export class CommentMapper {
     }
   }
   static toUserCommentResponseAtLessonDto(c: IComment): IUserCommentResponseAtLesson{
-     console.log("comment",c)
     return {
       comment: c.comment,
       createdAt: c.createdAt || new Date(),

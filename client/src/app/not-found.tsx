@@ -8,14 +8,15 @@ export default async function NotFound() {
   return (
     <div className="relative min-h-screen text-white flex items-center justify-center p-4">
       <div className="absolute inset-0 -z-10">
-       <Image
+ <Image
   src={randomImageUrl}
   alt="Background"
-  width={1920}
-  height={1080}
+  fill
   priority
+  sizes="100vw"
   className="object-cover w-full h-full"
 />
+
 
         <div className="absolute inset-0 bg-black/70" />
       </div>

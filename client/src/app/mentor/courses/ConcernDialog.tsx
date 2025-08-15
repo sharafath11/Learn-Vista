@@ -28,7 +28,6 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { concerns,setConcerns } = useMentorContext();
-  console.log(concerns)
   const concern = concerns.find((i) => i.courseId === courseId)
   const status = concern?.status
 

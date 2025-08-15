@@ -30,7 +30,6 @@ export default function CreateCoursePage() {
   
   const fetchAllMentors = async () => {
     const res = await AdminAPIMethods.getAllMentor();
-    console.log("dsfdsfsdf",res)
     if (res.ok) {
       
       setMentors(res.data)

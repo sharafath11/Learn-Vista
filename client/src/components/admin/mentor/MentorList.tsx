@@ -26,7 +26,7 @@ const MentorList: FC<MentorListProps> = ({ mentors }) => {
             <ApplyMentorButton />
           </div> */}
         </div>
-        <MentorTable mentors={mentors} theme="light" />
+        <MentorTable theme="light" />
       </div>
     </div>
   );

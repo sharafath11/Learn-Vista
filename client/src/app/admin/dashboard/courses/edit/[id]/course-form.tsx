@@ -22,7 +22,6 @@ import { IMentor } from "@/src/types/mentorTypes"
 
 export function CourseFormDesign({ courseId }: { courseId: string }) {
   const { courses, avilbleMentors, setCourses, categories } = useAdminContext();
-  console.log("coudvsdf",courses)
   const [mentors, setMentors] = useState<IMentor[]>();
    useEffect(() => {
      fetchAllMentors()

@@ -99,7 +99,7 @@ export interface SocialLink {
 
 export interface IMentor {
   id: string;
-
+  students?:number
   userId: string;
   username: string;
   email: string;

@@ -13,6 +13,7 @@ import { convertSignedUrlInArray, convertSignedUrlInObject} from "../../utils/s3
 import { Messages } from "../../constants/messages";
 import { MentorMapper} from "../../shared/dtos/mentor/mentor.mapper";
 import { IAdminAddCourseMentorsDto, IAdminMentorResponseDto } from "../../shared/dtos/mentor/mentor-response.dto";
+import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 
 @injectable()
 export class AdminMentorService implements IAdminMentorServices {
@@ -20,7 +21,9 @@ export class AdminMentorService implements IAdminMentorServices {
     @inject(TYPES.MentorRepository)
     private _mentorRepo: IMentorRepository,
     @inject(TYPES.NotificationService)
-    private _notificationService: INotificationService
+    private _notificationService: INotificationService,
+    @inject(TYPES.CourseRepository) private _courseRepo:ICourseRepository
+    
   ) { }
   async getAllMentorWithoutFiltring(): Promise<IAdminAddCourseMentorsDto[]> {
     const result = await this._mentorRepo.findAll();
@@ -46,8 +49,18 @@ export class AdminMentorService implements IAdminMentorServices {
     if (!data) {
       throwError(Messages.MENTOR.FETCH_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
     }
-    const sendData = await convertSignedUrlInArray(data, ["profilePicture", "cvOrResume"])
-    const mappingDatas=sendData.map((i)=>MentorMapper.toResponseAdminDto(i))
+  const sendData = await convertSignedUrlInArray(data, ["profilePicture", "cvOrResume"]);
+
+
+const mappingDatas = await Promise.all(
+  sendData.map(async (mentor) => {
+    const courses = await this._courseRepo.findAll({ mentorId: mentor._id });
+    return MentorMapper.toResponseAdminDto(mentor, courses.length);
+  })
+);
+
+
+
   
     return {
       data:mappingDatas,

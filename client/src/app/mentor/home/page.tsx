@@ -21,7 +21,6 @@ export default function MentorDashboard() {
   let totalStudent = 0
   let totalLessons = 0
   let completedLessons = 0
-console.log("from mentor",courses)
   courses.forEach((course) => {
     totalStudent += course.totelStudent as number
     totalLessons += course?.sessions as number

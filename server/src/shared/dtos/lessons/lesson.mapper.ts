@@ -5,7 +5,6 @@ import {  IAdminLessonResponseDto, ILessonResponseDto, IMentorLessonResponseDto,
 
 export class LessonMapper {
   static toLessonResponseDto(lesson: ILesson): ILessonResponseDto {
-    console.log(lesson)
     return {
       id: lesson._id.toString(),
       title: lesson.title,
@@ -39,7 +38,6 @@ export class LessonMapper {
     }
   }
   static toLessonUserResponseDto(lesson: ILesson): IUserLessonResponseDto{
-    console.log("lesson",lesson)
      return {
       id: lesson._id.toString(),
       title: lesson.title,
@@ -51,7 +49,6 @@ export class LessonMapper {
     };
   }
   static toLessonProgressUser(p: IUserLessonProgress): IUserLessonProgressDto {
-  console.log("progress",p)
   return {
     id: p._id.toString(),
     courseId: p.courseId.toString(),

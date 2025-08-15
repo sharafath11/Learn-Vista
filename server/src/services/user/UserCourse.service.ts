@@ -61,7 +61,6 @@ export class UserCourseService implements IUserCourseService {
     return CourseMapper.toResponseUserCourse(i, photo);
   })
     );
-    console.log(sendDatas)
     return {data:sendDatas, total, totalPages };
   }
   

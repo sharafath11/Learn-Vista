@@ -60,7 +60,7 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
         <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(mentor.status)}`}>{mentor.status}</span>
       </td>
       <td className="p-4">{mentor.liveClasses.length}</td>
-      <td className="p-4">{mentor.coursesCreated&&mentor.coursesCreated.length}</td>
+      <td className="p-4">{mentor.students}</td>
       <td className="p-4">{mentor.isBlock?"Block":"Active"}</td>
       <td className="p-4 text-right space-x-2">
   {/* View button */}

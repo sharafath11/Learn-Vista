@@ -204,7 +204,6 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
    });
     const sendData = (await convertSignedUrlInObject(updatedCourse, ["thumbnail"]));
 
-    console.log("servioce layerfjgnjfn ", sendData)
      const mapperData=CourseMapper.toResponsePopulatedAdminCourse(sendData)
     return mapperData;
   }

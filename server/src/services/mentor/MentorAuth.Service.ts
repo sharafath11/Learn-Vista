@@ -41,7 +41,6 @@ export class MentorAuthService implements IMentorAuthService {
     if (!isPasswordValid) {
       throwError(Messages.AUTH.INVALID_CREDENTIALS, StatusCode.BAD_REQUEST);
     }
-    console.log(mentor)
   
     const token = generateAccessToken(mentor._id.toString(), "mentor");
     const refreshToken = generateRefreshToken(mentor._id.toString(), "mentor");
