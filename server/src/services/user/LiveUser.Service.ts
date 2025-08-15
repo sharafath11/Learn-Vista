@@ -23,11 +23,11 @@ export class LiveUserService implements IUserLiveService {
 
   async getRoomIdService(courseId: string, userId: string): Promise<string> {
     const liveSession = await this.validateLiveSession(courseId);
-    await this.addParticipant(liveSession.id, userId);
+    await this.addParticipant(liveSession._id, userId);
     const user = await this._userRepo.findById(userId);
     await notifyWithSocket({
       notificationService: this._notificationService,
-      userIds: [liveSession.mentorId.toString()],
+      userId: liveSession.mentorId.toString(),
       title: Messages.STREAM.USER_JOINED_NOTIFICATION_TITLE,
       message: Messages.STREAM.USER_JOINED_NOTIFICATION_MESSAGE(
         user?.username || "A user"

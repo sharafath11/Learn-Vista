@@ -38,7 +38,6 @@ export class CourseMapper {
     };
   }
   static toResponsePopulatedAdminCourse(course: ICourse): ICourseAdminResponse {
-      console.log("responseeesssseeeeee",course)
     return {
     id:course._id.toString(),
     title: course.title,
@@ -47,7 +46,7 @@ export class CourseMapper {
     startDate: course.startDate || "",
     endDate: course.endDate || "",
     startTime: course.startTime || "",
-        isActive: course.isActive,
+    isActive: course.isActive,
     isBlock:course.isBlock,
       thumbnail: course.thumbnail || "",
     description:course.description
@@ -80,7 +79,8 @@ export class CourseMapper {
     mentorPhoto, 
     mentorExpertise: c.mentorId?.expertise ?? [], 
     sessions: c.sessions?.length ?? 0,
-    enrolledUsers:c.enrolledUsers.map((i)=>i.toString()),
+    isStreaming:c.isStreaming,
+    enrolledUsers: c.enrolledUsers.map((i) => i.toString()),
     categoryName: c.category?.title ?? c.categoryName ?? "",
     thumbnail: c.thumbnail ?? "",
     students: c.enrolledUsers.length ?? 0,

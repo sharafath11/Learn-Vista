@@ -68,6 +68,7 @@ export interface ICourseUserResponseDto{
   mentorPhoto?:string
   courseLanguage?:string
   sessions: number,
+ isStreaming?:boolean
   tags?:string[]
   categoryName: string,
   thumbnail: string,

@@ -18,7 +18,6 @@ export default function UpcomingSessions() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [joiningSession, setJoiningSession] = useState<string | null>(null)
   const [filter, setFilter] = useState<"active" | "expired">("active")
-
   const courses = allCourses.filter((course) => course.enrolledUsers?.some((userId) => userId === user?.id))
 
   useEffect(() => {

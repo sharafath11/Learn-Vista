@@ -81,7 +81,7 @@ export interface ICourseFormData {
   thumbnailPreview: string | null;
 }
 export interface ILiveClass extends Document {
-  _id: ObjectId;
+  _id:Types.ObjectId;
   courseId: Types.ObjectId;
   mentorId: Types.ObjectId;
   date: Date;

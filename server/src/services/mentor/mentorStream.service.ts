@@ -47,15 +47,19 @@ export class MentorStreamService implements IMentorStreamService{
         if (!stream) throwError("Live stream not found");
         await this._courseRepo.update(stream.courseId as unknown as string,{isStreaming:false})
         await Promise.all([
-          this._baseLiveRepo.update(stream.id, { isActive: false, isEnd: true }),
-          this._baseMentorRepo.update(mentorId, { $addToSet: { liveClasses: stream?.id } })
+          this._baseLiveRepo.update(stream._id as unknown as string, { isActive: false, isEnd: true }),
+          this._baseMentorRepo.update(mentorId, { $addToSet: { liveClasses: stream?._id } })
         ]);
-         await notifyWithSocket({
-             notificationService: this._notificationService,
-             userIds: stream.participants.map((id) => id.toString()),
-             title: Messages.STREAM.END_SUCCESS,
-             message: Messages.STREAM.END_SUCCESS,
-             type: "info",
-         });
+         await Promise.all(
+    stream.participants.map((participant) =>
+      notifyWithSocket({
+        notificationService: this._notificationService,
+        userId: participant.userId as unknown as string,
+        title: Messages.STREAM.END_SUCCESS,
+        message: Messages.STREAM.END_SUCCESS,
+        type: "info",
+      })
+    )
+  );
       }
 }
