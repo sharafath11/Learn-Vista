@@ -110,7 +110,7 @@ export default function ForgotPassword() {
                 </div>
                 <div className="mt-6">
                   <Link
-                    href="/login"
+                    href="/user/login"
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-violet-700 bg-violet-100 hover:bg-violet-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-colors duration-200"
                   >
                     <ArrowLeft className="mr-2 h-4 w-4" />
@@ -177,7 +177,7 @@ export default function ForgotPassword() {
 
               <div className="flex items-center justify-center">
                 <Link
-                  href="/login"
+                  href="/user/login"
                   className="inline-flex items-center text-sm font-medium text-violet-600 hover:text-violet-500 transition-colors duration-200"
                 >
                   <ArrowLeft className="mr-1 h-4 w-4 transition-transform duration-200 group-hover:translate-x-[-2px]" />

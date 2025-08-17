@@ -1,4 +1,3 @@
-import { format } from "path";
 import { IComment } from "../../../types/lessons";
 import { IAdminCommentResponseDto, ICommentResponseDto, IMentorCommentResponseAtLesson, IMentorCommentResponseDto, IUserCommentResponseAtLesson } from "./commentResponse.dto";
 

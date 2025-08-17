@@ -107,9 +107,9 @@
 //     });
 //   });
 // }
-// @/src/socket.ts
+
 import { Server, Socket } from "socket.io";
-import { logger } from "../utils/logger";
+
 
 interface Participant {
   socketId: string;
@@ -150,10 +150,8 @@ export function socketHandler(io: Server) {
 
       if (role === 'mentor') {
         rooms[roomId].mentorSocketId = currentSocketId;
-        // Notify all users in the room that the mentor is available
         socket.to(roomId).emit('mentor-available', currentSocketId);
       } else {
-        // Notify the mentor about the new user
         if (rooms[roomId].mentorSocketId) {
           io.to(rooms[roomId].mentorSocketId!).emit('user-joined', currentSocketId, clientProvidedId);
         }
@@ -177,7 +175,6 @@ export function socketHandler(io: Server) {
     });
     
     socket.on("stream-ended", (roomId: string) => {
-      // Broadcast to all clients in the room
       io.to(roomId).emit("end-stream", "Stream was ended");
     });
     
@@ -189,10 +186,8 @@ export function socketHandler(io: Server) {
           
           if (disconnectedParticipant.role === 'mentor') {
             rooms[roomId].mentorSocketId = null;
-            // Notify all users that the mentor has disconnected
             io.to(roomId).emit('mentor-disconnected');
           } else {
-            // Notify the mentor that a user has left
             if (rooms[roomId].mentorSocketId) {
               io.to(rooms[roomId].mentorSocketId!).emit('user-left', socket.id);
             }
@@ -201,9 +196,9 @@ export function socketHandler(io: Server) {
           delete rooms[roomId].participants[socket.id];
           
           if (Object.keys(rooms[roomId].participants).length === 0) {
-            delete rooms[roomId]; // Clean up empty rooms
+            delete rooms[roomId];
           }
-          break; // Exit loop after finding and processing
+          break; 
         }
       }
     });
