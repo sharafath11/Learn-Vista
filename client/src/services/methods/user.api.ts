@@ -29,6 +29,7 @@ export const UserAPIMethods = {
   }) => get(`/courses`,{params}),
   updateCourse: (courseId: string) => patch(`/courses/${courseId}`,{}),
   getUserRoomId: (courseId: string) => get(`/start-live/vc/${courseId}`),
+  checkValidUser:(liveId:string)=>get(`/live/${liveId}/verify`),
   getLessons: (courseId: string) => get(`/courses/lessons/${courseId}`),
   getQustion: (lessonId: string) => get(`/lessons/${lessonId}/questions`),
   getLessonDetils: (lessonId: string) => get(`/lessons/${lessonId}/details`),

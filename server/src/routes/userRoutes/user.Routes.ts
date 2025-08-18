@@ -23,6 +23,7 @@ router.patch('/profile', authenticateToken, uploadImage.single('image'), profile
 router.get("/courses",authenticateToken, userCourseController.getAllCourse.bind(userCourseController));
 router.patch("/courses/:courseId", authenticateToken, userCourseController.updateUserCourse.bind(userCourseController));
 router.get("/start-live/vc/:courseId", authenticateToken, userLiveController.getRoomId.bind(userLiveController));
+router.get("/live/:liveId/verify",authenticateToken,userLiveController.verify.bind(userLiveController))
 router.patch("/profile/password", authenticateToken, profileController.changePassword.bind(profileController));
 router.get("/courses/lessons/:courseId",authenticateToken,userLessonsController.getLessons.bind(userLessonsController))
 router.get("/lessons/:lessonId/questions",authenticateToken,userLessonsController.getQuestions.bind(userLessonsController));

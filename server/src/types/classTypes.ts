@@ -87,7 +87,7 @@ export interface ILiveClass extends Document {
   date: Date;
   duration: string;
   liveId: string;
-  participants: { userId: ObjectId }[];
+  participants: { userId: ObjectId,_id:ObjectId }[];
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;

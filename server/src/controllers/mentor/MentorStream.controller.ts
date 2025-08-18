@@ -49,7 +49,7 @@ export class MentorStreamController implements IMentorStreamController {
         return 
       }
       await this._mentorStreamService.endStream(liveId,mentorId);
-      sendResponse(res, StatusCode.OK,Messages.STREAM.END_SUCCESS, true, { liveId });
+      sendResponse(res, StatusCode.OK,Messages.STREAM.END_SUCCESS(), true, { liveId });
     } catch (error) {
       handleControllerError(res, error);
     }

@@ -12,7 +12,9 @@ export async function notifyWithSocket({
   type = "info",
 }: NotifyParams & { notificationService: INotificationService }): Promise<void> {
   const io = getIOInstance();
+  console.log("socket u",userIds)
   for (const userId of userIds) {
+    console.log("socket u",userId)
     await notificationService.createNotification({ userId, title, message, type });
     io.to(userId).emit("notification", { title, message, type });
  

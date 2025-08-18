@@ -25,6 +25,17 @@ export class UserLiveCallController  implements IUserLiveController {
             handleControllerError(res,error)
         }
     }
+    async verify(req: Request, res: Response): Promise<void> {
+        try {
+            const { liveId } = req.params;
+            const decode = decodeToken(req.cookies.token);
+            if (!decode) throwError(Messages.STREAM.INVALID_USER, StatusCode.BAD_REQUEST);
+            await this._userLiveService.verifyUser(liveId,decode.id);
+             sendResponse(res,StatusCode.OK,"",true,)
+        } catch (error) {
+            handleControllerError(res,error)
+        }
+    }
 
    
 }

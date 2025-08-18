@@ -143,15 +143,16 @@ export default function MentorQuestionManagePage() {
                 )}
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleEditQuestion(question)}
-              className="flex items-center gap-2"
-            >
-              <Edit className="w-4 h-4" />
-              Edit
-            </Button>
+           <Button
+  variant="ghost"
+  size="sm"
+  onClick={() => handleEditQuestion(question)}
+  className="flex items-center gap-2"
+>
+  <Edit className="w-4 h-4" />
+  Edit
+</Button>
+
           </div>
         </CardContent>
       </Card>

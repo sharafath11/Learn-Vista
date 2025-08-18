@@ -4,17 +4,15 @@ import  { uploadConcernFiles, uploadImage } from '../../middlewares/upload';
 import { mentorAuthController, mentorProfileController, mentorController, _mentorCourseController, mentorStreamController, mentorLessonController, mentorStudentsController, _mentorConcernControler, _mentorCommentController } from './mentorController';
 const router = express.Router();
 
-router.post('/auth/signup', (req, res) => mentorAuthController.signupController(req, res));
-router.post('/auth/signup/otp', (req, res) => mentorAuthController.mentorOtpControler(req, res));
-router.post('/auth/signup/otp/verify', (req, res) => mentorAuthController.verifyOtp(req, res));
-router.post('/auth/login', (req, res) => mentorAuthController.login(req, res));
-router.post('/auth/logout', (req, res) => mentorAuthController.logout(req, res));
-router.patch("/profile",uploadImage.single('image'),verifyMentor,(req,res)=>mentorProfileController.editProfile(req,res))
-router.get('/me', verifyMentor, (req, res, next) => {
-    mentorController.getMentor(req, res).catch(next);
-});
-router.post("/auth/password/forgot", (req, res) => mentorAuthController.forgetPassword(req, res));
-router.post("/auth/password/reset", (req, res) => mentorAuthController.restartPassword(req, res));
+router.post('/auth/signup', mentorAuthController.signupController.bind(mentorAuthController));
+router.post('/auth/signup/otp',mentorAuthController.mentorOtpControler.bind(mentorAuthController));
+router.post('/auth/signup/otp/verify',mentorAuthController.verifyOtp.bind(mentorAuthController));
+router.post('/auth/login', mentorAuthController.login.bind(mentorAuthController));
+router.post('/auth/logout',mentorAuthController.logout.bind(mentorAuthController));
+router.patch("/profile",uploadImage.single('image'),verifyMentor,mentorProfileController.editProfile.bind(mentorProfileController))
+router.get('/me', verifyMentor,mentorController.getMentor.bind(mentorController));
+router.post("/auth/password/forgot",mentorAuthController.forgetPassword.bind(mentorAuthController));
+router.post("/auth/password/reset",mentorAuthController.restartPassword.bind(mentorAuthController));
 router.get("/courses", verifyMentor, _mentorCourseController.getCourses.bind(_mentorCourseController));
 router.patch("/courses/:courseId/status",verifyMentor, _mentorCourseController.changeStatus.bind(_mentorCourseController));
 router.get("/courses/:courseId/stream/start", verifyMentor, mentorStreamController.startStreamController.bind(mentorStreamController));

@@ -302,7 +302,7 @@ export const Messages = {
   },
   STREAM: {
     START_SUCCESS: "Live session started successfully.",
-    END_SUCCESS: "Live session ended successfully.",
+    END_SUCCESS: (coursename?:string)=>`${coursename} Live session ended successfully.`,
     JOINED_SUCCESS: "User joined the session successfully.",
     MISSING_STREAM_DATA: "Missing course ID or token.",
     MISSING_LIVE_ID: "Missing live session ID or token.",
@@ -313,6 +313,7 @@ export const Messages = {
     NOT_AVAILABLE: "Live session is not available.",
     NOT_STARTED: "This live session has not started yet.",
     ALREADY_ENDED: "This live session has already ended.",
+    NOT_ALLOWED:"You Are not allowed on this course please enroll first"
   },
   STUDENTS: {
     FETCHED: "Student data fetched successfully.",

@@ -8,6 +8,7 @@ import Peer from "simple-peer"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { showInfoToast } from "@/src/utils/Toast"
+import { useUserContext } from "@/src/context/userAuthContext"
 
 export default function UserLiveSession({ roomId }: { roomId: string }) {
   const [mentorStream, setMentorStream] = useState<MediaStream | null>(null)
@@ -15,7 +16,7 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
   const [newComment, setNewComment] = useState("")
   const [isMentorConnected, setIsMentorConnected] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false); 
-
+  
   const socketRef = useRef<any>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const peerRef = useRef<Peer.Instance | null>(null)
