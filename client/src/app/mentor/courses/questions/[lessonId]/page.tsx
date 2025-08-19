@@ -146,8 +146,9 @@ export default function MentorQuestionManagePage() {
            <Button
   variant="ghost"
   size="sm"
+  
   onClick={() => handleEditQuestion(question)}
-  className="flex items-center gap-2"
+  className="flex items-center gap-2 bg-amber-50"
 >
   <Edit className="w-4 h-4" />
   Edit

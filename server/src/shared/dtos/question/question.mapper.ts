@@ -29,6 +29,7 @@ export class QuestionMapper {
   }
   static toImentorQustionResponseDto(q: IQuestions): IMentorQustionsDto{
     return {
+      id:q._id.toString(),
       question: q.question,
       type: q.type,
       options:q.options

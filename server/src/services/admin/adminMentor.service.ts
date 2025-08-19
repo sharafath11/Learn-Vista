@@ -102,7 +102,8 @@ const mappingDatas = await Promise.all(
   const statusText = Messages.MENTOR.BLOCK_STATUS_TEXT(isBlock);
    await notifyWithSocket({
     notificationService: this._notificationService,
-    userIds: [id],
+     userIds: [id.toString()],
+    userId:id,
     title: Messages.MENTOR.BLOCK_TITLE(statusText),
     message: Messages.MENTOR.BLOCK_MESSAGE(statusText),
     type: isBlock ? "error" : "success",

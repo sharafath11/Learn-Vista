@@ -38,6 +38,7 @@ export class MentorMapper {
       coursesCreated:mentor.coursesCreated.toString(),
       expertise: mentor.expertise,
       status: mentor.status,
+      isVerified:mentor.isVerified,
       students:students||0,
       courses: mentor.courses ? mentor.courses.length : 0,
       isBlock: mentor.isBlock,

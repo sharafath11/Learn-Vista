@@ -269,6 +269,7 @@ async deleteS3File(req: Request, res: Response): Promise<void> {
    async editQuestions(req: Request, res: Response): Promise<void> {
   try {
     const questionId = req.params.questionId;
+    console.log(req.params)
 
     if (!questionId) {
       return sendResponse(res, StatusCode.BAD_REQUEST, Messages.COMMON.MISSING_FIELDS, false);

@@ -175,13 +175,14 @@ export class MentorLessonService implements IMentorLessonService {
     questionId: string,
     data: Partial<IQuestions>
   ): Promise<void> {
-    if (!data.question || !data.type || !data.lessonId) {
+    console.log(data)
+    if (!data.question || !data.type ) {
       throwError(
         Messages.COMMON.MISSING_FIELDS,
         StatusCode.BAD_REQUEST
       );
     }
-    if (data.question.trim().length < 10)
+    if (data.question.trim().length < 3)
       throwError(Messages.QUESTIONS.INVALID_QUESTION);
     await this._questionRepository.update(data.id, data);
 

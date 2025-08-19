@@ -20,6 +20,7 @@ export interface IQuestionAdminResponseDto {
   lessonId:string
 }
 export interface IMentorQustionsDto{
+  id:string,
   question: string;
   options?:string[]
   type: QuestionType;

@@ -32,7 +32,7 @@ export const MentorAPIMethods = {
   getSignedVideoUrl: (lessonId: string, videoUrl: string) => post(`/mentor/lessons/${lessonId}/video-url`, {videoUrl }),
   addQustion: (data:Omit<IQuestions, "id" | "isCompleted">) => post("/mentor/lessons/question", data),
   getQustion: (lessonId: string) => get(`/mentor/lessons/${lessonId}/questions`),
-  editQustion: (qustionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/questions/${qustionId}`, data),
+  editQustion: (questionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/questions/${questionId}`, data),
   getCourseStudents: (params: {
   courseId: string;
   page?: number;

@@ -36,7 +36,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         localStreamRef.current = stream
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = stream
-          localVideoRef.current.play().catch(e => console.error("Mentor: Error playing local video:", e)); // Ensure mentor's local video plays
+          localVideoRef.current.play().catch(e => console.error("Mentor: Error playing local video:", e));
         }
 
       
@@ -278,31 +278,46 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         </Card>
       </div>
 
-      <div className="w-full lg:w-80 flex flex-col border rounded-lg">
-        <div className="p-3 border-b"><h3 className="font-medium">Chat</h3></div>
-        <div className="flex-1 overflow-y-auto p-3 space-y-2">
-          {comments.map((comment, i) => (
-            <div key={i} className={`p-2 rounded ${comment.sender === "Mentor" ? "bg-blue-100" : "bg-gray-100"}`}>
-              <p className="font-medium text-sm">{comment.sender}</p>
-              <p>{comment.text}</p>
-            </div>
-          ))}
-        </div>
-        <div className="p-3 border-t">
-          <Textarea
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Type a message..."
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault()
-                submitComment()
-              }
-            }}
-          />
-          <Button onClick={submitComment} className="w-full mt-2">Send</Button>
-        </div>
+      <div className="w-full lg:w-80 flex flex-col border rounded-lg h-[500px]">
+  {/* Header */}
+  <div className="p-3 border-b">
+    <h3 className="font-medium">Chat</h3>
+  </div>
+
+  {/* Messages with scroll */}
+  <div className="flex-1 overflow-y-auto p-3 space-y-2">
+    {comments.map((comment, i) => (
+      <div
+        key={i}
+        className={`p-2 rounded ${
+          comment.sender === "Mentor" ? "bg-blue-100" : "bg-gray-100"
+        }`}
+      >
+        <p className="font-medium text-sm">{comment.sender}</p>
+        <p>{comment.text}</p>
       </div>
+    ))}
+  </div>
+
+  {/* Input */}
+  <div className="p-3 border-t">
+    <Textarea
+      value={newComment}
+      onChange={(e) => setNewComment(e.target.value)}
+      placeholder="Type a message..."
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault()
+          submitComment()
+        }
+      }}
+    />
+    <Button onClick={submitComment} className="w-full mt-2">
+      Send
+    </Button>
+  </div>
+</div>
+
     </div>
   )
 }

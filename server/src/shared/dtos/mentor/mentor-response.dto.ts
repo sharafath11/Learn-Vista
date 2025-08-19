@@ -56,7 +56,8 @@ export interface IAdminMentorResponseDto {
     cvOrResume: string
     email: string
     phoneNumber: string;
-    socialLinks:string|ISocialLink[]
+  socialLinks: string | ISocialLink[]
+  isVerified:boolean
 }
 export interface IAdminAddCourseMentorsDto{
   id: string
