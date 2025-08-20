@@ -31,13 +31,16 @@ import {
 import { logger } from "../../utils/logger";
 import { Messages } from "../../constants/messages";
 import { UserMapper } from "../../shared/dtos/user/user.mapper";
-import {  IUserResponseUser } from "../../shared/dtos/user/user-response.dto";
-import { IDailySubTaskResponseDto, IDailyTaskResponseDto } from "../../shared/dtos/daily-task/dailyTask-response.dto";
+import { IUserResponseUser } from "../../shared/dtos/user/user-response.dto";
+import {
+  IDailySubTaskResponseDto,
+  IDailyTaskResponseDto,
+} from "../../shared/dtos/daily-task/dailyTask-response.dto";
 import { DailyTaskMapper } from "../../shared/dtos/daily-task/dailyTask.mapper";
 
 export class UserService implements IUserService {
   constructor(
-    @inject(TYPES.UserRepository) private userRepository: IUserRepository,
+    @inject(TYPES.UserRepository) private _userRepository: IUserRepository,
     @inject(TYPES.NotificationService)
     private _notificationService: INotificationService,
     @inject(TYPES.DailyTaskRepository)
@@ -45,7 +48,7 @@ export class UserService implements IUserService {
   ) {}
 
   async getUser(id: string): Promise<IUserResponseUser> {
-    const user = await this.userRepository.findById(id);
+    const user = await this._userRepository.findById(id);
 
     if (!user) {
       return throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
@@ -73,7 +76,7 @@ export class UserService implements IUserService {
   }
 
   async forgetPassword(email: string): Promise<void> {
-    const user = await this.userRepository.findOne({ email });
+    const user = await this._userRepository.findOne({ email });
 
     if (!user) {
       return throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
@@ -89,33 +92,29 @@ export class UserService implements IUserService {
     const result = await sendPasswordResetEmail(user.email, resetLink);
 
     if (!result.success) {
-      throwError(
-        Messages.AUTH.EMAIL_FAILED,
-        StatusCode.INTERNAL_SERVER_ERROR
-      );
+      throwError(Messages.AUTH.EMAIL_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
     }
   }
 
   async resetPassword(id: string, password: string): Promise<void> {
-    const user = await this.userRepository.findById(id);
+    const user = await this._userRepository.findById(id);
 
     if (!user) {
       throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await this.userRepository.update(id, { password: hashedPassword });
+    await this._userRepository.update(id, { password: hashedPassword });
     await notifyWithSocket({
       notificationService: this._notificationService,
       userIds: [id],
-      title:  Messages.AUTH.PASSWORD_RESET_SUCCESS,
-      message:Messages.AUTH.PASSWORD_RESET_MESSAGE,
+      title: Messages.AUTH.PASSWORD_RESET_SUCCESS,
+      message: Messages.AUTH.PASSWORD_RESET_MESSAGE,
       type: "info",
     });
   }
 
- 
-async getDailyTaskSevice(
+  async getDailyTaskSevice(
     userId: string | Types.ObjectId
   ): Promise<IDailyTaskResponseDto> {
     const userObjectId =
@@ -175,10 +174,7 @@ async getDailyTaskSevice(
       if (geminiResponse) {
         logger.error("Raw Gemini Response:", geminiResponse);
       }
-      throwError(
-        Messages.GENAI.PARSING_FAILED,
-        StatusCode.BAD_REQUEST
-      );
+      throwError(Messages.GENAI.PARSING_FAILED, StatusCode.BAD_REQUEST);
     }
 
     const newTask = await this._dailyTaskRepo.create({
@@ -195,10 +191,9 @@ async getDailyTaskSevice(
       message: Messages.DAILY_TASK.NEW_TASK_MESSAGE(day),
       type: "info",
     });
-    
+
     return DailyTaskMapper.dailyTaskResponseDto(newTask);
   }
-
 
   async updateDailyTask({
     taskId,
@@ -207,7 +202,8 @@ async getDailyTaskSevice(
     audioFile,
   }: IUpdateDailyTaskInput): Promise<IDailySubTaskResponseDto> {
     const task = await this._dailyTaskRepo.findById(taskId);
-    if (!task) throwError(Messages.DAILY_TASK.TASK_NOT_FOUND, StatusCode.NOT_FOUND);
+    if (!task)
+      throwError(Messages.DAILY_TASK.TASK_NOT_FOUND, StatusCode.NOT_FOUND);
 
     const subtaskIndex = task.tasks.findIndex((t) => t.type === taskType);
     if (subtaskIndex === -1)
@@ -222,7 +218,10 @@ async getDailyTaskSevice(
 
     if (taskType === "speaking") {
       if (!audioFile)
-        throwError(Messages.DAILY_TASK.AUDIO_FILE_REQUIRE, StatusCode.BAD_REQUEST);
+        throwError(
+          Messages.DAILY_TASK.AUDIO_FILE_REQUIRE,
+          StatusCode.BAD_REQUEST
+        );
 
       const { buffer, mimetype } = audioFile;
       userResponseToDB = await uploadDailyTaskAudio(buffer, mimetype);
@@ -295,10 +294,9 @@ async getDailyTaskSevice(
 
     if (signedUrl) {
       const responseSubtask = { ...updatedSubtask, userResponse: signedUrl };
-      return DailyTaskMapper.subTaskResponseDto(responseSubtask)
+      return DailyTaskMapper.subTaskResponseDto(responseSubtask);
     }
-   return DailyTaskMapper.subTaskResponseDto(updatedSubtask)
-
+    return DailyTaskMapper.subTaskResponseDto(updatedSubtask);
   }
   async getAllDailyTasks(userId: string): Promise<IDailyTaskResponseDto[]> {
     const result = await this._dailyTaskRepo.findAll({ userId });
@@ -314,10 +312,13 @@ async getDailyTaskSevice(
       })
     );
 
-  return sendData
-  .map((i) => DailyTaskMapper.dailyTaskResponseDto(i))
-  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-;
+    return sendData
+      .map((i) => DailyTaskMapper.dailyTaskResponseDto(i))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }
+  async checkIfBlocked(userId: string): Promise<boolean> {
+    const user = await this._userRepository.findById(userId);
+    if (!user) throwError(Messages.COMMON.UNAUTHORIZED);
+    return user.isBlocked === true;
   }
 }

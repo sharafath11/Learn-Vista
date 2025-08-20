@@ -1,5 +1,4 @@
-import {  IUser } from "../../../../types/userTypes";
-import { IDailyTask, ISubTask, ISubTaskWithSignedUrl, IUpdateDailyTaskInput } from "../../../../types/dailyTaskType";
+import {ISubTask, ISubTaskWithSignedUrl, IUpdateDailyTaskInput } from "../../../../types/dailyTaskType";
 import {Types} from "mongoose"
 import {IUserResponseUser } from "../../../../shared/dtos/user/user-response.dto";
 import { IDailyTaskResponseDto } from "../../../../shared/dtos/daily-task/dailyTask-response.dto";
@@ -14,5 +13,6 @@ export interface IUserService {
         answer,
         audioFile,
      }: IUpdateDailyTaskInput): Promise<ISubTask | ISubTaskWithSignedUrl>
-    getAllDailyTasks(userId:string):Promise<IDailyTaskResponseDto[]>
+    getAllDailyTasks(userId: string): Promise<IDailyTaskResponseDto[]>
+    checkIfBlocked(userId:string):Promise<boolean>
 }

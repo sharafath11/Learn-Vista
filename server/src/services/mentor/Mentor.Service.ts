@@ -28,5 +28,10 @@ export class MentorService implements IMentorService {
 
     return MentorMapper.toMentorMentorResponse(mentor,signedUrl)
   }
+  async checkIfBlocked(mentorId: string): Promise<boolean> {
+    const mentor = await this._mentorRepo.findById(mentorId);
+    if (!mentor) throwError(Messages.COMMON.UNAUTHORIZED);
+    return mentor.isBlock === true;
+  }
 }
 
