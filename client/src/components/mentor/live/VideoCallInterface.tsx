@@ -278,7 +278,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         </Card>
       </div>
 
-      <div className="w-full lg:w-80 flex flex-col border rounded-lg h-[500px]">
+      <div className="w-full lg:w-80 flex flex-col border rounded-lg h-[500px] mt-4 lg:mt-0">
   {/* Header */}
   <div className="p-3 border-b">
     <h3 className="font-medium">Chat</h3>
