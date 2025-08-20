@@ -175,7 +175,6 @@ export class MentorLessonService implements IMentorLessonService {
     questionId: string,
     data: Partial<IQuestions>
   ): Promise<void> {
-    console.log(data)
     if (!data.question || !data.type ) {
       throwError(
         Messages.COMMON.MISSING_FIELDS,

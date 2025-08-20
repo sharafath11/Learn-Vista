@@ -9,8 +9,6 @@ import {
   DialogTitle,
 } from "@/src/components/shared/components/ui/dialog"
 import {
-  AlertCircle,
-  CheckCircle,
   ImageIcon,
   Music,
   FileText
@@ -31,6 +29,11 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
   const [resolution, setResolution] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
   const { setAllConcerns } = useAdminContext()
+
+  // For preview modal
+  const [mediaUrl, setMediaUrl] = useState<string>("")
+  const [mediaType, setMediaType] = useState<"image" | "audio" | null>(null)
+  const [mediaOpen, setMediaOpen] = useState(false)
 
   const getAttachmentIcon = (type: string) => {
     const iconClass = "w-4 h-4"
@@ -82,95 +85,121 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
 
   if (!concern) return null
 
-
   return (
-    <Dialog open={!!concern} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Concern Details</DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={!!concern} onOpenChange={onClose}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Concern Details</DialogTitle>
+          </DialogHeader>
 
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-lg font-semibold">Title</h3>
-            <p>{concern.title}</p>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold">Message</h3>
-            <p>{concern.message}</p>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold">Status</h3>
-            <Badge variant={concern.status === "resolved" ? "success" : "destructive"}>
-              {concern.status.toUpperCase()}
-            </Badge>
-          </div>
-
-          {concern.attachments && concern.attachments.length > 0 && (
+          <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold mb-2">Attachments</h3>
-              <ul className="space-y-2">
-                {concern.attachments.map((att, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-center justify-between bg-muted p-3 rounded-lg hover:bg-muted/80 transition cursor-pointer"
-                    onClick={() => {
-              
-                      if (!att.url || !att.url.startsWith("http")) {
-                        showErrorToast("Invalid or missing attachment URL.")
-                        return
-                      }
-                      window.open(att.url, "_blank")
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      {getAttachmentIcon(att.type)}
-                      <div>
-                        <p className="text-sm font-medium">{att.filename}</p>
-                        <p className="text-xs text-gray-500">
-                          {att.type} • {formatFileSize(att.size)}
-                        </p>
-                      </div>
-                    </div>
-                    <Button size="sm" variant="secondary">Open</Button>
-                  </li>
-                ))}
-              </ul>
+              <h3 className="text-lg font-semibold">Title</h3>
+              <p>{concern.title}</p>
             </div>
-          )}
 
-          <div>
-            <h3 className="text-lg font-semibold">Resolution</h3>
-            <textarea
-              className="w-full p-2 border border-gray-300 rounded"
-              rows={3}
-              placeholder="Enter resolution..."
-              value={resolution}
-              onChange={(e) => setResolution(e.target.value)}
-            />
-          </div>
+            <div>
+              <h3 className="text-lg font-semibold">Message</h3>
+              <p>{concern.message}</p>
+            </div>
 
-          <div className="flex justify-end gap-3">
-            <Button onClick={onClose} disabled={isProcessing}>Cancel</Button>
-            <Button
-              variant="outline"
-              onClick={() => handleStatusUpdate("in-progress")}
-              disabled={isProcessing || concern.status === "in-progress"}
-            >
-              Mark In-Progress
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => handleStatusUpdate("resolved")}
-              disabled={isProcessing || concern.status === "resolved"}
-            >
-              Resolve Concern
-            </Button>
+            <div>
+              <h3 className="text-lg font-semibold">Status</h3>
+              <Badge variant={concern.status === "resolved" ? "success" : "destructive"}>
+                {concern.status.toUpperCase()}
+              </Badge>
+            </div>
+
+            {concern.attachments && concern.attachments.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Attachments</h3>
+                <ul className="space-y-2">
+                  {concern.attachments.map((att, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-center justify-between bg-muted p-3 rounded-lg hover:bg-muted/80 transition cursor-pointer"
+                      onClick={() => {
+                        if (!att.url || !att.url.startsWith("http")) {
+                          showErrorToast("Invalid or missing attachment URL.")
+                          return
+                        }
+                        if (att.type === "image" || att.type === "audio") {
+                          setMediaUrl(att.url)
+                          setMediaType(att.type as "image" | "audio")
+                          setMediaOpen(true)
+                        } else {
+                          window.open(att.url, "_blank")
+                        }
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        {getAttachmentIcon(att.type)}
+                        <div>
+                          <p className="text-sm font-medium">{att.filename}</p>
+                          <p className="text-xs text-gray-500">
+                            {att.type} • {formatFileSize(att.size)}
+                          </p>
+                        </div>
+                      </div>
+                      <Button size="sm" variant="secondary">Open</Button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div>
+              <h3 className="text-lg font-semibold">Resolution</h3>
+              <textarea
+                className="w-full p-2 border border-gray-300 rounded"
+                rows={3}
+                placeholder="Enter resolution..."
+                value={resolution}
+                onChange={(e) => setResolution(e.target.value)}
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button onClick={onClose} disabled={isProcessing}>Cancel</Button>
+              <Button
+                variant="outline"
+                onClick={() => handleStatusUpdate("in-progress")}
+                disabled={isProcessing || concern.status === "in-progress"}
+              >
+                Mark In-Progress
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => handleStatusUpdate("resolved")}
+                disabled={isProcessing || concern.status === "resolved"}
+              >
+                Resolve Concern
+              </Button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      {/* Media Preview Modal */}
+      <Dialog open={mediaOpen} onOpenChange={setMediaOpen}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle>Preview</DialogTitle>
+          </DialogHeader>
+
+          <div className="flex justify-center items-center p-4">
+            {mediaType === "image" ? (
+              <img src={mediaUrl} alt="Preview" className="max-h-[60vh] rounded-lg" />
+            ) : mediaType === "audio" ? (
+              <audio controls className="w-full">
+                <source src={mediaUrl} />
+                Your browser does not support the audio element.
+              </audio>
+            ) : null}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }

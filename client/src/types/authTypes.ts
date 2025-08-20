@@ -60,7 +60,8 @@ export interface UserContextType {
   unreadCount: number,
   setUnreadCount: React.Dispatch<React.SetStateAction<number>>
   refereshNotifcation: () => void
-  dailyTask:IDailyTask|null
+  dailyTask: IDailyTask | null
+  fetchUserData:()=>Promise<void>
   
 }
 

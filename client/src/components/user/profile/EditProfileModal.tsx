@@ -2,13 +2,13 @@
 
 import { useState, useRef, useEffect, useCallback, memo, JSX } from "react";
 import Image from "next/image";
-import { X, ChevronLeft, Mail, Lock, User, Camera, CheckCircle, Loader2 } from "lucide-react";
+import { X, ChevronLeft, Mail, User, Camera, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { useUserContext } from "@/src/context/userAuthContext";
 import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast";
 
-type View = "profile" | "forgotPassword" | "resetSent";
+type View = "profile";
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -91,14 +91,13 @@ export default function EditProfileModal({
   const [name, setName] = useState(username);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [currentView, setCurrentView] = useState<View>("profile");
+  const [currentView] = useState<View>("profile");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { setUser ,user} = useUserContext();
+  const { setUser, user } = useUserContext();
 
   const resetState = useCallback(() => {
     setName(username);
-    setCurrentView("profile");
     setSelectedImage(null);
     setImagePreview(null);
     setIsLoading(false);
@@ -120,24 +119,6 @@ export default function EditProfileModal({
     setSelectedImage(file);
     setImagePreview(URL.createObjectURL(file));
   }, []);
-
-  const handleForgotPassword = useCallback(async () => {
-    if (!email) return;
-    
-    setIsLoading(true);
-    try {
-     const res=await UserAPIMethods.forgotPassword(email)
-      if (res.ok) {
-        setCurrentView("resetSent");
-        showSuccessToast(res.msg)
-      }
-      else showErrorToast(res.msg)
-    } catch (error) {
-      showErrorToast("Failed to send reset link");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [email]);
 
   const handleSaveChanges = useCallback(async () => {
     setIsLoading(true);
@@ -226,47 +207,12 @@ export default function EditProfileModal({
             className="bg-gray-100 cursor-not-allowed"
           />
 
-          <button
-            onClick={() => setCurrentView("forgotPassword")}
-            className="w-full text-left text-sm font-medium text-red-600 hover:text-red-800 transition-colors"
-          >
-            Forgot Password?
-          </button>
-
           <Button onClick={handleSaveChanges} gradient loading={isLoading}>
             Save Changes
           </Button>
         </div>
       </>
     ),
-    forgotPassword: (
-      <div className="space-y-6 text-center">
-        <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mb-4">
-          <Lock size={32} className="text-indigo-600" />
-        </div>
-        <h3 className="text-lg font-medium text-gray-900">Reset your password</h3>
-        <p className="text-sm text-gray-500">
-          We'll send a password reset link to your email.
-        </p>
-        <Button onClick={handleForgotPassword} loading={isLoading}>
-          Send Reset Link
-        </Button>
-      </div>
-    ),
-    resetSent: (
-      <div className="text-center space-y-4">
-        <div className="flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mx-auto">
-          <CheckCircle size={32} className="text-green-600" />
-        </div>
-        <h3 className="text-lg font-semibold text-gray-900">Reset Link Sent!</h3>
-        <p className="text-sm text-gray-600">
-          Please check your email for a link to reset your password.
-        </p>
-        <Button onClick={onClose} className="bg-green-600 hover:bg-green-700">
-          Close
-        </Button>
-      </div>
-    )
   };
 
   return (
@@ -289,19 +235,8 @@ export default function EditProfileModal({
             </button>
 
             <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
-              {currentView !== "profile" && (
-                <button
-                  onClick={() => setCurrentView("profile")}
-                  className="absolute top-4 left-4 text-white hover:text-indigo-200 transition-colors"
-                  disabled={isLoading}
-                  aria-label="Go back"
-                >
-                  <ChevronLeft size={24} />
-                </button>
-              )}
               <h2 className="text-2xl font-bold text-center">
-                {currentView === "profile" ? "Edit Profile" : 
-                currentView === "forgotPassword" ? "Reset Password" : "Check Your Email"}
+                Edit Profile
               </h2>
             </div>
 

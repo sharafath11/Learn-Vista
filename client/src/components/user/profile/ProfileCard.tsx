@@ -49,23 +49,15 @@ export default function ProfileCard() {
 
         <div className="pt-20 pb-6 px-6 text-center">
           <h2 className="text-xl font-bold text-gray-900">{user?.username}</h2>
-          <p className="text-sm text-gray-500 mt-1">Joined at {formattedDate}</p>
 
           <div className="mt-4 flex justify-center space-x-4">
             <div className="text-center">
               <p className="text-lg font-bold text-gray-900">Email</p>
               <p className="text-xs text-gray-500">
-                {user?.email ?? "N/A"} {/* Changed from "No course" as it's an email field */}
+                {user?.email ?? "N/A"} 
               </p>
             </div>
-            <div className="text-center">
-              <p className="text-lg font-bold text-gray-900">4</p>
-              <p className="text-xs text-gray-500">Completed</p>
-            </div>
-            <div className="text-center">
-              <p className="text-lg font-bold text-gray-900">124</p>
-              <p className="text-xs text-gray-500">Hours</p>
-            </div>
+           
           </div>
 
           <button

@@ -60,7 +60,6 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
       <div className="rounded-xl shadow-lg overflow-hidden bg-white animate-pulse h-96"></div>
     );
   }
- console.log(mentor)
   return (
     <div className="rounded-xl shadow-lg overflow-hidden bg-white flex flex-col md:flex-row">
       <div className="md:w-1/2 p-6 flex flex-col items-center">

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import React from "react"; 
-import { showSuccessToast } from "../utils/Toast";
+import { showSuccessToast, showErrorToast } from "../utils/Toast";
 import { UserAPIMethods } from "../services/methods/user.api";
 import { MentorAPIMethods } from "../services/methods/mentor.api";
 
@@ -20,25 +20,38 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
 }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = async(e: React.FormEvent) => {
       e.preventDefault();
-      if (role == "user") {
+
+      if (newPassword !== confirmPassword) {
+        showErrorToast("New password and confirm password do not match.");
+        return;
+      }
+
+      if (role === "user") {
           const res = await UserAPIMethods.changePassword(currentPassword, newPassword);
           if (res.ok) {
             showSuccessToast(res.msg);
+            onClose(); 
+          } else {
+            showErrorToast(res.msg);
           }
       } else {
         const res = await MentorAPIMethods.changePassword(currentPassword, newPassword);
         if (res.ok) {
           showSuccessToast(res.msg);
+          onClose(); 
+        } else {
+          showErrorToast(res.msg);
         }
       }
-    onClose(); 
   };
 
   return (
@@ -75,7 +88,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <label
               htmlFor="newPassword"
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -96,6 +109,35 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
                 onClick={() => setShowNewPassword(!showNewPassword)}
               >
                 {showNewPassword ? (
+                  <EyeOff className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <Eye className="h-5 w-5 text-gray-500" />
+                )}
+              </span>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-gray-700 text-sm font-bold mb-2"
+            >
+              Confirm New Password
+            </label>
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                id="confirmPassword"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pr-10"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              <span
+                className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? (
                   <EyeOff className="h-5 w-5 text-gray-500" />
                 ) : (
                   <Eye className="h-5 w-5 text-gray-500" />

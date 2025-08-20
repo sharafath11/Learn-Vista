@@ -104,7 +104,8 @@ useEffect(() => {
     unreadCount,
     setUnreadCount,
     refereshNotifcation: fetchNotifications,
-    dailyTask
+    dailyTask,
+    fetchUserData,
   };
 
   return (

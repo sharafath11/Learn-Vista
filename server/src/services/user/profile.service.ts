@@ -142,8 +142,7 @@ await notifyWithSocket({
   }
 
   async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
-    const user = await this.userRepository.findWithPassword({ id: userId });
-
+    const user = await this.userRepository.findWithPassword({ _id: userId });
     if (!user) {
       throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
     }
