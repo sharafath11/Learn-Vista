@@ -23,6 +23,7 @@ import {
   PaginationLink,
 } from "@/src/components/shared/components/ui/pagination"
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
+import { CustomAlertDialog } from "@/src/components/custom-alert-dialog"
 
 interface FetchParams {
   page?: number
@@ -39,6 +40,10 @@ export default function Page() {
   const [selectedStudent, setSelectedStudent] = useState<IUser | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [totalPages, setTotelPages] = useState<number>(0)
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+const [shouldBlock, setShouldBlock] = useState<boolean>(false);
+
   const [fetchParams, setFetchParams] = useState<FetchParams>({
     page: 1,
     search: "",
@@ -57,20 +62,30 @@ export default function Page() {
     setSelectedStudent(null)
   }
 
-  const handleToggleBlock = async (id: string, shouldBlock: boolean) => {
-    const res = await MentorAPIMethods.blockStudentInCourse(
-      params.courseId as string,
-      id,
-      shouldBlock
-    )
+const handleToggleBlock = (id: string, block: boolean) => {
+  setSelectedStudentId(id);
+  setShouldBlock(block);
+  setIsConfirmOpen(true);
+};
+const confirmToggleBlock = async () => {
+  if (!selectedStudentId) return;
 
-    if (res.ok) {
-      showSuccessToast(res.msg)
-      fetchStudents()
-    } else {
-      showErrorToast(res.msg)
-    }
+  const res = await MentorAPIMethods.blockStudentInCourse(
+    params.courseId as string,
+    selectedStudentId,
+    shouldBlock
+  );
+
+  if (res.ok) {
+    showSuccessToast(res.msg);
+    fetchStudents();
+  } else {
+    showErrorToast(res.msg);
   }
+
+  setIsConfirmOpen(false);
+  setSelectedStudentId(null);
+};
 
   useEffect(() => {
     fetchStudents()
@@ -264,6 +279,22 @@ export default function Page() {
           />
         )}
       </div>
+      <CustomAlertDialog
+  isOpen={isConfirmOpen}
+  onClose={() => setIsConfirmOpen(false)}
+  title={shouldBlock ? "Block Student" : "Unblock Student"}
+  description={
+    shouldBlock
+      ? "Are you sure you want to block this student from the course?"
+      : "Are you sure you want to unblock this student and allow access?"
+  }
+  onConfirm={confirmToggleBlock}
+  onCancel={() => setIsConfirmOpen(false)}
+  confirmText={shouldBlock ? "Block" : "Unblock"}
+  cancelText="Cancel"
+  variant={shouldBlock ? "warning" : "info"}
+/>
+
     </main>
   )
 }

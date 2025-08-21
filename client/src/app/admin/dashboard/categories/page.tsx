@@ -53,7 +53,7 @@ export default function CategoriesList() {
     const fetchCategories = async () => {
       setIsLoading(true);
       try {
-        const filters: ICategoryFilters = {};
+       const filters: ICategoryFilters = {};
         if (statusFilter !== "All") {
           filters.isBlock = statusFilter === "Blocked";
         }

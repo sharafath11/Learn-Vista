@@ -68,7 +68,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
                     });
 
                     peer.on("track", (track, stream) => {
-                        // This event is important for viewers, not mentors
+                      
                     });
 
                     peer.on("error", err => {
