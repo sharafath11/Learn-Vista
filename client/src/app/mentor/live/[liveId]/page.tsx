@@ -1,7 +1,6 @@
 "use client";
-import { MobileView } from "@/src/components/mentor/live/MobailVC";
-import MentorStream from "@/src/components/mentor/live/VideoCallInterface";
 
+import MentorStream from "@/src/components/mentor/live/VideoCallInterface";
 import { useParams } from "next/navigation";
 
 export default function Home() {
@@ -10,13 +9,9 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
-      <div className="hidden md:flex flex-1 p-4">
-        <div className="w-full h-[calc(100vh-2rem)] rounded-xl overflow-hidden shadow-lg">
-          <MentorStream roomId={liveId} />
-        </div>
-      </div>
-      <div className="md:hidden flex flex-1">
-        <MobileView roomId={liveId} />
+      <div className="flex flex-1 p-4">
+        {/* The MentorStream component handles all responsiveness internally */}
+        <MentorStream roomId={liveId} />
       </div>
     </main>
   );
