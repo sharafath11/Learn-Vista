@@ -5,9 +5,10 @@ import { Card } from "@/src/components/shared/components/ui/card"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { cn } from "@/src/utils/cn"
+import { IPopulatedCourse } from "@/src/types/courseTypes"
 
 interface SessionCardProps {
-  session: any
+  session: IPopulatedCourse
   isExpired: boolean
   joiningSession: string | null
   onJoinCall: (courseId: string) => void
@@ -161,7 +162,7 @@ export const SessionCard = ({ session, isExpired, joiningSession, onJoinCall, on
             <div>
               <p className="text-xs text-gray-500 font-medium">Sessions</p>
               <p className="text-sm font-semibold text-gray-900">
-                {session.sessions.length} session{session.sessions.length !== 1 ? "s" : ""}
+                {session.sessions} session{session.sessions !== 1 ? "s" : ""}
               </p>
             </div>
           </div>

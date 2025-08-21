@@ -14,7 +14,7 @@ export const checkUserBlock = async (req: Request, res: Response, next: NextFunc
           sendResponse(res, StatusCode.UNAUTHORIZED, Messages.COMMON.UNAUTHORIZED, false);
           return 
       }  
-    const userService =  container.get<UserService>(TYPES.UserService);
+      const userService =  container.get<UserService>(TYPES.UserService);
       const isBlocked = await userService.checkIfBlocked(userId);
     if (isBlocked) {
         sendResponse(res, StatusCode.FORBIDDEN, Messages.AUTH.BLOCKED, false);

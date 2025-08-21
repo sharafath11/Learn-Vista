@@ -14,3 +14,7 @@ export interface ICategoryUserCourseResponse{
   id: String,
   title:string
 }
+export interface ICategoryMentorCourseResponse{
+  id: string,
+  title:string
+}

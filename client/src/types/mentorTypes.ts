@@ -1,93 +1,7 @@
 
-// import {  ICategory, ICourse, IMentor, IReson } from "./adminTypes"
-// export interface MentorSignupData {
-//   email: string;
-//   password: string;
-//   confirmPassword: string;
-//   experience: number;
-//   bio: string;
-//   isVerified: boolean;
-//   otp: string;
-//   phoneNumber: string;
-// }
-// export interface IMentorContext{
-//   mentor: IMentorMentor|null;
-//   setMentor: React.Dispatch<React.SetStateAction<IMentorMentor | null>>;
-//   refreshMentor: () => void
-//   courses:IPopulatedCourse[],
-//   setCourses:React.Dispatch<React.SetStateAction<IPopulatedCourse[]>>;
-
-import { IReson } from "./commonTypes";
 import { IConcern } from "./concernTypes";
 import { ICourse, IPopulatedCourse } from "./courseTypes";
 import { INotification } from "./notificationsTypes";
-// import { ICourse } from "./courseTypes";
-
-  
-// }
-// export interface SocialLink {
-//   platform: "twitter" | "github" | "website";
-//   url: string;
-// }
-// export interface IMentorMentor {
-//   _id: string;
-//   id:string
-//   userId: string;
-//   username: string;
-//   email: string;
-//   profilePicture: string | null;
-//   bio: string | null;
-//   experience: number;
-//   courses?:ICourse[]
-//   expertise: string[];
-//   socialLinks: SocialLink[];
-//   cvOrResume: string;
-//   courseRejectReson:IReson
-//   phoneNumber:""
-//   coursesCreated: any[]; 
-//   liveClasses: any[];    
-//   reviews: any[];       
-//   isVerified: boolean;
-//   status: 'pending' | 'approved' | 'rejected';
-//   applicationDate: string;
-//   createdAt: string;
-//   updatedAt: string;
-//   __v: number;
-// }
-// export type FormInputProps = {
-//   label: string;
-//   type: string;
-//   id: string;
-//   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-//   value?: string;
-//   placeholder?: string;
-//   required?: boolean;
-// };
-// export interface FormOTPProps {
-//   label: string
-//   email: string
-//   onChange: (e: { target: { id: string; value: string } }) => void
-//   onVerified: () => void
-//   onResend?: () => void
-// }
-// export interface ClassSession {
-//   id: string;
-//   title: string;
-//   startTime: Date;
-//   endTime: Date;
-//   students: {
-//     id: string;
-//     name: string;
-//     avatar?: string;
-//   }[];
-//   topic: string;
-//   description?: string;
-// }
-// export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId'> {
-//   mentorId: IMentor;   
-//   categoryId: ICategory;
-// }
-
 
 
 export type MentorStatus = 'pending' | 'approved' | 'rejected';
@@ -180,3 +94,27 @@ export interface IMentorSingupFormInputProps {
   placeholder?: string;
   required?: boolean;
 };
+type SortDirection = 1 | -1
+type StudentStatus = "allowed" | "blocked"
+interface StudentFilters {
+  status?: StudentStatus
+}
+interface StudentSort {
+  createdAt?: SortDirection
+}
+export interface IGetCourseStudentsParams {
+  courseId: string
+  page?: number
+  limit?: number
+  search?: string
+  filters?: StudentFilters
+  sort?: StudentSort
+}
+type SortOrder = 1 | -1;
+
+
+export interface MentorFilters {
+  status?: MentorStatus;
+}
+
+type MentorSort = Partial<Record<"username" | "createdAt" | "updatedAt", SortOrder>>;

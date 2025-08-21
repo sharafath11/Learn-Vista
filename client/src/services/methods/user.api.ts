@@ -1,3 +1,4 @@
+import { IFetchAllCourseParams } from "@/src/types/courseTypes";
 import { ILogin, IUserRegistration } from "../../types/authTypes";
 import { AnswerWithType, ILessonProgressUpdate } from "../../types/lessons";
 import { getRequest, postRequest, patchRequest } from "../api";
@@ -20,13 +21,7 @@ export const UserAPIMethods = {
   resetPassword: (token: string, password: string) => post("/reset-password", { token, password }),
   changePassword: (password: string, newPassword: string) => patch("/profile/password", { password, newPassword }),
   getCategories:()=>get("/categories"),
-  fetchAllCourse: (params: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    filters?: Record<string,any>;
-    sort?: Record<string, 1 | -1>
-  }) => get(`/courses`,{params}),
+  fetchAllCourse: (params:IFetchAllCourseParams) => get(`/courses`,{params}),
   updateCourse: (courseId: string) => patch(`/courses/${courseId}`,{}),
   getUserRoomId: (courseId: string) => get(`/start-live/vc/${courseId}`),
   checkValidUser:(liveId:string)=>get(`/live/${liveId}/verify`),

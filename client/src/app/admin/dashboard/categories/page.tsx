@@ -22,6 +22,7 @@ import {
 } from "@/src/components/shared/components/ui/dropdown-menu";
 import { Badge } from "@/src/components/shared/components/ui/badge";
 import { AdminAPIMethods } from "@/src/services/methods/admin.api";
+import { ICategoryFilters } from "@/src/types/adminTypes";
 
 
 
@@ -52,7 +53,7 @@ export default function CategoriesList() {
     const fetchCategories = async () => {
       setIsLoading(true);
       try {
-        const filters: Record<string, any> = {};
+        const filters: ICategoryFilters = {};
         if (statusFilter !== "All") {
           filters.isBlock = statusFilter === "Blocked";
         }

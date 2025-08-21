@@ -11,6 +11,7 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 import { SessionTable } from "./SessionTable"
 import { ILessons } from "@/src/types/lessons"
+import { ICourse, IPopulatedCourse } from "@/src/types/courseTypes"
 
 export default function UpcomingSessions() {
   const router = useRouter()
@@ -52,7 +53,7 @@ export default function UpcomingSessions() {
 
   const handleStartSession = (courseId: string) => router.push(`/mentor/live-class/${courseId}`)
 
-  const getSessionStatus = (session: any) => {
+  const getSessionStatus = (session: IPopulatedCourse) => {
     if (isSessionEnded(session.endDate)) return "ended"
     if (session.isStreaming) return "streaming"
     if (canStartSession(session.startDate, session.endDate, session.startTime)) return "ready"
@@ -62,7 +63,7 @@ export default function UpcomingSessions() {
   const upcomingSessions = courses.filter(session => !isSessionEnded(session.endDate))
   const endedSessions = courses.filter(session => isSessionEnded(session.endDate))
 
-  const SessionCards = ({ sessions, isEnded = false }: { sessions: any[]; isEnded?: boolean }) => (
+  const SessionCards = ({ sessions, isEnded = false }: { sessions: IPopulatedCourse[]; isEnded?: boolean }) => (
     <div className="space-y-4">
       {sessions.length > 0 ? (
         sessions.map((session) => {
@@ -123,10 +124,7 @@ export default function UpcomingSessions() {
                     </div>
                     <div className="flex items-center gap-2 text-sm">
                       <Clock className="w-4 h-4 text-slate-400" />
-                      <div>
-                        <p className="text-slate-400">End Time</p>
-                        <p className="text-slate-200 font-medium">{session.endTime || "N/A"}</p>
-                      </div>
+                     
                     </div>
                   </div>
                 </div>

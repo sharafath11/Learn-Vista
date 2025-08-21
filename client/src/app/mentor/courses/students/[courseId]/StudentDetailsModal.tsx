@@ -24,10 +24,7 @@ interface StudentDetailsModalProps {
 
 export default function StudentDetailsModal({ student, isOpen, onClose }: StudentDetailsModalProps) {
   const { courses } = useMentorContext();
-
-  // Combine enrolledCourses with full course details and enrollment status
   const userCourses = student.enrolledCourses?.map((enrolledCourse) => {
-    // Find course detail by courseId
     const courseDetail = courses.find(c => c.id === enrolledCourse.courseId);
     if (!courseDetail) return null;
 
@@ -35,7 +32,7 @@ export default function StudentDetailsModal({ student, isOpen, onClose }: Studen
       ...courseDetail,
       allowed: enrolledCourse.allowed,
     };
-  }).filter(Boolean); // remove nulls if any
+  }).filter(Boolean); 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

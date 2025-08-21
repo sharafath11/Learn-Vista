@@ -62,11 +62,12 @@ export class CourseMapper {
       sessions: course.sessions?.length || 0,
       categoryName: course.categoryName,
       thumbnail: course.thumbnail || "",
-         isActive: course.isActive ?? false,
+      isActive: course.isActive ?? false,
       totelStudent:course.enrolledUsers.length,
       startDate: course.startDate||"",
       endDate: course.endDate||"",
-      startTime: course.startTime || "",
+         startTime: course.startTime || "",
+      
     };
   }
  static  toResponseUserCourse(c: IPopulatedCourse,mentorPhoto:string): ICourseUserResponseDto {

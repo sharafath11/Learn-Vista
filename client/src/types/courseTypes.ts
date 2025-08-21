@@ -86,3 +86,36 @@ export interface IcourseFromResponse {
   courseLanguage:string
   startTime:string
 }
+type SortOrder = 1 | -1;
+
+export interface IFetchAllCourseParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  filters?: {
+    categoryId?: string;
+  };
+  sort?: Partial<Record<"createdAt" | "title" | "updatedAt", SortOrder>>;
+}
+
+interface MentorCourseFilters {
+  categoryId?: string;
+}
+
+export interface IMentorGetCourseWithFilterParams {
+  page: number;
+  limit: number;
+  search?: string;
+  filters?: MentorCourseFilters;
+  sort?: Partial<Record<"createdAt" | "title" | "updatedAt", SortOrder>>;
+}
+
+export type IAdminCourseFilters = {
+  isBlocked?: boolean;
+  categoryId?: string;
+};
+
+export type CourseSort = {
+  createdAt?: 1 | -1;
+  updatedAt?: 1 | -1;
+};

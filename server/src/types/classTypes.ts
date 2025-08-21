@@ -104,3 +104,10 @@ export interface ISession extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface ICourseQuery {
+  page?: string;
+  limit?: string;
+  search?: string;
+  filters?: Record<string, unknown>;
+  sort?: Record<string, "ASC" | "DESC" | "1" | "-1" | 1 | -1>;
+}

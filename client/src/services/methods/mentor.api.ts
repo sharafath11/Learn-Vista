@@ -1,5 +1,6 @@
+import { IMentorGetCourseWithFilterParams } from "@/src/types/courseTypes";
 import { IQuestions } from "../../types/lessons";
-import { IMentorSignupData } from "../../types/mentorTypes";
+import { IGetCourseStudentsParams, IMentorSignupData } from "../../types/mentorTypes";
 import { getRequest, postRequest, patchRequest } from "../api";
 
 
@@ -33,14 +34,7 @@ export const MentorAPIMethods = {
   addQustion: (data:Omit<IQuestions, "id" | "isCompleted">) => post("/mentor/lessons/question", data),
   getQustion: (lessonId: string) => get(`/mentor/lessons/${lessonId}/questions`),
   editQustion: (questionId: string, data: Omit<IQuestions, "id" | "isCompleted">) => patch(`/mentor/questions/${questionId}`, data),
-  getCourseStudents: (params: {
-  courseId: string;
-  page?: number;
-  limit?: number;
-  search?: string;
-  filters?: Record<string, any>;
-    sort?: Record<string, 1 | -1>;
-}) => {
+  getCourseStudents: (params: IGetCourseStudentsParams) => {
   const { courseId, filters, sort, ...rest } = params;
   return get(`/mentor/course/${courseId}/students`, {
     params: {
@@ -69,13 +63,7 @@ export const MentorAPIMethods = {
     ...params
   }
 }),
-getCourseWithFilter: (params: {
-  page: number;
-  limit: number;
-  search?: string;
-  filters?: Record<string, any>;
-  sort?: Record<string, 1 | -1>;
-}) =>  get("/mentor/courses/pagenated", { params }),
+getCourseWithFilter: (params: IMentorGetCourseWithFilterParams) =>  get("/mentor/courses/pagenated", { params }),
 
 getAllComments: (params: {
   sortBy?: string

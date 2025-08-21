@@ -37,7 +37,7 @@ export default function CreateCoursePage() {
     else showErrorToast(res.msg)
   }
   const languages = ["English", "Malayalam"]
-  const handleSubmit = async (formData: any) => {
+  const handleSubmit = async (formData:any) => {
     const { isValid, message } = validateCourseForm(formData);
     if (!isValid) {
       showInfoToast(message);

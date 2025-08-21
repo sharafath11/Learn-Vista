@@ -27,7 +27,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
   const [concerns, setConcerns] = useState<IConcern[]>([])
   useEffect(() => {
     localStorage.removeItem("role")
-  localStorage.setItem("role","mentor")
+    localStorage.setItem("role", "mentor"); fetchNotifications()
 },[])
   const router = useRouter();
 

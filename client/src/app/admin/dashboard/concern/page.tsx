@@ -8,7 +8,7 @@ import { ConcernModal } from "../courses/concernModal"
 
 import { cn } from "@/lib/utils"
 import { ICourse } from "@/src/types/courseTypes"
-import { IConcern } from "@/src/types/concernTypes"
+import { IConcern, IConcernFilters } from "@/src/types/concernTypes"
 import { showErrorToast } from "@/src/utils/Toast"
 import { IMentor } from "@/src/types/mentorTypes"
 import { Input } from "@/src/components/shared/components/ui/input"
@@ -55,7 +55,7 @@ const [mediaType, setMediaType] = useState<"image" | "video" | "audio" | "pdf" |
       else showErrorToast(res.msg)
     }
   const fetchConcerns = async () => {
-    const filters: Record<string, any> = {}
+    const filters:IConcernFilters = {}
     if (statusFilter !== "All") filters.status = statusFilter
     if (selectedCourseId !== "All") filters.courseId = selectedCourseId
 

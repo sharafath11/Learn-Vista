@@ -16,34 +16,36 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleReset = async () => {
-    if (password !== confirmPassword) {
-      return setMessage("Passwords do not match.");
-    }
-    if (!validatePassword(password)) {
-      return showInfoToast("Password must be at least 8 characters with a number and special character");
-    }
+const handleReset = async () => {
+  if (password !== confirmPassword) {
+    return setMessage("Passwords do not match.");
+  }
+  if (!validatePassword(password)) {
+    return showInfoToast(
+      "Password must be at least 8 characters with a number and special character"
+    );
+  }
 
-    try {
-      setLoading(true);
-      setMessage("");
-      const res = await UserAPIMethods.resetPassword(params.rts as string, password);
-      
-      if (res.ok) {
-        showSuccessToast(res.msg);
-        setTimeout(() => router.push("/user/login"), 2000);
-      } else {
-        setMessage("❌ " + (res.error || "Something went wrong."));
-        showErrorToast(res.error || "Failed to reset password");
-      }
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.error || "Server error.";
-      setMessage("❌ " + errorMsg);
-      showErrorToast(errorMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  setMessage("");
+
+  const res = await UserAPIMethods.resetPassword(
+    params.rts as string,
+    password
+  );
+
+  if (res.ok) {
+    showSuccessToast(res.msg);
+    setTimeout(() => router.push("/user/login"), 2000);
+  } else {
+    const errorMsg = res.error || "Something went wrong.";
+    setMessage("❌ " + errorMsg);
+    showErrorToast(errorMsg);
+  }
+
+  setLoading(false);
+};
+
 
   return (
     <div style={{ maxWidth: 400, margin: "80px auto", textAlign: "center" }}>

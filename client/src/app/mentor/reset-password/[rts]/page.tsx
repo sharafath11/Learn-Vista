@@ -23,37 +23,43 @@ export default function ResetPasswordPage() {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   };
+type ResetPasswordResponse = {
+  ok: boolean;
+  msg?: string;
+  error?: string;
+};
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validation
-    if (form.password !== form.confirmPassword) {
-      return setError("Passwords do not match");
-    }
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!validatePassword(form.password)) {
-      return setError("Password must be at least 8 characters with a number and special character");
-    }
+  // Validation
+  if (form.password !== form.confirmPassword) {
+    return setError("Passwords do not match");
+  }
 
-    try {
-      setLoading(true);
-      setError("");
-      
-      const res = await MentorAPIMethods.resetPassword(params.rts as string, form.password);
-      
-      if (res.ok) {
-        showSuccessToast(res.msg);
-        setTimeout(() => router.push("/mentor/login"), 2000);
-      } else {
-        showErrorToast(res.error || "Failed to reset password");
-      }
-    } catch (err: any) {
-      showErrorToast(err.response?.data?.error || "An unexpected error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!validatePassword(form.password)) {
+    return setError(
+      "Password must be at least 8 characters with a number and special character"
+    );
+  }
+
+  setLoading(true);
+  setError("");
+
+  const res: ResetPasswordResponse = await MentorAPIMethods.resetPassword(
+    params.rts as string,
+    form.password
+  );
+
+  if (res.ok) {
+    showSuccessToast(res.msg || "Password reset successful");
+    setTimeout(() => router.push("/mentor/login"), 2000);
+  } else {
+    showErrorToast(res.error || "Failed to reset password");
+  }
+
+  setLoading(false);
+};
 
   return (
     <div className="max-w-md mx-auto my-20 p-6 bg-white rounded-lg shadow-md">

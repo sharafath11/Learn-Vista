@@ -17,7 +17,7 @@ export default function LoginForm() {
   const [autoSubmit, setAutoSubmit] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { setUser ,user,fetchUserData} = useUserContext();
+  const { setUser ,user,fetchUserData,refereshNotifcation} = useUserContext();
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -51,7 +51,8 @@ export default function LoginForm() {
       if (res.ok) {
         setUser(res.data);
         showSuccessToast(res.msg);
-        await fetchUserData()
+        await fetchUserData();
+        await refereshNotifcation()
         router.push("/user");
       }
       

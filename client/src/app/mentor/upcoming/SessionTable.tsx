@@ -4,12 +4,13 @@ import { format, parseISO } from "date-fns"
 import { Calendar, Clock, Users, Play, Radio, CheckCircle, Archive } from "lucide-react"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
+import { IPopulatedCourse } from "@/src/types/courseTypes"
 
 interface SessionTableProps {
-  sessions: any[]
+  sessions: IPopulatedCourse[]
   isEnded?: boolean
   handleStartSession: (courseId: string) => void
-  getSessionStatus: (session: any) => string
+  getSessionStatus: (session: IPopulatedCourse) => string
 }
 
 export const SessionTable = ({ 

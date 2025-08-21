@@ -35,6 +35,7 @@ const AdminLogin = () => {
         const res = await postRequest("/admin/login", data);
         if (res.ok) {
           showSuccessToast(res.msg);
+          admin?.refreshAdminNotification()
           admin?.setAdmin(true);
           route.push("/admin/dashboard")
         }

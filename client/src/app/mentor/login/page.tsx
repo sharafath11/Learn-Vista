@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({ email: '', password: '' });
 
   const router = useRouter();
-  const {mentor,setMentor} =useMentorContext()
+  const {mentor,setMentor,refreshMentor,refreshMentorNotification} =useMentorContext()
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +60,8 @@ export default function LoginPage() {
         if (res.ok) {
           setMentor(res.data.mentor);
           router.push("/mentor/home");
+          await refreshMentor();
+          await refreshMentorNotification()
           showSuccessToast(res.msg);
         }
      

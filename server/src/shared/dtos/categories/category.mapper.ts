@@ -1,5 +1,5 @@
 import { ICategory } from "../../../types/classTypes";
-import { ICategoryCoursePopulated, ICategoryResponseDto, ICategoryUserCourseResponse } from "./category-response.dto";
+import { ICategoryCoursePopulated, ICategoryMentorCourseResponse, ICategoryResponseDto, ICategoryUserCourseResponse } from "./category-response.dto";
 
 export class CategoryMapper {
   static toResponseDto(category: ICategory): ICategoryResponseDto {
@@ -19,6 +19,12 @@ export class CategoryMapper {
     }
   }
   static toResponseCategoryInUser(c: ICategory): ICategoryUserCourseResponse{
+    return {
+      id: c._id.toString(),
+      title:c.title
+    }
+  }
+  static toResponseCategoryInMentor(c: ICategory): ICategoryMentorCourseResponse{
     return {
       id: c._id.toString(),
       title:c.title

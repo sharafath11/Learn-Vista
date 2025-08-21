@@ -1,5 +1,6 @@
+import { ICategory } from "../../../types/classTypes";
 import { IMentor } from "../../../types/mentorTypes";
-import { ICategoryCoursePopulated, ICategoryResponseDto } from "../categories/category-response.dto";
+import { ICategoryCoursePopulated, ICategoryMentorCourseResponse, ICategoryResponseDto } from "../categories/category-response.dto";
 
 export interface ICourseResponseDto {
   id: string;
@@ -44,6 +45,7 @@ export interface ICourseAdminResponse {
   description?:string
 }
 export interface ICourseMentorResponseDto{
+
   id: String,
   title: string,
   description: string,
@@ -57,6 +59,7 @@ export interface ICourseMentorResponseDto{
   endDate: string,
   startTime:string
 }
+
 export interface ICourseUserResponseDto{
   id: string,
   title: string,

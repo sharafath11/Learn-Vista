@@ -29,6 +29,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 useEffect(() => {
   localStorage.removeItem("role");
   localStorage.setItem("role", "user");
+  fetchNotifications()
 }, []);
 
   const router = useRouter();

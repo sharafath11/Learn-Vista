@@ -169,35 +169,37 @@ export function AddLessonModal({
     document.body.appendChild(tempVideo);
 
 
-  } catch (error: any) {
-    showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
-    form.setValue("videoUrl", "");
-    setUploadedS3VideoUrl(null);
-    form.setValue("duration", "");
-  } finally {
+  } catch (error: unknown) {
+  if (error instanceof Error) {
+    showErrorToast(`Upload Failed: ${error.message}`);
+  } else {
+    showErrorToast("Upload Failed: Unexpected error.");
+  }
+  form.setValue("videoUrl", "");
+  setUploadedS3VideoUrl(null);
+  form.setValue("duration", "");
+}
+finally {
     setIsUploading(false);
   }
 };
+const handleRemoveVideo = async () => {
+  const currentVideoUrl = form.getValues("videoUrl");
+  if (!currentVideoUrl) return;
 
-  const handleRemoveVideo = async () => {
-    const currentVideoUrl = form.getValues("videoUrl");
-    if (!currentVideoUrl) return;
+  const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl);
 
-    try {
-      const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl);
-      if (deleteResult.ok) {
-        showSuccessToast("Video removed from S3.");
-      } else {
-        showErrorToast(`Delete failed: ${deleteResult.error?.message || "Unknown error"}`);
-      }
-    } catch (error: any) {
-      showErrorToast(`Delete Error: ${error.message || "Unexpected error."}`);
-    } finally {
-      form.setValue("videoUrl", "");
-      form.setValue("duration", "");
-      setUploadedS3VideoUrl(null);
-    }
-  };
+  if (deleteResult.ok) {
+    showSuccessToast("Video removed from S3.");
+  } else {
+    showErrorToast(`Delete failed: ${deleteResult.error.message}`);
+  }
+
+  form.setValue("videoUrl", "");
+  form.setValue("duration", "");
+  setUploadedS3VideoUrl(null);
+};
+
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -228,48 +230,46 @@ export function AddLessonModal({
     form.setValue("thumbnail", "");
   };
 
-  const handleSubmit = async (data: LessonFormValues) => {
-    if (isUploading) {
-      showErrorToast("Please wait for the video upload to complete.");
-      return;
-    }
+const handleSubmit = async (data: LessonFormValues) => {
+  if (isUploading) {
+    showErrorToast("Please wait for the video upload to complete.");
+    return;
+  }
 
-    if (!data.videoUrl && (data.duration || data.thumbnail)) {
-      showErrorToast("Upload a video or clear the duration/thumbnail if no video is intended.");
-      return;
-    }
+  if (!data.videoUrl && (data.duration || data.thumbnail)) {
+    showErrorToast("Upload a video or clear the duration/thumbnail if no video is intended.");
+    return;
+  }
 
-    setIsSaving(true);
+  setIsSaving(true);
 
-    const formData = new FormData();
+  const formData = new FormData();
+  formData.append("courseId", courseId);
+  formData.append("title", data.title);
+  formData.append("description", data.description);
+  formData.append("order", String(data.order));
+  formData.append("videoUrl", data.videoUrl || "");
+  formData.append("duration", data.duration || "");
 
-    formData.append("courseId", courseId);
-    formData.append("title", data.title);
-    formData.append("description", data.description);
-    formData.append("order", String(data.order));
-    formData.append("videoUrl", data.videoUrl || "");
-    formData.append("duration", data.duration || "");
+  if (thumbnailFile instanceof File) {
+    formData.append("thumbnail", thumbnailFile);
+  } else if (typeof data.thumbnail === "string" && data.thumbnail.startsWith("http")) {
+    formData.append("thumbnailUrl", data.thumbnail);
+  }
 
-    if (thumbnailFile instanceof File) {
-      formData.append("thumbnail", thumbnailFile);
-    } else if (typeof data.thumbnail === "string" && data.thumbnail.startsWith("http")) {
-      formData.append("thumbnailUrl", data.thumbnail);
-    }
-    
-    try {
-      const res = await MentorAPIMethods.addLesson(formData);
+  const res = await MentorAPIMethods.addLesson(formData);
 
-      if (!res.ok) throw new Error(res.error?.message || "Failed to add lesson");
+  if (res.ok) {
+    showSuccessToast("Lesson added successfully!");
+    onLessonAdded();
+    setOpen(false);
+  } else {
+    showErrorToast(res.error?.message || "Failed to add lesson");
+  }
 
-      showSuccessToast("Lesson added successfully!");
-      onLessonAdded();
-      setOpen(false);
-    } catch (error: any) {
-      
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  setIsSaving(false);
+};
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

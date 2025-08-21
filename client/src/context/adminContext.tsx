@@ -7,9 +7,9 @@ import {
   useEffect,
 } from "react";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
-import { AdminContextType } from "../types/adminTypes";
-import { IMentor } from "../types/mentorTypes";
-import { IPopulatedCourse } from "../types/courseTypes";
+import { AdminContextType, ICategoryFilters } from "../types/adminTypes";
+import { IMentor, MentorFilters } from "../types/mentorTypes";
+import { IAdminCourseFilters, IPopulatedCourse } from "../types/courseTypes";
 import { ICategory } from "../types/categoryTypes";
 import { useUserPagination } from "../hooks/useUserPagination";
 import { IConcern } from "../types/concernTypes";
@@ -65,7 +65,7 @@ const [adminUnreadNotification, setAdminUnreadNotification] = useState<number>(0
     limit?: number;
     search?: string;
     sort?: Record<string, 1 | -1>;
-    filters?: Record<string, any>;
+    filters?: ICategoryFilters;
   }) {
     const res = await AdminAPIMethods.getGetegories( params|| {limit:2});
     if (res.ok) setCat(res.data.data);
@@ -87,7 +87,7 @@ const [adminUnreadNotification, setAdminUnreadNotification] = useState<number>(0
     limit?: number;
     search?: string;
     sort?: Record<string, 1 | -1>;
-    filters?: Record<string, any>;
+    filters?: MentorFilters;
   }) {
     const res = await AdminAPIMethods.fetchMentor(params || {limit:2});
     
@@ -129,7 +129,7 @@ const [adminUnreadNotification, setAdminUnreadNotification] = useState<number>(0
     limit?: number;
     search?: string;
     sort?: Record<string, 1 | -1>;
-    filters?: Record<string, any>;
+    filters?: IAdminCourseFilters;
   }) {
     const res = await AdminAPIMethods.getCourses(params || {});
     if (res.ok) setCourses(res.data.data);

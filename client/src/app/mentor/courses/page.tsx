@@ -33,7 +33,6 @@ export default function CoursesPage() {
 
   const fetchCourses = () => {
     setLoading(true)
-
     const params = {
       page,
       limit: 2,
@@ -46,6 +45,8 @@ export default function CoursesPage() {
 
     MentorAPIMethods.getCourseWithFilter(params)
       .then((res) => {
+        console.log("from south side ",res.data.categories
+)
         setCourses(res?.data?.data || [])
         setTotalPages(res?.data?.totalPages || 1);
         setCategories(res.data.categories)

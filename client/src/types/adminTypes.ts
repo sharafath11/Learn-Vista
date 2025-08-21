@@ -142,3 +142,15 @@ export interface CourseFormData {
   startTime: string; // Format: "HH:mm" or "HH:mm:ss"
   thumbnail: File | string | null; // File for upload or string if already uploaded
 }
+export interface IAdminUserFilters {
+  role?: "student" | "mentor" | "admin";
+  status?: "active" | "inactive";
+  isBlocked?: boolean;
+}
+export type ICategoryFilters = {
+  isBlock?: boolean;
+};
+
+export type ICategorySort = {
+  createdAt?: 1 | -1;
+};

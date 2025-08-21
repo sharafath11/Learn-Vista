@@ -1,3 +1,4 @@
+import { ICategoryMentorCourseResponse } from "../../../../shared/dtos/categories/category-response.dto";
 import { ICourseMentorResponseDto } from "../../../../shared/dtos/courses/course-response.dto";
 import { ICategory, IPopulatedCourse } from "../../../../types/classTypes";
 
@@ -19,7 +20,7 @@ export interface IMentorCourseService {
   }): Promise<{
     data: ICourseMentorResponseDto[];
     total: number;
-    categories: ICategory[];
+    categories: ICategoryMentorCourseResponse[];
   }>;
   publishCourse(courseId:string,status:boolean):Promise<void>
 }

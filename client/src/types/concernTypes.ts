@@ -8,15 +8,12 @@ export interface ConcernAttachment {
   size: number;
 }
 
-// *** CRITICAL CHANGE HERE ***
-// The 'file' property MUST be of type `File` for Multer/S3 uploads,
-// not a `string` (which would be a Base64 string).
 export interface sendAttachement {
   id: string;
-  file: File; // <--- CHANGED FROM `string` TO `File`
-  previewUrl?: string; // Added for frontend display, optional
-  name: string; // The original filename
-  size: number; // File size in MB (as stored in frontend state)
+  file: File;
+  previewUrl?: string; 
+  name: string;
+  size: number;
   type: 'image' | 'audio';
 }
 
@@ -47,3 +44,11 @@ export interface IConcern {
   createdAt: string;
   updatedAt: string;
 }
+export type IConcernFilters = {
+  status?: "open" | "in-progress" | "resolved";
+  courseId?: string;
+};
+
+export type IConcernSort = {
+  createdAt?: 1 | -1;
+};

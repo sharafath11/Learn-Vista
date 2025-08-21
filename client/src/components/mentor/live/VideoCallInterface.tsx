@@ -4,34 +4,32 @@ import { useEffect, useRef, useState } from "react"
 import { Mic, MicOff, Video, VideoOff, Phone, Monitor, MessageSquare, Badge } from "lucide-react"
 
 import { toast } from "sonner"
-import io, { Socket } from "socket.io-client"
+import io  from "socket.io-client"
 import Peer from "simple-peer"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Card } from "@/src/components/shared/components/ui/card"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast"
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
-
+import { Socket } from "socket.io-client";
 
 export default function MentorStream({ roomId }: { roomId: string }) {
   const [isMuted, setIsMuted] = useState(false)
   const [isVideoOff, setIsVideoOff] = useState(false)
   const [isScreenSharing, setIsScreenSharing] = useState(false)
-  const [participants, setParticipants] = useState<string[]>([]) 
-  const [comments, setComments] = useState<{text: string, sender: string}[]>([])
+  const [participants, setParticipants] = useState<string[]>([])
+  const [comments, setComments] = useState<{ text: string, sender: string }[]>([])
   const [newComment, setNewComment] = useState("")
-  const socketRef = useRef<any>(null)
+  const socketRef = useRef<typeof Socket | null>(null)
   const localVideoRef = useRef<HTMLVideoElement>(null)
-  const localStreamRef = useRef<MediaStream | null>(null) 
-  const screenStreamRef = useRef<MediaStream | null>(null) 
+  const localStreamRef = useRef<MediaStream | null>(null)
+  const screenStreamRef = useRef<MediaStream | null>(null)
   const peersRef = useRef<Record<string, Peer.Instance>>({})
   const userIdToSocketIdMap = useRef<Record<string, string>>({});
- 
 
   useEffect(() => {
     const init = async () => {
       try {
-     
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         localStreamRef.current = stream
         if (localVideoRef.current) {
@@ -39,14 +37,14 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           localVideoRef.current.play().catch(e => console.error("Mentor: Error playing local video:", e));
         }
 
-      
         const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000")
         socketRef.current = socket
         socket.on('connect', () => {
-          socket.emit("join-room", roomId, socket.id, "mentor") 
+          socket.emit("join-room", roomId, socket.id, "mentor")
         });
+
         socket.on("user-joined", (socketId: string, userId: string) => {
-          userIdToSocketIdMap.current[userId] = socketId; 
+          userIdToSocketIdMap.current[userId] = socketId;
           setParticipants(prev => {
             if (!prev.includes(userId)) {
               return [...prev, userId];
@@ -58,7 +56,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           const peer = new Peer({
             initiator: true,
             trickle: false,
-            stream: streamToSend!, 
+            stream: streamToSend!,
             config: {
               iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
@@ -72,19 +70,20 @@ export default function MentorStream({ roomId }: { roomId: string }) {
           });
 
           peer.on("connect", () => {
+            // Can be used for connection success toast/log
           });
 
           peer.on("error", err => {
             removePeer(socketId);
-            toast.error(`Viewer ${userId.slice(0,5)} connection error.`);
+            toast.error(`Viewer ${userId.slice(0, 5)} connection error.`);
           });
 
           peer.on('close', () => {
-              removePeer(socketId);
-              toast.info(`Viewer ${userId.slice(0,5)} disconnected.`);
+            removePeer(socketId);
+            toast.info(`Viewer ${userId.slice(0, 5)} disconnected.`);
           });
 
-          peersRef.current[socketId] = peer; 
+          peersRef.current[socketId] = peer;
         });
 
         socket.on("rtc-answer", (fromSocketId: string, answer: any) => {
@@ -111,7 +110,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         socket.on("receive-comment", (message: string, sender: string) => {
           setComments(prev => [...prev, { text: message, sender }]);
         });
-        socket.on("end-stream", (msg:string) => {
+        socket.on("end-stream", (msg: string) => {
           showInfoToast(msg)
         })
         socket.on('disconnect', (reason: any) => {
@@ -126,9 +125,8 @@ export default function MentorStream({ roomId }: { roomId: string }) {
     init();
 
     return () => {
-
       if (socketRef.current) {
-        socketRef.current.off('connect'); 
+        socketRef.current.off('connect');
         socketRef.current.disconnect();
       }
       localStreamRef.current?.getTracks().forEach(track => track.stop());
@@ -136,10 +134,10 @@ export default function MentorStream({ roomId }: { roomId: string }) {
       Object.values(peersRef.current).forEach(peer => peer.destroy());
       peersRef.current = {};
       userIdToSocketIdMap.current = {};
-      
+
     };
   }, [roomId]);
- 
+
 
   const toggleScreenShare = async () => {
     try {
@@ -147,10 +145,10 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         screenStreamRef.current?.getTracks().forEach(track => track.stop());
         screenStreamRef.current = null;
         Object.values(peersRef.current).forEach(peer => {
-            peer.streams.forEach(s => peer.removeStream(s)); 
-            if (localStreamRef.current) {
-                peer.addStream(localStreamRef.current); 
-            }
+          peer.streams.forEach(s => peer.removeStream(s));
+          if (localStreamRef.current) {
+            peer.addStream(localStreamRef.current);
+          }
         });
         if (localVideoRef.current && localStreamRef.current) {
           localVideoRef.current.srcObject = localStreamRef.current;
@@ -166,22 +164,22 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         screenStream.getVideoTracks().forEach(track => combinedStreamForPeers.addTrack(track));
         localStreamRef.current?.getAudioTracks().forEach(track => combinedStreamForPeers.addTrack(track));
         screenStream.getAudioTracks().forEach(track => {
-            if (!combinedStreamForPeers.getAudioTracks().some(t => t.id === track.id)) { 
-                combinedStreamForPeers.addTrack(track);
-            }
+          if (!combinedStreamForPeers.getAudioTracks().some(t => t.id === track.id)) {
+            combinedStreamForPeers.addTrack(track);
+          }
         });
 
-        
+
         Object.values(peersRef.current).forEach(peer => {
-            peer.streams.forEach(s => peer.removeStream(s)); 
-            peer.addStream(combinedStreamForPeers); 
+          peer.streams.forEach(s => peer.removeStream(s));
+          peer.addStream(combinedStreamForPeers);
         });
         if (localVideoRef.current) {
           localVideoRef.current.srcObject = combinedStreamForPeers;
         }
         screenStream.getVideoTracks()[0].onended = () => {
-          if (isScreenSharing) { 
-            toggleScreenShare(); 
+          if (isScreenSharing) {
+            toggleScreenShare();
           }
         };
 
@@ -206,19 +204,22 @@ export default function MentorStream({ roomId }: { roomId: string }) {
       delete peersRef.current[socketId];
     }
   };
-  const handleEndCall = async () => {
+const handleEndCall = async () => {
     const res = await MentorAPIMethods.endStream(roomId);
     if (res.ok) {
-      socketRef.current.emit("stream-ended");
-      
-      socketRef.current?.disconnect();
-      window.location.href = "/mentor/upcoming";
-      showSuccessToast("Stream ended");
-      localStorage.removeItem("liveId")
+        // Add the null check here
+        if (socketRef.current) {
+            socketRef.current.emit("stream-ended");
+            socketRef.current.disconnect();
+        }
+        
+        window.location.href = "/mentor/upcoming";
+        showSuccessToast("Stream ended");
+        localStorage.removeItem("liveId");
+    } else {
+        showErrorToast(res.msg);
     }
-    else showErrorToast(res.msg);
-
-  }
+}
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen p-4 gap-4">
@@ -230,7 +231,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
             muted
             playsInline
             className="w-full h-full object-cover"
-            style={{ transform: 'scaleX(-1)' }} 
+            style={{ transform: 'scaleX(-1)' }}
           />
         </div>
 
@@ -245,7 +246,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
                 toast.warning("No microphone audio track found to toggle.");
               }
             } else {
-                toast.warning("Local stream not available to toggle microphone.");
+              toast.warning("Local stream not available to toggle microphone.");
             }
           }}>{isMuted ? <MicOff size={18} /> : <Mic size={18} />}</Button>
 
@@ -259,7 +260,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
                 toast.warning("No video track found to toggle.");
               }
             } else {
-                toast.warning("Local stream not available to toggle video.");
+              toast.warning("Local stream not available to toggle video.");
             }
           }}>{isVideoOff ? <VideoOff size={18} /> : <Video size={18} />}</Button>
 
@@ -279,45 +280,41 @@ export default function MentorStream({ roomId }: { roomId: string }) {
       </div>
 
       <div className="w-full lg:w-80 flex flex-col border rounded-lg h-[500px] mt-4 lg:mt-0">
-  {/* Header */}
-  <div className="p-3 border-b">
-    <h3 className="font-medium">Chat</h3>
-  </div>
+        <div className="p-3 border-b">
+          <h3 className="font-medium">Chat</h3>
+        </div>
 
-  {/* Messages with scroll */}
-  <div className="flex-1 overflow-y-auto p-3 space-y-2">
-    {comments.map((comment, i) => (
-      <div
-        key={i}
-        className={`p-2 rounded ${
-          comment.sender === "Mentor" ? "bg-blue-100" : "bg-gray-100"
-        }`}
-      >
-        <p className="font-medium text-sm">{comment.sender}</p>
-        <p>{comment.text}</p>
+        <div className="flex-1 overflow-y-auto p-3 space-y-2">
+          {comments.map((comment, i) => (
+            <div
+              key={i}
+              className={`p-2 rounded ${
+                comment.sender === "Mentor" ? "bg-blue-100" : "bg-gray-100"
+              }`}
+            >
+              <p className="font-medium text-sm">{comment.sender}</p>
+              <p>{comment.text}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="p-3 border-t">
+          <Textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Type a message..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault()
+                submitComment()
+              }
+            }}
+          />
+          <Button onClick={submitComment} className="w-full mt-2">
+            Send
+          </Button>
+        </div>
       </div>
-    ))}
-  </div>
-
-  {/* Input */}
-  <div className="p-3 border-t">
-    <Textarea
-      value={newComment}
-      onChange={(e) => setNewComment(e.target.value)}
-      placeholder="Type a message..."
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault()
-          submitComment()
-        }
-      }}
-    />
-    <Button onClick={submitComment} className="w-full mt-2">
-      Send
-    </Button>
-  </div>
-</div>
-
     </div>
   )
 }

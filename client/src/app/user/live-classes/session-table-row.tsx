@@ -4,9 +4,10 @@ import { Calendar, Users, BookOpen, Play, Pause, AlertCircle, CheckCircle } from
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { cn } from "@/src/utils/cn"
+import { IPopulatedCourse } from "@/src/types/courseTypes"
 
 interface SessionTableRowProps {
-  session: any
+  session: IPopulatedCourse
   index: number
   isExpired: boolean
   joiningSession: string | null
@@ -119,7 +120,7 @@ export const SessionTableRow = ({
         <div className="flex items-center gap-4 text-xs text-gray-500">
           <div className="flex items-center gap-1">
             <Users className="w-3.5 h-3.5" />
-            <span>{session.sessions.length} sessions</span>
+            <span>{session.sessions} sessions</span>
           </div>
           <div className="flex items-center gap-1">
             <BookOpen className="w-3.5 h-3.5" />

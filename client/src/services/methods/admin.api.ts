@@ -1,5 +1,8 @@
-import { UserBlock } from "../../types/adminTypes";
+import { MentorFilters } from "@/src/types/mentorTypes";
+import { IAdminUserFilters, ICategoryFilters, UserBlock } from "../../types/adminTypes";
 import { getRequest, postRequest, patchRequest } from "../api";
+import { IAdminCourseFilters } from "@/src/types/courseTypes";
+import { IConcernFilters } from "@/src/types/concernTypes";
 
 const get = getRequest;
 const post = postRequest;
@@ -10,14 +13,14 @@ const patch = patchRequest;
      page?: number;
      limit?: number;
      search?: string;
-     filters?: Record<string, any>;
+     filters?: IAdminUserFilters;
      sort?: Record<string, 1 | -1>;
    }) => get(`/admin/users`, { params }),
    fetchMentor: (params: {
      page?: number;
      limit?: number;
      search?: string;
-     filters?: Record<string, any>;
+     filters?:MentorFilters;
      sort?: Record<string, 1 | -1>;
    }) => get("/admin/mentors", { params }),
    getAllMentor:()=>get("/admin/all/mentors"),
@@ -32,7 +35,7 @@ const patch = patchRequest;
      page?: number;
      limit?: number;
      search?: string;
-     filters?: Record<string, any>;
+     filters?:IAdminCourseFilters;
      sort?: Record<string, 1 | -1>
    }) => get("/admin/courses",{params}),
    blockCours: (id: string, status: boolean) => patch(`/admin/courses/${id}/block`, {status: status }),
@@ -42,7 +45,7 @@ const patch = patchRequest;
      page?: number;
      limit?: number;
      search?: string;
-     filters?: Record<string, any>;
+     filters?: ICategoryFilters;
      sort?: Record<string, 1 | -1>
    }) => get("/admin/categories", { params }),
    getAllCategories:()=>get("/admin/all/category"),
@@ -55,7 +58,7 @@ const patch = patchRequest;
      page?: number;
      limit?: number;
      search?: string;
-     filters?: Record<string, any>;
+     filters?: IConcernFilters;
      sort?: Record<string, 1 | -1>;
    }) => get("/admin/all/concerns", { params }),
     updateConcernStatus: (concernId: string, status: "resolved" | "in-progress", resolution: string) => 

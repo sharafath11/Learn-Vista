@@ -5,6 +5,7 @@ import { useAdminContext } from '@/src/context/adminContext';
 import { SearchAndFilterBar } from '../SearchAndFilterBar';
 import { User } from 'lucide-react';
 import { AdminAPIMethods } from '@/src/services/methods/admin.api';
+import { MentorFilters, MentorStatus } from '@/src/types/mentorTypes';
 
 interface MentorTableProps {
   theme: string;
@@ -34,10 +35,10 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
   }, [debouncedSearchTerm, sortOrder, currentPage, statusFilter]);
 
   const fetchMentors = async () => {
-    const filters: any = {};
+    const filters: MentorFilters = {};
   
     if (statusFilter !== 'All') {
-      filters.status = statusFilter.toLowerCase();
+      filters.status = statusFilter.toLowerCase() as MentorStatus;
     }
   
     const res = await AdminAPIMethods.fetchMentor({
