@@ -23,6 +23,7 @@ import {
 import { Badge } from "@/src/components/shared/components/ui/badge";
 import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { ICategoryFilters } from "@/src/types/adminTypes";
+import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 
 
 
@@ -39,6 +40,9 @@ export default function CategoriesList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<{ id: string; isBlock: boolean } | null>(null);
+  
   const categoriesPerPage = 2;
 
   useEffect(() => {
@@ -79,17 +83,24 @@ export default function CategoriesList() {
     fetchCategories();
   }, [debouncedSearchTerm, statusFilter, sortOrder, currentPage]);
 
-  const handleToggleBlock = async (id: string, status: boolean) => {
-    const res = await AdminAPIMethods.blockCategorie(id, !status);
+ const confirmToggleBlock = async () => {
+    if (!selectedCategory) return;
+    const { id, isBlock } = selectedCategory;
+
+    const res = await AdminAPIMethods.blockCategorie(id, !isBlock);
     if (res.ok) {
       showSuccessToast(res.msg);
       setCategories((prev) =>
-        prev.map((c) => (c.id === id ? { ...c, isBlock: !status } : c))
+        prev.map((c) => (c.id === id ? { ...c, isBlock: !isBlock } : c))
       );
     } else {
       showInfoToast(res.msg);
     }
+
+    setIsDialogOpen(false);
+    setSelectedCategory(null);
   };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
@@ -225,23 +236,24 @@ export default function CategoriesList() {
                                 <Pencil className="w-4 h-4 mr-2 text-blue-500" />
                                 <span>Edit</span>
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  handleToggleBlock(
-                                    category.id,
-                                    category.isBlock
-                                  )
-                                }
-                                className="cursor-pointer text-gray-700 hover:bg-gray-100"
-                              >
-                                {category.isBlock ? (
-                                  <span className="text-green-600">
-                                    Unblock
-                                  </span>
-                                ) : (
-                                  <span className="text-amber-600">Block</span>
-                                )}
-                              </DropdownMenuItem>
+                          <DropdownMenuItem
+  onSelect={() => {
+ 
+    setTimeout(() => {
+      setSelectedCategory({ id: category.id, isBlock: category.isBlock });
+      setIsDialogOpen(true);
+    }, 0);
+  }}
+  className="cursor-pointer text-gray-700 hover:bg-gray-100"
+>
+  {category.isBlock ? (
+    <span className="text-green-600">Unblock</span>
+  ) : (
+    <span className="text-amber-600">Block</span>
+  )}
+</DropdownMenuItem>
+
+
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
@@ -341,7 +353,25 @@ export default function CategoriesList() {
             )}
           </>
         )}
-
+         <CustomAlertDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          title={
+            selectedCategory?.isBlock ? "Unblock Category" : "Block Category"
+          }
+          description={
+            selectedCategory?.isBlock
+              ? "Are you sure you want to unblock this category? It will become active again."
+              : "Are you sure you want to block this category? It will no longer be available."
+          }
+          variant={selectedCategory?.isBlock ? "info" : "warning"}
+          onConfirm={confirmToggleBlock}
+          onCancel={() => setIsDialogOpen(false)}
+          confirmText={
+            selectedCategory?.isBlock ? "Yes, Unblock" : "Yes, Block"
+          }
+          cancelText="Cancel"
+        />
         {isModalOpen && (
           <CategoryForm
             categoryId={editingCategory}

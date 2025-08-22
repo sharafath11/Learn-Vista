@@ -36,7 +36,7 @@ const LessonDiscussion: React.FC<LessonDiscussionProps> = ({
       <div className="max-h-60 overflow-y-auto mb-4 space-y-4 pr-2">
         {comments.length > 0 ? (
           comments.map((commentItem) => (
-            <div key={commentItem.id} className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <div key={commentItem.createdAt?.toString()||commentItem.id} className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
               <div className="flex justify-between items-start mb-1">
                 <span className="font-medium text-sm">{commentItem.userName}</span>
                 <span className="text-xs text-gray-500">

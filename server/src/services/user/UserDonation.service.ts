@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { IUserDonationServices } from "../../core/interfaces/services/user/IUserDonationServices";
 import { TYPES } from "../../core/types";
 import { IDonationRepoitory } from "../../core/interfaces/repositories/donation/IDonationRepoitory";
-import { CreateDonationInput, IDonation } from "../../types/donationTypes";
+import { CreateDonationInput} from "../../types/donationTypes";
 import { throwError } from "../../utils/ResANDError";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { Server } from "socket.io";
@@ -67,7 +67,7 @@ export class UserDonationServices implements IUserDonationServices {
   if (!ADMIN_ID) throwError(Messages.CONFIG.ADMIN_ID_MISSING);
 
   if (userId) {
-await notifyWithSocket({
+  await notifyWithSocket({
   notificationService: this._notificationService,
   userIds: [userId, ADMIN_ID],
   roles: ["admin"],

@@ -14,6 +14,7 @@ import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { useRouter } from "next/navigation";
 import { IReson } from "@/src/types/commonTypes";
 import { ConcernModal } from "./concernModal";
+import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 
 export default function CoursesAdminPage() {
   const { courses, setCourses, concern } = useAdminContext();
@@ -30,6 +31,34 @@ export default function CoursesAdminPage() {
   const [selectedConcernId, setSelectedConcernId] = useState<string | null>(
     null
   );
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+  const [selectedCourseBlocked, setSelectedCourseBlocked] = useState(false);
+   const handleCourseBlockClick = (id: string, isBlocked: boolean) => {
+    setSelectedCourseId(id);
+    setSelectedCourseBlocked(isBlocked);
+    setIsDialogOpen(true);
+   };
+   const confirmToggleCourseStatus = async () => {
+    if (!selectedCourseId) return;
+
+    const res = await AdminAPIMethods.blockCours(
+      selectedCourseId,
+      !selectedCourseBlocked
+    );
+
+    if (res.ok) {
+      showSuccessToast(res.msg);
+      setCourses(
+        courses.map((prev) =>
+          prev.id === selectedCourseId ? { ...prev, isBlock: !selectedCourseBlocked } : prev
+        )
+      );
+    }
+
+    setIsDialogOpen(false);
+    setSelectedCourseId(null);
+  };
   const coursesPerPage = 2;
 
   useEffect(() => {
@@ -211,18 +240,20 @@ export default function CoursesAdminPage() {
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4">
-<Button
-  variant="outline"
-  size="sm"
-  className={
-    course.isBlock
-      ? "border-green-500 text-green-600 hover:bg-green-50"
-      : "border-red-500 text-red-600 hover:bg-red-50"
-  }
-  onClick={() => toggleCourseStatus(course.id, course.isBlock)}
->
-  {course.isBlock ? "Unblock" : "Block"}
-</Button>
+ <Button
+                        variant="outline"
+                        size="sm"
+                        className={
+                          course.isBlock
+                            ? "border-green-500 text-green-600 hover:bg-green-50"
+                            : "border-red-500 text-red-600 hover:bg-red-50"
+                        }
+                        onClick={() =>
+                          handleCourseBlockClick(course.id, course.isBlock)
+                        }
+                      >
+                        {course.isBlock ? "Unblock" : "Block"}
+                      </Button>
 
 
  <Button
@@ -310,6 +341,21 @@ export default function CoursesAdminPage() {
         concern={selectedConcern}
         onClose={handleCloseConcernModal}
         onStatusChange={handleConcernStatusChange}
+      />
+            <CustomAlertDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        title={selectedCourseBlocked ? "Unblock Course" : "Block Course"}
+        description={
+          selectedCourseBlocked
+            ? "Are you sure you want to unblock this course? It will become accessible to students."
+            : "Are you sure you want to block this course? It will no longer be accessible to students."
+        }
+        variant={selectedCourseBlocked ? "info" : "warning"}
+        onConfirm={confirmToggleCourseStatus}
+        onCancel={() => setIsDialogOpen(false)}
+        confirmText={selectedCourseBlocked ? "Yes, Unblock" : "Yes, Block"}
+        cancelText="Cancel"
       />
     </div>
   );

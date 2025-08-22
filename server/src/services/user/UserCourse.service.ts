@@ -4,11 +4,10 @@ import { IUserCourseService } from "../../core/interfaces/services/user/IUserCou
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import { ICategory, IPopulatedCourse } from "../../types/classTypes";
+import {  IPopulatedCourse } from "../../types/classTypes";
 import { throwError } from "../../utils/ResANDError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { ICategoriesRepository } from "../../core/interfaces/repositories/course/ICategoriesRepository";
-import { IUserCourseProgress } from "../../types/userCourseProgress";
 import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
 import { IUserLessonProgressRepository } from "../../core/interfaces/repositories/course/IUserLessonProgressRepo"; 
@@ -52,6 +51,7 @@ export class UserCourseService implements IUserCourseService {
     };
     
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(queryParams);
+    console.log(data.length)
        if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
     const sendData = await convertSignedUrlInArray(data, ["thumbnail"]);
   
@@ -71,7 +71,8 @@ export class UserCourseService implements IUserCourseService {
     const course = await this._baseCourseRepo.findById(courseId);
     if (!course) {
       throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.BAD_REQUEST);
-    }
+    };
+    if(course.enrolledUsers.includes(userId)){}
     await this._baseCourseRepo.update(courseId, {
       $addToSet: { enrolledUsers: userObjectId },
     });

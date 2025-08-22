@@ -2,6 +2,7 @@
 
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { UserTable } from "@/src/components/admin/users/UserTable";
+import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 import { useAdminContext } from "@/src/context/adminContext";
 import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
@@ -14,6 +15,9 @@ const User = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const usersPerPage = 2;
+const [isDialogOpen, setIsDialogOpen] = useState(false);
+const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+const [selectedStatus, setSelectedStatus] = useState<boolean>(false);
 
   const { users, setUsers, getAllUsers, totalUsersCount } = useAdminContext();
 
@@ -45,18 +49,26 @@ const User = () => {
   }, [currentPage, debouncedSearchTerm, statusFilter, sortOrder]);
 
   const totalPages = Math.ceil(totalUsersCount / usersPerPage);
+function handleBlockClick(id: string, status: boolean) {
+  setSelectedUserId(id);
+  setSelectedStatus(status);
+  setIsDialogOpen(true);
+}
 
-  async function onBlockToggle(id: string, status: boolean) {
-    const res = await AdminAPIMethods.blockUser({ id, status });
-    if (res.ok) {
-      setUsers(prev =>
-        prev.map(user =>
-          user.id === id ? { ...user, isBlocked: status } : user
-        )
-      );
-      status ? showInfoToast(`User blocked`) : showSuccessToast("User unblocked");
-    }
+  async function confirmBlockToggle() {
+  if (!selectedUserId) return;
+
+  const res = await AdminAPIMethods.blockUser({ id: selectedUserId, status: selectedStatus });
+  if (res.ok) {
+    setUsers(prev =>
+      prev.map(user =>
+        user.id === selectedUserId ? { ...user, isBlocked: selectedStatus } : user
+      )
+    );
+    selectedStatus ? showInfoToast("User blocked") : showSuccessToast("User unblocked");
   }
+  setIsDialogOpen(false);
+}
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -97,11 +109,12 @@ const User = () => {
           } } roleFilter={"User"}       />
 
         <div className="rounded-lg shadow-sm overflow-hidden bg-white">
-          <UserTable
-            onBlockToggle={onBlockToggle}
-            currentUsers={users}
-            getRoleColor={getRoleColor}
-          />
+         <UserTable
+  onBlockToggle={handleBlockClick}
+  currentUsers={users}
+  getRoleColor={getRoleColor}
+/>
+
         </div>
 
         <div className="flex justify-center items-center mt-6">
@@ -138,6 +151,22 @@ const User = () => {
           </nav>
         </div>
       </div>
+      <CustomAlertDialog
+  isOpen={isDialogOpen}
+  onClose={() => setIsDialogOpen(false)}
+  title={selectedStatus ? "Block User" : "Unblock User"}
+  description={
+    selectedStatus
+      ? "Are you sure you want to block this user? They will lose access immediately."
+      : "Are you sure you want to unblock this user?"
+  }
+  variant={selectedStatus ? "warning" : "info"}
+  onConfirm={confirmBlockToggle}
+  onCancel={() => setIsDialogOpen(false)}
+  confirmText={selectedStatus ? "Yes, Block" : "Yes, Unblock"}
+  cancelText="Cancel"
+/>
+
     </div>
   );
 };
