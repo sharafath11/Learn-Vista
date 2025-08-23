@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function LoginForm() {
   const [data, setData] = useState<ILogin>({ email: "", password: "", googleId: "" });
@@ -24,7 +25,7 @@ export default function LoginForm() {
   useEffect(() => {
     setIsMounted(true);
      if(user) router.push("/user")
-  }, []);
+  },[]);
 
   useEffect(() => {
     if (session?.user?.email && session?.user?.id && !data.googleId) {
@@ -35,13 +36,13 @@ export default function LoginForm() {
       });
       setAutoSubmit(true);
     }
-  }, [session]);
+  },[session]);
 
   useEffect(() => {
     if (autoSubmit) {
       handleSubmit();
     }
-  }, [autoSubmit]);
+  },[autoSubmit]);
 
   const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
@@ -88,7 +89,7 @@ export default function LoginForm() {
   return (
     <div className="max-w-md mx-auto p-6 sm:p-8 rounded-xl shadow-lg bg-white">
       <div className="mb-6 flex items-center justify-center">
-        <img src="/images/logo.png" alt="Learn Vista Logo" className="w-10" />
+        <Image src="/images/logo.png" alt="Learn Vista Logo" className="w-10" />
         <span className="ml-2 text-2xl font-bold text-purple-700">Learn Vista</span>
       </div>
 

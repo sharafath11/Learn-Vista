@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import type { IDonation, IStripeSuccessSession } from "@/src/types/donationTyps"
+import type { IDonation} from "@/src/types/donationTyps"
 import { CheckCircle2, Heart, Mail, ArrowLeft, Download, Loader2 } from "lucide-react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { Button } from "@/src/components/shared/components/ui/button"
@@ -49,7 +49,7 @@ export default function SuccessView({ session }: Props) {
 
       await generateReceiptPDF(receiptData)
     } catch (error) {
-     
+     console.warn(error)
     } finally {
       setDownloadingPDF(false)
     }

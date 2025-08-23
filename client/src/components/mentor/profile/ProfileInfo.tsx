@@ -1,14 +1,14 @@
 "use client";
 import { IMentor } from "@/src/types/mentorTypes";
+import Image from "next/image";
 import React, { useState } from "react";
-import { FiExternalLink, FiEdit2, FiPlay, FiClock, FiUsers } from "react-icons/fi";
+import { FiExternalLink, FiEdit2,FiClock, FiUsers } from "react-icons/fi";
 
 interface ProfileInfoProps {
   mentor: IMentor | null;
 }
 
 export default function ProfileInfo({ mentor }: ProfileInfoProps) {
-  const [activeTab, setActiveTab] = useState<'courses' | 'live'>('courses');
   const [isEditing, setIsEditing] = useState(false);
 
   if (!mentor) return (
@@ -23,7 +23,7 @@ export default function ProfileInfo({ mentor }: ProfileInfoProps) {
       <div className="flex flex-col md:flex-row gap-8 mb-8">
         {/* Profile Picture */}
         <div className="relative group w-32 h-32 md:w-40 md:h-40 flex-shrink-0">
-          <img
+          <Image
             src={mentor.profilePicture || "/default-avatar.png"}
             alt={`${mentor.username}'s profile`}
             className="w-full h-full rounded-2xl object-cover border-4 border-indigo-500/30 shadow-lg"

@@ -1,10 +1,9 @@
-// components/ProfileCard.jsx
 "use client";
 
 import Image from "next/image";
 import { Settings } from "lucide-react";
 import { useUserContext } from "@/src/context/userAuthContext";
-import { useState, useEffect } from "react"; 
+import { useState} from "react"; 
 import EditProfileModal from "./EditProfileModal";
 import ChangePasswordModal from "../../ChangePasswordModal";
 
@@ -12,17 +11,6 @@ export default function ProfileCard() {
   const { user } = useUserContext();
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
-
-
-
-  const formattedDate = user?.createdAt
-    ? new Date(user.createdAt).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "";
-
   const finalProfileImageSrc = user?.profilePicture || "/default-avatar.png";
 
   return (
@@ -32,13 +20,12 @@ export default function ProfileCard() {
           <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
             <div className="relative h-32 w-32 rounded-full border-4 border-white shadow-lg">
               <Image
-                // --- Using the determined finalProfileImageSrc ---
                 src={finalProfileImageSrc}
                 alt="User Avatar"
                 width={128}
                 height={128}
                 className="object-cover rounded-full"
-                unoptimized // --- RE-ADDED THIS CRITICAL PROP ---
+                unoptimized
               />
               <div className="absolute bottom-0 right-0 bg-green-500 rounded-full p-1 border-2 border-white">
                 <div className="h-4 w-4" />

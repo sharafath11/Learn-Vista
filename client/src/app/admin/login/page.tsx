@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, ChangeEvent, HtmlHTMLAttributes, useContext } from 'react';
+import { useState, useEffect, ChangeEvent,useContext } from 'react';
 import { useTheme } from 'next-themes';
 import { FiMail, FiLock, FiUser, FiSun, FiMoon } from 'react-icons/fi';
 import { motion } from 'framer-motion';

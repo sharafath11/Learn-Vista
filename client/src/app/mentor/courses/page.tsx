@@ -8,7 +8,7 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/src/components/shared/components/ui/avatar"
 import { RaiseConcernDialog } from "./ConcernDialog"
 import {
-  Layers, Calendar, Tag, Clock, BookText, Users, AlertCircle,
+  Layers, Calendar, Clock, BookText, Users, AlertCircle,
   CheckCircle,
   XCircle
 } from "lucide-react"
@@ -65,20 +65,6 @@ export default function CoursesPage() {
   useEffect(() => {
     setPage(1)
   }, [filters])
-
-  // const categoryOptions: ICategory[] = Array.from(
-  //   new Map(
-  //     courses
-  //       .filter((c) => typeof c.categoryId === "object" && c.categoryId !== null)
-  //       .map((c) => [
-  //         (c.categoryId as ICategory).id,
-  //         c.categoryId as ICategory,
-  //       ])
-  //   ).values()
-  // )
-
-
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-gray-200 p-6">
       <div className="max-w-7xl mx-auto py-8">

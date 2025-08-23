@@ -19,7 +19,6 @@ export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
   const [comments, setComments] = useState<IComment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loadingComments, setLoadingComments] = useState(true);
-  const [submittingComment, setSubmittingComment] = useState(false);
 
   useEffect(() => {
     if (open && lessonId) {
@@ -40,7 +39,8 @@ export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
       } else {
         showErrorToast("Failed to fetch comments. Please try again.");
       }
-    } catch (error) {
+    } catch (err) {
+      console.warn(err)
       showErrorToast("An unexpected error occurred while fetching comments.");
     } finally {
       setLoadingComments(false);

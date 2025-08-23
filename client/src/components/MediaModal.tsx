@@ -1,6 +1,7 @@
 import { Download, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./shared/components/ui/dialog";
 import { Button } from "./shared/components/ui/button";
+import Image from "next/image";
 
 interface MediaModalProps {
   open: boolean;
@@ -24,7 +25,7 @@ export function MediaModal({ open, onClose, url, type, title }: MediaModalProps)
     switch (getType()) {
       case "image":
         return (
-          <img
+          <Image
             src={url}
             alt={title || "media"}
             className="max-h-[80vh] mx-auto rounded-lg shadow-lg"

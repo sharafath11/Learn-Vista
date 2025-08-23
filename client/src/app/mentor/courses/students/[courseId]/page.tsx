@@ -89,7 +89,7 @@ const confirmToggleBlock = async () => {
 
   useEffect(() => {
     fetchStudents()
-  }, [fetchParams])
+  },[fetchParams])
 
   const fetchStudents = async () => {
     const res = await MentorAPIMethods.getCourseStudents({

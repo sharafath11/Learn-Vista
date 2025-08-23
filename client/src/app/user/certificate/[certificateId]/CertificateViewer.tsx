@@ -1,5 +1,6 @@
 "use client"
 import type { ICertificate } from "@/src/types/certificateTypes"
+import Image from "next/image"
 import { forwardRef } from "react"
 
 interface CertificateViewerProps {
@@ -25,7 +26,7 @@ const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(({ 
       >
         {/* Header */}
         <div className="text-center mb-10">
-          <img
+          <Image
             src="/images/logo.png"
             width={140}
             height={70}
@@ -76,7 +77,7 @@ const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(({ 
           {/* QR Code */}
           {certificate.qrCodeUrl && (
             <div className="text-center flex-1">
-              <img
+              <Image
                 src={certificate.qrCodeUrl || "/placeholder.png"}
                 width={90}
                 height={90}

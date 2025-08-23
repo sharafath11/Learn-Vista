@@ -42,23 +42,22 @@ export const Header = () => {
   const { unreadCount, setUnreadCount, userNotifications, setUserNotifications, refereshNotifcation } = useUserContext()
   const router = useRouter()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
-  const confirmLogout = useCallback(async () => {
-    try {
-      await signOut({ redirect: false })
-      const res = await UserAPIMethods.logout()
-      if (res.ok) {
-        setUser(null)
-        showSuccessToast("Logged out successfully!") 
-        router.push("/user/login")
-      } else {
-        showErrorToast(res.msg || "Logout failed. Please try again.")
-      }
-    } catch (error) {
-      showErrorToast( "An unexpected error occurred during logout.")
-    } finally {
-      setShowLogoutConfirm(false) 
-    }
-  }, [router, setUser])
+ const confirmLogout = useCallback(async () => {
+  setShowLogoutConfirm(false);
+
+  await signOut({ redirect: false });
+
+  const res = await UserAPIMethods.logout();
+
+  if (res?.ok) {
+    setUser(null);
+    showSuccessToast("Logged out successfully!");
+    router.push("/user/login");
+  } else {
+    showErrorToast(res?.msg || "Logout failed. Please try again.");
+  }
+},[router, setUser]);
+
   const handleLogout = useCallback(() => {
     setShowLogoutConfirm(true)
     setIsDropdownOpen(false) 

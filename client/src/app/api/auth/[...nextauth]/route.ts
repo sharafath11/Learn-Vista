@@ -25,7 +25,6 @@ const handler = NextAuth({
   callbacks: {
     async signIn({ user, account, profile }) {
       try {
-        // Validate required fields
         if (!account?.providerAccountId || !user.email) {
         
           throw new Error("Missing required user information");
@@ -60,8 +59,6 @@ const handler = NextAuth({
         if (response.status >= 400) {
           throw new Error(response.data.message || "Backend registration failed");
         }
-
-        // Store backend user ID if available
         if (response.data?.id) {
           user.id = response.data.id;
           user.role = response.data.role || "user";

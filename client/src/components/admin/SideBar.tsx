@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FiHome, FiUsers, FiBook, FiSettings, FiLogOut, FiX, FiAlertCircle, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiHome, FiUsers, FiBook, FiLogOut, FiX, FiAlertCircle, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { FaChalkboardTeacher } from 'react-icons/fa';
 import { SideBarProps } from '@/src/types/adminTypes';
 import { usePathname, useRouter } from 'next/navigation';

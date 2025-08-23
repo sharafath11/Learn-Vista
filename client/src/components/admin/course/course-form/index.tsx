@@ -85,14 +85,6 @@ export function CourseForm({ courseId }: CourseFormProps) {
 
   const onSubmit = (data: CourseFormValues) => {
     setIsLoading(true)
-
-    const formData = {
-      ...data,
-      tags,
-      thumbnail,
-    }
-
-
     setTimeout(() => {
       setIsLoading(false)
       router.push("/courses")

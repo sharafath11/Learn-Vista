@@ -242,40 +242,13 @@ export default function LessonPage() {
   }, [videoCompleted, theoryCompleted, practicalCompleted, mcqCompleted, report, lesson, submitLessonReport, questions]);
 
 
-  const calculateOverallProgress = useCallback(() => {
-    const SECTION_WEIGHTS = {
-        video: 0.40,
-        theory: 0.20,
-        practical: 0.20,
-        mcq: 0.20,
-    };
-
-    let completedWeight = 0;
-    if (videoCompleted) {
-        completedWeight += SECTION_WEIGHTS.video;
-    } else if (videoTotalDuration > 0) {
-        const videoCompletionRatio = Math.min(1, videoWatchedDuration / videoTotalDuration);
-        completedWeight += videoCompletionRatio * SECTION_WEIGHTS.video;
-    }
-
-    if (theoryCompleted) {
-        completedWeight += SECTION_WEIGHTS.theory;
-    }
-    if (practicalCompleted) {
-        completedWeight += SECTION_WEIGHTS.practical;
-    }
-    if (mcqCompleted) {
-        completedWeight += SECTION_WEIGHTS.mcq;
-    }
-
-    return Math.min(100, Math.max(0, completedWeight * 100));
-  }, [videoWatchedDuration, videoTotalDuration, videoCompleted, theoryCompleted, practicalCompleted, mcqCompleted]);
+  
 
 
   useEffect(() => {
     window.history.pushState(null, "", window.location.href);
 
-    const handlePopState = (event: PopStateEvent) => {
+    const handlePopState = () => {
       if (hasUnsavedChangesRef.current) {
         setShowLeaveConfirm(true);
         window.history.pushState(null, "", window.location.href);

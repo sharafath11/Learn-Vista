@@ -1,6 +1,5 @@
-// components/CourseCard.tsx
-"use client"
 
+"use client"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { Sparkles, Users, Clock, BookOpen } from "lucide-react"
@@ -8,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Progress } from "@/src/components/shared/components/ui/progress"
-import type { IcourseFromResponse, IPopulatedCourse } from "@/src/types/courseTypes"
+import type { IcourseFromResponse} from "@/src/types/courseTypes"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"

@@ -11,7 +11,6 @@ interface CategoryCardProps {
 }
 
 export default function CategoryCard({ icon, title, courses }: CategoryCardProps) {
-  const {allCourses}=useUserContext()
   return (
     <motion.div
       whileHover={{ y: -8 }}

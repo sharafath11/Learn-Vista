@@ -10,8 +10,7 @@ import { Card, CardContent } from "@/src/components/shared/components/ui/card"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 import { SessionTable } from "./SessionTable"
-import { ILessons } from "@/src/types/lessons"
-import { ICourse, IPopulatedCourse } from "@/src/types/courseTypes"
+import {  IPopulatedCourse } from "@/src/types/courseTypes"
 
 export default function UpcomingSessions() {
   const router = useRouter()

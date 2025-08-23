@@ -5,8 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/shared/components/ui/select"
-import { ChevronLeft, ChevronRight, Download, Eye, MoreHorizontal } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/src/components/shared/components/ui/dropdown-menu"
+import { ChevronLeft, ChevronRight, Download, } from "lucide-react"
 import { Skeleton } from "@/src/components/shared/components/ui/skeleton"
 import type { IDonation } from "@/src/types/donationTyps"
 import { FilterOptions } from "@/src/types/adminTypes"
@@ -130,7 +129,7 @@ export function TransactionTable({
               </TableHeader>
               <TableBody>
                 {transactions.length > 0 ? (
-                  transactions.map((transaction, i) => (
+                  transactions.map((transaction) => (
                     <TableRow key={`${transaction.id}-${transaction.donorId}`}>
                       <TableCell>
                         <div>

@@ -1,7 +1,7 @@
 "use client"
 
 import { useRef } from "react"
-import { ChevronDown, User, Settings, LogOut, Trophy } from "lucide-react"
+import { ChevronDown, User,LogOut, Trophy } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"

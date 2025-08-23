@@ -40,8 +40,8 @@ export default function MentorQuestionManagePage() {
     return questions?.filter((q) => q.type === type) || [];
   };
 
-  const theoryQuestions = useMemo(() => filteredQuestions("theory"), [questions]);
-  const practicalQuestions = useMemo(() => filteredQuestions("practical"), [questions]);
+  const theoryQuestions = useMemo(() => filteredQuestions("theory"),[questions]);
+  const practicalQuestions = useMemo(() => filteredQuestions("practical"),[questions]);
   const mcqQuestions = useMemo(() => filteredQuestions("mcq"), [questions]);
 
   const totalQuestionsCount = questions?.length || 0;

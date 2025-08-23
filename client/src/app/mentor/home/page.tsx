@@ -29,7 +29,6 @@ export default function MentorDashboard() {
   let totalCourses = courses.length
 let publishedCourses = courses.filter((course) => course.isActive).length
  
-  const completionRate = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
@@ -328,24 +327,6 @@ interface ActivityCardProps {
   color: string
 }
 
-function ActivityCard({ type, title, time, icon: Icon, color }: ActivityCardProps) {
-  return (
-    <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all duration-300">
-      <div className="flex items-start gap-3">
-        <div className={`p-2 rounded-lg bg-white/10 flex-shrink-0`}>
-          <Icon className={`h-5 w-5 ${color}`} />
-        </div>
-        <div className="flex-1">
-          <div className="flex justify-between items-start mb-1">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">{type}</span>
-            <span className="text-xs text-slate-500">{time}</span>
-          </div>
-          <p className="text-sm text-white font-medium">{title}</p>
-        </div>
-      </div>
-    </div>
-  )
-}
 function Button({ children, className = "", variant = "default", size = "default", onClick, ...props }: any) {
   const baseClasses =
     "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900"

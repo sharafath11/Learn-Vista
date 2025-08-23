@@ -41,7 +41,7 @@ export const MentorsContextProvider = ({ children }: { children: ReactNode }) =>
     } else {
       router.push("/mentor/login");
     }
-  }, []);
+  },[]);
    const fetchNotifications = async () => {
       const res = await SharedAPIMethods.getMyNotifications();
      

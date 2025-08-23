@@ -6,6 +6,7 @@ import { Input } from "@/src/components/shared/components/ui/input"
 import { Label } from "@/src/components/shared/components/ui/label"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { X } from "lucide-react"
+import Image from "next/image"
 
 interface MediaSectionProps {
   thumbnailPreview: string | null
@@ -25,7 +26,7 @@ export function MediaSection({ thumbnailPreview, handleThumbnailChange, removeTh
           <div className="flex flex-col items-center space-y-4">
             {thumbnailPreview ? (
               <div className="relative">
-                <img
+                <Image
                   src={thumbnailPreview || "/placeholder.svg"}
                   alt="Thumbnail preview"
                   className="w-full max-w-md h-auto rounded-md object-cover"

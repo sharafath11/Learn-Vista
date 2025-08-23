@@ -13,7 +13,7 @@ export interface ReceiptData {
   donorName: string;
   donorEmail: string;
   amount: number;
-  currency: string; // e.g. "INR"
+  currency: string; 
   paymentMethod: string;
   purpose: string;
   isRecurring: boolean;
@@ -93,7 +93,6 @@ export const generateReceiptPDF = async (data: ReceiptData) => {
   pdf.setFont("helvetica", "bold");
   pdf.text(`Donation Amount INR ${data.amount} `, margin + 5, y + 10);
 
-  const currencySymbol = data.currency.toUpperCase() === "INR" ? "₹" : data.currency.toUpperCase();
   pdf.setFontSize(22);
   pdf.text(`${data.amount}`, pageWidth - margin - 5, y + 20, {
     align: "right",

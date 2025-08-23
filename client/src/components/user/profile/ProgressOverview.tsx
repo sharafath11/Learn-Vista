@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation"
 
 export default function ProgressOverview() {
   const { progresses, allCourses, user } = useUserContext()
- const route=useRouter()
   const progressData = useMemo(() => {
     if (!progresses || !allCourses || !user?.enrolledCourses) {
       return {

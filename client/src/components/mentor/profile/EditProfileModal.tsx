@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import Image from "next/image";
 import { X, ChevronLeft, Mail, Lock, User, Camera, CheckCircle, Loader2, Edit } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
@@ -81,23 +80,22 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     };
 
   const handleForgotPassword = useCallback(async () => {
-    if (!mentor?.email) return;
-    
-    setIsLoading(true);
-    try {
-      const res = await MentorAPIMethods.forgotPassword(mentor.email);
-      if (res.ok) {
-        setCurrentView("resetSent");
-        showSuccessToast(res.msg);
-      } else {
-        showErrorToast(res.msg);
-      }
-    } catch (error) {
-      showErrorToast("Failed to send reset link");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [mentor?.email]);
+  if (!mentor?.email) return;
+
+  setIsLoading(true);
+
+  const res = await MentorAPIMethods.forgotPassword(mentor.email);
+
+  if (res?.ok) {
+    setCurrentView("resetSent");
+    showSuccessToast(res.msg);
+  } else {
+    showErrorToast(res?.msg || "Failed to send reset link");
+  }
+
+  setIsLoading(false);
+}, [mentor?.email]);
+
 
   const handleSaveChanges = useCallback(async () => {
     if (!mentor) return;

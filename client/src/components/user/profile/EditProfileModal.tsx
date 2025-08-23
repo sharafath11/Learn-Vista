@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, memo, JSX } from "react";
 import Image from "next/image";
-import { X, ChevronLeft, Mail, User, Camera, Loader2 } from "lucide-react";
+import { X,Mail, User, Camera, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { useUserContext } from "@/src/context/userAuthContext";
@@ -94,7 +94,7 @@ export default function EditProfileModal({
   const [currentView] = useState<View>("profile");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { setUser, user } = useUserContext();
+  const { setUser } = useUserContext();
 
   const resetState = useCallback(() => {
     setName(username);
@@ -144,7 +144,7 @@ export default function EditProfileModal({
         showSuccessToast(res.msg);
         onClose();
       }
-    } catch (error) {
+    } catch (_error) {
       showErrorToast("Failed to save changes");
     } finally {
       setIsLoading(false);

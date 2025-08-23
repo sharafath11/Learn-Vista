@@ -8,6 +8,7 @@ import { AdminContext } from '@/src/context/adminContext';
 import { IMentor } from '@/src/types/mentorTypes';
 import { AdminAPIMethods } from '@/src/services/methods/admin.api';
 import { CustomAlertDialog } from '@/src/components/custom-alert-dialog'; // ✅ import your dialog
+import Image from 'next/image';
 
 interface MentorRowProps {
   mentor: IMentor;
@@ -59,7 +60,7 @@ const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
           <div className="flex items-center">
             <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden mr-3">
               {mentor?.profilePicture ? (
-                <img src={mentor?.profilePicture} alt={mentor.username} className="w-full h-full object-cover" />
+                <Image src={mentor?.profilePicture} alt={mentor.username} className="w-full h-full object-cover" />
               ) : (
                 <FiUser className="w-full h-full p-2 text-gray-500" />
               )}

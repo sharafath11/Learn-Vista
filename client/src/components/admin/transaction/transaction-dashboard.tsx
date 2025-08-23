@@ -29,42 +29,40 @@ export default function TransactionDashboard() {
 
   useEffect(() => {
     fetchTransactions()
-  }, [filters])
+  },[filters])
 
-  const fetchTransactions = async () => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams()
+const fetchTransactions = async () => {
+  setLoading(true)
 
-      if (filters.dateRange.from) {
-        params.append("fromDate", filters.dateRange.from.toISOString())
-      }
-      if (filters.dateRange.to) {
-        params.append("toDate", filters.dateRange.to.toISOString())
-      }
-      
-      if (filters.status !== "all") {
-        params.append("status", filters.status)
-      }
-      params.append("sortBy", filters.sortBy)
-      params.append("sortOrder", filters.sortOrder)
-      params.append("page", filters.page.toString())
-      params.append("limit", filters.limit.toString())
+  const params = new URLSearchParams()
 
-      const res = await AdminAPIMethods.getFilteredDonations(params.toString())
-
-      if (res.ok) {
-        setTransactions(res.data.transactions || res.data)
-        setTotalCount(res.data.totalCount || res.data.length)
-      } else {
-        showErrorToast(res.msg || "Failed to fetch transactions")
-      }
-    } catch (error) {
-      showErrorToast("Error fetching transactions")
-    } finally {
-      setLoading(false)
-    }
+  if (filters.dateRange.from) {
+    params.append("fromDate", filters.dateRange.from.toISOString())
   }
+  if (filters.dateRange.to) {
+    params.append("toDate", filters.dateRange.to.toISOString())
+  }
+
+  if (filters.status !== "all") {
+    params.append("status", filters.status)
+  }
+  params.append("sortBy", filters.sortBy)
+  params.append("sortOrder", filters.sortOrder)
+  params.append("page", filters.page.toString())
+  params.append("limit", filters.limit.toString())
+
+  const res = await AdminAPIMethods.getFilteredDonations(params.toString())
+
+  if (res?.ok) {
+    setTransactions(res.data.transactions || res.data)
+    setTotalCount(res.data.totalCount || res.data.length)
+  } else {
+    showErrorToast(res?.msg || "Failed to fetch transactions")
+  }
+
+  setLoading(false)
+}
+
 
   const handleFilterChange = (newFilters: Partial<FilterOptions>) => {
     setFilters((prev) => ({

@@ -2,8 +2,9 @@
 
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { BookOpen, DollarSign, ChevronRight } from "lucide-react"
+import { BookOpen,ChevronRight } from "lucide-react"
 import { ICourse } from "@/src/types/courseTypes"
+import Image from "next/image"
 
 interface CourseCardProps {
   course: ICourse
@@ -21,7 +22,7 @@ export default function CourseCard({ course }: CourseCardProps) {
           {/* Placeholder for thumbnail or icon */}
           <div className="p-4 bg-blue-900 rounded-full group-hover:bg-blue-700 transition-colors">
             {course.thumbnail ? (
-              <img
+              <Image
                 src={course.thumbnail || "/placeholder.svg"}
                 alt={course.title}
                 className="h-12 w-12 object-cover rounded-full"

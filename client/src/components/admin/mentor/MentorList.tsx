@@ -10,7 +10,7 @@ interface MentorListProps {
   mentors: IMentor[];
 }
 
-const MentorList: FC<MentorListProps> = ({ mentors }) => {
+const MentorList: FC<MentorListProps> = () => {
   return (
     <div className="min-h-screen p-6 bg-gray-50 text-gray-800">
       <div className="max-w-7xl mx-auto">

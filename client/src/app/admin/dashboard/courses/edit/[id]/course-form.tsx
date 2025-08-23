@@ -17,10 +17,11 @@ import { useEffect, useState } from "react"
 import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
-import { ICategory } from "@/src/types/categoryTypes"
 import { IMentor } from "@/src/types/mentorTypes"
+import Image from "next/image"
 
 export function CourseFormDesign({ courseId }: { courseId: string }) {
+   const router=useRouter()
   const { courses, avilbleMentors, setCourses, categories } = useAdminContext();
   const [mentors, setMentors] = useState<IMentor[]>();
    useEffect(() => {
@@ -40,7 +41,7 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
   if (!course) {
     return <div>Loading...</div>
   }
-  const router=useRouter()
+ 
   const [formData, setFormData] = useState({
     title: course?.title || "",
     description: course?.description || "",
@@ -202,13 +203,13 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                 <div className="flex flex-col items-center gap-4">
                   <div className="border-2 border-dashed rounded-md p-8 w-full max-w-md text-center">
                     {thumbnailFile ? (
-                      <img
+                      <Image
                         src={URL.createObjectURL(thumbnailFile)}
                         alt="Course Thumbnail Preview"
                         className="w-full h-auto"
                       />
                     ) : formData.thumbnail ? (
-                      <img
+                      <Image
                         src={formData.thumbnail}
                         alt="Course Thumbnail"
                         className="w-full h-auto"

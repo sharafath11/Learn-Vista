@@ -87,52 +87,48 @@ export default function SignupForm() {
     setOtpVerified(false);
     handleSendOtp();
   };
+const handleSendOtp = async () => {
+  if (!userData.email) {
+    showErrorToast("Please enter your email address");
+    return;
+  }
 
-  const handleSendOtp = async () => {
-    if (!userData.email) {
-      showErrorToast("Please enter your email address");
-      return;
-    }
+  const res = await UserAPIMethods.sendOtp(userData.email);
 
-    try {
-      const res = await UserAPIMethods.sendOtp(userData.email);
-      if (res?.ok || (typeof res === "string" && res.includes("OTP already send it"))) {
-        setOtpSent(true);
-        showSuccessToast("OTP sent to your email");
-      }
-    } catch (error) {
-      showErrorToast("Failed to send OTP");
-    }
-  };
+  if (res?.ok || (typeof res === "string" && res.includes("OTP already send it"))) {
+    setOtpSent(true);
+    showSuccessToast("OTP sent to your email");
+  }
+};
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
 
-    const validation = validateSignup(userData);
-    if (!validation.isValid) {
-      showErrorToast(validation.message);
-      return;
-    }
+ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    if (!otpVerified) {
-      showSuccessToast("Please verify your OTP first");
-      return;
-    }
+  const validation = validateSignup(userData);
+  if (!validation.isValid) {
+    showErrorToast(validation.message);
+    return;
+  }
 
-    setIsSubmitting(true);
+  if (!otpVerified) {
+    showSuccessToast("Please verify your OTP first");
+    return;
+  }
 
-    try {
-      const res = await UserAPIMethods.signUp(userData);
-      if (res?.ok) {
-        showSuccessToast("Signup successful");
-        router.push("/user/login");
-      }
-    } catch (error) {
-      showErrorToast("Signup failed. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  setIsSubmitting(true);
+
+  const res = await UserAPIMethods.signUp(userData); 
+  if (res?.ok) {
+    showSuccessToast("Signup successful");
+    router.push("/user/login");
+  } else {
+    showErrorToast("Signup failed. Please try again.");
+  }
+
+  setIsSubmitting(false);
+};
+
 
   const googleSignup = async () => {
     try {
@@ -142,6 +138,7 @@ export default function SignupForm() {
         router.push("/");
       }
     } catch (error) {
+      console.warn(error)
       showErrorToast("Signup failed, please try again.");
     }
   };
@@ -159,20 +156,19 @@ export default function SignupForm() {
 
   useEffect(() => {
     const autoLogin = async () => {
-      if (autoSubmit && loginData) {
-        try {
-          const res = await UserAPIMethods.loginUser(loginData);
-          if (res.ok) {
-            showSuccessToast(res.msg);
-            router.push("/");
-          }
-        } catch (error) {
-        }
-      }
-    };
+  if (autoSubmit && loginData) {
+    const res = await UserAPIMethods.loginUser(loginData).catch(() => null);
+
+    if (res?.ok) {
+      showSuccessToast(res.msg);
+      router.push("/");
+    }
+  }
+};
+
 
     autoLogin();
-  }, [autoSubmit, router, loginData]);
+  },[autoSubmit, router, loginData]);
 
   return (
     <div className="flex w-full max-w-6xl overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg">

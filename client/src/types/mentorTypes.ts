@@ -117,4 +117,3 @@ export interface MentorFilters {
   status?: MentorStatus;
 }
 
-type MentorSort = Partial<Record<"username" | "createdAt" | "updatedAt", SortOrder>>;

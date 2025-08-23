@@ -8,7 +8,6 @@ import Peer from "simple-peer"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { showInfoToast } from "@/src/utils/Toast"
-import { useUserContext } from "@/src/context/userAuthContext"
 
 export default function UserLiveSession({ roomId }: { roomId: string }) {
   const [mentorStream, setMentorStream] = useState<MediaStream | null>(null)
@@ -98,9 +97,9 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
             setMentorStream(stream);
           
             if (stream) {
-              stream.getVideoTracks().forEach(track => {
+              stream.getVideoTracks().forEach(_track => {
               });
-              stream.getAudioTracks().forEach(track => {
+              stream.getAudioTracks().forEach(_track => {
               });
             } else {
             }
@@ -109,7 +108,7 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           peer.on("connect", () => {
           });
 
-          peer.on("error", (err) => {
+          peer.on("error", (_err) => {
             peerRef.current = null;
             setMentorStream(null);
             setIsPlaying(false); 
@@ -142,11 +141,12 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
           showInfoToast(msg);
           window.location.href="/user/live-classes"
         })
-        socket.on('disconnect', (reason: any) => {
+        socket.on('disconnect', (_reason: any) => {
           toast.error("Disconnected from server. Please refresh.");
         });
 
       } catch (err) {
+        console.warn(err)
         toast.error("Failed to join session");
         window.location.href="/user/live-classes"
       }
@@ -167,7 +167,7 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
       setMentorStream(null);
       setIsPlaying(false);
     };
-  }, [roomId]);
+  },[roomId]);
 
   useEffect(() => {
     if (mentorStream && videoRef.current) {
@@ -182,7 +182,7 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
     if (videoRef.current && mentorStream) {
       videoRef.current.play().then(() => {
           setIsPlaying(true); 
-      }).catch(e => {
+      }).catch(_e => {
           toast.error("Failed to play video. Please ensure browser autoplay settings allow it.");
       });
     }

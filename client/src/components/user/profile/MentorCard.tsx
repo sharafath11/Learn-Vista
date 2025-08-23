@@ -1,11 +1,10 @@
 "use client";
 
-import { useUserContext } from "@/src/context/userAuthContext";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { MentorApplyFormData } from "@/src/types/authTypes";
 import { showSuccessToast } from "@/src/utils/Toast";
 import { validateMentorApplyForm } from "@/src/validations/validation";
-import { GraduationCap, X, Upload, FileText, Loader2, Github, Linkedin, Globe, Link2 } from "lucide-react";
+import { GraduationCap, X,FileText, Loader2, Github, Linkedin, Globe, Link2 } from "lucide-react";
 import { useRef, useState, useCallback, useMemo } from "react";
 
 const PLATFORM_ICONS = {
@@ -15,7 +14,6 @@ const PLATFORM_ICONS = {
   default: <Link2 className="h-4 w-4" />
 };
 export default function MentorCard() {
-  const {user}=useUserContext()
   const dialogRef = useRef<HTMLDialogElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

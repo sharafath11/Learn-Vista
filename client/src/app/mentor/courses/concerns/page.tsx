@@ -30,32 +30,32 @@ export default function ConcernsPage() {
     total: 0
   })
 
-  const fetchConcernsData = async () => {
-    setIsLoading(true)
-    try {
-      const params = {
-        search: debouncedSearchTerm,
-        status: statusFilter !== "all" ? statusFilter : undefined,
-        courseId: courseFilter !== "all" ? courseFilter : undefined,
-        sortBy,
-        sortOrder,
-        page: pagination.page,
-        pageSize: pagination.pageSize
-      }
+ const fetchConcernsData = async () => {
+  setIsLoading(true);
 
-      const res = await MentorAPIMethods.getConcern(params)
-      if (res.ok) {
-        setConcerns(res.data.data)
-        setPagination(prev => ({
-          ...prev,
-          total: res.data.total
-        }))
-      }
-    } catch (error) {
-    } finally {
-      setIsLoading(false)
-    }
+  const params = {
+    search: debouncedSearchTerm,
+    status: statusFilter !== "all" ? statusFilter : undefined,
+    courseId: courseFilter !== "all" ? courseFilter : undefined,
+    sortBy,
+    sortOrder,
+    page: pagination.page,
+    pageSize: pagination.pageSize
+  };
+
+  const res = await MentorAPIMethods.getConcern(params);
+
+  if (res.ok) {
+    setConcerns(res.data.data);
+    setPagination(prev => ({
+      ...prev,
+      total: res.data.total
+    }));
   }
+
+  setIsLoading(false);
+};
+
   useEffect(() => {
     setPagination(prev => ({ ...prev, page: 1 }))
   }, [searchTerm, statusFilter, courseFilter, sortBy, sortOrder])

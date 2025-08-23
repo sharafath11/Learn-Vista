@@ -1,16 +1,11 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { X, Star, Clock, Users, BookOpen, CheckCircle, Play, Calendar, Tag, Languages } from "lucide-react"
+import { X,Clock, Users, BookOpen, CheckCircle, Calendar, Tag, Languages } from "lucide-react"
 import Image from "next/image"
-import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { Progress } from "@/src/components/shared/components/ui/progress"
-import { IcourseFromResponse, IPopulatedCourse } from "@/src/types/courseTypes"
+import { IcourseFromResponse} from "@/src/types/courseTypes"
 import { format } from "date-fns"
-import { useEffect, useState } from "react"
-import { ILessons } from "@/src/types/lessons"
-import { useUserContext } from "@/src/context/userAuthContext"
 import { useRouter } from "next/navigation"
 
 interface CourseDetailsModalProps {
@@ -25,10 +20,7 @@ const CourseDetailsModal = ({
   course,
   isOpen,
   onClose,
-  onEnroll,
-  isEnrolled = false
 }: CourseDetailsModalProps) => {
-  const route=useRouter()
    
   return (
     <AnimatePresence>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation"; 
 import LoginForm from "./LoginForm";
 import { UserRole } from "@/src/types/authTypes";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [role, setRole] = useState<UserRole>("user");
@@ -50,7 +51,7 @@ export default function LoginPage() {
               <LoginForm  />
             </div>
             <div className="hidden lg:flex items-center justify-center bg-gradient-to-r from-purple-100 to-indigo-100">
-              <img
+              <Image
                 src="/images/login.png"
                 alt="Login Illustration"
                 className="w-full h-auto object-contain"

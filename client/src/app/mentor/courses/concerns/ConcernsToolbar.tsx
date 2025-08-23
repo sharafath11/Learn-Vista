@@ -1,4 +1,3 @@
-// components/ConcernsToolbar.tsx
 import { Input } from "@/src/components/shared/components/ui/input"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/src/components/shared/components/ui/dropdown-menu"
@@ -50,7 +49,6 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
   setStatusFilter,
   courseFilter,
   setCourseFilter,
-  sortBy,
   setSortBy,
   sortOrder,
   setSortOrder,

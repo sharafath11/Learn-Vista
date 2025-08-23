@@ -16,9 +16,9 @@ const CourseCard = ({ course }: { course: ICourse }) => {
   const { progresses } = useUserContext()
   const router = useRouter()
 
-  const lessons = sessions?.length || 0
+  const lessons = sessions || 0
   const progress = getCourseProgress(course.id, progresses) || 0
-  const completedLessons = Math.round((lessons * progress) / 100)
+  const completedLessons = Math.round((lessons as number * progress) / 100)
 
   const mentorName = typeof mentorId === "object" && "name" in mentorId ? mentorId.name : "Instructor"
 

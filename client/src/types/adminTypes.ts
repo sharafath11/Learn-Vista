@@ -3,14 +3,12 @@ import { IUser} from "./userTypes";
 import { IMentor } from "./mentorTypes";
 import { ICategory } from "./categoryTypes";
 import { IPopulatedCourse } from "./courseTypes";
-import { AllStatusFilter } from "./commonTypes";
 import { IConcern } from "./concernTypes";
 import { INotification } from "./notificationsTypes";
 
 export type DropDown = 'All' | 'admin' | 'mentor' | 'user';
 
 export interface AdminUser extends IUser {}
-
 export interface UserTableProps {
   currentUsers: IUser[];
   getRoleColor: (role: string) => string;
@@ -137,10 +135,10 @@ export interface CourseFormData {
   mentorId: string;
   categoryId: string;
   language: string;
-  startDate: string; // Format: "YYYY-MM-DD"
-  endDate: string;   // Format: "YYYY-MM-DD"
-  startTime: string; // Format: "HH:mm" or "HH:mm:ss"
-  thumbnail: File | string | null; // File for upload or string if already uploaded
+  startDate: string;
+  endDate: string;   
+  startTime: string;
+  thumbnail: File | string | null;
 }
 export interface IAdminUserFilters {
   role?: "student" | "mentor" | "admin";
@@ -154,3 +152,18 @@ export type ICategoryFilters = {
 export type ICategorySort = {
   createdAt?: 1 | -1;
 };
+export interface ICreateCourseForm {
+  title?: string
+  description?: string
+  mentorId?: string
+  categoryId?: string
+  category: string
+  price: number | string
+  language: string
+  tags: string
+  startDate: string
+  endDate: string
+  startTime: string
+  categoryName: string
+  thumbnail?: File
+}

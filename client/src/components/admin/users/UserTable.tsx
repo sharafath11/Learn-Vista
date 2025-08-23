@@ -8,8 +8,9 @@ import { UserDetailsModal } from "./user-details-modal"
 import { showErrorToast } from "@/src/utils/Toast"
 import type { UserTableProps } from "@/src/types/adminTypes"
 import { AdminAPIMethods } from "@/src/services/methods/admin.api"
+import Image from "next/image"
 
-export const UserTable = ({ currentUsers, getRoleColor, onBlockToggle }: UserTableProps) => {
+export const UserTable = ({ currentUsers,onBlockToggle }: UserTableProps) => {
   const [selectedUser, setSelectedUser] = useState<IUser | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [certificates, setCertificates] = useState<ICertificate[]>([])
@@ -48,7 +49,7 @@ export const UserTable = ({ currentUsers, getRoleColor, onBlockToggle }: UserTab
                   <td className="p-4">
                     <div className="flex items-center">
                       <div className="w-10 h-10 rounded-full bg-gray-300 overflow-hidden mr-3">
-                        <img
+                        <Image
                           src={user.profilePicture ?? ""}
                           alt={user.username}
                           className="w-full h-full object-cover"

@@ -36,7 +36,7 @@ export const NotificationCenter = ({
     if (isOpen && onRefresh) {
       onRefresh()
     }
-  }, [isOpen])
+  },[isOpen])
 
   const markAsRead = async (id: string) => {
     const res = await SharedAPIMethods.markAsRead(id)

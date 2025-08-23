@@ -18,6 +18,7 @@ import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import type { ConcernDialogProps, sendAttachement } from "@/src/types/concernTypes"
 import { useMentorContext } from "@/src/context/mentorContext"
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
+import Image from "next/image"
 
 export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) {
   const [open, setOpen] = useState(false)
@@ -207,7 +208,7 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
                     >
                       <div className="flex items-center gap-3">
                         {att.type === "image" && att.previewUrl ? (
-                          <img src={att.previewUrl} alt="preview" className="w-8 h-8 object-cover rounded" />
+                          <Image src={att.previewUrl} alt="preview" className="w-8 h-8 object-cover rounded" />
                         ) : (
                           getAttachmentIcon(att.type)
                         )}

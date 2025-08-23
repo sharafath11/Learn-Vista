@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { Play, Pause, Volume2, VolumeX, Maximize, Minimize } from "lucide-react"
+import Image from "next/image"
 
 interface VideoPlayerProps {
   videoUrl: string
@@ -224,7 +225,7 @@ export default function VideoPlayer({
           Your browser does not support the video .
         </video>
         {!hasStartedPlaying && !isCompleted && (
-          <img
+          <Image
             src={thumbnail}
             alt={title}
             className="absolute top-0 left-0 w-full h-full object-cover cursor-pointer"

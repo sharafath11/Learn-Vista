@@ -108,18 +108,18 @@ const [mediaType, setMediaType] = useState<"image" | "video" | "audio" | "pdf" |
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
-            {["All", "open", "in-progress", "resolved"].map((status) => (
-              <DropdownMenuItem
-                key={status}
-                onClick={() => {
-                  setStatusFilter(status as any)
-                  setCurrentPage(1)
-                }}
-                className={cn(statusFilter === status && "bg-accent")}
-              >
-                {status === "All" ? "All Status" : status}
-              </DropdownMenuItem>
-            ))}
+            {(["All", "open", "in-progress", "resolved"] as const).map((status) => (
+  <DropdownMenuItem
+    key={status}
+    onClick={() => {
+      setStatusFilter(status)  
+      setCurrentPage(1)
+    }}
+    className={cn(statusFilter === status && "bg-accent")}
+  >
+    {status === "All" ? "All Status" : status}
+  </DropdownMenuItem>
+))}
           </DropdownMenuContent>
         </DropdownMenu>
 

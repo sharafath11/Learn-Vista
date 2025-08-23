@@ -18,7 +18,6 @@ import {
 import { Badge } from "@/src/components/shared/components/ui/badge";
 import { Mic, PenTool, Headphones, Play } from "lucide-react";
 import { Button } from "@/src/components/shared/components/ui/button";
-import { showInfoToast } from "@/src/utils/Toast";
 import { handleTextToSpeech, stopTextToSpeech } from "@/src/utils/voice";
 
 interface Props {

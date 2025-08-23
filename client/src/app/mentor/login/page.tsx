@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback,useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
@@ -65,8 +65,7 @@ export default function LoginPage() {
           showSuccessToast(res.msg);
         }
      
-    },
-    [formData, validateForm,  router]
+    },[formData, validateForm,  router]
   );
 
   const togglePasswordVisibility = useCallback(() => {

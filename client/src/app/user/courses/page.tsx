@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Sparkles, Users, Award, BookOpen, Clock, TrendingUp } from "lucide-react"
+import { Sparkles, Users,BookOpen,TrendingUp } from "lucide-react"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import CourseFilter from "./filtringAndSearch"
@@ -15,7 +15,7 @@ import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import type { ICategory } from "@/src/types/categoryTypes"
 import CourseCard from "./CourseCard"
 const Page = () => {
-  const { user, setUser, progresses } = useUserContext() 
+  const { user, setUser} = useUserContext() 
   const [courses, setCourses] = useState<IcourseFromResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -69,7 +69,7 @@ const Page = () => {
 
   useEffect(() => {
     fetchCourses()
-  }, [page, filters])
+  },[page, filters])
 
   const handleDetailsClick = (course: IcourseFromResponse) => {
     setSelectedCourse(course)

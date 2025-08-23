@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Mic, MicOff, Video, VideoOff, Phone, Monitor, MessageSquare, Badge } from "lucide-react"
+import { Mic, MicOff, Video, VideoOff, Phone, Monitor, Badge } from "lucide-react"
 
 import { toast } from "sonner"
 import io from "socket.io-client"
@@ -67,11 +67,11 @@ export default function MentorStream({ roomId }: { roomId: string }) {
                         socket.emit("rtc-offer", socketId, signal);
                     });
 
-                    peer.on("track", (track, stream) => {
+                    peer.on("track", (_track, _stream) => {
                       
                     });
 
-                    peer.on("error", err => {
+                    peer.on("error", _err => {
                         removePeer(socketId);
                         toast.error(`Viewer ${userId.slice(0, 5)} connection error.`);
                     });

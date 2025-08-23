@@ -58,7 +58,7 @@ const [adminUnreadNotification, setAdminUnreadNotification] = useState<number>(0
     fetchALlCategories()
     fetchConcernsData()
     fetchAdminNotifications()
-  }, []);
+  },[]);
 
   async function getCategories(params?: {
     page?: number ;

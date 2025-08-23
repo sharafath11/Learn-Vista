@@ -52,6 +52,7 @@ export default function ForgotPassword() {
         }
         
       } catch (error) {
+        console.warn(error)
         setErrors({ email: "Something went wrong. Please try again." })
       } finally {
         setIsSubmitting(false)

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { Card } from "@/src/components/shared/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/shared/components/ui/dialog";
 import { ArrowLeft, Pencil, PlusCircle, PlayCircle, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";

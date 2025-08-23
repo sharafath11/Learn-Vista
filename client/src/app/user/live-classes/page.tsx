@@ -39,6 +39,7 @@ export default function UpcomingSessions() {
         router.push(`/user/live-classes/${res.data}`)
       }
     } catch (error) {
+      console.warn(error)
     } finally {
       setJoiningSession(null)
     }

@@ -1,6 +1,5 @@
 "use client"
 import { formatDistanceToNow } from "date-fns"
-import { Trash2 } from "lucide-react"
 import type { INotification } from "@/src/types/notificationsTypes"
 import { cn } from "@/lib/utils"
 
@@ -10,17 +9,13 @@ interface AllNotificationsProps {
   variant?: "light" | "dark"
 }
 
-export const AllNotifications = ({ notifications, deleteNotification, variant = "dark" }: AllNotificationsProps) => {
+export const AllNotifications = ({ notifications,  variant = "dark" }: AllNotificationsProps) => {
   const all = notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
   const itemBgClass = variant === "dark" ? "bg-zinc-700 hover:bg-zinc-600" : "bg-gray-100 hover:bg-gray-200"
   const itemTextClass = variant === "dark" ? "text-white" : "text-gray-900"
   const timeTextClass = variant === "dark" ? "text-gray-400" : "text-gray-500"
-  const deleteButtonClass =
-    variant === "dark"
-      ? "text-gray-400 hover:text-red-400 hover:bg-zinc-600"
-      : "text-gray-500 hover:text-red-600 hover:bg-gray-200"
-
+  
   return (
     <div className="space-y-2">
       {all.length === 0 ? (

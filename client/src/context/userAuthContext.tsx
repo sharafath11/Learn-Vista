@@ -35,17 +35,15 @@ useEffect(() => {
   const router = useRouter();
 
   const fetchUserData = useCallback(async () => {
-    try {
-      const res = await UserAPIMethods.fetchUser();
-      if (res.ok) {
-        setUser(res.data);
-      } else {
-        router.push("/user/login");
-      }
-    } catch (error) {
-      router.push("/user/login");
-    }
-  }, [router]);
+  const res = await UserAPIMethods.fetchUser();
+
+  if (res?.ok) {
+    setUser(res.data);
+  } else {
+    router.push("/user/login");
+  }
+}, [router]);
+
   const fetchProgress = async () => {
     const res = await UserAPIMethods.getUserProgress();
     if (res.ok) setProgress(res.data);

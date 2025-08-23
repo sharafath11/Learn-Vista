@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { BookOpen, Star, Play, Award } from "lucide-react";
+import { BookOpen, Star,Award } from "lucide-react";
 import { getRandomUnsplashImage } from "@/src/utils/unsplash";
-import { useUserContext } from "@/src/context/userAuthContext";
+import Image from "next/image";
 
 export default function HeroSection() {
   const [randomImage, setRandomImage] = useState<string | null>(null);
@@ -69,7 +69,7 @@ export default function HeroSection() {
             <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 shadow-2xl border border-gray-100">
               {randomImage && (
                 <div className="mb-6 rounded-xl overflow-hidden h-64">
-                  <img
+                  <Image
                     src={randomImage}
                     alt="Random abstract image"
                     className="w-full h-full object-cover"

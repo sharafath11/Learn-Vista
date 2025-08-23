@@ -18,6 +18,7 @@ import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast"
 import { IConcern } from "@/src/types/concernTypes"
 import { useAdminContext } from "@/src/context/adminContext"
+import Image from "next/image"
 
 interface ConcernModalProps {
   concern: IConcern | null
@@ -190,7 +191,7 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
 
           <div className="flex justify-center items-center p-4">
             {mediaType === "image" ? (
-              <img src={mediaUrl} alt="Preview" className="max-h-[60vh] rounded-lg" />
+              <Image src={mediaUrl} alt="Preview" className="max-h-[60vh] rounded-lg" />
             ) : mediaType === "audio" ? (
               <audio controls className="w-full">
                 <source src={mediaUrl} />

@@ -115,6 +115,7 @@ export function DailyTaskCard({ task, taskId }: Props) {
       mediaRecorder.start();
       setIsRecording(true);
     } catch (error) {
+      console.warn(error)
       showInfoToast("Microphone access denied or not available.");
     }
   };

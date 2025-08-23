@@ -1,6 +1,5 @@
 "use client"
-import { ICourse } from "@/src/types/courseTypes"
-import { IComment, IMentorComments } from "@/src/types/lessons"
+import {  IMentorComments } from "@/src/types/lessons"
 import { User, Clock, BookOpen } from "lucide-react"
 
 interface CommentCardProps {

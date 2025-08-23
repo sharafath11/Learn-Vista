@@ -8,11 +8,9 @@ import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { showSuccessToast } from "@/src/utils/Toast";
 import Cheader from "./header";
 import { Button } from "@/src/components/shared/components/ui/button";
-import { Badge } from "@/src/components/shared/components/ui/badge";
 import { Card } from "@/src/components/shared/components/ui/card";
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { useRouter } from "next/navigation";
-import { IReson } from "@/src/types/commonTypes";
 import { ConcernModal } from "./concernModal";
 import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 
@@ -90,19 +88,6 @@ export default function CoursesAdminPage() {
       setTotalCourses(res.data.total);
     }
   };
-
-  const toggleCourseStatus = async (id: string, status: boolean) => {
-    const res = await AdminAPIMethods.blockCours(id, !status);
-    if (res.ok) {
-      showSuccessToast(res.msg);
-      setCourses(
-        courses.map((prev) =>
-          prev.id === id ? { ...prev, isBlock: !status } : prev
-        )
-      );
-    }
-  };
-
   const handleEditCourse = (courseId: string) => {
     router.push(`/admin/dashboard/courses/edit/${courseId}`);
   };

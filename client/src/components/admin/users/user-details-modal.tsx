@@ -7,7 +7,6 @@ import {
   FiCalendar,
   FiMail,
   FiUser,
-  FiShield,
   FiAward,
   FiAlertTriangle,
 } from "react-icons/fi"
@@ -30,6 +29,7 @@ import { Button } from "@/src/components/shared/components/ui/button"
 import Link from "next/link"
 import { CustomAlertDialog } from "../../custom-alert-dialog"
 import { AdminAPIMethods } from "@/src/services/methods/admin.api"
+import Image from "next/image"
 
 interface UserDetailsModalProps {
   user: IUser | null
@@ -79,7 +79,7 @@ export const UserDetailsModal = ({
             <CardContent>
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                  <img
+                  <Image
                     src={user.profilePicture ?? ""}
                     alt={user.username}
                     className="w-full h-full object-cover"

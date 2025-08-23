@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react"
 import { IConcern } from "@/src/types/concernTypes"
-import { ICourse } from "@/src/types/courseTypes"
 import {
   Card,
   CardContent,
@@ -23,6 +22,7 @@ import {
   XCircle,
   Play
 } from "lucide-react"
+import Image from "next/image"
 
 type ConcernStatus = "open" | "in-progress" | "resolved"
 
@@ -230,7 +230,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
       <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
         <DialogContent className="bg-gray-900 border border-gray-700 max-w-xl mx-auto">
           {previewImage && (
-            <img
+            <Image
               src={previewImage}
               alt="Preview"
               className="rounded-lg max-h-[80vh] mx-auto"

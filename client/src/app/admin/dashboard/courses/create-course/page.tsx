@@ -14,7 +14,7 @@ import { ICategory } from "@/src/types/categoryTypes"
 export default function CreateCoursePage() {
   const route = useRouter()
   const [categories,setCategories]=useState<ICategory[]>([])
-  const { cat, setCourses, } = useAdminContext()
+  const {setCourses, } = useAdminContext()
   const [mentors, setMentors] = useState<IMentor[]>();
   useEffect(() => {
     fetchAllMentors()

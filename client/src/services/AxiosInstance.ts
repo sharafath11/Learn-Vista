@@ -26,7 +26,6 @@ const handleResponseCompletion = () => {
   }
 };
 
-// Token refresh handling
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (value: unknown) => void;

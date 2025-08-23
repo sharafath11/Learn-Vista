@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
 import { Clock, Code, FileText, Info, Play } from "lucide-react"
-import { showErrorToast } from "@/src/utils/Toast"
 import { ILessons } from "@/src/types/lessons"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { IUserLessonProgress } from "@/src/types/userProgressTypes"
+import Image from "next/image"
 
 export default function LessonList({ courseId }: { courseId: string }) {
   const { fetchLessons } = useUserContext()
@@ -15,11 +15,10 @@ export default function LessonList({ courseId }: { courseId: string }) {
   const [lessons, setLessons] = useState<ILessons[]>([])
   const [lessonProgressMap, setLessonProgressMap] = useState<Map<string, IUserLessonProgress>>(new Map())
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
  const getData = async (currentCourseId: string) => {
   setLoading(true)
-  setError(null)
+  
   try {
     const data = await fetchLessons(currentCourseId);
     setLessons(data.lessons || [])
@@ -35,7 +34,7 @@ export default function LessonList({ courseId }: { courseId: string }) {
 
 useEffect(() => {
   getData(courseId)
-}, [])
+},[])
 
   const handleLessonClick = (lessonId: string) => {
     router.push(`/user/sessions/lessons/${lessonId}`)
@@ -77,7 +76,7 @@ useEffect(() => {
           >
             <div className="relative">
               <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-t-lg overflow-hidden">
-                <img
+                <Image
                   src={lesson.thumbnail || `/placeholder.svg?height=200&width=400&text=Lesson ${lesson.title}`}
                   alt={lesson.title}
                   className="w-full h-full object-cover"

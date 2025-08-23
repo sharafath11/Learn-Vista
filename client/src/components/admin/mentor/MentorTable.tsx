@@ -32,7 +32,7 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
 
   useEffect(() => {
     fetchMentors();
-  }, [debouncedSearchTerm, sortOrder, currentPage, statusFilter]);
+  },[debouncedSearchTerm, sortOrder, currentPage, statusFilter]);
 
   const fetchMentors = async () => {
     const filters: MentorFilters = {};

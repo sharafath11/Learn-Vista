@@ -54,34 +54,31 @@ export default function CategoriesList() {
   }, [searchTerm]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      setIsLoading(true);
-      try {
-       const filters: ICategoryFilters = {};
-        if (statusFilter !== "All") {
-          filters.isBlock = statusFilter === "Blocked";
-        }
+  const fetchCategories = async () => {
+    setIsLoading(true);
 
-        const res = await AdminAPIMethods.getGetegories({
-          page: currentPage,
-          limit: categoriesPerPage,
-          search: debouncedSearchTerm,
-          sort: { createdAt: sortOrder === "asc" ? 1 : -1 },
-          filters,
-        });
+    const filters: ICategoryFilters = {};
+    if (statusFilter !== "All") {
+      filters.isBlock = statusFilter === "Blocked";
+    }
+    const res = await AdminAPIMethods.getGetegories({
+      page: currentPage,
+      limit: categoriesPerPage,
+      search: debouncedSearchTerm,
+      sort: { createdAt: sortOrder === "asc" ? 1 : -1 },
+      filters,
+    });
+    if (res.ok) {
+      setCategories(res.data.data);
+      setTotalPages(res.data.totalPages);
+    }
 
-        if (res.ok) {
-          setCategories(res.data.data);
-          setTotalPages(res.data.totalPages);
-        }
-      } catch (error) {
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    setIsLoading(false);
+  };
 
-    fetchCategories();
-  }, [debouncedSearchTerm, statusFilter, sortOrder, currentPage]);
+  fetchCategories(); 
+}, [debouncedSearchTerm, statusFilter, sortOrder, currentPage]);
+
 
  const confirmToggleBlock = async () => {
     if (!selectedCategory) return;

@@ -45,7 +45,7 @@ export default function LiveStarterPage() {
   const courseId = params?.sessionId as string;
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then(handleDevices);
-  }, []);
+  },[]);
 
   const startLiveStream = async () => {
     const liveId=localStorage.getItem("liveId")
