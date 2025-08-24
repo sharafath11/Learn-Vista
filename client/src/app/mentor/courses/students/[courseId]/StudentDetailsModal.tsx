@@ -2,7 +2,7 @@
 
 import { IUser } from "@/src/types/userTypes"
 import { format } from "date-fns"
-import { Mail, CalendarDays, BookMarked, Lock, CheckCircle2, XCircle } from "lucide-react"
+import { Mail, CalendarDays, Lock, CheckCircle2, XCircle } from "lucide-react"
 import {
   Dialog,
   DialogContent,

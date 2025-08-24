@@ -7,21 +7,22 @@ export default function RouteLoader() {
   const [bgImage, setBgImage] = useState("");
   const [progress, setProgress] = useState(0);
 
-  useEffect(() => {
-    let progressInterval: NodeJS.Timeout;
-    getRandomUnsplashImage().then(setBgImage);
-    progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + Math.floor(Math.random() * 8) + 3;
-      });
-    }, 200);
+ useEffect(() => {
+  const progressInterval = setInterval(() => {
+    setProgress((prev) => {
+      if (prev >= 100) {
+        clearInterval(progressInterval);
+        return 100;
+      }
+      return prev + Math.floor(Math.random() * 8) + 3;
+    });
+  }, 200);
 
-    return () => clearInterval(progressInterval);
-  }, []);
+  getRandomUnsplashImage().then(setBgImage);
+
+  return () => clearInterval(progressInterval);
+}, []);
+
 
   return (
     <div

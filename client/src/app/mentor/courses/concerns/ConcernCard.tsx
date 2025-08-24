@@ -92,6 +92,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
         minute: "2-digit"
       })
     } catch (error) {
+      console.warn(error)
       return "Invalid Date"
     }
   }

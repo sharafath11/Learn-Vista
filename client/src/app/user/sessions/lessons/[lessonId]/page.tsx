@@ -21,7 +21,7 @@ export default function LessonPage() {
   const [lesson, setLesson] = useState<ILessons | null>(null)
   const [videoUrl, setVideoUrl] = useState<string>("")
   const [questions, setQuestions] = useState<IQuestions[]>([]);
-  const [lessonProgress, setLessonProgress] = useState<IUserLessonProgress | null>(null);
+  const [,setLessonProgress] = useState<IUserLessonProgress | null>(null);
 
   const [videoWatchedDuration, setVideoWatchedDuration] = useState<number>(0)
   const [videoTotalDuration, setVideoTotalDuration] = useState<number>(0)

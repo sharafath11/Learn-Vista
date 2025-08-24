@@ -55,7 +55,7 @@ export default function LetsFunPSC() {
       } else {
         throw new Error("API Error")
       }
-    } catch (error) {
+    } catch{
       setApiUnavailable(true)
       showErrorToast("Service temporarily unavailable")
     } finally {
@@ -154,7 +154,7 @@ export default function LetsFunPSC() {
               <Trophy className="w-6 h-6 text-white" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Let's Fun PSC
+              {`Let's Fun PSC`}
             </h1>
           </div>
           <p className="text-gray-600 text-lg">Test your knowledge with PSC practice questions</p>

@@ -6,7 +6,6 @@ import Image from "next/image"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { IcourseFromResponse} from "@/src/types/courseTypes"
 import { format } from "date-fns"
-import { useRouter } from "next/navigation"
 
 interface CourseDetailsModalProps {
   course: IcourseFromResponse

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { format, parseISO, addMinutes, isBefore } from "date-fns"
-import { Calendar, Clock, Users, Play, Radio, ChevronRight, CheckCircle, Archive } from "lucide-react"
+import { Calendar, Clock,Play, Radio, ChevronRight, CheckCircle, Archive } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useMentorContext } from "@/src/context/mentorContext"
 import { Button } from "@/src/components/shared/components/ui/button"
@@ -33,7 +33,7 @@ export default function UpcomingSessions() {
       const courseEndDate = parseISO(endDate)
       return currentTime >= courseStartDate && currentTime <= courseEndDate && 
              currentTime >= startWindow && currentTime <= endWindow
-    } catch (err) {
+    } catch {
       return false
     }
   }
@@ -45,7 +45,7 @@ export default function UpcomingSessions() {
       const today = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate())
       const sessionEnd = new Date(sessionEndDate.getFullYear(), sessionEndDate.getMonth(), sessionEndDate.getDate())
       return isBefore(sessionEnd, today)
-    } catch (err) {
+    } catch{
       return false
     }
   }

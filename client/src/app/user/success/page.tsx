@@ -47,7 +47,7 @@ export default function SuccessPage() {
       <div className="flex flex-col items-center justify-center h-screen text-center">
         <h2 className="text-2xl font-semibold text-red-600">Invalid or Missing Session</h2>
         <p className="mt-2 text-gray-500">
-          We couldn't find your donation session. Please try again.
+         {` We couldn't find your donation session. Please try again.`}
         </p>
       </div>
     );

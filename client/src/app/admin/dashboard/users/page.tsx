@@ -46,7 +46,7 @@ const [selectedStatus, setSelectedStatus] = useState<boolean>(false);
       limit:2,
       sort,
     });
-  }, [currentPage, debouncedSearchTerm, statusFilter, sortOrder]);
+  }, [currentPage, debouncedSearchTerm, statusFilter, sortOrder,getAllUsers]);
 
   const totalPages = Math.ceil(totalUsersCount / usersPerPage);
 function handleBlockClick(id: string, status: boolean) {
@@ -54,8 +54,7 @@ function handleBlockClick(id: string, status: boolean) {
   setSelectedStatus(status);
   setIsDialogOpen(true);
 }
-
-  async function confirmBlockToggle() {
+async function confirmBlockToggle() {
   if (!selectedUserId) return;
 
   const res = await AdminAPIMethods.blockUser({ id: selectedUserId, status: selectedStatus });
@@ -65,10 +64,16 @@ function handleBlockClick(id: string, status: boolean) {
         user.id === selectedUserId ? { ...user, isBlocked: selectedStatus } : user
       )
     );
-    selectedStatus ? showInfoToast("User blocked") : showSuccessToast("User unblocked");
+
+    if (selectedStatus) {
+      showInfoToast("User blocked");
+    } else {
+      showSuccessToast("User unblocked");
+    }
   }
   setIsDialogOpen(false);
 }
+
 
   const getRoleColor = (role: string) => {
     switch (role) {

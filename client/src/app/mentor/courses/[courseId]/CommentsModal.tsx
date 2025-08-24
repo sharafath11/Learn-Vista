@@ -1,56 +1,38 @@
-// src/app/mentor/courses/[courseId]/CommentsModal.tsx
 "use client";
-
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/src/components/shared/components/ui/dialog";
 import { showErrorToast } from "@/src/utils/Toast";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { formatDistanceToNow } from 'date-fns'; 
 import { IComment } from "@/src/types/lessons";
-
-
 interface CommentsModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   lessonId: string;
 }
-
 export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
   const [comments, setComments] = useState<IComment[]>([]);
-  const [newComment, setNewComment] = useState("");
+  const [, setNewComment] = useState("");
   const [loadingComments, setLoadingComments] = useState(true);
-
   useEffect(() => {
-    if (open && lessonId) {
-      fetchComments();
-    } else {
-      setComments([]);
-      setNewComment("");
-    }
-  }, [open, lessonId]);
-
   const fetchComments = async () => {
-    setLoadingComments(true);
-    try {
-     
-        const res = await MentorAPIMethods.getCommentsByLessonId(lessonId);
-      if (res.ok) {
-        setComments(res.data);
-      } else {
-        showErrorToast("Failed to fetch comments. Please try again.");
-      }
-    } catch (err) {
-      console.warn(err)
-      showErrorToast("An unexpected error occurred while fetching comments.");
-    } finally {
-      setLoadingComments(false);
-    }
-  };
-
- 
-  
-
-  return (
+  setLoadingComments(true);
+  const res = await MentorAPIMethods.getCommentsByLessonId(lessonId);
+  if (res.ok) {
+    setComments(res.data);
+  } else {
+    showErrorToast("Failed to fetch comments. Please try again.");
+  }
+  setLoadingComments(false);
+};
+  if (open && lessonId) {
+    fetchComments();
+  } else {
+    setComments([]);
+    setNewComment("");
+  }
+},[open, lessonId]);
+return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[600px] bg-gray-900 text-white border-gray-700 p-6">
         <DialogHeader>
@@ -59,8 +41,6 @@ export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
             Read comments from other users or share your thoughts.
           </DialogDescription>
         </DialogHeader>
-
-        {/* Comments Display Area */}
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar border-b border-gray-700 pb-4">
           {loadingComments ? (
             <p className="text-gray-400 text-center py-8">Loading comments...</p>
@@ -82,9 +62,6 @@ export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
             ))
           )}
         </div>
-
-        {/* Comment Input Area */}
-        
       </DialogContent>
     </Dialog>
   );

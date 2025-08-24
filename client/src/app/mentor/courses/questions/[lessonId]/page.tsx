@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs";
@@ -19,20 +19,21 @@ export default function MentorQuestionManagePage() {
   const [currentTab, setCurrentTab] = useState<QuestionType>("theory");
   const params = useParams();
   const lessonId = params.lessonId as string;
+const fetchQuestions = useCallback(async () => {
+  const res = await MentorAPIMethods.getQustion(lessonId);
+  if (res.ok) {
+    setQuestions(res.data || []);
+  } else {
+    showErrorToast(res.error || "Failed to fetch questions");
+    setQuestions([]);
+  }
+}, [lessonId]); 
 
-  useEffect(() => {
-    fetchQuestions();
-  }, [lessonId]);
+useEffect(() => {
+  fetchQuestions();
+}, [fetchQuestions]);
 
-  const fetchQuestions = async () => {
-    const res = await MentorAPIMethods.getQustion(lessonId);
-    if (res.ok) {
-      setQuestions(res.data || []);
-    } else {
-      showErrorToast(res.error || "Failed to fetch questions");
-      setQuestions([]);
-    }
-  };
+  
 
   const questionTypes: QuestionType[] = ["theory", "practical", "mcq"];
   
@@ -40,9 +41,10 @@ export default function MentorQuestionManagePage() {
     return questions?.filter((q) => q.type === type) || [];
   };
 
-  const theoryQuestions = useMemo(() => filteredQuestions("theory"),[questions]);
-  const practicalQuestions = useMemo(() => filteredQuestions("practical"),[questions]);
-  const mcqQuestions = useMemo(() => filteredQuestions("mcq"), [questions]);
+const theoryQuestions = questions?.filter(q => q.type === "theory");
+const practicalQuestions = questions?.filter(q => q.type === "practical");
+const mcqQuestions = questions?.filter(q => q.type === "mcq");
+
 
   const totalQuestionsCount = questions?.length || 0;
   const hasNoQuestions = totalQuestionsCount === 0;
@@ -213,7 +215,7 @@ export default function MentorQuestionManagePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-slate-100">{theoryQuestions.length}</div>
+                <div className="text-2xl font-bold text-slate-100">{theoryQuestions?.length}</div>
                 <div className="text-sm text-slate-400">Total questions</div>
               </CardContent>
             </Card>
@@ -226,7 +228,7 @@ export default function MentorQuestionManagePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-slate-100">{practicalQuestions.length}</div>
+                <div className="text-2xl font-bold text-slate-100">{practicalQuestions?.length}</div>
                 <div className="text-sm text-slate-400">Total questions</div>
               </CardContent>
             </Card>
@@ -239,7 +241,7 @@ export default function MentorQuestionManagePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-slate-100">{mcqQuestions.length}</div>
+                <div className="text-2xl font-bold text-slate-100">{mcqQuestions?.length}</div>
                 <div className="text-sm text-slate-400">Total questions</div>
               </CardContent>
             </Card>

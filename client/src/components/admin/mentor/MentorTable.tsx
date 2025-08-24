@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import MentorRow from './MentorRow';
 import { useAdminContext } from '@/src/context/adminContext';
@@ -30,30 +30,30 @@ const MentorTable: FC<MentorTableProps> = ({ theme }) => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  useEffect(() => {
-    fetchMentors();
-  },[debouncedSearchTerm, sortOrder, currentPage, statusFilter]);
+ const fetchMentors = useCallback(async () => {
+  const filters: MentorFilters = {};
 
-  const fetchMentors = async () => {
-    const filters: MentorFilters = {};
-  
-    if (statusFilter !== 'All') {
-      filters.status = statusFilter.toLowerCase() as MentorStatus;
-    }
-  
-    const res = await AdminAPIMethods.fetchMentor({
-      limit:2,
-      page: currentPage,
-      search: debouncedSearchTerm,
-      sort: { username: sortOrder === 'asc' ? 1 : -1 },
-      filters,
-    });
-  
-    if (res.ok) {
-      setMentors(res.data.data);
-      setTotalMentors(res.data.total);
-    }
-  };
+  if (statusFilter !== "All") {
+    filters.status = statusFilter.toLowerCase() as MentorStatus;
+  }
+
+  const res = await AdminAPIMethods.fetchMentor({
+    limit: mentorsPerPage,
+    page: currentPage,
+    search: debouncedSearchTerm,
+    sort: { username: sortOrder === "asc" ? 1 : -1 },
+    filters,
+  });
+
+  if (res.ok) {
+    setMentors(res.data.data);
+    setTotalMentors(res.data.total);
+  }
+}, [statusFilter, currentPage, debouncedSearchTerm, sortOrder, setMentors, setTotalMentors]);
+
+useEffect(() => {
+  fetchMentors();
+}, [fetchMentors]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

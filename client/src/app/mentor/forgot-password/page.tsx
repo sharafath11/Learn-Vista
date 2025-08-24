@@ -29,35 +29,37 @@ export default function ForgotPassword() {
     return regex.test(email)
   }, [])
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault()
-      setErrors({})
-      if (!email.trim()) {
-        setErrors({ email: "Email is required" })
-        return
-      }
+const handleSubmit = useCallback(
+  async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({});
 
-      if (!validateEmail(email)) {
-        setErrors({ email: "Please enter a valid email address" })
-        return
-      }
-      setIsSubmitting(true)
-      try {
-        const res = await MentorAPIMethods.forgotPassword(email);
-        if (res.ok) {
-          setIsSuccess(true);
-          showSuccessToast(res.msg)
-        }
-        
-      } catch (error) {
-        setErrors({ email: "Something went wrong. Please try again." })
-      } finally {
-        setIsSubmitting(false)
-      }
-    },
-    [email, validateEmail],
-  )
+    if (!email.trim()) {
+      setErrors({ email: "Email is required" });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setErrors({ email: "Please enter a valid email address" });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const res = await MentorAPIMethods.forgotPassword(email);
+
+    if (res.ok) {
+      setIsSuccess(true);
+      showSuccessToast(res.msg);
+    } else {
+      setErrors({ email: res.error || "Something went wrong. Please try again." });
+    }
+
+    setIsSubmitting(false);
+  },
+  [email, validateEmail]
+);
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 sm:px-6 lg:px-8">
@@ -87,7 +89,7 @@ export default function ForgotPassword() {
             </div>
             <h2 className="mt-6 text-3xl font-bold text-gray-900">Reset your password</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Enter your email address and we'll send you a link to reset your password.
+              {`Enter your email address and we'll send you a link to reset your password.`}
             </p>
           </div>
 
@@ -103,7 +105,7 @@ export default function ForgotPassword() {
                 </div>
                 <h3 className="text-lg font-medium text-gray-900">Password reset email sent</h3>
                 <div className="mt-2 text-sm text-gray-600">
-                  <p>We've sent a password reset link to:</p>
+                  <p>We&apos;ve sent a password reset link to:</p>
                   <p className="font-medium text-gray-900 mt-1">{email}</p>
                   <p className="mt-2">Please check your inbox and follow the instructions.</p>
                 </div>

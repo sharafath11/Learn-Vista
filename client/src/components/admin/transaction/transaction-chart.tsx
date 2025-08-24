@@ -27,7 +27,7 @@ interface TransactionChartProps {
   filters: FilterOptions
 }
 
-export function TransactionChart({ transactions, loading, filters }: TransactionChartProps) {
+export function TransactionChart({ transactions, loading,}: TransactionChartProps) {
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(amount)
 

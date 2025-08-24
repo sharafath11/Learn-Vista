@@ -1,10 +1,9 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect,useState } from "react"
 import { MessageSquare, Search } from "lucide-react"
 import { useMentorContext } from "@/src/context/mentorContext"
-import { IComment, IMentorComments } from "@/src/types/lessons"
-import { ICourse } from "@/src/types/courseTypes"
+import {  IMentorComments } from "@/src/types/lessons"
 import CommentCard from "./comment-card"
 import useDebounce from "@/src/hooks/useDebouncing"
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
@@ -40,25 +39,30 @@ export default function ReviewsComponent() {
   }
 
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const res = await MentorAPIMethods.getAllComments({
-          sortBy,
-          search: debouncedSearch,
-          page,
-          limit: LIMIT,
-          courseId: filterByCourse !== "all" ? filterByCourse : undefined,
-        })
-        setComments(res.data.comments)
-        setTotalPages(res.data.pagination.totalPages)
-      } catch (err) {
-      } finally {
-        setLoading(false)
-      }
-    }
+  let isMounted = true;
+  setLoading(true);
 
-    fetchComments()
-  }, [sortBy, filterByCourse, debouncedSearch, page]);
+  (async () => {
+    const res = await MentorAPIMethods.getAllComments({
+      sortBy,
+      search: debouncedSearch,
+      page,
+      limit: LIMIT,
+      courseId: filterByCourse !== "all" ? filterByCourse : undefined,
+    });
+
+    if (isMounted) {
+      setComments(res.data.comments);
+      setTotalPages(res.data.pagination.totalPages);
+      setLoading(false);
+    }
+  })();
+
+  return () => {
+    isMounted = false;
+  };
+},[sortBy, filterByCourse, debouncedSearch, page]);
+
 
 
   return (

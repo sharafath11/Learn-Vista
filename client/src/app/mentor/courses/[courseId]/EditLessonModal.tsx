@@ -294,6 +294,7 @@ export function EditLessonModal({
       onLessonUpdated();
       setOpen(false);
     } catch (error) {
+      console.warn(error)
       showErrorToast("Failed to update lesson.");
     } finally {
       setIsSaving(false);

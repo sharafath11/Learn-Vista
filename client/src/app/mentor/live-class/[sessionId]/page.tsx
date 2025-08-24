@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Webcam from "react-webcam";
 import { Button } from "@/src/components/shared/components/ui/button";
 import {
@@ -28,24 +28,25 @@ export default function LiveStarterPage() {
   const [selectedDevice, setSelectedDevice] = useState<string>("");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const handleDevices = (mediaDevices: MediaDeviceInfo[]) => {
-    const videoDevices = mediaDevices
-      .filter(({ kind }) => kind === "videoinput")
-      .map((device) => ({
-        deviceId: device.deviceId,
-        label: device.label || `Camera ${devices.length + 1}`,
-      }));
-    setDevices(videoDevices);
-    if (videoDevices.length > 0) {
-      setSelectedDevice(videoDevices[0].deviceId);
-    }
-    setIsLoading(false);
-  };
+ const handleDevices = useCallback((mediaDevices: MediaDeviceInfo[]) => {
+  const videoDevices = mediaDevices
+    .filter(({ kind }) => kind === "videoinput")
+    .map((device, index) => ({
+      deviceId: device.deviceId,
+      label: device.label || `Camera ${index + 1}`,
+    }));
+  setDevices(videoDevices);
+  if (videoDevices.length > 0) {
+    setSelectedDevice(videoDevices[0].deviceId);
+  }
+  setIsLoading(false);
+}, [setDevices, setSelectedDevice, setIsLoading]);
   const params = useParams();
   const courseId = params?.sessionId as string;
-  useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then(handleDevices);
-  },[]);
+useEffect(() => {
+  navigator.mediaDevices.enumerateDevices().then(handleDevices);
+}, [handleDevices]);
+
 
   const startLiveStream = async () => {
     const liveId=localStorage.getItem("liveId")

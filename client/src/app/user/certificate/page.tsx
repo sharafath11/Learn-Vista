@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import CertificateFilters, { CertificateFilterValues } from "./CertificateFilters"
 import CertificateCard from "./CertificateCard"
 import { Loader2 } from "lucide-react"
@@ -16,27 +16,25 @@ export default function CertificateListPage() {
     status: "all",
   })
 
-  const fetchCertificates = async () => {
-    try {
-      setLoading(true)
-      const queryParams: Record<string, string> = {
-        search: filters.search,
-        sort: filters.sort,
-      }
-      if (filters.status !== "all") {
-        queryParams.status = filters.status
-      }
-      const data = await UserAPIMethods.getCertificates(queryParams)
-      setCertificates(data.data.data)
-    } catch (error) {
-    } finally {
-      setLoading(false)
+  const fetchCertificates = useCallback(async () => {
+    setLoading(true)
+
+    const queryParams: Record<string, string> = {
+      search: filters.search,
+      sort: filters.sort,
     }
-  }
+    if (filters.status !== "all") {
+      queryParams.status = filters.status
+    }
+
+    const data = await UserAPIMethods.getCertificates(queryParams)
+    setCertificates(data.data.data)
+    setLoading(false)
+  }, [filters])
 
   useEffect(() => {
     fetchCertificates()
-  },[filters])
+  }, [fetchCertificates])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-200 p-6 md:p-10">

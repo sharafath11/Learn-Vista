@@ -30,38 +30,36 @@ export default function ConcernsPage() {
     total: 0
   })
 
- const fetchConcernsData = async () => {
-  setIsLoading(true);
+ useEffect(() => {
+  const fetchConcernsData = async () => {
+    setIsLoading(true);
 
-  const params = {
-    search: debouncedSearchTerm,
-    status: statusFilter !== "all" ? statusFilter : undefined,
-    courseId: courseFilter !== "all" ? courseFilter : undefined,
-    sortBy,
-    sortOrder,
-    page: pagination.page,
-    pageSize: pagination.pageSize
+    const params = {
+      search: debouncedSearchTerm,
+      status: statusFilter !== "all" ? statusFilter : undefined,
+      courseId: courseFilter !== "all" ? courseFilter : undefined,
+      sortBy,
+      sortOrder,
+      page: pagination.page,
+      pageSize: pagination.pageSize,
+    };
+
+    const res = await MentorAPIMethods.getConcern(params);
+
+    if (res.ok) {
+      setConcerns(res.data.data);
+      setPagination((prev) => ({
+        ...prev,
+        total: res.data.total,
+      }));
+    }
+
+    setIsLoading(false);
   };
 
-  const res = await MentorAPIMethods.getConcern(params);
+  fetchConcernsData();
+}, [pagination.page, debouncedSearchTerm, statusFilter, courseFilter, sortBy, sortOrder, pagination.pageSize]);
 
-  if (res.ok) {
-    setConcerns(res.data.data);
-    setPagination(prev => ({
-      ...prev,
-      total: res.data.total
-    }));
-  }
-
-  setIsLoading(false);
-};
-
-  useEffect(() => {
-    setPagination(prev => ({ ...prev, page: 1 }))
-  }, [searchTerm, statusFilter, courseFilter, sortBy, sortOrder])
-  useEffect(() => {
-    fetchConcernsData()
-  }, [pagination.page, debouncedSearchTerm, statusFilter, courseFilter, sortBy, sortOrder])
 
   const statusCounts = {
     all: pagination.total,

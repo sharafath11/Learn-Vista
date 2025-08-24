@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { ILogin } from "@/src/types/authTypes";
@@ -15,54 +15,47 @@ export default function LoginForm() {
   const [data, setData] = useState<ILogin>({ email: "", password: "", googleId: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [autoSubmit, setAutoSubmit] = useState(false);
+  const [, setAutoSubmit] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const { setUser ,user,fetchUserData,refereshNotifcation} = useUserContext();
   const router = useRouter();
   const { data: session } = useSession();
 
-  useEffect(() => {
-    setIsMounted(true);
-     if(user) router.push("/user")
-  },[]);
+useEffect(() => {
+  setIsMounted(true);
+  if (user) router.push("/user");
+}, [router, user]);
+;
 
   useEffect(() => {
-    if (session?.user?.email && session?.user?.id && !data.googleId) {
-      setData({
-        email: session.user.email,
-        password: "",
-        googleId: session.user.id,
-      });
-      setAutoSubmit(true);
-    }
-  },[session]);
+  if (session?.user?.email && session?.user?.id && !data.googleId) {
+    setData({
+      email: session.user.email,
+      password: "",
+      googleId: session.user.id,
+    });
+    setAutoSubmit(true);
+  }
+}, [session, data.googleId]);
 
-  useEffect(() => {
-    if (autoSubmit) {
-      handleSubmit();
-    }
-  },[autoSubmit]);
 
-  const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
-    if (e) e.preventDefault();
-    setIsLoading(true);
-    try {
-      const res = await UserAPIMethods.loginUser(data);
-      if (res.ok) {
-        setUser(res.data);
-        showSuccessToast(res.msg);
-        await fetchUserData();
-        await refereshNotifcation()
-        router.push("/user");
-      }
-      
-      setIsLoading(false);
-      
-    } finally {
-      setIsLoading(false);
+  const handleSubmit = useCallback(async (e?: React.FormEvent<HTMLFormElement>) => {
+  if (e) e.preventDefault();
+  setIsLoading(true);
+  try {
+    const res = await UserAPIMethods.loginUser(data);
+    if (res.ok) {
+      setUser(res.data);
+      showSuccessToast(res.msg);
+      await fetchUserData();
+      await refereshNotifcation();
+      router.push("/user");
     }
-  };
+  } finally {
+    setIsLoading(false);
+  }
+}, [data, fetchUserData, refereshNotifcation, router, setUser]);
 
   const handleGoogleAuth = async () => {
     await signIn("google");

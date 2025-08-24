@@ -61,7 +61,7 @@ export default function DailyTaskPage() {
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Trophy className="h-5 w-5 text-yellow-500" />
-              Today's Progress
+             {`Today's Progress`}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -103,7 +103,8 @@ export default function DailyTaskPage() {
             <CardContent className="text-center p-6">
               <Trophy className="h-12 w-12 mx-auto mb-4" />
               <h3 className="text-xl font-bold mb-2">Congratulations! 🎉</h3>
-              <p className="text-green-100">You've completed all tasks for today!</p>
+              <p className="text-green-100">You&apos;ve completed all tasks for today!</p>
+
             </CardContent>
           </Card>
         )}

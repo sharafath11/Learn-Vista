@@ -105,7 +105,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
                     toast.error("Disconnected from server. Please refresh.");
                 });
 
-            } catch (err) {
+            } catch  {
                 toast.error("Failed to initialize stream");
             }
         };
@@ -215,7 +215,7 @@ export default function MentorStream({ roomId }: { roomId: string }) {
                 setIsScreenSharing(true);
                 toast.success("Screen sharing started");
             }
-        } catch (err) {
+        } catch{
             toast.error("Failed to toggle screen share. Ensure permissions are granted.");
         }
     };

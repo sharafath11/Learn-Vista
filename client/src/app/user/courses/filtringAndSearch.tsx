@@ -22,7 +22,7 @@ const CourseFilter: React.FC<CourseFilterProps> = ({ categories, onFilter }) => 
 
   useEffect(() => {
     onFilter({ search: debouncedSearch, category, sort })
-  },[debouncedSearch, category, sort])
+  },[debouncedSearch, category, sort,onFilter])
 
   return (
     <div className="w-full">

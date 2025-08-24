@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import StudentCard from "./studentsCard"
-import { useParams } from "next/navigation"
-import { IUser } from "@/src/types/userTypes"
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import StudentDetailsModal from "./StudentDetailsModal"
-import { Input } from "@/src/components/shared/components/ui/input"
+import { useCallback, useEffect, useState } from "react";
+import StudentCard from "./studentsCard";
+import { useParams } from "next/navigation";
+import { IUser } from "@/src/types/userTypes";
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
+import StudentDetailsModal from "./StudentDetailsModal";
+import { Input } from "@/src/components/shared/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/src/components/shared/components/ui/select"
+} from "@/src/components/shared/components/ui/select";
 import {
   Pagination,
   PaginationContent,
@@ -21,98 +21,98 @@ import {
   PaginationPrevious,
   PaginationNext,
   PaginationLink,
-} from "@/src/components/shared/components/ui/pagination"
-import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
-import { CustomAlertDialog } from "@/src/components/custom-alert-dialog"
+} from "@/src/components/shared/components/ui/pagination";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
+import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 
 interface FetchParams {
-  page?: number
-  limit?: number
-  search?: string
-  filters?: Record<string, any>
-  sort?: Record<string, 1 | -1>
+  page?: number;
+  limit?: number;
+  search?: string;
+  filters?: Record<string, any>;
+  sort?: Record<string, 1 | -1>;
 }
 
 export default function Page() {
-  const params = useParams()
-  const [students, setStudents] = useState<IUser[]>([])
-  const [totalStudents, setTotalStudents] = useState(0)
-  const [selectedStudent, setSelectedStudent] = useState<IUser | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [totalPages, setTotelPages] = useState<number>(0)
+  const params = useParams();
+  const [students, setStudents] = useState<IUser[]>([]);
+  const [totalStudents, setTotalStudents] = useState(0);
+  const [selectedStudent, setSelectedStudent] = useState<IUser | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [totalPages, setTotelPages] = useState<number>(0);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
-const [shouldBlock, setShouldBlock] = useState<boolean>(false);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(
+    null
+  );
+  const [shouldBlock, setShouldBlock] = useState<boolean>(false);
 
   const [fetchParams, setFetchParams] = useState<FetchParams>({
     page: 1,
     search: "",
     filters: {},
-    limit:2,
+    limit: 2,
     sort: { createdAt: -1 },
-  })
+  });
 
   const handleViewStudent = (student: IUser) => {
-    setSelectedStudent(student)
-    setIsModalOpen(true)
-  }
+    setSelectedStudent(student);
+    setIsModalOpen(true);
+  };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false)
-    setSelectedStudent(null)
-  }
+    setIsModalOpen(false);
+    setSelectedStudent(null);
+  };
 
-const handleToggleBlock = (id: string, block: boolean) => {
-  setSelectedStudentId(id);
-  setShouldBlock(block);
-  setIsConfirmOpen(true);
-};
-const confirmToggleBlock = async () => {
-  if (!selectedStudentId) return;
+  const handleToggleBlock = (id: string, block: boolean) => {
+    setSelectedStudentId(id);
+    setShouldBlock(block);
+    setIsConfirmOpen(true);
+  };
+  const confirmToggleBlock = async () => {
+    if (!selectedStudentId) return;
 
-  const res = await MentorAPIMethods.blockStudentInCourse(
-    params.courseId as string,
-    selectedStudentId,
-    shouldBlock
-  );
+    const res = await MentorAPIMethods.blockStudentInCourse(
+      params.courseId as string,
+      selectedStudentId,
+      shouldBlock
+    );
 
-  if (res.ok) {
-    showSuccessToast(res.msg);
-    fetchStudents();
-  } else {
-    showErrorToast(res.msg);
-  }
+    if (res.ok) {
+      showSuccessToast(res.msg);
+      fetchStudents();
+    } else {
+      showErrorToast(res.msg);
+    }
 
-  setIsConfirmOpen(false);
-  setSelectedStudentId(null);
-};
-
-  useEffect(() => {
-    fetchStudents()
-  },[fetchParams])
-
-  const fetchStudents = async () => {
+    setIsConfirmOpen(false);
+    setSelectedStudentId(null);
+  };
+  const fetchStudents = useCallback(async () => {
     const res = await MentorAPIMethods.getCourseStudents({
       courseId: params.courseId as string,
       ...fetchParams,
-    })
+    });
 
     if (res.ok) {
-      setStudents(res.data.students || [])
-      setTotalStudents(res.data.total || 0)
-      setTotelPages(res.data.totalPages)
+      setStudents(res.data.students || []);
+      setTotalStudents(res.data.total || 0);
+      setTotelPages(res.data.totalPages);
     } else {
-      showErrorToast(res.msg)
+      showErrorToast(res.msg);
     }
-  }
+  }, [params.courseId, fetchParams]);
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFetchParams((prev) => ({
       ...prev,
       search: e.target.value,
       page: 1,
-    }))
-  }
+    }));
+  };
 
   const handleStatusFilterChange = (value: string) => {
     setFetchParams((prev) => ({
@@ -122,23 +122,23 @@ const confirmToggleBlock = async () => {
         status: value === "all" ? undefined : value,
       },
       page: 1,
-    }))
-  }
+    }));
+  };
 
   const handleSortChange = (value: string) => {
     setFetchParams((prev) => ({
       ...prev,
       sort: { createdAt: value === "desc" ? -1 : 1 },
       page: 1,
-    }))
-  }
+    }));
+  };
 
   const handlePageChange = (page: number) => {
     setFetchParams((prev) => ({
       ...prev,
       page,
-    }))
-  }
+    }));
+  };
 
   return (
     <main className="min-h-screen bg-gray-950 p-6">
@@ -174,10 +174,7 @@ const confirmToggleBlock = async () => {
             </SelectContent>
           </Select>
 
-          <Select
-            onValueChange={handleSortChange}
-            defaultValue="desc"
-          >
+          <Select onValueChange={handleSortChange} defaultValue="desc">
             <SelectTrigger className="w-[180px] bg-gray-900 text-white border-gray-700">
               <SelectValue placeholder="Sort by date" />
             </SelectTrigger>
@@ -210,14 +207,18 @@ const confirmToggleBlock = async () => {
                     <PaginationPrevious
                       href="#"
                       onClick={(e) => {
-                        e.preventDefault()
+                        e.preventDefault();
                         if (fetchParams.page && fetchParams.page > 1) {
-                          handlePageChange(fetchParams.page - 1)
+                          handlePageChange(fetchParams.page - 1);
                         }
-                      } }
-                      className={fetchParams.page === 1
-                        ? "pointer-events-none opacity-50"
-                        : ""} size={undefined}                    />
+                      }}
+                      className={
+                        fetchParams.page === 1
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                      size={undefined}
+                    />
                   </PaginationItem>
 
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
@@ -226,13 +227,17 @@ const confirmToggleBlock = async () => {
                         <PaginationLink
                           href="#"
                           onClick={(e) => {
-                            e.preventDefault()
-                            handlePageChange(number)
-                          } }
+                            e.preventDefault();
+                            handlePageChange(number);
+                          }}
                           isActive={number === fetchParams.page}
-                          className={`${number === fetchParams.page
+                          className={`${
+                            number === fetchParams.page
                               ? "bg-white text-black font-semibold"
-                              : "bg-gray-800 text-white hover:bg-gray-700"} px-4 py-2 rounded-md transition`} size={undefined}                        >
+                              : "bg-gray-800 text-white hover:bg-gray-700"
+                          } px-4 py-2 rounded-md transition`}
+                          size={undefined}
+                        >
                           {number}
                         </PaginationLink>
                       </PaginationItem>
@@ -243,15 +248,18 @@ const confirmToggleBlock = async () => {
                     <PaginationNext
                       href="#"
                       onClick={(e) => {
-                        e.preventDefault()
-                        if (fetchParams.page &&
-                          fetchParams.page < totalPages) {
-                          handlePageChange(fetchParams.page + 1)
+                        e.preventDefault();
+                        if (fetchParams.page && fetchParams.page < totalPages) {
+                          handlePageChange(fetchParams.page + 1);
                         }
-                      } }
-                      className={fetchParams.page === totalPages
-                        ? "pointer-events-none opacity-50"
-                        : ""} size={undefined}                    />
+                      }}
+                      className={
+                        fetchParams.page === totalPages
+                          ? "pointer-events-none opacity-50"
+                          : ""
+                      }
+                      size={undefined}
+                    />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
@@ -280,21 +288,20 @@ const confirmToggleBlock = async () => {
         )}
       </div>
       <CustomAlertDialog
-  isOpen={isConfirmOpen}
-  onClose={() => setIsConfirmOpen(false)}
-  title={shouldBlock ? "Block Student" : "Unblock Student"}
-  description={
-    shouldBlock
-      ? "Are you sure you want to block this student from the course?"
-      : "Are you sure you want to unblock this student and allow access?"
-  }
-  onConfirm={confirmToggleBlock}
-  onCancel={() => setIsConfirmOpen(false)}
-  confirmText={shouldBlock ? "Block" : "Unblock"}
-  cancelText="Cancel"
-  variant={shouldBlock ? "warning" : "info"}
-/>
-
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        title={shouldBlock ? "Block Student" : "Unblock Student"}
+        description={
+          shouldBlock
+            ? "Are you sure you want to block this student from the course?"
+            : "Are you sure you want to unblock this student and allow access?"
+        }
+        onConfirm={confirmToggleBlock}
+        onCancel={() => setIsConfirmOpen(false)}
+        confirmText={shouldBlock ? "Block" : "Unblock"}
+        cancelText="Cancel"
+        variant={shouldBlock ? "warning" : "info"}
+      />
     </main>
-  )
+  );
 }

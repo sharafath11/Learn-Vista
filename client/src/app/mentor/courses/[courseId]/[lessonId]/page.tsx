@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { ArrowLeft, FileImage, Pencil, PlusCircle } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 // Form schema for adding a lesson
 const lessonFormSchema = z.object({
@@ -129,7 +130,7 @@ export default function CourseLessonsPage({ params }: { params: { courseId: stri
               <Card key={lesson.id} className="overflow-hidden">
                 <div className="flex flex-col sm:flex-row">
                   <div className="sm:w-32 h-20 overflow-hidden">
-                    <img
+                    <Image
                       src={lesson.thumbnail || "/placeholder.svg"}
                       alt={lesson.title}
                       className="w-full h-full object-cover"
@@ -168,7 +169,7 @@ export default function CourseLessonsPage({ params }: { params: { courseId: stri
                 <DialogHeader>
                   <DialogTitle>Add New Lesson</DialogTitle>
                   <DialogDescription>
-                    Create a new lesson for this course. Click save when you're done.
+                    {`Create a new lesson for this course. Click save when you're done.`}
                   </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -256,7 +257,7 @@ export default function CourseLessonsPage({ params }: { params: { courseId: stri
                 <DialogHeader>
                   <DialogTitle>Add New Lesson</DialogTitle>
                   <DialogDescription>
-                    Create a new lesson for this course. Click save when you're done.
+                    {`Create a new lesson for this course. Click save when you're done.`}
                   </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>

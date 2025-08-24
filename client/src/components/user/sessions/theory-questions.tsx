@@ -86,7 +86,7 @@ export default function TheoryQuestions({
         </div>
         <h3 className="text-xl font-bold mb-2">All Questions Completed!</h3>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-          You've successfully completed all the theory questions for this lesson.
+         {` You've successfully completed all the theory questions for this lesson.`}
         </p>
         <Button onClick={() => setAllQuestionsAnswered(false)}>Review Questions</Button>
       </div>

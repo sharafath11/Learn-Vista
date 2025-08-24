@@ -16,19 +16,17 @@ import {
 import { ICourse } from "@/src/types/courseTypes"
 
 export default function MentorDashboard() {
-  const { courses } = useMentorContext()
+    const { courses } = useMentorContext()
 
   let totalStudent = 0
   let totalLessons = 0
-  let completedLessons = 0
   courses.forEach((course) => {
     totalStudent += course.totelStudent as number
     totalLessons += course?.sessions as number
-    completedLessons += course?.isActive? 1:0
   })
-  let totalCourses = courses.length
-let publishedCourses = courses.filter((course) => course.isActive).length
- 
+
+  const totalCourses = courses.length
+  const publishedCourses = courses.filter((course) => course.isActive).length
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
@@ -273,7 +271,7 @@ interface CourseCardProps {
   lessons: number
 }
 
-function CourseCard({ course, title, description, progress, status, students, lessons }: CourseCardProps) {
+function CourseCard({ course, title, description, status, students, lessons }: CourseCardProps) {
   const statusColors: { [key: string]: string } = {
     Active: "bg-green-500/20 text-green-300 border-green-500/30",
     New: "bg-blue-500/20 text-blue-300 border-blue-500/30",
@@ -318,15 +316,6 @@ function CourseCard({ course, title, description, progress, status, students, le
     </div>
   )
 }
-
-interface ActivityCardProps {
-  type: string
-  title: string
-  time: string
-  icon: React.ElementType
-  color: string
-}
-
 function Button({ children, className = "", variant = "default", size = "default", onClick, ...props }: any) {
   const baseClasses =
     "inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900"

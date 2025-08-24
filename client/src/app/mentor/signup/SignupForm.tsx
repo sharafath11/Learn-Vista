@@ -37,12 +37,23 @@ export default function MentorSignupForm() {
     setOtpVerified(true);
   };
 
-  const handleSendOtp = async () => {
-    if (!mentorData.email) return showErrorToast("Email is required");
-    setOtpSent(true);
-    const res = await MentorAPIMethods.otpSend(mentorData.email);
-    res?.ok ? showSuccessToast("OTP sent") : showErrorToast("Failed to send OTP");
-  };
+const handleSendOtp = async () => {
+  if (!mentorData.email) {
+    showErrorToast("Email is required");
+    return;
+  }
+
+  setOtpSent(true);
+
+  const res = await MentorAPIMethods.otpSend(mentorData.email);
+
+  if (res?.ok) {
+    showSuccessToast("OTP sent");
+  } else {
+    showErrorToast("Failed to send OTP");
+  }
+};
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

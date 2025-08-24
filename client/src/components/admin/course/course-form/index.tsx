@@ -23,7 +23,7 @@ export function CourseForm({ courseId }: CourseFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState("")
-  const [thumbnail, setThumbnail] = useState<File | null>(null)
+  const [, setThumbnail] = useState<File | null>(null)
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null)
 
   // Initialize form with react-hook-form
@@ -83,7 +83,7 @@ export function CourseForm({ courseId }: CourseFormProps) {
     }
   }, [courseId, form])
 
-  const onSubmit = (data: CourseFormValues) => {
+  const onSubmit = () => {
     setIsLoading(true)
     setTimeout(() => {
       setIsLoading(false)

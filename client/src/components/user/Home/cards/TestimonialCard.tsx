@@ -37,7 +37,7 @@ export default function TestimonialCard({
           <p className="text-sm text-gray-600">{role}</p>
         </div>
       </div>
-      <p className="text-gray-700 text-sm sm:text-lg italic">"{content}"</p>
+      <p className="text-gray-700 text-sm sm:text-lg italic">{`"${content}"`}</p>
     </motion.div>
   );
 }

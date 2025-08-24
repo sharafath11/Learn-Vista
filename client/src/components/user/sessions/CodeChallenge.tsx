@@ -86,7 +86,7 @@ export default function CodeChallenge({
         </div>
         <h3 className="text-xl font-bold mb-2">All Challenges Completed!</h3>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-          You've successfully completed all the coding challenges for this lesson.
+         {` You've successfully completed all the coding challenges for this lesson.`}
         </p>
         <Button onClick={() => setAllQuestionsAnswered(false)}>Review Challenges</Button>
       </div>

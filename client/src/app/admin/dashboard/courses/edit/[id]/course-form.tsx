@@ -38,10 +38,6 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
      else showErrorToast(res.msg)
    }
   const course = courses.find((i) => i.id === courseId);
-  if (!course) {
-    return <div>Loading...</div>
-  }
- 
   const [formData, setFormData] = useState({
     title: course?.title || "",
     description: course?.description || "",
@@ -54,8 +50,14 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
     startTime: course?.startTime || "",
     thumbnail: course?.thumbnail || ""
   })
+    const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
+  if (!course) {
+    return <div>Loading...</div>
+  }
+ 
+  
 
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target

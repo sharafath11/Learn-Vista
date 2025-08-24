@@ -95,7 +95,7 @@ export default function AdminDashboard() {
               <CardHeader>
                 <CardTitle className="text-sm flex items-center gap-2 text-muted-foreground">
                   <Users className="h-4 w-4" />
-                  Today's Donations
+                  Today&apos;s Donations
                 </CardTitle>
               </CardHeader>
               <CardContent>

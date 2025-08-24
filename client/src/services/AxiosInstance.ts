@@ -34,10 +34,15 @@ let failedQueue: Array<{
 
 const processQueue = (error: any) => {
   failedQueue.forEach(prom => {
-    error ? prom.reject(error) : prom.resolve(null);
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(null);
+    }
   });
   failedQueue = [];
 };
+
 
 axiosInstance.interceptors.response.use(
   (response) => {

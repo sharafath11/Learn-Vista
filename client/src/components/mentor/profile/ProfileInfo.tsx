@@ -9,7 +9,7 @@ interface ProfileInfoProps {
 }
 
 export default function ProfileInfo({ mentor }: ProfileInfoProps) {
-  const [isEditing, setIsEditing] = useState(false);
+  const [, setIsEditing] = useState(false);
 
   if (!mentor) return (
     <div className="flex justify-center items-center h-64">

@@ -1,9 +1,9 @@
 "use client";
-import { useCallback,useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
-import {  useMentorContext } from '@/src/context/mentorContext';
+import { useMentorContext } from '@/src/context/mentorContext';
 import { showSuccessToast } from '@/src/utils/Toast';
 import { MentorAPIMethods } from '@/src/services/methods/mentor.api';
 
@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({ email: '', password: '' });
 
   const router = useRouter();
-  const {mentor,setMentor,refreshMentor,refreshMentorNotification} =useMentorContext()
+  const { mentor, setMentor, refreshMentor, refreshMentorNotification } = useMentorContext();
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,25 +47,26 @@ export default function LoginPage() {
     setErrors(newErrors);
     return isValid;
   }, [formData]);
+
   useEffect(() => {
-     if(mentor)router.push("/mentor/home");
-   },)
+    if (mentor) router.push("/mentor/home");
+  }, [mentor, router]);
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
       if (!validateForm()) return;
 
-    
-        const res = await MentorAPIMethods.login(formData.email, formData.password);
-        if (res.ok) {
-          setMentor(res.data.mentor);
-          router.push("/mentor/home");
-          await refreshMentor();
-          await refreshMentorNotification()
-          showSuccessToast(res.msg);
-        }
-     
-    },[formData, validateForm,  router]
+      const res = await MentorAPIMethods.login(formData.email, formData.password);
+      if (res.ok) {
+        setMentor(res.data.mentor);
+        await refreshMentor();
+        await refreshMentorNotification();
+        router.push("/mentor/home");
+        showSuccessToast(res.msg);
+      }
+    },
+    [formData, validateForm, router, setMentor, refreshMentor, refreshMentorNotification]
   );
 
   const togglePasswordVisibility = useCallback(() => {

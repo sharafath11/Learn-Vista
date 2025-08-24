@@ -1,9 +1,8 @@
-// Your existing Page.tsx
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Sparkles, Users,BookOpen,TrendingUp } from "lucide-react"
+import { Sparkles, Users, BookOpen, TrendingUp } from "lucide-react"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import CourseFilter from "./filtringAndSearch"
@@ -14,8 +13,9 @@ import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import type { ICategory } from "@/src/types/categoryTypes"
 import CourseCard from "./CourseCard"
+
 const Page = () => {
-  const { user, setUser} = useUserContext() 
+  const { user, setUser } = useUserContext()
   const [courses, setCourses] = useState<IcourseFromResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -29,47 +29,59 @@ const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [categories, setCategories] = useState<ICategory[]>([])
 
+ const fetchCategories = useCallback(async () => {
+  const res = await UserAPIMethods.getCategories()
+  if (res.ok) {
+    setCategories(res.data)
+  } else {
+    showErrorToast(res.msg)
+  }
+}, [])
+
   useEffect(() => {
     fetchCategories()
-  }, [])
+  }, [fetchCategories])
 
-  const fetchCategories = async () => {
-    const res = await UserAPIMethods.getCategories()
-    res.ok ? setCategories(res.data) : showErrorToast(res.msg)
-  }
-
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     setLoading(true)
-    let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
-    if (filters.sort === "ASC") {
-      mongoSort = { createdAt: -1 }
-    } else if (filters.sort === "DESC") {
-      mongoSort = { createdAt: 1 }
-    }
-    const res = await UserAPIMethods.fetchAllCourse({
-      page,
-      limit: 3,
-      search: filters.search || "",
-      filters: {
-        categoryId: filters.category === "All" ? "" : filters.category,
-      },
-      sort: mongoSort,
-    })
+    try {
+      let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
+      if (filters.sort === "ASC") {
+        mongoSort = { createdAt: -1 }
+      } else if (filters.sort === "DESC") {
+        mongoSort = { createdAt: 1 }
+      }
 
-    if (res.ok) {
-      const { data: newCourses, total, totalPages } = res.data
-      setCourses(newCourses.filter((i: IPopulatedCourse) => !i.isBlock))
-      setTotalPages(totalPages)
-    } else {
+      const res = await UserAPIMethods.fetchAllCourse({
+        page,
+        limit: 3,
+        search: filters.search || "",
+        filters: {
+          categoryId: filters.category === "All" ? "" : filters.category,
+        },
+        sort: mongoSort,
+      })
+
+      if (res.ok) {
+        const { data: newCourses, totalPages } = res.data
+        setCourses(newCourses.filter((i: IPopulatedCourse) => !i.isBlock))
+        setTotalPages(totalPages)
+      } else {
+        setCourses([])
+        setTotalPages(0)
+      }
+    } catch  {
+      showErrorToast("Failed to fetch courses")
       setCourses([])
       setTotalPages(0)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
-  }
+  }, [page, filters])
 
   useEffect(() => {
     fetchCourses()
-  },[page, filters])
+  }, [fetchCourses])
 
   const handleDetailsClick = (course: IcourseFromResponse) => {
     setSelectedCourse(course)
@@ -80,7 +92,7 @@ const Page = () => {
     setPage(1)
     setFilters(newFilters)
   }
- 
+
   return (
     <section className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -142,7 +154,6 @@ const Page = () => {
               Explore Our Courses
             </Button>
             <div className="flex items-center gap-6 text-sm text-gray-600">
-            
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-green-600" />
                 <span className="font-medium">10k+ Students</span>
@@ -152,16 +163,16 @@ const Page = () => {
         </div>
 
         {/* Filter Section */}
-       <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: 0.4 }}
-      className="mb-12"
-    >
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-        <CourseFilter categories={categories} onFilter={handleFilterChange} />
-      </div>
-    </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mb-12"
+        >
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
+            <CourseFilter categories={categories} onFilter={handleFilterChange} />
+          </div>
+        </motion.div>
 
         {/* Courses Grid */}
         <motion.div
@@ -169,45 +180,44 @@ const Page = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
         >
-         {courses.length > 0 ? (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    {courses.map((course, index) => (
-      <CourseCard
-        key={course.id}
-        course={course}
-        index={index}
-        onDetailsClick={handleDetailsClick}
-      />
-    ))}
-  </div>
-) : (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.95 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.5 }}
-    className="col-span-full text-center py-20 bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20"
-  >
-    <div className="max-w-md mx-auto">
-      <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
-        <BookOpen className="w-16 h-16 text-gray-400" />
-      </div>
-      <h3 className="text-2xl font-bold text-gray-800 mb-3">No Courses Found</h3>
-      <p className="text-gray-600 text-lg leading-relaxed">
-        Your search or filter criteria didn't match any courses.
-        <br />
-        Try broadening your search or selecting a different category.
-      </p>
-      <Button
-        variant="outline"
-        className="mt-6 px-6 py-2 rounded-xl border-blue-300 text-blue-700 hover:bg-blue-50 bg-transparent"
-        onClick={() => setFilters({ search: "", category: "", sort: "newest" })}
-      >
-        Clear Filters
-      </Button>
-    </div>
-  </motion.div>
-)}
-
+          {courses.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {courses.map((course, index) => (
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  index={index}
+                  onDetailsClick={handleDetailsClick}
+                />
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="col-span-full text-center py-20 bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20"
+            >
+              <div className="max-w-md mx-auto">
+                <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
+                  <BookOpen className="w-16 h-16 text-gray-400" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-3">No Courses Found</h3>
+                <p className="text-gray-600 text-lg leading-relaxed">
+                  Your search or filter criteria didn&apos;t match any courses.
+                  <br />
+                  Try broadening your search or selecting a different category.
+                </p>
+                <Button
+                  variant="outline"
+                  className="mt-6 px-6 py-2 rounded-xl border-blue-300 text-blue-700 hover:bg-blue-50 bg-transparent"
+                  onClick={() => setFilters({ search: "", category: "", sort: "newest" })}
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Pagination */}

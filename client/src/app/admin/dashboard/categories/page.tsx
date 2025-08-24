@@ -77,7 +77,7 @@ export default function CategoriesList() {
   };
 
   fetchCategories(); 
-}, [debouncedSearchTerm, statusFilter, sortOrder, currentPage]);
+},[debouncedSearchTerm, statusFilter, sortOrder, currentPage,setCategories]);
 
 
  const confirmToggleBlock = async () => {

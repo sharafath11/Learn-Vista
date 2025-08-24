@@ -4,7 +4,6 @@ import { useMemo } from "react"
 import { BookOpen, TrendingUp, Award, Target } from "lucide-react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { getCourseProgress } from "@/src/utils/getProgress"
-import { useRouter } from "next/navigation"
 
 export default function ProgressOverview() {
   const { progresses, allCourses, user } = useUserContext()
@@ -246,7 +245,7 @@ export default function ProgressOverview() {
             <Award className="h-6 w-6 text-green-600 mr-3 flex-shrink-0" />
             <div>
               <p className="text-sm font-semibold text-green-800">
-                🎉 You've completed {progressData.overall.completedLessons} lessons across{" "}
+                { `🎉 You've completed `}{progressData.overall.completedLessons} lessons across{" "}
                 {progressData.categories.length} categor{progressData.categories.length !== 1 ? "ies" : "y"}!
               </p>
               <p className="text-xs text-green-600 mt-1">

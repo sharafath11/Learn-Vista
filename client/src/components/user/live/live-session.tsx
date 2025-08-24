@@ -167,7 +167,7 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
       setMentorStream(null);
       setIsPlaying(false);
     };
-  },[roomId]);
+  },[roomId,mentorStream]);
 
   useEffect(() => {
     if (mentorStream && videoRef.current) {

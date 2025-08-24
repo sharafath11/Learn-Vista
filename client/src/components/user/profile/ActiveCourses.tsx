@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation"
 import { getCourseProgress } from "@/src/utils/getProgress"
 
 const CourseCard = ({ course }: { course: ICourse }) => {
-  const { title, categoryName, mentorId, thumbnail, sessions, startDate, endDate, enrolledUsers } = course
+  const { title, categoryName, mentorId, thumbnail, sessions, startDate, endDate} = course
 
   const { progresses } = useUserContext()
   const router = useRouter()
@@ -100,7 +100,7 @@ export default function ActiveCourses() {
           <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No Active Courses</h3>
           <p className="text-gray-600 mb-4">
-            You haven't enrolled in any courses yet. Start your learning journey today!
+            {`You haven't enrolled in any courses yet. Start your learning journey today!`}
           </p>
           <Link href="/user/courses">
             <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">Browse Courses</Button>

@@ -27,6 +27,7 @@ import { z } from "zod";
 import { FileImage, PlayCircle, XCircle, Loader2 } from "lucide-react";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
+import Image from "next/image";
 
 const lessonFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -151,7 +152,7 @@ export function AddLessonModal({
       }
     };
 
-    const handleVideoError = (e: Event) => {
+    const handleVideoError = (_e: Event) => {
       showErrorToast("Could not retrieve video duration. Video might be corrupted or unsupported.");
       form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
       setUploadedS3VideoUrl(publicVideoUrl);
@@ -433,7 +434,7 @@ const handleSubmit = async (data: LessonFormValues) => {
                   </FormDescription>
                   {(thumbnailPreviewUrl || field.value) && (
                     <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
-                      <img
+                      <Image
                         src={thumbnailPreviewUrl || field.value || "/placeholder.svg?height=80&width=120"}
                         alt="Thumbnail Preview"
                         className="w-full h-full object-cover"

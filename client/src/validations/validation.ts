@@ -46,7 +46,7 @@ export const validateMentorApplyForm = (
           newErrors.socialLink = "Please enter a valid LinkedIn URL (should contain linkedin.com)";
           isValid = false;
         }
-      } catch (e) {
+      } catch {
         newErrors.socialLink = "Please enter a valid URL";
         isValid = false;
       }

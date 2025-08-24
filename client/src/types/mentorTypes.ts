@@ -110,9 +110,6 @@ export interface IGetCourseStudentsParams {
   filters?: StudentFilters
   sort?: StudentSort
 }
-type SortOrder = 1 | -1;
-
-
 export interface MentorFilters {
   status?: MentorStatus;
 }

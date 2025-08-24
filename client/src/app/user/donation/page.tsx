@@ -98,8 +98,8 @@ export default function DonationHistoryPage() {
       <div className="max-w-6xl mx-auto text-center mb-12">
         <h1 className="text-4xl md:text-5xl font-bold text-purple-700 mb-4">Your Donation History 💖</h1>
         <p className="text-gray-600 text-lg md:text-xl mb-6">
-          Thank you for your generosity! Here's a record of your past contributions.
-        </p>
+  {"Thank you for your generosity! Here's a record of your past contributions."}
+</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
           <div className="text-2xl font-semibold text-gray-800">
             Total Donations: <span className="text-purple-600">₹{totalDonationsAmount.toFixed(2)}</span>
@@ -177,7 +177,7 @@ export default function DonationHistoryPage() {
             </div>
           )}
           {!hasMore && donations.length > 0 && (
-            <p className="text-gray-500">You've reached the end of your donation history.</p>
+            <p className="text-gray-500">{"You've reached the end of your donation history."}</p>
           )}
         </div>
       </div>

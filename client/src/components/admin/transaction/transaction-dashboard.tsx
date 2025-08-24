@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 
 import { TransactionChart } from "./transaction-chart"
@@ -27,43 +27,41 @@ export default function TransactionDashboard() {
     limit: 10,
   })
 
+   const fetchTransactions = useCallback(async () => {
+    setLoading(true)
+
+    const params = new URLSearchParams()
+
+    if (filters.dateRange.from) {
+      params.append("fromDate", filters.dateRange.from.toISOString())
+    }
+    if (filters.dateRange.to) {
+      params.append("toDate", filters.dateRange.to.toISOString())
+    }
+
+    if (filters.status !== "all") {
+      params.append("status", filters.status)
+    }
+    params.append("sortBy", filters.sortBy)
+    params.append("sortOrder", filters.sortOrder)
+    params.append("page", filters.page.toString())
+    params.append("limit", filters.limit.toString())
+
+    const res = await AdminAPIMethods.getFilteredDonations(params.toString())
+
+    if (res?.ok) {
+      setTransactions(res.data.transactions || res.data)
+      setTotalCount(res.data.totalCount || res.data.length)
+    } else {
+      showErrorToast(res?.msg || "Failed to fetch transactions")
+    }
+
+    setLoading(false)
+  }, [filters])
+
   useEffect(() => {
     fetchTransactions()
-  },[filters])
-
-const fetchTransactions = async () => {
-  setLoading(true)
-
-  const params = new URLSearchParams()
-
-  if (filters.dateRange.from) {
-    params.append("fromDate", filters.dateRange.from.toISOString())
-  }
-  if (filters.dateRange.to) {
-    params.append("toDate", filters.dateRange.to.toISOString())
-  }
-
-  if (filters.status !== "all") {
-    params.append("status", filters.status)
-  }
-  params.append("sortBy", filters.sortBy)
-  params.append("sortOrder", filters.sortOrder)
-  params.append("page", filters.page.toString())
-  params.append("limit", filters.limit.toString())
-
-  const res = await AdminAPIMethods.getFilteredDonations(params.toString())
-
-  if (res?.ok) {
-    setTransactions(res.data.transactions || res.data)
-    setTotalCount(res.data.totalCount || res.data.length)
-  } else {
-    showErrorToast(res?.msg || "Failed to fetch transactions")
-  }
-
-  setLoading(false)
-}
-
-
+  }, [fetchTransactions]) 
   const handleFilterChange = (newFilters: Partial<FilterOptions>) => {
     setFilters((prev) => ({
       ...prev,

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Calendar, Clock, PenSquare, BookOpen } from "lucide-react";
 import { useAdminContext } from "@/src/context/adminContext";
 import { AdminAPIMethods } from "@/src/services/methods/admin.api";
@@ -25,19 +25,19 @@ export default function CoursesAdminPage() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCourses, setTotalCourses] = useState(0);
-  const [isConcernModalOpen, setIsConcernModalOpen] = useState(false);
+  const [, setIsConcernModalOpen] = useState(false);
   const [selectedConcernId, setSelectedConcernId] = useState<string | null>(
     null
   );
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [selectedCourseBlocked, setSelectedCourseBlocked] = useState(false);
-   const handleCourseBlockClick = (id: string, isBlocked: boolean) => {
+  const handleCourseBlockClick = (id: string, isBlocked: boolean) => {
     setSelectedCourseId(id);
     setSelectedCourseBlocked(isBlocked);
     setIsDialogOpen(true);
-   };
-   const confirmToggleCourseStatus = async () => {
+  };
+  const confirmToggleCourseStatus = async () => {
     if (!selectedCourseId) return;
 
     const res = await AdminAPIMethods.blockCours(
@@ -49,7 +49,9 @@ export default function CoursesAdminPage() {
       showSuccessToast(res.msg);
       setCourses(
         courses.map((prev) =>
-          prev.id === selectedCourseId ? { ...prev, isBlock: !selectedCourseBlocked } : prev
+          prev.id === selectedCourseId
+            ? { ...prev, isBlock: !selectedCourseBlocked }
+            : prev
         )
       );
     }
@@ -65,12 +67,7 @@ export default function CoursesAdminPage() {
     }, 300);
     return () => clearTimeout(timer);
   }, [searchTerm]);
-
-  useEffect(() => {
-    fetchCourses();
-  }, [debouncedSearchTerm, statusFilter, sortOrder, currentPage]);
-
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     const filters: Record<string, unknown> = {};
 
     if (statusFilter === "Active") filters.isBlocked = false;
@@ -87,7 +84,12 @@ export default function CoursesAdminPage() {
       setCourses(res.data.data);
       setTotalCourses(res.data.total);
     }
-  };
+  }, [statusFilter, currentPage, debouncedSearchTerm, sortOrder, setCourses]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
   const handleEditCourse = (courseId: string) => {
     router.push(`/admin/dashboard/courses/edit/${courseId}`);
   };
@@ -120,7 +122,6 @@ export default function CoursesAdminPage() {
   const selectedConcern = selectedConcernId
     ? concern.find((c) => c.id === selectedConcernId) || null
     : null;
- 
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
@@ -163,8 +164,7 @@ export default function CoursesAdminPage() {
 
                   {(() => {
                     const activeConcern = concern.find(
-                      (i) =>
-                        i.courseId === course.id && i.status !== "resolved"
+                      (i) => i.courseId === course.id && i.status !== "resolved"
                     );
                     if (!activeConcern) return null;
                     const isOpen = activeConcern.status === "open";
@@ -225,7 +225,7 @@ export default function CoursesAdminPage() {
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4">
- <Button
+                      <Button
                         variant="outline"
                         size="sm"
                         className={
@@ -240,26 +240,27 @@ export default function CoursesAdminPage() {
                         {course.isBlock ? "Unblock" : "Block"}
                       </Button>
 
+                      <Button
+                        size="sm"
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                        onClick={() =>
+                          router.push(
+                            `/admin/dashboard/courses/lessons/${course.id}`
+                          )
+                        }
+                      >
+                        Lessons
+                      </Button>
 
- <Button
-    size="sm"
-    className="bg-purple-600 hover:bg-purple-700 text-white"
-    onClick={() => router.push(`/admin/dashboard/courses/lessons/${course.id}`)}
-  >
-    Lessons
-  </Button>
-
-
-  <Button
-    size="sm"
-    onClick={() => handleEditCourse(course.id)}
-    className="flex items-center"
-  >
-    <PenSquare className="h-4 w-4 mr-1.5" />
-    Edit
-  </Button>
-</div>
-
+                      <Button
+                        size="sm"
+                        onClick={() => handleEditCourse(course.id)}
+                        className="flex items-center"
+                      >
+                        <PenSquare className="h-4 w-4 mr-1.5" />
+                        Edit
+                      </Button>
+                    </div>
                   </div>
                 </Card>
               ))}
@@ -327,7 +328,7 @@ export default function CoursesAdminPage() {
         onClose={handleCloseConcernModal}
         onStatusChange={handleConcernStatusChange}
       />
-            <CustomAlertDialog
+      <CustomAlertDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         title={selectedCourseBlocked ? "Unblock Course" : "Block Course"}

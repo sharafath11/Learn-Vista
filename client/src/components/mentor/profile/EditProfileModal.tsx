@@ -276,7 +276,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
           </div>
           <h3 className="text-lg font-medium">Reset your password</h3>
           <p className="text-sm text-gray-500">
-            We'll send a password reset link to your email.
+           {` We'll send a password reset link to your email.`}
           </p>
         </CardHeader>
         <CardContent>

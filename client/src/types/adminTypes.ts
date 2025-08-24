@@ -8,7 +8,9 @@ import { INotification } from "./notificationsTypes";
 
 export type DropDown = 'All' | 'admin' | 'mentor' | 'user';
 
-export interface AdminUser extends IUser {}
+export interface AdminUser extends IUser {
+  isAdmin?: boolean;
+}
 export interface UserTableProps {
   currentUsers: IUser[];
   getRoleColor: (role: string) => string;

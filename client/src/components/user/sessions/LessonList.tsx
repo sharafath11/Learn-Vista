@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
 import { Clock, Code, FileText, Info, Play } from "lucide-react"
@@ -16,25 +16,22 @@ export default function LessonList({ courseId }: { courseId: string }) {
   const [lessonProgressMap, setLessonProgressMap] = useState<Map<string, IUserLessonProgress>>(new Map())
   const [loading, setLoading] = useState(true)
 
- const getData = async (currentCourseId: string) => {
-  setLoading(true)
-  
-  try {
-    const data = await fetchLessons(currentCourseId);
+   const getData = useCallback(async (currentCourseId: string) => {
+    setLoading(true)
+    const data = await fetchLessons(currentCourseId)
     setLessons(data.lessons || [])
-    const progressMap = new Map<string, IUserLessonProgress>();
-    (data.progress || []).forEach(p => {
+
+    const progressMap = new Map<string, IUserLessonProgress>()
+    ;(data.progress || []).forEach(p => {
       progressMap.set(p.lessonId.toString(), p)
     })
-    setLessonProgressMap(progressMap)   
-  } finally {
+    setLessonProgressMap(progressMap)
     setLoading(false)
-  }
-}
+  }, [fetchLessons]) 
 
-useEffect(() => {
-  getData(courseId)
-},[])
+  useEffect(() => {
+    getData(courseId)
+  }, [courseId, getData])
 
   const handleLessonClick = (lessonId: string) => {
     router.push(`/user/sessions/lessons/${lessonId}`)
