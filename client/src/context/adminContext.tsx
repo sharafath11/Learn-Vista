@@ -22,138 +22,98 @@ export const AdminContext = createContext<AdminContextType | null>(null);
 const AdminProvider = ({ children }: { children: ReactNode }) => {
   const [admin, setAdmin] = useState(false);
   const [mentors, setMentors] = useState<IMentor[]>([]);
-  const [avilbleMentors,setAvilbleMentors]=useState<IMentor[]>([])
+  const [avilbleMentors,setAvilbleMentors]=useState<IMentor[]>([]);
   const [cat, setCat] = useState<ICategory[]>([]);
-  const [categories,setCategories]=useState<ICategory[]>([])
+  const [categories,setCategories]=useState<ICategory[]>([]);
   const [courses, setCourses] = useState<IPopulatedCourse[]>([]);
-  const [concern, setConcerns] = useState<IConcern[]>([])
-  const [cMentors, setCMentors] = useState<IMentor[]>([])
+  const [concern, setConcerns] = useState<IConcern[]>([]);
+  const [cMentors, setCMentors] = useState<IMentor[]>([]);
   const [adminNotifications, setAdminNotifications] = useState<INotification[]>([]);
-const [adminUnreadNotification, setAdminUnreadNotification] = useState<number>(0);
-  useEffect(() => {
-  localStorage.removeItem("role")
-  localStorage.setItem("role","admin")
-},[])
-  const [mentorPagination, setMentorPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-  });
-  const [allConcerns,setAllConcerns]=useState<IConcern[]>([])
+  const [adminUnreadNotification, setAdminUnreadNotification] = useState<number>(0);
+  const [mentorPagination, setMentorPagination] = useState({ page: 1, limit: 10, total: 0 });
+  const [allConcerns,setAllConcerns]=useState<IConcern[]>([]);
 
-  const {
-    users,
-    pagination: usersPagination,
-    loading: loadingUsers,
-    fetchUsers,
-    setUsers,
-  } = useUserPagination();
- 
-  useEffect(() => {
-    getAllMentors();
-    getCategories();
-    getCourse();
-    fetchUsers({});
-    availvleMentorGet()
-    fetchALlCategories()
-    fetchConcernsData()
-    fetchAdminNotifications()
-  },[fetchUsers]);
+  const { users, pagination: usersPagination, loading: loadingUsers, fetchUsers, setUsers } = useUserPagination();
 
-  async function getCategories(params?: {
-    page?: number ;
-    limit?: number;
-    search?: string;
-    sort?: Record<string, 1 | -1>;
-    filters?: ICategoryFilters;
-  }) {
-    const res = await AdminAPIMethods.getGetegories( params|| {limit:2});
+ useEffect(() => {
+  localStorage.setItem("role","admin");
+
+  const initAdminData = async () => {
+    await Promise.all([
+      getAllMentors(),
+      getCategories(),
+      getCourse(),
+      fetchUsers({}), // <- fetchUsers is fine here
+      availvleMentorGet(),
+      fetchALlCategories(),
+      fetchConcernsData(),
+      fetchAdminNotifications()
+    ]);
+  };
+
+  initAdminData();
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
+
+  async function getCategories(params?: { page?: number ; limit?: number; search?: string; sort?: Record<string, 1 | -1>; filters?: ICategoryFilters }) {
+    const res = await AdminAPIMethods.getGetegories(params || {limit:2});
     if (res.ok) setCat(res.data.data);
     else showInfoToast(res.msg);
   }
-  const fetchAdminNotifications = async () => {
-  const res = await SharedAPIMethods.getMyNotifications();
-  if (res.ok) {
-    setAdminNotifications(res.data);
-    const unreadCount = res.data.filter((n: INotification) => !n.isRead).length;
-    setAdminUnreadNotification(unreadCount);
-  } else {
-    showInfoToast(res.msg);
-  }
-};
 
-  async function getAllMentors(params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    sort?: Record<string, 1 | -1>;
-    filters?: MentorFilters;
-  }) {
-    const res = await AdminAPIMethods.fetchMentor(params || {limit:2});
-    
+  const fetchAdminNotifications = async () => {
+    const res = await SharedAPIMethods.getMyNotifications();
     if (res.ok) {
-      setMentors(res.data.data);
-      setMentorPagination({
-        page: res.data.page,
-        limit: res.data.limit,
-        total: res.data.total,
-      });
-     
+      setAdminNotifications(res.data);
+      const unreadCount = res.data.filter((n: INotification) => !n.isRead).length;
+      setAdminUnreadNotification(unreadCount);
     } else {
       showInfoToast(res.msg);
     }
+  };
+
+  async function getAllMentors(params?: { page?: number; limit?: number; search?: string; sort?: Record<string, 1 | -1>; filters?: MentorFilters }) {
+    const res = await AdminAPIMethods.fetchMentor(params || {limit:2});
+    if (res.ok) {
+      setMentors(res.data.data);
+      setMentorPagination({ page: res.data.page, limit: res.data.limit, total: res.data.total });
+    } else showInfoToast(res.msg);
   }
-   const fetchALlCategories = async () => {
-      const res = await AdminAPIMethods.getAllCategories();
-     
-      if (res.ok) {
-        
-        setCategories(res.data)
-        return
-      }
-      showInfoToast(res.msg)
-    }
+
+  const fetchALlCategories = async () => {
+    const res = await AdminAPIMethods.getAllCategories();
+    if (res.ok) setCategories(res.data);
+    else showInfoToast(res.msg);
+  };
+
   const availvleMentorGet = async () => {
     const res = await AdminAPIMethods.fetchMentor({});
     if (res.ok) {
-       setCMentors(res.data.data)
-       const mentor = res.data.data.filter((i: IMentor) => {
-        return i.isVerified && !i.isBlock && i.status == "approved"
-      });
-     setAvilbleMentors(mentor)
+      setCMentors(res.data.data);
+      const mentor = res.data.data.filter((i: IMentor) => i.isVerified && !i.isBlock && i.status == "approved");
+      setAvilbleMentors(mentor);
     }
-  }
+  };
 
-  async function getCourse(params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    sort?: Record<string, 1 | -1>;
-    filters?: IAdminCourseFilters;
-  }) {
+  async function getCourse(params?: { page?: number; limit?: number; search?: string; sort?: Record<string, 1 | -1>; filters?: IAdminCourseFilters }) {
     const res = await AdminAPIMethods.getCourses(params || {});
     if (res.ok) setCourses(res.data.data);
     else showInfoToast(res.msg);
   }
 
-  const getAllUsers = async (params?: {
-    page?: number;
-    search?: string;
-    filters?: Record<string, unknown>;
-    limit?: number;
-    sort?: Record<string, 1 | -1>;
-  }) => {
+  const getAllUsers = async (params?: { page?: number; search?: string; filters?: Record<string, unknown>; limit?: number; sort?: Record<string, 1 | -1> }) => {
     await fetchUsers(params ?? {});
   };
+
   const fetchConcernsData = async () => {
     const res = await AdminAPIMethods.getConcern();
-    if (res.ok) {
-      setConcerns(res.data);
-      return
-    }
-    else showErrorToast(res.msg)
-  }
+    if (res.ok) setConcerns(res.data);
+    else showErrorToast(res.msg);
+  };
 
+  // --------------------- CONTEXT PROVIDER ---------------------
   return (
     <AdminContext.Provider
       value={{
@@ -183,10 +143,10 @@ const [adminUnreadNotification, setAdminUnreadNotification] = useState<number>(0
         setAllConcerns,
         cMentors,
         adminNotifications,
-    setAdminNotifications,
-    adminUnreadNotification,
+        setAdminNotifications,
+        adminUnreadNotification,
         setAdminUnreadNotification,
-    refreshAdminNotification:fetchAdminNotifications
+        refreshAdminNotification: fetchAdminNotifications
       }}
     >
       {children}

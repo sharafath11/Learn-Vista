@@ -76,6 +76,7 @@ export interface IMentorSignupData {
   isVerified: boolean;
   otp: string;
   phoneNumber: string;
+  expertise?:string[]
   socialLinks?: SocialLink[]
 }
 export interface MentorSignupOtpProps {

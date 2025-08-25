@@ -17,6 +17,9 @@ interface ScheduleSectionProps {
 }
 
 export function ScheduleSection({ form }: ScheduleSectionProps) {
+  const startDate = form.watch("startDate");
+  const endDate = form.watch("endDate");
+
   return (
     <Card>
       <CardHeader>
@@ -24,52 +27,48 @@ export function ScheduleSection({ form }: ScheduleSectionProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Start Date */}
           <div className="space-y-2">
             <Label htmlFor="startDate">Start Date</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !form.watch("startDate") && "text-muted-foreground",
-                  )}
+                  className={cn("w-full justify-start text-left font-normal", !startDate && "text-muted-foreground")}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {form.watch("startDate") ? format(form.watch("startDate"), "PPP") : <span>Pick a date</span>}
+                  {startDate ? format(startDate, "PPP") : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
                 <Calendar
                   mode="single"
-                  selected={form.watch("startDate")}
-                  onSelect={(date) => form.setValue("startDate", date)}
+                  selected={startDate}
+                  onSelect={(date:any) => form.setValue("startDate", date)}
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
           </div>
 
+          {/* End Date */}
           <div className="space-y-2">
             <Label htmlFor="endDate">End Date</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !form.watch("endDate") && "text-muted-foreground",
-                  )}
+                  className={cn("w-full justify-start text-left font-normal", !endDate && "text-muted-foreground")}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {form.watch("endDate") ? format(form.watch("endDate"), "PPP") : <span>Pick a date</span>}
+                  {endDate ? format(endDate, "PPP") : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
                 <Calendar
                   mode="single"
-                  selected={form.watch("endDate")}
-                  onSelect={(date) => form.setValue("endDate", date)}
+                  selected={endDate}
+                  onSelect={(date:any) => form.setValue("endDate", date)}
                   initialFocus
                 />
               </PopoverContent>
@@ -86,5 +85,6 @@ export function ScheduleSection({ form }: ScheduleSectionProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
+

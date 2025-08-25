@@ -1,9 +1,9 @@
 "use client"
 import { useState } from "react";
-import type { MentorSignupData } from "@/src/types/mentorTypes";
+import type { IMentorSignupData } from "@/src/types/mentorTypes";
 
 type ExpertiseInputProps = {
-  mentorData: MentorSignupData;
+  mentorData: IMentorSignupData;
   onAddExpertise: (expertise: string[]) => void;
   onRemoveExpertise: (index: number) => void;
 };

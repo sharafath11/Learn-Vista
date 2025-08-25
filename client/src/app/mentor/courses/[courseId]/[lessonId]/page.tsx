@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { use, useState } from "react"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Card } from "@/src/components/shared/components/ui/card"
 import {
@@ -22,8 +22,6 @@ import { z } from "zod"
 import { ArrowLeft, FileImage, Pencil, PlusCircle } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-
-// Form schema for adding a lesson
 const lessonFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
@@ -32,24 +30,24 @@ const lessonFormSchema = z.object({
 })
 
 type LessonFormValues = z.infer<typeof lessonFormSchema>
-
-export default function CourseLessonsPage({ params }: { params: { courseId: string } }) {
-  // const { toast } = useToast() // This line is removed as per your request
+interface CourseLessonsPageProps {
+  params: Promise<{
+    courseId: string;
+  }>
+}
+export default function CourseLessonsPage({ params }: CourseLessonsPageProps) {
+  const resolvedParams = use(params);
   const [open, setOpen] = useState(false)
-
-  // In a real app, this would come from a database based on the courseId
   const course = {
-    id: params.courseId,
+    id: resolvedParams.courseId,
     title:
-      params.courseId === "3"
+      resolvedParams.courseId === "3"
         ? "CSS Mastery"
-        : params.courseId === "2"
+        : resolvedParams.courseId === "2"
           ? "Advanced JavaScript"
           : "Introduction to React",
     description: "Master CSS layouts, animations, and responsive design",
   }
-
-  // Sample lessons data - in a real app, this would come from a database
   const [lessons, setLessons] = useState<
     Array<{
       id: string
@@ -59,7 +57,7 @@ export default function CourseLessonsPage({ params }: { params: { courseId: stri
       thumbnail: string
     }>
   >(
-    params.courseId === "3"
+    resolvedParams.courseId === "3"
       ? []
       : [
           {

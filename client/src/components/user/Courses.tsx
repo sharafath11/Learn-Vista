@@ -62,7 +62,7 @@ const Courses = () => {
                     {course.enrolledUsers?.length || 0} students
                   </span>
                 </div>
-                <Progress value={(course.sessions?.length || 0) * 10} className="h-2" />
+                <Progress value={(course.sessions as number || 0) * 10} className="h-2" />
               </CardContent>
               <CardFooter className="flex justify-between items-center">
                 <div className="flex items-center gap-2">

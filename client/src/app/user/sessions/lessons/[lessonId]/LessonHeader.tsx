@@ -1,4 +1,4 @@
-// components/user/sessions/LessonHeader.tsx
+"use client"
 import React from 'react';
 import { Button } from "@/src/components/shared/components/ui/button";
 import { ArrowLeft } from "lucide-react";

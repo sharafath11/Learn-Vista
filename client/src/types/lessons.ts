@@ -12,6 +12,13 @@ export interface ILessons {
   updatedAt?: Date;
 }
 
+export interface Level {
+  id: number
+  title: string
+  description?:string
+  duration: number 
+}
+
 export type QuestionType = "theory" | "practical" | "mcq";
 export interface IQuestions {
   id: string;
