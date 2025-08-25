@@ -1,14 +1,15 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import {  PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuidv4 } from "uuid";
 import { s3 } from "../config/AWS";
-import { fileTypeFromBuffer } from "file-type";
+// CommonJS require
+const { fileTypeFromBuffer } = require("file-type");
+
 import { IConcern } from "../types/concernTypes";
 import { logger } from "./logger";
-import { IDailyTask, ISubTask, ISubTaskWithSignedUrl } from "../types/dailyTaskType";
+import { IDailyTask, ISubTask} from "../types/dailyTaskType";
 
 const S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME!;
-const AWS_REGION = process.env.AWS_REGION || 'ap-south-1';
 
 export async function uploadBufferToS3(
   buffer: Buffer,

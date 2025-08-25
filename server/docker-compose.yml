@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: learnvista-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: LearnVista
+    volumes:
+      - mongo_data:/data/db
+
+  server:
+    build: .
+    container_name: learnvista-server
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      MONGO_URI: "mongodb://mongo:27017/LearnVista"
+      NODE_ENV: development
+    depends_on:
+      - mongo
+
+volumes:
+  mongo_data:

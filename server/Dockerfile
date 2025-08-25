@@ -1,18 +1,14 @@
-FROM node:20-alpine
+FROM node:20
 
 WORKDIR /app
 
-# Copy package files first
-COPY package.json package-lock.json ./
+COPY package*.json ./
+RUN npm install
 
-# Install only production dependencies (faster)
-RUN npm install --omit=dev --frozen-lockfile
-
-# Copy the rest of your code
 COPY . .
 
-# Expose your backend port
+RUN npm run build
+
 EXPOSE 4000
 
-# Start your server
-CMD ["node", "index.js"]  # change if your entry point is different
+CMD ["node", "dist/index.js"]

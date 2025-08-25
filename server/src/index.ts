@@ -11,7 +11,7 @@ import mentorRoutes from "./routes/mentor/mentor.Routes";
 import adminRoutes from "./routes/adminRoutes/admin.Routes";
 import { socketHandler } from "./config/ socket";
 import { setIOInstance } from "./config/globalSocket";
-import sharedRoutes from "../src/routes/shared/shared.Routes"
+import sharedRoutes from "./routes/shared/shared.Routes"
 import { requestLogger } from "./middlewares/requestLogger";
 import { logger } from "./utils/logger";
 import { CustomError } from "./types/errorTypes";
