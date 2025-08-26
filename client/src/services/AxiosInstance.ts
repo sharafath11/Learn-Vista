@@ -1,7 +1,9 @@
 import axios from "axios";
 import { showInfoToast } from "../utils/Toast";
 import { useLoading } from "../hooks/useLoading";
-export const baseURL =process.env.NEXT_PUBLIC_BASEURL 
+export const baseURL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+
 const axiosInstance = axios.create({
   baseURL,
   withCredentials: true,
@@ -12,7 +14,7 @@ let activeRequests = 0;
 const { start, stop } = useLoading.getState();
 
 axiosInstance.interceptors.request.use(config => {
-  console.log(config)
+
   if (activeRequests === 0) start();
   activeRequests++;
   return config;

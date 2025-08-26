@@ -23,10 +23,9 @@ export default function LoginForm() {
   const { data: session } = useSession();
 
 useEffect(() => {
-  setIsMounted(true);
   if (user) router.push("/user");
 }, [router, user]);
-;
+
 
   useEffect(() => {
   if (session?.user?.email && session?.user?.id && !data.googleId) {
@@ -49,13 +48,14 @@ useEffect(() => {
       setUser(res.data);
       showSuccessToast(res.msg);
       await fetchUserData();
-      await refereshNotifcation();
-      router.push("/user");
+      refereshNotifcation();
+
     }
   } finally {
     setIsLoading(false);
   }
-}, [data, fetchUserData, refereshNotifcation, router, setUser]);
+}, [data, fetchUserData, refereshNotifcation, setUser]);
+
 
   const handleGoogleAuth = async () => {
     await signIn("google");

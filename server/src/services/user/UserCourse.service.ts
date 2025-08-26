@@ -51,8 +51,7 @@ export class UserCourseService implements IUserCourseService {
     };
     
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(queryParams);
-    console.log(data.length)
-       if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
+         if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
     const sendData = await convertSignedUrlInArray(data, ["thumbnail"]);
   
     const sendDatas = await Promise.all(
