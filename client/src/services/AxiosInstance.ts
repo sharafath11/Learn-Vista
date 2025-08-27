@@ -2,8 +2,8 @@ import axios from "axios";
 import { showInfoToast } from "../utils/Toast";
 import { useLoading } from "../hooks/useLoading";
 export const baseURL =
-  process.env.NEXT_PUBLIC_API_URL || "http://13.234.225.92:4000/api";
-console.log("thyr",process.env.NEXT_PUBLIC_API_URL)
+  process.env.NEXT_PUBLIC_BASEURL || "http://13.234.225.92/api";
+console.log("thyr",baseURL)
 const axiosInstance = axios.create({
   baseURL,
   withCredentials: true,
