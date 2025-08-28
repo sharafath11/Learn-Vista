@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
+import { baseURL } from "@/src/services/AxiosInstance";
 axios.defaults.timeout = 10000; 
 
 const handler = NextAuth({
@@ -42,7 +43,7 @@ const handler = NextAuth({
   
 
         const response = await axios.post(
-          `http://localhost:4000/api/google/signup`,
+          `${baseURL}/google/signup`,
           payload,
           {
             withCredentials: true,

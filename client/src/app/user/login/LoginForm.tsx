@@ -1,10 +1,11 @@
 "use client";
+
 import { useState, useEffect, useCallback } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { ILogin } from "@/src/types/authTypes";
 import { useUserContext } from "@/src/context/userAuthContext";
-import {  showSuccessToast } from "@/src/utils/Toast";
+import { showSuccessToast } from "@/src/utils/Toast";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
@@ -18,43 +19,41 @@ export default function LoginForm() {
   const [, setAutoSubmit] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const { setUser ,user,fetchUserData,refereshNotifcation} = useUserContext();
+  const { setUser, user, fetchUserData, refereshNotifcation } = useUserContext();
   const router = useRouter();
   const { data: session } = useSession();
-
-useEffect(() => {
-  if (user) router.push("/user");
-}, [router, user]);
-
-
   useEffect(() => {
-  if (session?.user?.email && session?.user?.id && !data.googleId) {
-    setData({
-      email: session.user.email,
-      password: "",
-      googleId: session.user.id,
-    });
-    setAutoSubmit(true);
-  }
-}, [session, data.googleId]);
-
-
-  const handleSubmit = useCallback(async (e?: React.FormEvent<HTMLFormElement>) => {
+    setIsMounted(true);
+  }, []);
+  useEffect(() => {
+    if (user) router.push("/user");
+  }, [router, user]);
+  useEffect(() => {
+    if (session?.user?.email && session?.user?.id && !data.googleId) {
+      setData({
+        email: session.user.email,
+        password: "",
+        googleId: session.user.id,
+      });
+      setAutoSubmit(true);
+    }
+  }, [session, data.googleId]);
+  const handleSubmit = async (e?: React.FormEvent<HTMLFormElement>) => {
   if (e) e.preventDefault();
   setIsLoading(true);
-  try {
-    const res = await UserAPIMethods.loginUser(data);
-    if (res.ok) {
-      setUser(res.data);
-      showSuccessToast(res.msg);
-      await fetchUserData();
-      refereshNotifcation();
 
-    }
-  } finally {
-    setIsLoading(false);
+  const res = await UserAPIMethods.loginUser(data);
+
+  if (res.ok) {
+    setUser(res.data);
+    showSuccessToast(res.msg);
+    await fetchUserData();
+    refereshNotifcation();
+    router.push("/user");
   }
-}, [data, fetchUserData, refereshNotifcation, setUser]);
+
+  setIsLoading(false);
+};
 
 
   const handleGoogleAuth = async () => {
@@ -81,14 +80,16 @@ useEffect(() => {
 
   return (
     <div className="max-w-md mx-auto p-6 sm:p-8 rounded-xl shadow-lg bg-white">
+      {/* Logo */}
       <div className="mb-6 flex items-center justify-center">
-        <Image src="/images/logo.png" alt="Learn Vista Logo" className="w-10" />
+        <Image src="/images/logo.png" alt="Learn Vista Logo" width={40} height={40} />
         <span className="ml-2 text-2xl font-bold text-purple-700">Learn Vista</span>
       </div>
 
       <h1 className="text-2xl font-semibold text-gray-800">Welcome back 👋</h1>
       <p className="mt-2 text-sm text-gray-500">Enter your credentials to continue</p>
 
+      {/* Form */}
       <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
         <FormInput
           label="Email"
@@ -111,20 +112,23 @@ useEffect(() => {
           <label className="flex items-center">
             <input type="checkbox" className="mr-2" /> Remember me
           </label>
-          <Link href="/user/forgot-password" className="text-purple-600 hover:underline">Forgot password?</Link>
+          <Link href="/user/forgot-password" className="text-purple-600 hover:underline">
+            Forgot password?
+          </Link>
         </div>
 
         <button
           type="submit"
-          // disabled={isLoading}
           className={`w-full bg-purple-600 py-3 text-white rounded-lg font-medium shadow-md hover:bg-purple-700 transition duration-200 ${
             isLoading ? "opacity-60 cursor-not-allowed" : ""
           }`}
+          disabled={isLoading}
         >
           {isLoading ? "Signing in..." : "Sign in"}
         </button>
       </form>
 
+      {/* Divider */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-200"></div>
@@ -134,6 +138,7 @@ useEffect(() => {
         </div>
       </div>
 
+      {/* Google Auth */}
       <button
         type="button"
         onClick={handleGoogleAuth}
@@ -144,14 +149,15 @@ useEffect(() => {
 
       <p className="mt-6 text-center text-sm text-gray-500">
         Don&apos;t have an account?{" "}
-        <a href="/user/signup" className="text-purple-600 font-semibold hover:underline">
+        <Link href="/user/signup" className="text-purple-600 font-semibold hover:underline">
           Sign up
-        </a>
+        </Link>
       </p>
     </div>
   );
 }
 
+// Input component
 function FormInput({
   label,
   type,
@@ -188,7 +194,7 @@ function FormInput({
         <button
           type="button"
           onClick={togglePassword}
-          className="absolute right-3 top-9 text-gray-500 hover:text-purple-600"
+          className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-purple-600"
         >
           {showPassword ? <HiEyeOff className="w-5 h-5" /> : <HiEye className="w-5 h-5" />}
         </button>
