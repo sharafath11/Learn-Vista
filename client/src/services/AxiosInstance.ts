@@ -3,7 +3,6 @@ import { showInfoToast } from "../utils/Toast";
 import { useLoading } from "../hooks/useLoading";
 export const baseURL =
   process.env.NEXT_PUBLIC_BASEURL ;
-console.log("thyr",baseURL)
 const axiosInstance = axios.create({
   baseURL,
   withCredentials: true,

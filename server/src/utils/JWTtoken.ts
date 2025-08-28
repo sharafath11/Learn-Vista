@@ -46,28 +46,39 @@ export const setTokensInCookies = (
 ) => {
   res.cookie("token", accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
+    domain: ".sharafathabi.cloud",   // ✅ allow frontend + api to share
     maxAge: 15 * 60 * 1000,
+    path: "/",
   });
+
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
+    domain: ".sharafathabi.cloud",  
     maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/",
   });
 };
+
 export const clearTokens = (res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",               
+    domain: ".sharafathabi.cloud",
+    path: "/",
   });
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",                
+    domain: ".sharafathabi.cloud",
+    path: "/",
   });
-  return sendResponse(res,StatusCode.OK,"Logout Succesfull",true)
+
+  return sendResponse(res, StatusCode.OK, "Logout Successful", true);
 };

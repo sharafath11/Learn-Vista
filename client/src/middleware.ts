@@ -3,7 +3,9 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value ||req.cookies.get("refreshToken");
+  const token = req.cookies.get("token")?.value || req.cookies.get("refreshToken");
+  console.log("Cookies in middleware:", req.cookies.get("token")?.value);
+
   const path = req.nextUrl.pathname;
   //not checking
   const publicRoutes = [
