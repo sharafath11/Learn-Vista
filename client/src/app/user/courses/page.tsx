@@ -15,7 +15,7 @@ import type { ICategory } from "@/src/types/categoryTypes"
 import CourseCard from "./CourseCard"
 
 const Page = () => {
-  const { user, setUser } = useUserContext()
+    const { user, setUser } = useUserContext()
   const [courses, setCourses] = useState<IcourseFromResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -29,14 +29,14 @@ const Page = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [categories, setCategories] = useState<ICategory[]>([])
 
- const fetchCategories = useCallback(async () => {
-  const res = await UserAPIMethods.getCategories()
-  if (res.ok) {
-    setCategories(res.data)
-  } else {
-    showErrorToast(res.msg)
-  }
-}, [])
+  const fetchCategories = useCallback(async () => {
+    const res = await UserAPIMethods.getCategories()
+    if (res.ok) {
+      setCategories(res.data)
+    } else {
+      showErrorToast(res.msg)
+    }
+  }, [])
 
   useEffect(() => {
     fetchCategories()
@@ -70,7 +70,7 @@ const Page = () => {
         setCourses([])
         setTotalPages(0)
       }
-    } catch  {
+    } catch {
       showErrorToast("Failed to fetch courses")
       setCourses([])
       setTotalPages(0)
@@ -81,7 +81,7 @@ const Page = () => {
 
   useEffect(() => {
     fetchCourses()
-  }, [fetchCourses])
+  }, [page, filters])
 
   const handleDetailsClick = (course: IcourseFromResponse) => {
     setSelectedCourse(course)
