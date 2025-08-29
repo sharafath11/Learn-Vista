@@ -75,9 +75,16 @@ const handleSendOtp = async () => {
         {/* Left Form Section */}
         <div className="w-full lg:w-1/2 p-6 lg:p-10">
           <div className="mb-6 flex items-center">
-            <Image src="/images/logo.png" alt="Logo" width={50} height={50} />
-            <span className="ml-3 text-xl font-bold text-purple-700">Learn Vista</span>
-          </div>
+  <Image
+    src="/images/logo.png"
+    alt="Logo"
+    width={50}
+    height={50}
+    className="object-contain"
+  />
+  <span className="ml-3 text-xl font-bold text-purple-700">Learn Vista</span>
+</div>
+
 
           <h2 className="text-2xl font-semibold text-gray-800">Mentor Signup</h2>
           <p className="mb-6 text-sm text-gray-500">Inspire, guide, and shape the future of learners</p>
@@ -150,8 +157,15 @@ const handleSendOtp = async () => {
 
         {/* Right Image Section */}
         <div className="hidden lg:flex w-1/2 items-center justify-center bg-purple-50">
-          <Image src="/images/signup.png" alt="Signup Illustration" width={480} height={360} className="object-contain" />
-        </div>
+  <Image
+    src="/images/signup.png"
+    alt="Signup Illustration"
+    width={480}
+    height={360}
+    className="object-contain"
+  />
+</div>
+
       </div>
     </div>
   );

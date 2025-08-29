@@ -50,14 +50,16 @@ export default function LoginPage() {
               {/* Pass the selected role to the LoginForm */}
               <LoginForm  />
             </div>
-            <div className="hidden lg:flex items-center justify-center bg-gradient-to-r from-purple-100 to-indigo-100 relative w-full h-[500px]">
+<div className="hidden lg:flex items-center justify-center bg-gradient-to-r from-purple-100 to-indigo-100 relative w-full h-[500px]">
   <Image
     src="/images/login.png"
     alt="Login Illustration"
-    className="object-contain"
     fill
+    className="object-contain"
+    sizes="100vw"
   />
 </div>
+
 
           </div>
         </div>

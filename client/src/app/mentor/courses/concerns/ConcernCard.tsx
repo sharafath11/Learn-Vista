@@ -230,20 +230,33 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
 
       <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
         <DialogContent className="bg-gray-900 border border-gray-700 max-w-xl mx-auto">
-          {previewImage && (
-            <Image
-              src={previewImage}
-              alt="Preview"
-              className="rounded-lg max-h-[80vh] mx-auto"
-            />
-          )}
-          <Button
-            className="mt-4 text-sm bg-red-600 hover:bg-red-700 text-white"
-            onClick={() => setPreviewImage(null)}
-          >
-            Close
-          </Button>
-        </DialogContent>
+  {previewImage && (
+    <div className="relative max-h-[80vh] w-full">
+      {previewImage.startsWith("blob:") ? (
+        <img
+          src={previewImage}
+          alt="Preview"
+          className="rounded-lg max-h-[80vh] mx-auto"
+        />
+      ) : (
+        <Image
+          src={previewImage}
+          alt="Preview"
+          fill
+          className="rounded-lg object-contain mx-auto"
+          sizes="100vw"
+        />
+      )}
+    </div>
+  )}
+  <Button
+    className="mt-4 text-sm bg-red-600 hover:bg-red-700 text-white"
+    onClick={() => setPreviewImage(null)}
+  >
+    Close
+  </Button>
+</DialogContent>
+
       </Dialog>
     </>
   )

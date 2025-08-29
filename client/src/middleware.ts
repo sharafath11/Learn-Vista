@@ -3,10 +3,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
-console.log("All cookies in middleware:", req.cookies.getAll());
-console.log("Token cookie:", req.cookies.get("token"));
-console.log("Refresh cookie:", req.cookies.get("refreshToken"));
-console.log("Cookies in middleware:", req.cookies.get("token")?.value);
   const token = req.cookies.get("token")?.value || req.cookies.get("refreshToken");
   const path = req.nextUrl.pathname;
   //not checking

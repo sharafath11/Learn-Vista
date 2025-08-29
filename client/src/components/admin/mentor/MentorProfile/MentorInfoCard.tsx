@@ -65,11 +65,13 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
     <div className="rounded-xl shadow-lg overflow-hidden bg-white flex flex-col md:flex-row">
       <div className="md:w-1/2 p-6 flex flex-col items-center">
         <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-4 border-indigo-500">
-          <Image
-            src={mentor?.profilePicture || ''}
-            alt={mentor?.profilePicture || ''}
-            className="w-full h-full object-cover"
-          />
+ <Image
+      src={mentor?.profilePicture || "/placeholder.svg"}
+      alt={mentor?.username || "Mentor profile"}
+      fill
+      className="object-cover"
+      sizes="160px"
+    />
         </div>
         <h3 className="text-xl font-bold text-center text-red-500">{mentor.isVerified ? "" : "Not verified"}</h3>
         <h2 className="text-xl font-bold text-center">{mentor?.username}</h2>

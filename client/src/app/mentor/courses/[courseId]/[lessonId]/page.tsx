@@ -127,13 +127,16 @@ export default function CourseLessonsPage({ params }: CourseLessonsPageProps) {
             {lessons.map((lesson) => (
               <Card key={lesson.id} className="overflow-hidden">
                 <div className="flex flex-col sm:flex-row">
-                  <div className="sm:w-32 h-20 overflow-hidden">
-                    <Image
-                      src={lesson.thumbnail || "/placeholder.svg"}
-                      alt={lesson.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <div className="sm:w-32 h-20 relative overflow-hidden">
+  <Image
+    src={lesson?.thumbnail || "/placeholder.svg"}
+    alt={lesson?.title || "Lesson thumbnail"}
+    fill
+    className="object-cover"
+    sizes="128px"
+  />
+</div>
+
                   <div className="flex-1 p-4">
                     <div className="flex justify-between items-start">
                       <div>

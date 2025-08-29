@@ -190,15 +190,24 @@ export function ConcernModal({ concern, onClose, onStatusChange }: ConcernModalP
           </DialogHeader>
 
           <div className="flex justify-center items-center p-4">
-            {mediaType === "image" ? (
-              <Image src={mediaUrl} alt="Preview" className="max-h-[60vh] rounded-lg" />
-            ) : mediaType === "audio" ? (
-              <audio controls className="w-full">
-                <source src={mediaUrl} />
-                Your browser does not support the audio element.
-              </audio>
-            ) : null}
-          </div>
+  {mediaType === "image" && mediaUrl ? (
+    <Image
+      src={mediaUrl}
+      alt="Preview"
+      width={600}
+      height={400}
+      className="max-h-[60vh] rounded-lg object-contain"
+    />
+  ) : mediaType === "audio" && mediaUrl ? (
+    <audio controls className="w-full">
+      <source src={mediaUrl} />
+      Your browser does not support the audio element.
+    </audio>
+  ) : (
+    <p className="text-gray-500">No preview available</p>
+  )}
+</div>
+
         </DialogContent>
       </Dialog>
     </>

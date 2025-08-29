@@ -172,13 +172,16 @@ const CourseDetailsModal = ({
                 <div className="w-full md:w-80">
                   <div className="sticky top-6 space-y-6">
                     <div className="relative h-48 w-full rounded-lg overflow-hidden">
-                      <Image
-                        src={course.thumbnail || "/images/course-placeholder.jpg"}
-                        alt={course.title}
-                        fill
-                        className="object-cover"
-                        priority
-                      />
+                    
+                    <Image
+  src={course?.thumbnail || "/images/course-placeholder.jpg"}
+  alt={course?.title || "Course thumbnail"}
+  fill
+  className="object-cover"
+  sizes="100vw"
+  priority
+/>
+
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                       {/* <Button 
                         variant="ghost" 

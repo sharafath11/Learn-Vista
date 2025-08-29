@@ -153,14 +153,17 @@ export default function CoursesAdminPage() {
               {courses.map((course) => (
                 <Card key={course.id} className="overflow-hidden shadow-md">
                   <div className="relative h-48 w-full">
-                    <Image
-                      src={course.thumbnail || "/placeholder.svg"}
-                      alt={course.title}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  </div>
+  <Image
+    src={course?.thumbnail || "/placeholder.svg"}
+    alt={course?.title || "Course thumbnail"}
+    fill
+    className="object-cover"
+    sizes="100vw"
+    priority={false} 
+  />
+  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+</div>
+
 
                   {(() => {
                     const activeConcern = concern.find(

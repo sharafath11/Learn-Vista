@@ -26,10 +26,12 @@ export function MediaModal({ open, onClose, url, type, title }: MediaModalProps)
       case "image":
         return (
           <Image
-            src={url}
-            alt={title || "media"}
-            className="max-h-[80vh] mx-auto rounded-lg shadow-lg"
-          />
+    src={url}
+    alt={title || "media"}
+    fill
+    className="object-contain max-h-[80vh] mx-auto rounded-lg shadow-lg"
+    sizes="100vw"
+  />
         );
       case "video":
         return (

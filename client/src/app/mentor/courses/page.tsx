@@ -117,11 +117,12 @@ export default function CoursesPage() {
                 >
                   <CardHeader className="relative p-0 aspect-video overflow-hidden rounded-t-xl">
                     <Image
-                      src={course.thumbnail || "/placeholder.png"}
-                      alt={course.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300 group-hover:brightness-100"
-                    />
+    src={course?.thumbnail || "/placeholder.png"}
+    alt={course?.title || "Course thumbnail"}
+    fill
+    className="object-cover group-hover:scale-105 transition-transform duration-300 group-hover:brightness-100"
+    sizes="100vw"
+  />
                     <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center gap-2">
                       {typeof course.categoryId === "object" &&
                         course.categoryId?.title && (

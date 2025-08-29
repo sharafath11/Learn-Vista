@@ -434,12 +434,23 @@ const handleSubmit = async (data: LessonFormValues) => {
                   </FormDescription>
                   {(thumbnailPreviewUrl || field.value) && (
                     <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
-                      <Image
-                        src={thumbnailPreviewUrl || field.value || "/placeholder.svg?height=80&width=120"}
-                        alt="Thumbnail Preview"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+  {thumbnailPreviewUrl?.startsWith("blob:") ? (
+    <img
+      src={thumbnailPreviewUrl}
+      alt="Thumbnail Preview"
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <Image
+      src={field.value || "/placeholder.svg"}
+      alt="Thumbnail Preview"
+      fill
+      className="object-cover"
+      sizes="128px" // matches w-32
+    />
+  )}
+</div>
+
                   )}
                   <FormMessage />
                 </FormItem>

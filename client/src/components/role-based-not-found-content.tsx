@@ -56,13 +56,16 @@ export default function RoleBasedNotFoundContent({ randomImageUrl }: RoleBasedNo
   return (
     <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-12 text-center shadow-2xl max-w-md w-full relative overflow-hidden">
       <div className="absolute inset-0 z-0 opacity-10">
-        <Image
-          src={randomImageUrl || "/placeholder.svg"}
-          alt="Background image"
-          fill
-          className="rounded-2xl object-cover"
-        />
-      </div>
+  <Image
+    src={randomImageUrl || "/placeholder.svg"}
+    alt="Background image"
+    fill
+    className="rounded-2xl object-cover"
+    sizes="100vw"
+    priority
+  />
+</div>
+
       <div className="relative z-10">
         {isLoadingRole ? (
           <div className="text-center py-12">

@@ -26,25 +26,24 @@ const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(({ 
       >
         {/* Header */}
         <div className="text-center mb-10">
-          <Image
-            src="/images/logo.png"
-            width={140}
-            height={70}
-            alt="Company Logo"
-            className="object-contain mx-auto mb-4"
-            crossOrigin="anonymous"
-          />
-          <h1 className="text-4xl font-bold text-gray-800 font-serif">
-            {"Certificate of "}
-            {certificate.isRevoked ? "Revocation" : "Completion"}
-          </h1>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-indigo-500 to-blue-500 mx-auto rounded-full my-3" />
-          <p className="text-lg text-gray-600">
-            {certificate.isRevoked
-              ? "This certificate has been officially revoked"
-              : "Awarded for outstanding achievement and dedication"}
-          </p>
-        </div>
+  <Image
+    src="/images/logo.png"
+    width={140}
+    height={70}
+    alt="Company Logo"
+    className="object-contain mx-auto mb-4"
+  />
+  <h1 className="text-4xl font-bold text-gray-800 font-serif">
+    {certificate.isRevoked ? "Certificate of Revocation" : "Certificate of Completion"}
+  </h1>
+  <div className="w-24 h-1.5 bg-gradient-to-r from-indigo-500 to-blue-500 mx-auto rounded-full my-3" />
+  <p className="text-lg text-gray-600">
+    {certificate.isRevoked
+      ? "This certificate has been officially revoked"
+      : "Awarded for outstanding achievement and dedication"}
+  </p>
+</div>
+
         {/* Recipient */}
         <div className="text-center mb-10">
           <p className="text-lg text-gray-700 mb-2">This is to certify that</p>

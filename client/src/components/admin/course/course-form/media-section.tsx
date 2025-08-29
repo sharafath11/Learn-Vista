@@ -26,11 +26,13 @@ export function MediaSection({ thumbnailPreview, handleThumbnailChange, removeTh
           <div className="flex flex-col items-center space-y-4">
             {thumbnailPreview ? (
               <div className="relative">
-                <Image
-                  src={thumbnailPreview || "/placeholder.svg"}
-                  alt="Thumbnail preview"
-                  className="w-full max-w-md h-auto rounded-md object-cover"
-                />
+               <Image
+    src={thumbnailPreview || "/placeholder.svg"}
+    alt="Thumbnail preview"
+    width={600}
+    height={400}
+    className="w-full max-w-md h-auto rounded-md object-cover"
+  />
                 <Button
                   type="button"
                   variant="destructive"

@@ -207,18 +207,33 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
                       className="flex items-center justify-between bg-gray-800/50 p-3 rounded-lg"
                     >
                       <div className="flex items-center gap-3">
-                        {att.type === "image" && att.previewUrl ? (
-                          <Image src={att.previewUrl} alt="preview" className="w-8 h-8 object-cover rounded" />
-                        ) : (
-                          getAttachmentIcon(att.type)
-                        )}
-                        <div>
-                          <p className="text-gray-200 text-sm font-medium truncate w-44">
-                            {att.name}
-                          </p>
-                          <p className="text-gray-400 text-xs">{att.size} MB</p>
-                        </div>
-                      </div>
+  {att.type === "image" && att.previewUrl ? (
+    att.previewUrl.startsWith("blob:") || att.previewUrl.startsWith("data:") ? (
+      <img
+        src={att.previewUrl}
+        alt="preview"
+        className="w-8 h-8 object-cover rounded"
+      />
+    ) : (
+      <Image
+        src={att.previewUrl}
+        alt="preview"
+        width={32}
+        height={32}
+        className="object-cover rounded"
+      />
+    )
+  ) : (
+    getAttachmentIcon(att.type)
+  )}
+  <div>
+    <p className="text-gray-200 text-sm font-medium truncate w-44">
+      {att.name}
+    </p>
+    <p className="text-gray-400 text-xs">{att.size} MB</p>
+  </div>
+</div>
+
                       <Button
                         variant="ghost"
                         size="sm"

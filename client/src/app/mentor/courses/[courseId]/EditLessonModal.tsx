@@ -463,14 +463,25 @@ export function EditLessonModal({
                     Upload a new image or clear the existing one.
                   </FormDescription>
                   {(thumbnailPreviewUrl || field.value) && (
-                    <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
-                      <Image
-                        src={thumbnailPreviewUrl || field.value || "/placeholder.svg?height=80&width=120"}
-                        alt="Thumbnail Preview"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+  <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
+    {thumbnailPreviewUrl?.startsWith("blob:") ? (
+      <img
+        src={thumbnailPreviewUrl}
+        alt="Thumbnail Preview"
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <Image
+        src={field.value || "/placeholder.svg"}
+        alt="Thumbnail Preview"
+        fill
+        className="object-cover"
+        sizes="128px"
+      />
+    )}
+  </div>
+)}
+
                   <FormMessage />
                 </FormItem>
               )}

@@ -204,24 +204,27 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                 <Label>Thumbnail</Label>
                 <div className="flex flex-col items-center gap-4">
                   <div className="border-2 border-dashed rounded-md p-8 w-full max-w-md text-center">
-                    {thumbnailFile ? (
-                      <Image
-                        src={URL.createObjectURL(thumbnailFile)}
-                        alt="Course Thumbnail Preview"
-                        className="w-full h-auto"
-                      />
-                    ) : formData.thumbnail ? (
-                      <Image
-                        src={formData.thumbnail}
-                        alt="Course Thumbnail"
-                        className="w-full h-auto"
-                      />
-                    ) : (
-                      <p className="text-sm text-muted-foreground">
-                        Drag and drop image here, or click to select
-                      </p>
-                    )}
-                  </div>
+  {thumbnailFile ? (
+    <img
+      src={URL.createObjectURL(thumbnailFile)}
+      alt="Course Thumbnail Preview"
+      className="w-full h-auto rounded-md"
+    />
+  ) : formData.thumbnail ? (
+    <Image
+      src={formData.thumbnail}
+      alt="Course Thumbnail"
+      width={600}
+      height={400}
+      className="w-full h-auto rounded-md"
+    />
+  ) : (
+    <p className="text-sm text-muted-foreground">
+      Drag and drop image here, or click to select
+    </p>
+  )}
+</div>
+
                   <Input 
                     type="file" 
                     accept="image/*" 

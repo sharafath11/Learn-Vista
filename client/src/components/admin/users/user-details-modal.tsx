@@ -79,12 +79,13 @@ export const UserDetailsModal = ({
             <CardContent>
               <div className="flex flex-col md:flex-row gap-6">
                 <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                  <Image
-                    src={user.profilePicture ?? ""}
-                    alt={user.username}
-                    className="w-full h-full object-cover"
-                    onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
-                  />
+<Image
+    src={user.profilePicture||""}
+    alt={user?.username || "User profile"}
+    fill
+    className="object-cover w-full h-full"
+    sizes="100vw"
+  />
                 </div>
                 <div className="flex-1 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">

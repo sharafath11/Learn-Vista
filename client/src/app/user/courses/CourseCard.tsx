@@ -55,13 +55,15 @@ const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
           className="relative h-48 w-full cursor-pointer overflow-hidden rounded-t-2xl"
           onClick={() => onDetailsClick(course)}
         >
-          <Image
-            src={course.thumbnail || "/placeholder.svg?height=200&width=400"}
-            alt={course.title}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500"
-            priority
-          />
+<Image
+  src={course?.thumbnail || "/placeholder.svg"}
+  alt={course?.title || "Course thumbnail"}
+  fill
+  className="object-cover group-hover:scale-110 transition-transform duration-500"
+  sizes="100vw"
+  priority
+/>
+
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
           {/* Category Badge */}
