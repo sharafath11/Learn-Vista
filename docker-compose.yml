@@ -12,22 +12,7 @@ services:
       - learnvista-network
     # Removed dependency on local mongo
 
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-      args:
-        - NEXT_PUBLIC_BASEURL=http://server:4000
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_BASEURL=http://server:4000
-    networks:
-      - learnvista-network
-    depends_on:
-      - server
-
+    
 networks:
   learnvista-network:
     driver: bridge

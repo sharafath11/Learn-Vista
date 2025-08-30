@@ -110,7 +110,12 @@ const CourseDetailsModal = ({
                         <Tag className="h-5 w-5 text-purple-500 mr-2 mt-0.5 flex-shrink-0" />
                         <div>
                           <h4 className="font-medium">Category</h4>
-                          <p className="text-sm text-gray-600">{course.categoryName|| "Not specified"}</p>
+                          <p className="text-sm text-gray-600">
+  {typeof course.categoryName === "object"
+    ? course.categoryName || "Not specified"
+    : course.categoryName || "Not specified"}
+</p>
+
                         </div>
                       </div>
                       

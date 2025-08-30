@@ -2,7 +2,8 @@ import { Response } from "express";
 import jwt from "jsonwebtoken";
 import { sendResponse } from "./ResANDError";
 import { StatusCode } from "../enums/statusCode.enum";
-
+import dotenv from "dotenv";
+dotenv.config()
 const SECRET_KEY = process.env.JWT_SECRET || "yourAccessSecret";
 const REFRESH_KEY = process.env.REFRESH_SECRET || "yourRefreshSecret";
 const ACCESS_EXPIRES_IN = "15m";
@@ -11,14 +12,14 @@ export interface TokenPayload {
   id: string;
   role: string;
 }
+
 const cookieOptions = {
   httpOnly: true,
-  secure: true,
-  sameSite: "none" as const,
+  secure: process.env.NODE_ENV === "production", 
+  sameSite: "none" as const,                    
   domain: ".sharafathabi.cloud", 
-  path: "/",                      
+  path: "/",                                     
 };
-
 export const generateAccessToken = (id: string, role: string): string => {
   const payload: TokenPayload = { id, role };
   return jwt.sign(payload, SECRET_KEY, { expiresIn: ACCESS_EXPIRES_IN });
