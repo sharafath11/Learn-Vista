@@ -42,46 +42,43 @@ const Page = () => {
     fetchCategories()
   }, [fetchCategories])
 
-  const fetchCourses = useCallback(async () => {
+  useEffect(() => {
+  const fetchCourses = async () => {
     setLoading(true)
-    try {
-      let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
-      if (filters.sort === "ASC") {
-        mongoSort = { createdAt: -1 }
-      } else if (filters.sort === "DESC") {
-        mongoSort = { createdAt: 1 }
-      }
 
-      const res = await UserAPIMethods.fetchAllCourse({
-        page,
-        limit: 3,
-        search: filters.search || "",
-        filters: {
-          categoryId: filters.category === "All" ? "" : filters.category,
-        },
-        sort: mongoSort,
-      })
+    let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
+    if (filters.sort === "ASC") {
+      mongoSort = { createdAt: -1 }
+    } else if (filters.sort === "DESC") {
+      mongoSort = { createdAt: 1 }
+    }
 
-      if (res.ok) {
-        const { data: newCourses, totalPages } = res.data
-        setCourses(newCourses.filter((i: IPopulatedCourse) => !i.isBlock))
-        setTotalPages(totalPages)
-      } else {
-        setCourses([])
-        setTotalPages(0)
-      }
-    } catch {
-      showErrorToast("Failed to fetch courses")
+    const res = await UserAPIMethods.fetchAllCourse({
+      page,
+      limit: 3,
+      search: filters.search || "",
+      filters: {
+        categoryId: filters.category === "All" ? "" : filters.category,
+      },
+      sort: mongoSort,
+    })
+
+    if (res.ok) {
+      const { data: newCourses, totalPages } = res.data
+      setCourses(newCourses.filter((i: IPopulatedCourse) => !i.isBlock))
+      setTotalPages(totalPages)
+    } else {
       setCourses([])
       setTotalPages(0)
-    } finally {
-      setLoading(false)
     }
-  }, [page, filters])
 
-  useEffect(() => {
-    fetchCourses()
-  }, [page, filters])
+    setLoading(false)
+  }
+
+  fetchCourses()
+}, [page, filters])
+
+
 
   const handleDetailsClick = (course: IcourseFromResponse) => {
     setSelectedCourse(course)

@@ -68,14 +68,15 @@ export default function HeroSection() {
           <div className="relative">
             <div className="relative bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 shadow-2xl border border-gray-100">
               {randomImage && (
-                <div className="mb-6 rounded-xl overflow-hidden h-64">
-                  <Image
-                    src={randomImage}
-                    alt="Random abstract image"
-                    className="w-full h-full object-cover"
-                    onError={() => setRandomImage("/placeholder.svg?height=400&width=600")}
-                  />
-                </div>
+                <div className="mb-6 rounded-xl overflow-hidden h-64 relative">
+  <Image
+    src={randomImage}
+    alt="Random abstract image"
+    fill
+    className="object-cover"
+  />
+</div>
+
               )}
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-[#8525FF]/10 to-[#A855F7]/10 rounded-2xl p-6 border border-[#8525FF]/20">

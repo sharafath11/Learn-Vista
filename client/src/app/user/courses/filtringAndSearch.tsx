@@ -19,14 +19,12 @@ const CourseFilter: React.FC<CourseFilterProps> = ({ categories, onFilter }) => 
   const [sort, setSort] = useState("ASC")
 
   const debouncedSearch = useDebounce(search, 400)
-
   useEffect(() => {
     onFilter({ search: debouncedSearch, category, sort })
-  },[debouncedSearch, category, sort,onFilter])
+  }, [debouncedSearch, category, sort]) 
 
   return (
     <div className="w-full">
-      {/* Mobile Layout */}
       <div className="flex flex-col gap-4 sm:hidden">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
