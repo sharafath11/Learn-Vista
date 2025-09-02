@@ -12,14 +12,14 @@ import { Messages } from "../../constants/messages";
 class AdminAuthController implements IAdminAuthController {
   constructor(
     @inject(TYPES.AdminAuthService)
-    private adminAuthServices: IAdminAuthService
+    private _adminAuthServices: IAdminAuthService
   ) {}
 
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
 
-      const { accessToken, refreshToken } = await this.adminAuthServices.login(
+      const { accessToken, refreshToken } = await this._adminAuthServices.login(
         email,
         password
       );

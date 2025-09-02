@@ -10,8 +10,7 @@ import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRe
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { ICertificateRepository } from "../../core/interfaces/repositories/course/ICertificateRepository";
-import { ICertificate } from "../../types/certificateTypes";
-import { convertSignedUrlInArray, convertSignedUrlInObject, getSignedS3Url } from "../../utils/s3Utilits";
+import { convertSignedUrlInArray, convertSignedUrlInObject} from "../../utils/s3Utilits";
 import { Messages } from "../../constants/messages";
 import { UserMapper } from "../../shared/dtos/user/user.mapper";
 import { IAdminUserCertificate, IAdminUserResponseDto } from "../../shared/dtos/user/user-response.dto";

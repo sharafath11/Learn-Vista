@@ -19,7 +19,6 @@ class AdminCourseController implements IAdminCourseController {
       const data = req.body;
       const thumbnail = req.file;
       if (!thumbnail) throwError("Thumbnail image is required", StatusCode.BAD_REQUEST);
-
       const result = await this._adminCourseServices.createClass(data, thumbnail.buffer);
       sendResponse(res, StatusCode.OK, Messages.COURSE.CREATED, true, result);
     } catch (error) {

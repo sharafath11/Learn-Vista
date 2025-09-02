@@ -12,11 +12,11 @@ import { ICategoryResponseDto,ICategoryCoursePopulated } from "../../shared/dtos
 @injectable()
 export class AdminCategoryService implements IAdminCategoryService {
   constructor(
-    @inject(TYPES.CategoriesRepository) private categoryRepo: ICategoriesRepository
+    @inject(TYPES.CategoriesRepository) private _categoryRepo: ICategoriesRepository
   ) {}
 
   async addCategory(title: string, description: string): Promise<ICategoryResponseDto> {
-    const existCategory = await this.categoryRepo.findOne({
+    const existCategory = await this._categoryRepo.findOne({
       title: { $regex: new RegExp(`^${title}$`, "i") }
     });
 
@@ -24,11 +24,11 @@ export class AdminCategoryService implements IAdminCategoryService {
       throwError(Messages.CATEGORY.ALREADY_EXISTS, StatusCode.BAD_REQUEST);
     }
 
-    const result = await this.categoryRepo.create({ title, description });
+    const result = await this._categoryRepo.create({ title, description });
     return CategoryMapper.toResponseDto(result)
   }
 async getAllCategories(): Promise<ICategoryCoursePopulated[]> {
-  const result = await this.categoryRepo.findAll();
+  const result = await this._categoryRepo.findAll();
   return result.map((i) => CategoryMapper.toResponseDto(i));
 }
 
@@ -40,7 +40,7 @@ async getCategories(
   filters: FilterQuery<ICategory> = {},
   sort: Record<string, 1 | -1> = { createdAt: -1 }
 ): Promise<{ data: ICategoryResponseDto[]; total: number; totalPages: number }> {
-  const result = await this.categoryRepo.findPaginated(filters, page, limit, search, sort);
+  const result = await this._categoryRepo.findPaginated(filters, page, limit, search, sort);
 
   if (!result.data ) {
     throwError(Messages.CATEGORY.FAILED_TO_FETCH, StatusCode.INTERNAL_SERVER_ERROR);
@@ -58,11 +58,11 @@ async getCategories(
       throwError(Messages.CATEGORY.INVALID_INPUT, StatusCode.BAD_REQUEST);
     }
 
-    const existingCategory = await this.categoryRepo.findById(categoryId);
+    const existingCategory = await this._categoryRepo.findById(categoryId);
     if (!existingCategory) throwError(Messages.CATEGORY.NOT_FOUND, StatusCode.NOT_FOUND);
 
 
-    const updated = await this.categoryRepo.update(categoryId, {
+    const updated = await this._categoryRepo.update(categoryId, {
       title,
       description,
       updatedAt: new Date()
@@ -73,7 +73,7 @@ async getCategories(
   }
 
 async blockCategory(id: string, isBlock: boolean): Promise<ICategoryResponseDto> {
-  const updated = await this.categoryRepo.update(id, { isBlock });
+  const updated = await this._categoryRepo.update(id, { isBlock });
   if (!updated) throwError(Messages.CATEGORY.FAILED_TO_UPDATE_STATUS, StatusCode.INTERNAL_SERVER_ERROR);
   return CategoryMapper.toResponseDto(updated);
 }
