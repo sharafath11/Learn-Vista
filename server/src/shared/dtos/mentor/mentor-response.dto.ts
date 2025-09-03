@@ -50,7 +50,7 @@ export interface IAdminMentorResponseDto {
   status: 'pending' | 'approved' | 'rejected';
     students: number;
     profilePicture: string;
-    courses: number;
+    courses?: { title: string; isActive: boolean }[];
     liveClasses:string[];
     isBlock: boolean;
     cvOrResume: string

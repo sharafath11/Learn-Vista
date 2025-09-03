@@ -33,6 +33,7 @@ export interface IMentor {
   applicationDate: string;
   createdAt: string;
   updatedAt: string;
+  courses?: { title: string; isActive: boolean }[];
   __v?: number;
 }
 

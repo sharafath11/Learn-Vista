@@ -61,50 +61,97 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
       <div className="rounded-xl shadow-lg overflow-hidden bg-white animate-pulse h-96"></div>
     );
   }
+
   return (
     <div className="rounded-xl shadow-lg overflow-hidden bg-white flex flex-col md:flex-row">
+      {/* Left side (Profile & Info) */}
       <div className="md:w-1/2 p-6 flex flex-col items-center">
+        {/* Profile Picture */}
         <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-4 border-indigo-500">
- <Image
-      src={mentor?.profilePicture || "/placeholder.svg"}
-      alt={mentor?.username || "Mentor profile"}
-      fill
-      className="object-cover"
-      sizes="160px"
-    />
+          <Image
+            src={mentor?.profilePicture || "/placeholder.svg"}
+            alt={mentor?.username || "Mentor profile"}
+            width={160}
+            height={160}
+            className="object-cover w-40 h-40 rounded-full"
+          />
         </div>
-        <h3 className="text-xl font-bold text-center text-red-500">{mentor.isVerified ? "" : "Not verified"}</h3>
-        <h2 className="text-xl font-bold text-center">{mentor?.username}</h2>
-        <p className="text-sm text-center mb-4 text-gray-600">{mentor?.expertise}</p>
-        <div className="mb-4">
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusClass}`}>
-            {statusLabel}
-          </span>
+
+        {/* Basic Info */}
+        <h3 className="text-lg font-bold text-red-500">
+          {mentor.isVerified ? "" : "Not verified"}
+        </h3>
+        <h2 className="text-2xl font-bold text-center">{mentor?.username}</h2>
+
+        {/* Expertise Tags */}
+        <div className="flex flex-wrap justify-center gap-2 mt-2 mb-4">
+          {mentor.expertise?.map((skill) => (
+            <span
+              key={skill}
+              className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium"
+            >
+              {skill}
+            </span>
+          ))}
         </div>
+
+        {/* Status */}
+        <span className={`px-4 py-1 mb-4 rounded-full text-sm font-medium ${statusClass}`}>
+          {statusLabel}
+        </span>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4 w-full mb-4">
+          <div className="text-center">
+            <p className="text-lg font-bold">{mentor.students}</p>
+            <p className="text-xs text-gray-500">Students</p>
+          </div>
+          <div className="text-center">
+  <p className="text-lg font-bold">
+    {mentor.courses?.filter(c => c.isActive).length || 0}
+  </p>
+  <p className="text-xs text-gray-500">Active Courses</p>
+</div>
+
+<div className="text-center">
+  <p className="text-lg font-bold">
+    {mentor.courses?.filter(c => !c.isActive).length || 0}
+  </p>
+  <p className="text-xs text-gray-500">Inactive Courses</p>
+</div>
+
+          <div className="text-center">
+            <p className="text-lg font-bold">{mentor.liveClasses?.length}</p>
+            <p className="text-xs text-gray-500">Live Classes</p>
+          </div>
+        </div>
+
+        {/* Contact Info */}
         <div className="w-full p-4 rounded-lg mb-4 bg-gray-100">
           <h3 className="font-semibold mb-2">Contact Information</h3>
           <p className="text-sm mb-1"><span className="font-medium">Email:</span> {mentor?.email}</p>
           <p className="text-sm mb-1"><span className="font-medium">Phone:</span> {mentor?.phoneNumber}</p>
-          <div className="mt-2">
-            <h4 className="font-medium text-sm mb-1">Social Media:</h4>
-            <div className="flex flex-wrap gap-2">
-              {mentor?.socialLinks?.map((link) => (
-                <a
-                  key={link?.url}
-                  href={link?.url || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full hover:bg-indigo-100 transition"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14 3v2h3.59L9 13.59 10.41 15 19 6.41V10h2V3z" />
-                  </svg>
-                  <span>{link?.platform}</span>
-                </a>
-              ))}
+          {mentor?.socialLinks?.length > 0 && (
+            <div className="mt-2">
+              <h4 className="font-medium text-sm mb-1">Social Media:</h4>
+              <div className="flex flex-wrap gap-2">
+                {mentor?.socialLinks?.map((link) => (
+                  <a
+                    key={link?.url}
+                    href={link?.url || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full hover:bg-indigo-100 transition"
+                  >
+                    <span>{link?.platform}</span>
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
+
+        {/* Approve / Reject / Pending Buttons */}
         {currentStatus !== 'approved' && (
           <div className="flex flex-wrap gap-2 w-full">
             <button
@@ -135,6 +182,8 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
           </div>
         )}
       </div>
+
+      {/* Right side (Resume Preview) */}
       {mentor?.cvOrResume && (
         <div className="md:w-1/2 p-6 flex flex-col gap-4">
           <a

@@ -55,7 +55,7 @@ export class AdminMentorService implements IAdminMentorServices {
 const mappingDatas = await Promise.all(
   sendData.map(async (mentor) => {
     const courses = await this._courseRepo.findAll({ mentorId: mentor._id });
-    return MentorMapper.toResponseAdminDto(mentor, courses.length);
+    return MentorMapper.toResponseAdminDto(mentor, courses);
   })
 );
 

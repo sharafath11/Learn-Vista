@@ -2,6 +2,7 @@ import { inject } from "inversify";
 import { IMentor } from "../../../types/mentorTypes";
 import { IMentorResponseDto, IAdminMentorResponseDto, IAdminAddCourseMentorsDto, IMentorMentorResponseDto } from "./mentor-response.dto";
 import { TYPES } from "../../../core/types";
+import { ICourse } from "../../../types/classTypes";
 
 export class MentorMapper {
   static toResponseDto(mentor: IMentor): IMentorResponseDto {
@@ -31,7 +32,9 @@ export class MentorMapper {
       createdAt: mentor.createdAt,
     };
   }
-  static toResponseAdminDto(mentor: IMentor, students?: number): IAdminMentorResponseDto {
+  static toResponseAdminDto(mentor: IMentor, courseDetiles?: ICourse[]): IAdminMentorResponseDto {
+    let students = 0
+    courseDetiles?.map((i)=>students+=i.enrolledUsers.length)
     return {
       id: mentor._id.toString(),
       username: mentor.username,
@@ -39,8 +42,11 @@ export class MentorMapper {
       expertise: mentor.expertise,
       status: mentor.status,
       isVerified:mentor.isVerified,
-      students:students||0,
-      courses: mentor.courses ? mentor.courses.length : 0,
+      students,
+      courses: courseDetiles?.map((i) => ({
+       title: i.title,
+       isActive: i.isActive,
+      })),
       isBlock: mentor.isBlock,
       liveClasses: mentor.liveClasses.map(lc => lc.toString()),
       cvOrResume: mentor.cvOrResume,
