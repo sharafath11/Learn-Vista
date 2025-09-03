@@ -229,20 +229,14 @@ export default function LoginForm() {
   const { setUser, user, fetchUserData, refereshNotifcation } = useUserContext();
   const router = useRouter();
   const { data: session } = useSession();
-
-  // prevent hydration mismatch
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // redirect if already logged in
   useEffect(() => {
     if (user) {
       router.push("/user");
     }
   }, [user, router]);
-
-  // handle google login auto-submit
   useEffect(() => {
     if (session?.user?.email && session?.user?.id && !data.googleId) {
       const googleLogin = async () => {
@@ -257,8 +251,6 @@ export default function LoginForm() {
       googleLogin();
     }
   }, [session]);
-
-  // main submit handler
   const handleSubmit = async (
     overrideData?: ILogin,
     e?: React.FormEvent<HTMLFormElement>
@@ -274,7 +266,8 @@ export default function LoginForm() {
         showSuccessToast(res.msg);
         await fetchUserData();
         refereshNotifcation();
-        router.push("/user"); // ✅ redirect after success
+        console.log("redairt ",)
+        router.push("/user"); 
       } else {
         showErrorToast(res.msg || "Login failed");
       }
@@ -284,13 +277,9 @@ export default function LoginForm() {
 
     setIsLoading(false);
   };
-
-  // google button handler
   const handleGoogleAuth = async () => {
     await signIn("google");
   };
-
-  // form change handler
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
