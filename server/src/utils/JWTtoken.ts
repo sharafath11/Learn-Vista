@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config()
 const SECRET_KEY = process.env.JWT_SECRET || "yourAccessSecret";
 const REFRESH_KEY = process.env.REFRESH_SECRET || "yourRefreshSecret";
-const ACCESS_EXPIRES_IN = "15m";
+const ACCESS_EXPIRES_IN = "1m";
 const REFRESH_EXPIRES_IN = "7d";
 export interface TokenPayload {
   id: string;
