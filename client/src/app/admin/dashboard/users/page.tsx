@@ -6,7 +6,7 @@ import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 import { useAdminContext } from "@/src/context/adminContext";
 import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const User = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,24 +29,24 @@ const [selectedStatus, setSelectedStatus] = useState<boolean>(false);
 
     return () => clearTimeout(timer); 
   }, [searchTerm]);
+ const stableGetAllUsers = useCallback(getAllUsers, []);
+useEffect(() => {
+  const filters: Record<string, unknown> = {};
 
-  
-  useEffect(() => {
-    const filters: Record<string, unknown> = {};
+  if (statusFilter === 'Active') filters.isBlocked = false;
+  else if (statusFilter === 'Blocked') filters.isBlocked = true;
 
-    if (statusFilter === 'Active') filters.isBlocked = false;
-    else if (statusFilter === 'Blocked') filters.isBlocked = true;
+  const sort: Record<string, 1 | -1> = { username: sortOrder === 'asc' ? 1 : -1 };
 
-    const sort: Record<string, 1 | -1> = { username: sortOrder === 'asc' ? 1 : -1 };
+  stableGetAllUsers({
+    page: currentPage,
+    search: debouncedSearchTerm,
+    filters,
+    limit: 2,  
+    sort,
+  });
+}, [currentPage, debouncedSearchTerm, statusFilter, sortOrder, stableGetAllUsers]);
 
-    getAllUsers({
-      page: currentPage,
-      search: debouncedSearchTerm,
-      filters,
-      limit:2,
-      sort,
-    });
-  }, [currentPage, debouncedSearchTerm, statusFilter, sortOrder,getAllUsers]);
 
   const totalPages = Math.ceil(totalUsersCount / usersPerPage);
 function handleBlockClick(id: string, status: boolean) {
