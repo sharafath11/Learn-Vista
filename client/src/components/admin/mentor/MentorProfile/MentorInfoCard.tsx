@@ -64,9 +64,7 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
 
   return (
     <div className="rounded-xl shadow-lg overflow-hidden bg-white flex flex-col md:flex-row">
-      {/* Left side (Profile & Info) */}
       <div className="md:w-1/2 p-6 flex flex-col items-center">
-        {/* Profile Picture */}
         <div className="w-40 h-40 rounded-full overflow-hidden mb-4 border-4 border-indigo-500">
           <Image
             src={mentor?.profilePicture || "/placeholder.svg"}
@@ -77,13 +75,11 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
           />
         </div>
 
-        {/* Basic Info */}
         <h3 className="text-lg font-bold text-red-500">
           {mentor.isVerified ? "" : "Not verified"}
         </h3>
         <h2 className="text-2xl font-bold text-center">{mentor?.username}</h2>
 
-        {/* Expertise Tags */}
         <div className="flex flex-wrap justify-center gap-2 mt-2 mb-4">
           {mentor.expertise?.map((skill) => (
             <span
@@ -95,38 +91,37 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
           ))}
         </div>
 
-        {/* Status */}
         <span className={`px-4 py-1 mb-4 rounded-full text-sm font-medium ${statusClass}`}>
           {statusLabel}
         </span>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 w-full mb-4">
+        <div className="grid grid-cols-4 gap-4 w-full mb-4">
           <div className="text-center">
             <p className="text-lg font-bold">{mentor.students}</p>
             <p className="text-xs text-gray-500">Students</p>
           </div>
           <div className="text-center">
-  <p className="text-lg font-bold">
-    {mentor.courses?.filter(c => c.isActive).length || 0}
-  </p>
-  <p className="text-xs text-gray-500">Active Courses</p>
-</div>
-
-<div className="text-center">
-  <p className="text-lg font-bold">
-    {mentor.courses?.filter(c => !c.isActive).length || 0}
-  </p>
-  <p className="text-xs text-gray-500">Inactive Courses</p>
-</div>
-
+            <p className="text-lg font-bold">
+              {Array.isArray(mentor.courses)
+                ? mentor.courses.filter(c => c.isActive).length
+                : 0}
+            </p>
+            <p className="text-xs text-gray-500">Active Courses</p>
+          </div>
           <div className="text-center">
-            <p className="text-lg font-bold">{mentor.liveClasses?.length}</p>
+            <p className="text-lg font-bold">
+              {Array.isArray(mentor.courses)
+                ? mentor.courses.filter(c => !c.isActive).length
+                : 0}
+            </p>
+            <p className="text-xs text-gray-500">Inactive Courses</p>
+          </div>
+          <div className="text-center">
+            <p className="text-lg font-bold">{mentor.liveClasses?.length || 0}</p>
             <p className="text-xs text-gray-500">Live Classes</p>
           </div>
         </div>
 
-        {/* Contact Info */}
         <div className="w-full p-4 rounded-lg mb-4 bg-gray-100">
           <h3 className="font-semibold mb-2">Contact Information</h3>
           <p className="text-sm mb-1"><span className="font-medium">Email:</span> {mentor?.email}</p>
@@ -151,7 +146,6 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
           )}
         </div>
 
-        {/* Approve / Reject / Pending Buttons */}
         {currentStatus !== 'approved' && (
           <div className="flex flex-wrap gap-2 w-full">
             <button
@@ -183,7 +177,6 @@ const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
         )}
       </div>
 
-      {/* Right side (Resume Preview) */}
       {mentor?.cvOrResume && (
         <div className="md:w-1/2 p-6 flex flex-col gap-4">
           <a
