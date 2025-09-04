@@ -52,6 +52,14 @@ export const UserAPIMethods = {
   getCertificate: (certificateId: string) => get(`/certificate/${certificateId}`),
   getDailyTask: () => get("/daily-task/today"),
  submitDailyTaskAnswer: (formData:FormData) =>post("/daily-task/today",formData),
- getAllDailyTask:()=>get("/dailyTaks")
+  getAllDailyTask: () => get("/dailyTaks"),
+  voiceNote: (lessonId: string, courseId: string, note: string) =>
+    post(`/lessons/${lessonId}/voicenote`, { note, courseId }),
+  
+  
+ getVoiceNotes: (
+    lessonId: string,
+    params?: { search?: string; sort?: "asc" | "desc" }
+  ) => get(`/lessons/${lessonId}/voicenotes`, { params }),
 
 } as const;

@@ -147,6 +147,9 @@ import { AdminCategoryService } from '../../services/admin/AdminCategory.Service
 import { AdminConcernService } from '../../services/admin/AdminConcern.Service';
 import { IDailyTaskRepository } from '../interfaces/repositories/user/IDailyTaskRepository';
 import { DailyTaskRepository } from '../../repositories/user/DailyTaskRepository';
+import { IVoiceNote } from '../../types/lessons';
+import { VoiceNoteRepository } from '../../repositories/user/VoiceNoteRepository';
+import { IVoiceNoteRepository } from '../interfaces/repositories/user/IVoiceNoteRepository';
 
 const container = new Container();
 
@@ -223,6 +226,7 @@ container.bind<IUserCourseProgressRepository>(TYPES.UserCourseProgressRepository
 container.bind<INotificationRepository>(TYPES.NotificationRepository).to(NotificationRepository);
 container.bind<IUserLessonProgressRepository>(TYPES.UserLessonProgressRepository).to(UserLessonProgresssRepository)
 container.bind<ICertificateRepository>(TYPES.CertificateRepository).to(CertificateRepository)
-container.bind<IDailyTaskRepository>(TYPES.DailyTaskRepository).to(DailyTaskRepository)
+container.bind<IDailyTaskRepository>(TYPES.DailyTaskRepository).to(DailyTaskRepository);
+container.bind<IVoiceNoteRepository>(TYPES.VoiceNoteRepository).to(VoiceNoteRepository)
 
 export default container;

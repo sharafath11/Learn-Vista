@@ -6,28 +6,28 @@ import dotenv from "dotenv";
 dotenv.config()
 const SECRET_KEY = process.env.JWT_SECRET || "yourAccessSecret";
 const REFRESH_KEY = process.env.REFRESH_SECRET || "yourRefreshSecret";
-const ACCESS_EXPIRES_IN = "5m";
+const ACCESS_EXPIRES_IN = "15m";
 const REFRESH_EXPIRES_IN = "7d";
 export interface TokenPayload {
   id: string;
   role: string;
 }
 
-// const cookieOptions = {
-//   httpOnly: true,
-//   secure: process.env.COOKIE_SECURE === "true",
-//   sameSite: (process.env.COOKIE_SAMESITE as "lax" | "strict" | "none") || "lax",
-//   domain: process.env.COOKIE_DOMAIN || undefined,
-//   path: "/",
-// };
-
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production", 
-  sameSite: "none" as const,                    
-  domain: ".sharafathabi.cloud", 
-  path: "/",                                     
+  secure: process.env.COOKIE_SECURE === "true",
+  sameSite: (process.env.COOKIE_SAMESITE as "lax" | "strict" | "none") || "lax",
+  domain: process.env.COOKIE_DOMAIN || undefined,
+  path: "/",
 };
+
+// const cookieOptions = {
+//   httpOnly: true,
+//   secure: process.env.NODE_ENV === "production", 
+//   sameSite: "none" as const,                    
+//   domain: ".sharafathabi.cloud", 
+//   path: "/",                                     
+// };
 
 export const generateAccessToken = (id: string, role: string): string => {
   const payload: TokenPayload = { id, role };

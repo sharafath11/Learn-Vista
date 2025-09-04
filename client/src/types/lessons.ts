@@ -70,3 +70,19 @@ courseTitle:string
 lessonTitle:string
 comment:string
 }
+
+
+
+
+export type SortOption = "newest" | "oldest";
+
+export interface IVoiceNote {
+  id: string;
+  course: string;
+  lesson: string;
+  note: string;
+  PrefectNote: string;
+  notedDate: Date|string;
+}
+
+

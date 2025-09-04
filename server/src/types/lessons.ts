@@ -4,6 +4,7 @@ import { IUserLessonProgress } from "./userLessonProgress";
 import { IMentorCommentResponseDto, IUserCommentResponseAtLesson } from "../shared/dtos/comment/commentResponse.dto";
 import { IUserQustionsDto } from "../shared/dtos/question/question-response.dto";
 import { IUserLessonProgressDto, IUserLessonReportResponse, IUserLessonResponseDto } from "../shared/dtos/lessons/lessonResponse.dto";
+import { extend } from "dayjs";
 
 export interface ILesson extends Document {
     _id:string | ObjectId
@@ -98,4 +99,14 @@ export interface ILessonDetails {
   report?: IUserLessonReportResponse| null;
   questions: IUserQustionsDto[];
   comments: IUserCommentResponseAtLesson[];
+}
+export interface IVoiceNote extends Document{
+  _id: string | ObjectId;
+  courseId: string | ObjectId;
+  lessonId: string | ObjectId;
+  userId: string | ObjectId;
+  note: string;
+  AiResponse:string
+  createdAt: Date;
+  updatedAt: Date;
 }

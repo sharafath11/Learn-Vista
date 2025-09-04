@@ -1,4 +1,18 @@
 export const Messages = {
+  VOICE_NOTE: {
+  SAVED: "Voice note saved successfully.",
+  FETCHED: "Voice notes fetched successfully.",
+  UPDATED: "Voice note updated successfully.",
+  DELETED: "Voice note deleted successfully.",
+  NOT_FOUND: "Voice note not found.",
+  INVALID_ID: "Invalid voice note ID.",
+  MISSING_NOTE: "Voice note content is required.",
+  SAVE_FAILED: "Failed to save voice note.",
+  FETCH_FAILED: "Failed to fetch voice notes.",
+  UPDATE_FAILED: "Failed to update voice note.",
+  DELETE_FAILED: "Failed to delete voice note.",
+},
+
   AUTH: {
     LOGIN_SUCCESS: "Login successful.",
     LOGOUT_SUCCESS: "Logout successful.",
@@ -180,6 +194,7 @@ export const Messages = {
     UNAUTHORIZED: "Unauthorized access.",
     ACCESS_DENIED:
       "Access denied. You do not have permission to perform this action.",
+    INVALID_REQUEST: "Invalid request.",
   },
   MENTOR: {
     CREATED: "Mentor created successfully.",

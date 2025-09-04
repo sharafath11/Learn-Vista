@@ -12,7 +12,7 @@ import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "../../config/AWS";
 import { ILessonReportRepository } from "../../core/interfaces/repositories/lessons/ILessonReportRepository";
-import { buildPrompt } from "../../utils/Rportprompt";
+import { buildPerfectNotePrompt, buildPrompt } from "../../utils/Rportprompt";
 import { getGemaniResponse } from "../../config/gemaniAi";
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
@@ -29,7 +29,9 @@ import { IUserQustionsDto } from "../../shared/dtos/question/question-response.d
 import { QuestionMapper } from "../../shared/dtos/question/question.mapper";
 import { CommentMapper } from "../../shared/dtos/comment/comment.mapper";
 import { IUserCommentResponseAtLesson } from "../../shared/dtos/comment/commentResponse.dto";
-import { IUserLessonProgressDto, IUserLessonReportResponse } from "../../shared/dtos/lessons/lessonResponse.dto";
+import { IUserLessonProgressDto, IUserLessonReportResponse, IUserVoiceNoteResponseDto } from "../../shared/dtos/lessons/lessonResponse.dto";
+import { IVoiceNoteRepository } from "../../core/interfaces/repositories/user/IVoiceNoteRepository";
+import { toObjectId } from "../../utils/convertStringToObjectId";
 
 const SECTION_WEIGHTS = {
   video: 0.40,
@@ -49,7 +51,8 @@ export class UserLessonsService implements IUserLessonsService {
     @inject(TYPES.UserRepository) private _userRepo: IUserRepository,
     @inject(TYPES.UserLessonProgressRepository) private _userLessonProgressRepo: IUserLessonProgressRepository,
     @inject(TYPES.NotificationService) private _notificationService: INotificationService,
-    @inject(TYPES.UserCourseService) private _userCourseService: IUserCourseService
+    @inject(TYPES.UserCourseService) private _userCourseService: IUserCourseService,
+    @inject(TYPES.VoiceNoteRepository) private _voiceRepo:IVoiceNoteRepository
   ) {}
 
   private async getSignedVideoUrl(videoUrl: string): Promise<string> {
@@ -330,4 +333,62 @@ async updateLessonProgress(
   await this._userCourseService.updateUserCourseProgress(userId, courseId, lessonId);
   return LessonMapper.toLessonProgressUser(finalProgressDoc);
 }
+  
+  
+  async saveVoiceNote(userId: string, courseId: string | ObjectId, lessonId: string | ObjectId, note: string): Promise<void> {
+     if (!userId || !courseId || !lessonId || !note) {
+    throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
+     }
+    const prompt = buildPerfectNotePrompt(note);
+    const AiResponse = await getGemaniResponse(prompt);
+    const savedNote = await this._voiceRepo.create({
+  userId,
+  courseId,
+      lessonId,
+  AiResponse:AiResponse||"I cant Understand youre english sorry 😵‍💫 ",
+  note,
+});
+
+  }
+async getVoiceNotes(
+  userId: string,
+  courseId: string | ObjectId,
+  lessonId: string | ObjectId,
+  params: { search?: string; sort?: "asc" | "desc" } = {}
+): Promise<IUserVoiceNoteResponseDto[]> {
+  const { search = "", sort = "desc" } = params;
+
+  if (!userId || !lessonId) {
+    throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
+  }
+
+  const query: any = {
+    userId: toObjectId(userId),
+    lessonId:  toObjectId(lessonId as string),
+  };
+
+  if (search) {
+    query.$or = [
+      { note: { $regex: search, $options: "i" } },
+      { aiResponse: { $regex: search, $options: "i" } }, 
+    ];
+  }
+
+  const notes = await this._voiceRepo.findAllWithSort(query, {
+    createdAt: sort === "asc" ? 1 : -1,
+  });
+
+const notesWithDetails = await Promise.all(
+  notes.map(async (i) => {
+    const course = await this._courseRepository.findById(i.courseId as string);
+    const lesson = await this._lessonRepository.findById(i.lessonId as string);
+    return LessonMapper.lessonVoieNoteResponse(i, course?.title||"", lesson?.title||"");
+  })
+);
+
+return notesWithDetails;
+
+}
+
+  
 }

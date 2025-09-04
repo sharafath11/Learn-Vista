@@ -162,4 +162,6 @@ async update(id: string, data: UpdateQuery<T>): Promise<U | null> {
       throw this.handleError(error, Messages.REPOSITORY.DELETE_ERROR);
     }
   }
+
+
 }

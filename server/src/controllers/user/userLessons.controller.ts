@@ -118,4 +118,51 @@ export class UserLessonsController implements IUserLessonsController{
             handleControllerError(res, error);
         }
     };
+    async saveVoiceNote(req: Request, res: Response): Promise<void> {
+    try {
+      const lessonId = req.params.lessonId;
+      const { note ,courseId} = req.body;
+      const decode = decodeToken(req.cookies.token);
+
+      if (!lessonId || !note) {
+        throwError(Messages.COMMON.INVALID_REQUEST, StatusCode.BAD_REQUEST);
+      }
+
+      const result = await this._userLessonsService.saveVoiceNote(
+          decode?.id as string,
+          courseId,
+        lessonId,
+        note
+      );
+
+      sendResponse(res, StatusCode.CREATED, Messages.VOICE_NOTE.SAVED, true, result);
+    } catch (error) {
+      handleControllerError(res, error);
+    }
+    }
+    async getVoiceNotes(req: Request, res: Response): Promise<void> {
+    try {
+      const lessonId = req.params.lessonId;
+      const decode = decodeToken(req.cookies.token);
+      const { search = "", sort = "desc" } = req.query;
+
+      if (!lessonId) {
+        throwError(Messages.COMMON.INVALID_REQUEST, StatusCode.BAD_REQUEST);
+      }
+
+      const result = await this._userLessonsService.getVoiceNotes(
+  decode?.id as string,
+  "",
+  lessonId,
+  {
+    search: search as string,
+    sort: (sort as "asc" | "desc") || "desc"
+  }
+);
+
+      sendResponse(res, StatusCode.OK, Messages.VOICE_NOTE.FETCHED, true, result);
+    } catch (error) {
+      handleControllerError(res, error);
+    }
+  }
 }

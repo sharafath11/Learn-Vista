@@ -160,3 +160,16 @@ Instructions:
 }
 `;
 
+export const buildPerfectNotePrompt = (note: string) => `
+You are an expert mentor.
+
+The student wrote the following note for a lesson:
+"${note.replace(/"/g, '\\"')}"
+
+Your task:
+1. Understand the content and key points of the lesson from this note.
+2. Correct any errors, fill in missing key points, and make it concise.
+3. Rewrite it as a perfect note that a student could use to revise the lesson.
+
+Respond ONLY with the **perfect note text**, no extra commentary or JSON.
+`;

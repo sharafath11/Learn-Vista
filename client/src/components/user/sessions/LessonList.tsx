@@ -72,18 +72,23 @@ export default function LessonList({ courseId }: { courseId: string }) {
             onClick={() => handleLessonClick(lesson.id.toString())}
           >
             <div className="relative">
-              <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-t-lg overflow-hidden">
-                <Image
-                  src={lesson.thumbnail || `/placeholder.svg?height=200&width=400&text=Lesson ${lesson.title}`}
-                  alt={lesson.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-black bg-opacity-40 rounded-full p-4 hover:bg-opacity-60 transition-all">
-                    <Play className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </div>
+             <div className="relative aspect-video bg-gray-200 dark:bg-gray-700 rounded-t-lg overflow-hidden">
+  <Image
+    src={
+      lesson.thumbnail ||
+      `/placeholder.svg?height=200&width=400&text=Lesson ${lesson.title}`
+    }
+    alt={lesson.title}
+    fill
+    className="object-cover"
+  />
+  <div className="absolute inset-0 flex items-center justify-center">
+    <div className="bg-black bg-opacity-40 rounded-full p-4 hover:bg-opacity-60 transition-all">
+      <Play className="h-8 w-8 text-white" />
+    </div>
+  </div>
+</div>
+
               
             </div>
 

@@ -57,3 +57,12 @@ export interface IUserLessonReportResponse {
     report: LessonQuestionEvaluation |string;
     createdAt?: Date;
 }
+
+export interface IUserVoiceNoteResponseDto {
+  id: string;
+  course: string;
+  lesson: string;
+  note: string;
+  PrefectNote: string
+  notedDate:Date
+}

@@ -1,6 +1,6 @@
-import { ILesson, ILessonReport } from "../../../types/lessons";
+import { ILesson, ILessonReport, IVoiceNote } from "../../../types/lessons";
 import { IUserLessonProgress } from "../../../types/userLessonProgress";
-import {  IAdminLessonResponseDto, ILessonResponseDto, IMentorLessonResponseDto, IUserLessonProgressDto, IUserLessonReportResponse, IUserLessonResponseDto} from "./lessonResponse.dto";
+import {  IAdminLessonResponseDto, ILessonResponseDto, IMentorLessonResponseDto, IUserLessonProgressDto, IUserLessonReportResponse, IUserLessonResponseDto, IUserVoiceNoteResponseDto} from "./lessonResponse.dto";
 
 
 export class LessonMapper {
@@ -68,5 +68,15 @@ export class LessonMapper {
     return {
       report: l.report 
   }
-}
+  }
+  static lessonVoieNoteResponse(v: IVoiceNote,course:string,lesson:string): IUserVoiceNoteResponseDto{
+    return {
+      course,
+      id: v._id.toString(),
+      lesson,
+      note: v.note,
+      PrefectNote: v.AiResponse,
+      notedDate:v.createdAt
+    }
+  }
 }

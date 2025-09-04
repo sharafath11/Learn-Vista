@@ -7,7 +7,6 @@ import { CreateCertificateInput, ICertificate } from "../../types/certificateTyp
 import { formatIssuedDate, generateCertificateId, generateQRCode } from "../../utils/ certificateUtils"
 import { ICertificateResponseDto } from "../../shared/dtos/certificate/certificate-response.dto"
 import { CertificateMapper } from "../../shared/dtos/certificate/certificate.mapper"
-import { throwError } from "../../utils/ResANDError"
 
 @injectable()
 export class UserCertificateService implements IUserCertificateService {

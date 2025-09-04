@@ -77,5 +77,6 @@ export const TYPES = {
   NotificationRepository: Symbol.for("NotificationRepository"),
   UserLessonProgressRepository: Symbol.for("UserLessonProgressReposiory"),
   CertificateRepository: Symbol.for("CertificateRepository"),
-  DailyTaskRepository:Symbol.for("DailyTaskRepository")
+  DailyTaskRepository: Symbol.for("DailyTaskRepository"),
+  VoiceNoteRepository:Symbol.for("VoiceNoteRepository")
 };
