@@ -164,5 +164,52 @@ export class UserLessonsController implements IUserLessonsController{
     } catch (error) {
       handleControllerError(res, error);
     }
+    }
+    
+    async deleteVoiceNote(req: Request, res: Response): Promise<void> {
+  try {
+    const lessonId = req.params.lessonId;
+    const voiceNoteId = req.params.voiceNoteId;
+    const decode = decodeToken(req.cookies.token);
+
+    if (!lessonId || !voiceNoteId) {
+      throwError(Messages.COMMON.INVALID_REQUEST, StatusCode.BAD_REQUEST);
+    }
+
+    const result = await this._userLessonsService.deleteVoiceNote(
+      decode?.id as string,
+      lessonId,
+      voiceNoteId
+    );
+
+    sendResponse(res, StatusCode.OK, Messages.VOICE_NOTE.DELETED, true, result);
+  } catch (error) {
+    handleControllerError(res, error);
   }
+}
+
+async editVoiceNote(req: Request, res: Response): Promise<void> {
+  try {
+    const lessonId = req.params.lessonId;
+    const voiceNoteId = req.params.voiceNoteId;
+    const { note } = req.body;
+    const decode = decodeToken(req.cookies.token);
+
+    if (!lessonId || !voiceNoteId || !note) {
+      throwError(Messages.COMMON.INVALID_REQUEST, StatusCode.BAD_REQUEST);
+    }
+
+    const result = await this._userLessonsService.editVoiceNote(
+      decode?.id as string,
+      lessonId,
+      voiceNoteId,
+      note
+    );
+
+    sendResponse(res, StatusCode.OK, Messages.VOICE_NOTE.UPDATED, true, result);
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+}
+
 }

@@ -358,37 +358,106 @@ async getVoiceNotes(
 ): Promise<IUserVoiceNoteResponseDto[]> {
   const { search = "", sort = "desc" } = params;
 
+  console.log("=== getVoiceNotes called ===");
+  console.log("userId:", userId);
+  console.log("courseId:", courseId);
+  console.log("lessonId:", lessonId);
+  console.log("search:", search, "sort:", sort);
+
   if (!userId || !lessonId) {
+    console.error("Invalid data: userId or lessonId missing");
     throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
   }
 
   const query: any = {
     userId: toObjectId(userId),
-    lessonId:  toObjectId(lessonId as string),
+    lessonId: toObjectId(lessonId as string),
   };
 
   if (search) {
     query.$or = [
       { note: { $regex: search, $options: "i" } },
-      { aiResponse: { $regex: search, $options: "i" } }, 
+      { aiResponse: { $regex: search, $options: "i" } },
     ];
+    console.log("Search query applied:", query.$or);
   }
+
+  console.log("MongoDB query object:", query);
+  console.log("Sorting by createdAt:", sort === "asc" ? "ascending" : "descending");
 
   const notes = await this._voiceRepo.findAllWithSort(query, {
     createdAt: sort === "asc" ? 1 : -1,
   });
 
-const notesWithDetails = await Promise.all(
-  notes.map(async (i) => {
-    const course = await this._courseRepository.findById(i.courseId as string);
-    const lesson = await this._lessonRepository.findById(i.lessonId as string);
-    return LessonMapper.lessonVoieNoteResponse(i, course?.title||"", lesson?.title||"");
-  })
-);
+  console.log(`Found ${notes.length} notes from the database`);
 
-return notesWithDetails;
+  const notesWithDetails = await Promise.all(
+    notes.map(async (i) => {
+      console.log("Processing note:", i._id.toString());
+      const course = await this._courseRepository.findById(i.courseId as string);
+      const lesson = await this._lessonRepository.findById(i.lessonId as string);
+      return LessonMapper.lessonVoieNoteResponse(i, course?.title || "", lesson?.title || "");
+    })
+  );
 
+  console.log("Returning notes with details:", notesWithDetails.length);
+  console.log("=== getVoiceNotes completed ===");
+
+  return notesWithDetails;
 }
 
-  
+
+  async editVoiceNote(
+  userId: string,
+  lessonId: string | ObjectId,
+  voiceNoteId: string | ObjectId,
+  note: string
+): Promise<IUserVoiceNoteResponseDto> {
+  if (!userId || !lessonId || !voiceNoteId || !note) {
+    throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
+  }
+
+  const prompt = buildPerfectNotePrompt(note);
+  const aiResponse = await getGemaniResponse(prompt) || "I can't understand your input 😵‍💫";
+
+  const updatedNote = await this._voiceRepo.update(
+    voiceNoteId.toString(),
+    {
+      $set: {
+        note,
+        aiResponse,
+        updatedAt: new Date()
+      }
+    }
+  );
+
+  if (!updatedNote) {
+    throwError(Messages.VOICE_NOTE.DELETE_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
+  }
+  const course = await this._courseRepository.findById(updatedNote.courseId as string);
+  const lesson = await this._lessonRepository.findById(updatedNote.lessonId as string);
+
+  return LessonMapper.lessonVoieNoteResponse(
+    updatedNote,
+    course?.title || "",
+    lesson?.title || ""
+  );
+}
+
+async deleteVoiceNote(
+  userId: string,
+  lessonId: string | ObjectId,
+  voiceNoteId: string | ObjectId
+): Promise<void> {
+  if (!userId || !lessonId || !voiceNoteId) {
+    throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
+  }
+
+  const deleted = await this._voiceRepo.delete(voiceNoteId.toString());
+
+  if (!deleted) {
+    throwError(Messages.VOICE_NOTE.DELETED, StatusCode.INTERNAL_SERVER_ERROR);
+  }
+}
+
 }

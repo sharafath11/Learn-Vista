@@ -38,4 +38,16 @@ export interface IUserLessonsService {
     lessonId: string | ObjectId,
     params: { search?: string; sort?: "asc" | "desc" }
   ): Promise<IUserVoiceNoteResponseDto[]>;
+   editVoiceNote(
+    userId: string,
+    lessonId: string | ObjectId,
+    voiceNoteId: string | ObjectId,
+    note: string
+  ): Promise<IUserVoiceNoteResponseDto>;
+  
+  deleteVoiceNote(
+    userId: string,
+    lessonId: string | ObjectId,
+    voiceNoteId: string | ObjectId
+  ): Promise<void>;
 }

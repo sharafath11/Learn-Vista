@@ -9,5 +9,7 @@ export interface IUserLessonsController {
     updateLessonProgress(req: Request, res: Response): Promise<void>
     saveVoiceNote(req: Request, res: Response): Promise<void>;
     getVoiceNotes(req: Request, res: Response): Promise<void>;
+    deleteVoiceNote(req: Request, res: Response): Promise<void>;
+    editVoiceNote(req: Request, res: Response): Promise<void>;
 
 } 

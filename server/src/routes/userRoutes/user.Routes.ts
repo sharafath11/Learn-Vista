@@ -37,8 +37,13 @@ router.get("/donation-session/:sessionId/verify", userDonationController.verifyS
 router.get("/course/progress", authenticateToken,checkUserBlock, userCourseController.getProgressDetiles.bind(userCourseController))
 router.get("/let-fun/psc",authenticateToken,checkUserBlock,userController.getQuestionByNumber.bind(userController));
 router.patch("/lessons/:lessonId/progress", authenticateToken, checkUserBlock, userLessonsController.updateLessonProgress.bind(userLessonsController));
-router.post("/lessons/:lessonId/voicenote", authenticateToken, checkUserBlock, userLessonsController.saveVoiceNote.bind(userLessonsController));
-router.get("/lessons/:lessonId/voicenotes", authenticateToken, checkUserBlock, userLessonsController.getVoiceNotes.bind(userLessonsController));
+router.post("/lessons/:lessonId/voicenote", authenticateToken, checkUserBlock, userLessonsController.saveVoiceNote.bind(userLessonsController))
+      .get("/lessons/:lessonId/voicenotes", authenticateToken, checkUserBlock, userLessonsController.getVoiceNotes.bind(userLessonsController))
+      .delete("/lessons/:lessonId/voicenote/:voiceNoteId", authenticateToken, checkUserBlock, userLessonsController.deleteVoiceNote.bind(userLessonsController))
+      .patch("/lessons/:lessonId/voicenote/:voiceNoteId", authenticateToken, checkUserBlock, userLessonsController.editVoiceNote.bind(userLessonsController));
+
+
+router.delete("/lessons/:lessonId/voicenotes", authenticateToken, checkUserBlock, userLessonsController.getVoiceNotes.bind(userLessonsController));
 router.get("/donations/:page", authenticateToken,checkUserBlock, userDonationController.getPaginatedDonations.bind(userDonationController));
 router.get("/certificates", authenticateToken,checkUserBlock, userCertificateController.getCertificates.bind(userCertificateController))
 router.get("/certificate/:certificateId",checkUserBlock, userCertificateController.getCertificate.bind(userCertificateController))

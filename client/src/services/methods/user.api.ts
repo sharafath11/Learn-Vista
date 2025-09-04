@@ -1,11 +1,12 @@
 import { IFetchAllCourseParams } from "@/src/types/courseTypes";
 import { ILogin, IUserRegistration } from "../../types/authTypes";
 import { AnswerWithType, ILessonProgressUpdate } from "../../types/lessons";
-import { getRequest, postRequest, patchRequest } from "../api";
+import { getRequest, postRequest, patchRequest, deleteRequest } from "../api";
 
 const get = getRequest;
 const post = postRequest;
 const patch = patchRequest;
+const deleteApi=deleteRequest;
 
 
 export const UserAPIMethods = {
@@ -53,13 +54,8 @@ export const UserAPIMethods = {
   getDailyTask: () => get("/daily-task/today"),
  submitDailyTaskAnswer: (formData:FormData) =>post("/daily-task/today",formData),
   getAllDailyTask: () => get("/dailyTaks"),
-  voiceNote: (lessonId: string, courseId: string, note: string) =>
-    post(`/lessons/${lessonId}/voicenote`, { note, courseId }),
-  
-  
- getVoiceNotes: (
-    lessonId: string,
-    params?: { search?: string; sort?: "asc" | "desc" }
-  ) => get(`/lessons/${lessonId}/voicenotes`, { params }),
-
+  voiceNote: (lessonId: string, courseId: string, note: string) =>post(`/lessons/${lessonId}/voicenote`, { note, courseId }),
+  getVoiceNotes: (lessonId: string, params?: { search?: string; sort?: "asc" | "desc" }) => get(`/lessons/${lessonId}/voicenotes`, { params }),
+  deleteVoiceNote: (lessonId: string, noteId: string) => deleteApi(`lessons/${lessonId}/voicenote/${noteId}`,),
+  editVoiceNote:(lessonId: string, noteId: string) => patch(`lessons/${lessonId}/voicenote/${noteId}`,{})
 } as const;

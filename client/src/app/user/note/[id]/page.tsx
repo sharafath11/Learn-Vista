@@ -16,6 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/src/components/shared/components/ui/tooltip";
+import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 
 export default function VoiceNotesDashboard() {
   const params = useParams();
@@ -26,6 +27,8 @@ export default function VoiceNotesDashboard() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
   const [expandedNote, setExpandedNote] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   const fetchNotes = async () => {
     if (!lessonId) return;
@@ -47,7 +50,7 @@ export default function VoiceNotesDashboard() {
   useEffect(() => {
     const handler = setTimeout(() => {
       fetchNotes();
-    }, 500); // Debounce search
+    }, 500); // debounce search
     return () => clearTimeout(handler);
   }, [lessonId, searchQuery, sortBy]);
 
@@ -66,20 +69,47 @@ export default function VoiceNotesDashboard() {
     });
   };
 
-  const handleDelete = async (noteId: string) => {
-    if (!confirm("Are you sure you want to delete this note ?")) return;
-    // try {
-    //   await UserAPIMethods.deleteVoiceNote(noteId);
-    //   setNotes((prev) => prev.filter((n) => n.id !== noteId));
-    //   showSuccessToast("Note deleted successfully.");
-    // } catch (err) {
-    //   showInfoToast("Failed to delete note.");
-    // }
+  // Open confirmation modal before deleting
+  const confirmDelete = (noteId: string) => {
+    setNoteToDelete(noteId);
+    setDeleteDialogOpen(true);
   };
 
-  const handleEdit = (noteId: string) => {
-    // Redirect to edit page or open modal
-    showInfoToast(`Edit note ${noteId} clicked!`);
+  const handleDeleteConfirmed = async () => {
+    if (!lessonId || !noteToDelete) return;
+
+    try {
+      const res = await UserAPIMethods.deleteVoiceNote(lessonId, noteToDelete);
+      if (res.ok) {
+        setNotes((prev) => prev.filter((n) => n.id !== noteToDelete));
+        showSuccessToast("Note deleted successfully.");
+      } else {
+        showInfoToast(res.msg);
+      }
+    } catch (err) {
+      showInfoToast("Failed to delete note.");
+    } finally {
+      setDeleteDialogOpen(false);
+      setNoteToDelete(null);
+    }
+  };
+
+  const handleEdit = async (noteId: string) => {
+    try {
+      const res = await UserAPIMethods.editVoiceNote(lessonId, noteId);
+      if (res.ok) {
+        setNotes((prev) =>
+          prev.map((n) =>
+            n.id === noteId ? { ...n, PrefectNote: res.data.AiResponse } : n
+          )
+        );
+        showSuccessToast("AI response regenerated successfully.");
+      } else {
+        showInfoToast(res.msg);
+      }
+    } catch (err) {
+      showInfoToast("Failed to regenerate AI response.");
+    }
   };
 
   return (
@@ -87,8 +117,12 @@ export default function VoiceNotesDashboard() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-10 text-center md:text-left">
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">My Voice Notes</h1>
-          <p className="text-lg text-gray-600">Review your notes and AI-enhanced insights for this lesson.</p>
+          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">
+            My Voice Notes
+          </h1>
+          <p className="text-lg text-gray-600">
+            Review your notes and AI-enhanced insights for this lesson.
+          </p>
         </div>
 
         {/* Search and Sort Controls */}
@@ -128,8 +162,12 @@ export default function VoiceNotesDashboard() {
             <p className="text-gray-500 text-center py-10">Loading notes...</p>
           ) : notes.length === 0 ? (
             <Card className="p-10 text-center bg-white shadow-md">
-              <p className="text-gray-500 text-lg font-medium">No notes found for this lesson.</p>
-              <p className="text-gray-400 text-sm mt-1">Start by adding your first voice note.</p>
+              <p className="text-gray-500 text-lg font-medium">
+                No notes found for this lesson.
+              </p>
+              <p className="text-gray-400 text-sm mt-1">
+                Start by adding your first voice note.
+              </p>
             </Card>
           ) : (
             notes.map((note) => (
@@ -154,7 +192,10 @@ export default function VoiceNotesDashboard() {
                           <Button
                             size="icon"
                             variant="ghost"
-                            onClick={(e) => { e.stopPropagation(); handleEdit(note.id); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(note.id);
+                            }}
                             className="text-gray-500 hover:bg-gray-100"
                           >
                             <Edit className="h-4 w-4" />
@@ -169,7 +210,10 @@ export default function VoiceNotesDashboard() {
                           <Button
                             size="icon"
                             variant="ghost"
-                            onClick={(e) => { e.stopPropagation(); handleDelete(note.id); }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              confirmDelete(note.id);
+                            }}
                             className="text-red-500 hover:bg-red-50"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -190,7 +234,11 @@ export default function VoiceNotesDashboard() {
                       <User className="h-5 w-5 text-cyan-600" />
                       <span className="font-semibold text-cyan-800 text-base">Your Note</span>
                     </div>
-                    <p className={`text-gray-800 leading-relaxed ${expandedNote === note.id ? "" : "line-clamp-3"}`}>
+                    <p
+                      className={`text-gray-800 leading-relaxed ${
+                        expandedNote === note.id ? "" : "line-clamp-3"
+                      }`}
+                    >
                       {note.note}
                     </p>
                   </div>
@@ -200,7 +248,11 @@ export default function VoiceNotesDashboard() {
                       <Bot className="h-5 w-5 text-orange-600" />
                       <span className="font-semibold text-orange-800 text-base">AI Enhanced Note</span>
                     </div>
-                    <p className={`text-gray-800 leading-relaxed ${expandedNote === note.id ? "" : "line-clamp-3"}`}>
+                    <p
+                      className={`text-gray-800 leading-relaxed ${
+                        expandedNote === note.id ? "" : "line-clamp-3"
+                      }`}
+                    >
                       {note.PrefectNote}
                     </p>
                   </div>
@@ -230,13 +282,24 @@ export default function VoiceNotesDashboard() {
           )}
         </div>
 
-        {/* Results Count */}
         {!loading && notes.length > 0 && (
           <div className="mt-10 text-center">
             <p className="text-gray-500 text-sm">Showing {notes.length} notes.</p>
           </div>
         )}
       </div>
+
+      <CustomAlertDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        title="Confirm Delete"
+        description="Are you sure you want to delete this note? This action cannot be undone."
+        onConfirm={handleDeleteConfirmed}
+        onCancel={() => setDeleteDialogOpen(false)}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="error"
+      />
     </div>
   );
 }
