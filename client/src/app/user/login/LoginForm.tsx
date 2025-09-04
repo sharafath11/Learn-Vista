@@ -264,9 +264,8 @@ export default function LoginForm() {
       if (res.ok) {
         setUser(res.data);
         showSuccessToast(res.msg);
-        await fetchUserData();
+        fetchUserData();
         refereshNotifcation();
-        console.log("redairt ",)
         router.push("/user"); 
       } else {
         showErrorToast(res.msg || "Login failed");

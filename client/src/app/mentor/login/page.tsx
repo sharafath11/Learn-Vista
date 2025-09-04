@@ -60,8 +60,8 @@ export default function LoginPage() {
       const res = await MentorAPIMethods.login(formData.email, formData.password);
       if (res.ok) {
         setMentor(res.data.mentor);
-        await refreshMentor();
-        await refreshMentorNotification();
+         refreshMentor();
+         refreshMentorNotification();
         router.push("/mentor/home");
         showSuccessToast(res.msg);
       }

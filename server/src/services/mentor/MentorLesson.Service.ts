@@ -66,7 +66,7 @@ export class MentorLessonService implements IMentorLessonService {
       try {
         imageUrl = await uploadThumbnail(data.thumbnail);
       } catch (error) {
-        logger.error("S3 upload failed:", error);
+       
         throwError(
           Messages.LESSONS.UPLOAD_FAILED,
           StatusCode.INTERNAL_SERVER_ERROR
@@ -128,7 +128,6 @@ export class MentorLessonService implements IMentorLessonService {
           updateData.thumbnailFileBuffer,
         );
       } catch (error) {
-        logger.error("Error during thumbnail upload or deletion in editLesson:", error);
         throwError(Messages.LESSONS.THUMBNAIL_UPDATE_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
       }
     }

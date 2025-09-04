@@ -10,7 +10,6 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserDonationServices } from "../../core/interfaces/services/user/IUserDonationServices";
-import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { decodeToken } from "../../utils/JWTtoken";
 import { Messages } from "../../constants/messages";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -21,8 +20,6 @@ export class UserDonationController implements IUserDonationController {
   constructor(
     @inject(TYPES.UserDonationServices)
     private _donationService: IUserDonationServices,
-    @inject(TYPES.NotificationService)
-    private _notificationService: INotificationService
   ) {}
 
   async createCheckoutSession(req: Request, res: Response): Promise<void> {

@@ -170,7 +170,6 @@ export class UserService implements IUserService {
         isCompleted: false,
       }));
     } catch (err) {
-      logger.error(Messages.DAILY_TASK.GENERATION_FAILED);
       if (geminiResponse) {
         logger.error("Raw Gemini Response:", geminiResponse);
       }

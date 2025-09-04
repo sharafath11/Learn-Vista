@@ -3,7 +3,6 @@ import { CustomError } from "../types/errorTypes";
 import { logger } from "./logger";
 
 export function throwError(message: string, statusCode = 400): never {
-  logger.error("Throwing error:", message);
   const error: CustomError = new Error(message);
   error.statusCode = statusCode;
   throw error;
@@ -15,7 +14,7 @@ export function sendResponse<T>(
   ok: boolean,
   data?: T
 ): void {
-  logger.error(msg);
+  
   res.status(status).json({ ok, msg, data });
 }
 export function handleControllerError(
