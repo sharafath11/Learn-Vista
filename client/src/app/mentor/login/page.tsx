@@ -61,9 +61,9 @@ export default function LoginPage() {
       if (res.ok) {
         setMentor(res.data.mentor);
          refreshMentor();
-         refreshMentorNotification();
-        router.push("/mentor/home");
-        showSuccessToast(res.msg);
+        refreshMentorNotification();
+         window.location.href = "/mentor/home";
+                showSuccessToast(res.msg);
       }
     },
     [formData, validateForm, router, setMentor, refreshMentor, refreshMentorNotification]
