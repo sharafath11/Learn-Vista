@@ -14,3 +14,10 @@ export interface IMentorFilterParams {
       $lte?: Date;
     };
 }
+
+type Role = "admin" | "user" | "mentor";
+
+export interface IDecodedToken {
+  id: string;
+  role: Role;
+}

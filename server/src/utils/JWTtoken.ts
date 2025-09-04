@@ -15,11 +15,12 @@ export interface TokenPayload {
 
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production", 
-  sameSite: "none" as const,                    
-  domain: ".sharafathabi.cloud", 
-  path: "/",                                     
+  secure: process.env.COOKIE_SECURE === "true",
+  sameSite: (process.env.COOKIE_SAMESITE as "lax" | "strict" | "none") || "lax",
+  domain: process.env.COOKIE_DOMAIN || undefined,
+  path: "/",
 };
+
 export const generateAccessToken = (id: string, role: string): string => {
   const payload: TokenPayload = { id, role };
   return jwt.sign(payload, SECRET_KEY, { expiresIn: ACCESS_EXPIRES_IN });
@@ -63,3 +64,8 @@ export const clearTokens = (res: Response) => {
 
   return sendResponse(res, StatusCode.OK, "Logout Successful", true);
 };
+export const clearTokensWithoutResponse = (res: Response) => {
+  res.clearCookie("token", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
+};
+

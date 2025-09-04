@@ -1,18 +1,17 @@
 import { Request, Response, NextFunction } from "express";
-import { clearTokens, verifyAccessToken } from "../utils/JWTtoken";
+import { clearTokens, clearTokensWithoutResponse, refreshAccessToken, setTokensInCookies, verifyAccessToken } from "../utils/JWTtoken";
 import { sendResponse } from "../utils/ResANDError";
 import { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
+import { Messages } from "../constants/messages";
+import { StatusCode } from "../enums/statusCode.enum";
+import { IDecodedToken } from "../types/adminTypes";
 
-type Role = "admin" | "user" | "mentor";
 
-interface DecodedToken {
-  id: string;
-  role: Role;
-}
+
 
 declare module "express-serve-static-core" {
   interface Request {
-    mentor?: DecodedToken;
+    mentor?: IDecodedToken;
   }
 }
 
@@ -20,39 +19,59 @@ export const verifyMentor = (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+) => {
   const accessToken = req.cookies?.token;
+  const refreshToken = req.cookies?.refreshToken;
 
   if (!accessToken) {
-    sendResponse(res, 401, "Unauthorized: No token provided", false);
-    return;
+    return sendResponse(res, StatusCode.UNAUTHORIZED, Messages.AUTH.AUTH_REQUIRED, false);
   }
 
   try {
-    const decoded = verifyAccessToken(accessToken) as DecodedToken;
+    const decoded = verifyAccessToken(accessToken) as IDecodedToken;
 
     if (decoded?.id && decoded.role === "mentor") {
       req.mentor = decoded;
-      next();
-      return;
+      return next();
     }
 
-    clearTokens(res);
-    sendResponse(res, 403, "Forbidden: Not a mentor", false);
-
+    clearTokensWithoutResponse(res);
+    return sendResponse(res, StatusCode.FORBIDDEN, Messages.COMMON.ACCESS_DENIED, false);
   } catch (error) {
     if (error instanceof TokenExpiredError) {
-      clearTokens(res);
-      sendResponse(res, 401, "Access token expired", false);
-      return;
+      if (!refreshToken) {
+        clearTokensWithoutResponse(res);
+        return sendResponse(res, StatusCode.UNAUTHORIZED, Messages.AUTH.INVALID_TOKEN, false);
+      }
+
+      try {
+        const newTokens = refreshAccessToken(refreshToken);
+        if (!newTokens) {
+          clearTokensWithoutResponse(res);
+          return sendResponse(res, StatusCode.UNAUTHORIZED, Messages.SHARED.INVALID_TOKEN, false);
+        }
+
+        setTokensInCookies(res, newTokens.accessToken, newTokens.refreshToken);
+
+        const decoded = verifyAccessToken(newTokens.accessToken) as IDecodedToken;
+        if (decoded?.id && decoded.role === "mentor") {
+          req.mentor = decoded;
+          return next();
+        }
+
+        clearTokensWithoutResponse(res);
+        return sendResponse(res, StatusCode.FORBIDDEN, Messages.COMMON.ACCESS_DENIED, false);
+      } catch {
+        clearTokensWithoutResponse(res);
+        return sendResponse(res, StatusCode.UNAUTHORIZED, Messages.AUTH.INVALID_TOKEN, false);
+      }
     }
 
     if (error instanceof JsonWebTokenError) {
-      clearTokens(res);
-      sendResponse(res, 401, "Invalid access token", false);
-      return;
+      clearTokensWithoutResponse(res);
+      return sendResponse(res, StatusCode.UNAUTHORIZED, Messages.AUTH.INVALID_TOKEN, false);
     }
 
-    sendResponse(res, 500, "Internal server error", false);
+    return sendResponse(res, StatusCode.INTERNAL_SERVER_ERROR, Messages.COMMON.INTERNAL_ERROR, false);
   }
 };
