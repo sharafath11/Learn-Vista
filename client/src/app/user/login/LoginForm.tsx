@@ -252,30 +252,28 @@ export default function LoginForm() {
     }
   }, [session]);
   const handleSubmit = async (
-    overrideData?: ILogin,
-    e?: React.FormEvent<HTMLFormElement>
-  ) => {
-    if (e) e.preventDefault();
-    setIsLoading(true);
+  overrideData?: ILogin,
+  e?: React.FormEvent<HTMLFormElement>
+) => {
+  if (e) e.preventDefault();
+  setIsLoading(true);
 
-    try {
-      const res = await UserAPIMethods.loginUser(overrideData || data);
+  const res = await UserAPIMethods.loginUser(overrideData || data);
 
-      if (res.ok) {
-        setUser(res.data);
-        showSuccessToast(res.msg);
-        fetchUserData();
-        refereshNotifcation();
-        router.push("/user"); 
-      } else {
-        showErrorToast(res.msg || "Login failed");
-      }
-    } catch (err) {
-      showErrorToast("Something went wrong. Try again.");
-    }
-
+  if (res?.ok) {
+    setUser(res.data);
+    showSuccessToast(res.msg);
+    fetchUserData();
+    refereshNotifcation();
+    window.location.href = "/user";
     setIsLoading(false);
-  };
+    return;
+  }
+
+  showErrorToast(res?.msg || "Login failed");
+  setIsLoading(false);
+};
+
   const handleGoogleAuth = async () => {
     await signIn("google");
   };
