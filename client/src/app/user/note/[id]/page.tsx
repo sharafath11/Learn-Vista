@@ -67,7 +67,7 @@ export default function VoiceNotesDashboard() {
   };
 
   const handleDelete = async (noteId: string) => {
-    if (!confirm("Are you sure you want to delete this note?")) return;
+    if (!confirm("Are you sure you want to delete this note ?")) return;
     // try {
     //   await UserAPIMethods.deleteVoiceNote(noteId);
     //   setNotes((prev) => prev.filter((n) => n.id !== noteId));
