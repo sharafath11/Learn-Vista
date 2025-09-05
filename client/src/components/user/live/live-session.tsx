@@ -20,6 +20,7 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const peerRef = useRef<Peer.Instance | null>(null)
   const mentorSocketIdRef = useRef<string | null>(null);
+
   const exitSession = () => {
     if (socketRef.current) {
       socketRef.current.disconnect();
@@ -39,10 +40,15 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
   useEffect(() => {
     const init = async () => {
       try {
-        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000")
-        socketRef.current = socket
+        if (socketRef.current) {
+          socketRef.current.disconnect();
+        }
+        
+        const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000");
+        socketRef.current = socket;
+        
         socket.on('connect', () => {
-          socket.emit("join-room", roomId, socket.id, "user") 
+          socket.emit("join-room", roomId, socket.id, "user");
         });
 
         socket.on("mentor-available", (mentorSocketId: string) => {
@@ -63,7 +69,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
         });
 
         socket.on("rtc-offer", async (mentorSocketId: string, offer: any) => {
-
           if (mentorSocketIdRef.current !== mentorSocketId) {
               mentorSocketIdRef.current = mentorSocketId;
               if (peerRef.current) {
@@ -73,7 +78,6 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
                 setIsPlaying(false); 
               }
           }
-
           if (peerRef.current && peerRef.current.connected) {
               return;
           }
@@ -95,20 +99,14 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
 
           peer.on("stream", (stream) => {
             setMentorStream(stream);
-          
-            if (stream) {
-              stream.getVideoTracks().forEach(_track => {
-              });
-              stream.getAudioTracks().forEach(_track => {
-              });
-            } else {
-            }
           });
 
           peer.on("connect", () => {
+           
           });
 
-          peer.on("error", (_err) => {
+          peer.on("error", (err) => {
+            console.error("Peer connection error:", err);
             peerRef.current = null;
             setMentorStream(null);
             setIsPlaying(false); 
@@ -153,10 +151,16 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
     };
 
     init();
-
     return () => {
       if (socketRef.current) {
         socketRef.current.off('connect');
+        socketRef.current.off('mentor-available');
+        socketRef.current.off('mentor-disconnected');
+        socketRef.current.off('rtc-offer');
+        socketRef.current.off('ice-candidate');
+        socketRef.current.off('receive-comment');
+        socketRef.current.off('end-stream');
+        socketRef.current.off('disconnect');
         socketRef.current.disconnect();
       }
       if (peerRef.current) {
@@ -164,20 +168,16 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
         peerRef.current = null;
       }
       mentorStream?.getTracks().forEach(track => track.stop());
-      setMentorStream(null);
-      setIsPlaying(false);
     };
-  },[roomId,mentorStream]);
+  },[roomId]); 
 
   useEffect(() => {
-    if (mentorStream && videoRef.current) {
+    if (videoRef.current) {
       videoRef.current.srcObject = mentorStream;
-      setIsPlaying(false); 
-    } else if (!mentorStream && videoRef.current) {
-        videoRef.current.srcObject = null;
-        setIsPlaying(false); 
+      setIsPlaying(false);
     }
-  }, [mentorStream]); 
+  }, [mentorStream]);
+
   const handlePlayVideo = () => {
     if (videoRef.current && mentorStream) {
       videoRef.current.play().then(() => {

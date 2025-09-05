@@ -72,6 +72,9 @@ export abstract class BaseRepository<T extends Document, U>
           { email: { $regex: searchRegex } },
           { tag: { $regex: searchRegex } },
           { title: { $regex: searchRegex } },
+          { AiResponse: { $regex: searchRegex } },
+          {note:{ $regex: searchRegex }}
+          
         ];
       }
 

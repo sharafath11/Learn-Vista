@@ -55,7 +55,7 @@ export const UserAPIMethods = {
  submitDailyTaskAnswer: (formData:FormData) =>post("/daily-task/today",formData),
   getAllDailyTask: () => get("/dailyTaks"),
   voiceNote: (lessonId: string, courseId: string, note: string) =>post(`/lessons/${lessonId}/voicenote`, { note, courseId }),
-  getVoiceNotes: (lessonId: string, params?: { search?: string; sort?: "asc" | "desc" }) => get(`/lessons/${lessonId}/voicenotes`, { params }),
+  getVoiceNotes: (lessonId: string, params?: { search?: string; sort?: "asc" | "desc",limit:number,page:number}) => get(`/lessons/${lessonId}/voicenotes`, { params }),
   deleteVoiceNote: (lessonId: string, noteId: string) => deleteApi(`lessons/${lessonId}/voicenote/${noteId}`,),
-  editVoiceNote:(lessonId: string, noteId: string) => patch(`lessons/${lessonId}/voicenote/${noteId}`,{})
+  editVoiceNote:(lessonId: string, noteId: string,note:string) => patch(`lessons/${lessonId}/voicenote/${noteId}`,{note})
 } as const;

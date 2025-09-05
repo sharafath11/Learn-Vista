@@ -32,12 +32,12 @@ export interface IUserLessonsService {
     lessonId: string | ObjectId,
     note: string
   ): Promise<void>;
-  getVoiceNotes(
-    userId: string,
-    courseId: string | ObjectId,
-    lessonId: string | ObjectId,
-    params: { search?: string; sort?: "asc" | "desc" }
-  ): Promise<IUserVoiceNoteResponseDto[]>;
+getVoiceNotes(
+  userId: string,
+  lessonId: string | ObjectId,
+  params: { search?: string; sort?: "asc" | "desc"; limit: number; page: number }
+): Promise<{ notes: IUserVoiceNoteResponseDto[]; totalNotes: number }>;
+
    editVoiceNote(
     userId: string,
     lessonId: string | ObjectId,

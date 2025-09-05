@@ -220,13 +220,12 @@ export default function MentorStream({ roomId }: { roomId: string }) {
         }
     };
 
-    const submitComment = () => {
-        if (newComment.trim() && socketRef.current) {
-            socketRef.current.emit("send-comment", roomId, newComment, "Mentor");
-            setComments(prev => [...prev, { text: newComment, sender: "Mentor" }]);
-            setNewComment("");
-        }
-    };
+ const submitComment = () => {
+    if (newComment.trim()) {
+      socketRef.current?.emit("send-comment", roomId, newComment, "Mentor");
+      setNewComment("");
+    }
+  };
 
     const removePeer = (socketId: string) => {
         if (peersRef.current[socketId]) {

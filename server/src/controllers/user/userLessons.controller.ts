@@ -141,31 +141,36 @@ export class UserLessonsController implements IUserLessonsController{
     }
     }
     async getVoiceNotes(req: Request, res: Response): Promise<void> {
-    try {
-      const lessonId = req.params.lessonId;
-      const decode = decodeToken(req.cookies.token);
-      const { search = "", sort = "desc" } = req.query;
+  try {
+    const lessonId = req.params.lessonId;
+    const decode = decodeToken(req.cookies.token);
+    const query = (req.query as any).params || req.query;
+    const { search = "", sort = "desc", limit = "5", page = "1" } = query;
+    const limitInt = parseInt(limit as string, 10);
+    const pageInt = parseInt(page as string, 10);
 
-      if (!lessonId) {
-        throwError(Messages.COMMON.INVALID_REQUEST, StatusCode.BAD_REQUEST);
+    if (!lessonId) {
+      throwError(Messages.COMMON.INVALID_REQUEST, StatusCode.BAD_REQUEST);
+    }
+
+    const result = await this._userLessonsService.getVoiceNotes(
+      decode?.id as string,
+      lessonId,
+      {
+        search: search as string,
+        sort: (sort as "asc" | "desc") || "desc",
+        limit: limitInt,
+        page: pageInt,
       }
+    );
 
-      const result = await this._userLessonsService.getVoiceNotes(
-  decode?.id as string,
-  "",
-  lessonId,
-  {
-    search: search as string,
-    sort: (sort as "asc" | "desc") || "desc"
+    sendResponse(res, StatusCode.OK, Messages.VOICE_NOTE.FETCHED, true, result);
+  } catch (error) {
+    handleControllerError(res, error);
   }
-);
+}
 
-      sendResponse(res, StatusCode.OK, Messages.VOICE_NOTE.FETCHED, true, result);
-    } catch (error) {
-      handleControllerError(res, error);
-    }
-    }
-    
+
     async deleteVoiceNote(req: Request, res: Response): Promise<void> {
   try {
     const lessonId = req.params.lessonId;

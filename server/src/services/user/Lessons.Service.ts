@@ -1,6 +1,6 @@
-import mongoose, { ObjectId } from "mongoose";
+import mongoose, { FilterQuery, ObjectId } from "mongoose";
 import { GetLessonsResponse, IUserLessonsService } from "../../core/interfaces/services/user/IUserLessonsService";
-import {ILessonDetails, LessonQuestionInput } from "../../types/lessons";
+import {ILessonDetails, IVoiceNote, LessonQuestionInput } from "../../types/lessons";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
@@ -350,61 +350,63 @@ async updateLessonProgress(
 });
 
   }
+
 async getVoiceNotes(
   userId: string,
-  courseId: string | ObjectId,
-  lessonId: string | ObjectId,
-  params: { search?: string; sort?: "asc" | "desc" } = {}
-): Promise<IUserVoiceNoteResponseDto[]> {
-  const { search = "", sort = "desc" } = params;
+  lessonOrCourseId: string | ObjectId,
+  params: { search?: string; sort?: "asc" | "desc"; limit: number; page: number } = { limit: 10, page: 1 }
+): Promise<{ notes: IUserVoiceNoteResponseDto[]; totalNotes: number }> {
+  const { search = "", sort = "desc", limit, page } = params;
 
-  console.log("=== getVoiceNotes called ===");
-  console.log("userId:", userId);
-  console.log("courseId:", courseId);
-  console.log("lessonId:", lessonId);
-  console.log("search:", search, "sort:", sort);
-
-  if (!userId || !lessonId) {
-    console.error("Invalid data: userId or lessonId missing");
+  if (!userId || !lessonOrCourseId) {
     throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
   }
 
-  const query: any = {
+  const lesson = await this._lessonRepository.findById(lessonOrCourseId as string);
+
+  let query: FilterQuery<IVoiceNote> = {
     userId: toObjectId(userId),
-    lessonId: toObjectId(lessonId as string),
   };
+
+  if (lesson) {
+    query.lessonId = toObjectId(lessonOrCourseId as string);
+  } else {
+    query.courseId = toObjectId(lessonOrCourseId as string);
+  }
 
   if (search) {
     query.$or = [
       { note: { $regex: search, $options: "i" } },
-      { aiResponse: { $regex: search, $options: "i" } },
+      { AiResponse: { $regex: search, $options: "i" } },
     ];
-    console.log("Search query applied:", query.$or);
   }
 
-  console.log("MongoDB query object:", query);
-  console.log("Sorting by createdAt:", sort === "asc" ? "ascending" : "descending");
-
-  const notes = await this._voiceRepo.findAllWithSort(query, {
-    createdAt: sort === "asc" ? 1 : -1,
-  });
-
-  console.log(`Found ${notes.length} notes from the database`);
+  const { data: notes, total } = await this._voiceRepo.findPaginated(
+    query,
+    page,
+    limit,
+    search,
+    { createdAt: sort === "asc" ? 1 : -1 }
+  );
 
   const notesWithDetails = await Promise.all(
-    notes.map(async (i) => {
-      console.log("Processing note:", i._id.toString());
+    notes.map(async (i: IVoiceNote) => {
       const course = await this._courseRepository.findById(i.courseId as string);
       const lesson = await this._lessonRepository.findById(i.lessonId as string);
-      return LessonMapper.lessonVoieNoteResponse(i, course?.title || "", lesson?.title || "");
+      return LessonMapper.lessonVoieNoteResponse(
+        i,
+        course?.title || "",
+        lesson?.title || ""
+      );
     })
   );
 
-  console.log("Returning notes with details:", notesWithDetails.length);
-  console.log("=== getVoiceNotes completed ===");
-
-  return notesWithDetails;
+  return {
+    notes: notesWithDetails,
+    totalNotes: total,
+  };
 }
+
 
 
   async editVoiceNote(
@@ -418,14 +420,14 @@ async getVoiceNotes(
   }
 
   const prompt = buildPerfectNotePrompt(note);
-  const aiResponse = await getGemaniResponse(prompt) || "I can't understand your input 😵‍💫";
+  const aiResponse = await getGemaniResponse(prompt) || "I can't understand your note 😵‍💫";
 
   const updatedNote = await this._voiceRepo.update(
     voiceNoteId.toString(),
     {
       $set: {
         note,
-        aiResponse,
+        AiResponse:aiResponse,
         updatedAt: new Date()
       }
     }
