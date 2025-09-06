@@ -105,14 +105,7 @@ export const MobileMenu = ({
                     <User size={18} className="group-hover:scale-110 transition-transform" />
                     <span className="font-medium">Profile</span>
                   </Link>
-                  <Link
-                    href="/user/settings"
-                    className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-purple-400 rounded-lg transition-all duration-200 group"
-                    onClick={onClose}
-                  >
-                    <Settings size={18} className="group-hover:scale-110 transition-transform" />
-                    <span className="font-medium">Settings</span>
-                  </Link>
+                  
                   <Link
                     href="/user/lets-fun-psc"
                     className="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-zinc-800 hover:text-purple-400 rounded-lg transition-all duration-200 group"
