@@ -24,50 +24,50 @@ export default function VoiceNoteModal({
   const [transcript, setTranscript] = useState("");
   const [browserSupport, setBrowserSupport] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [,setIsEditing] = useState(false);
+useEffect(() => {
+  // Check for browser support on component mount
+  // @ts-expect-error: SpeechRecognition is experimental
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    setBrowserSupport(true);
+  }
+}, []);
 
-  useEffect(() => {
-    // Check for browser support on component mount
-    // @ts-ignore - SpeechRecognition is experimental
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition) {
-      setBrowserSupport(true);
+const startRecording = () => {
+  // @ts-expect-error: SpeechRecognition is experimental
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = true;
+  recognition.continuous = true;
+
+  recognition.onresult = (event: { resultIndex: any; results: string | any[] }) => {
+    let currentTranscript = "";
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      currentTranscript += event.results[i][0].transcript;
     }
-  }, []);
-
-  const startRecording = () => {
-    // @ts-ignore - SpeechRecognition is experimental
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = true;
-    recognition.continuous = true;
-
-    recognition.onresult = (event: { resultIndex: any; results: string | any[]; }) => {
-      let currentTranscript = "";
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        currentTranscript += event.results[i][0].transcript;
-      }
-      setTranscript(currentTranscript);
-    };
-
-    recognition.onend = () => {
-      setRecording(false);
-      setIsEditing(true); // Enable editing after recording stops
-    };
-
-    recognition.onerror = (event: { error: any; }) => {
-      console.error("Speech recognition error:", event.error);
-      setRecording(false);
-      setIsEditing(true);
-    };
-
-    recognition.start();
-    recognitionRef.current = recognition;
-    setRecording(true);
-    setIsEditing(false); // Disable editing while recording
+    setTranscript(currentTranscript);
   };
+
+  recognition.onend = () => {
+    setRecording(false);
+    setIsEditing(true);
+  };
+
+  recognition.onerror = (event: { error: any }) => {
+    console.error("Speech recognition error:", event.error);
+    setRecording(false);
+    setIsEditing(true);
+  };
+
+  recognition.start();
+  recognitionRef.current = recognition;
+  setRecording(true);
+  setIsEditing(false);
+};
+
 
   const stopRecording = () => {
     recognitionRef.current?.stop();

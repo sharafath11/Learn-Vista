@@ -26,11 +26,8 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [dailyTask, setDailyTask] = useState<IDailyTask | null>(null)
 
-useEffect(() => {
-  localStorage.removeItem("role");
-  localStorage.setItem("role", "user");
-  fetchNotifications()
-}, []);
+
+
 
   const router = useRouter();
 
@@ -75,7 +72,7 @@ const fetchNotifications = useCallback(async () => {
     fetchProgress();
     fetchNotifications();
     fetchTasks()
-  }, [fetchUserData]);
+  }, [fetchUserData,fetchNotifications]);
   const fetchCourses = async () => {
     const res = await UserAPIMethods.fetchAllCourse({});
     if (res.ok) setAllCourses(res.data.data);
@@ -89,7 +86,13 @@ const fetchNotifications = useCallback(async () => {
         } else {
           showInfoToast(res.msg)
         }
-    }
+ }
+  useEffect(() => {
+  localStorage.removeItem("role");
+  localStorage.setItem("role", "user");
+  fetchNotifications();
+}, [fetchNotifications]);
+
   const contextValue = {
     user,
     setUser,

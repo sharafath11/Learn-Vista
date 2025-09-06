@@ -170,13 +170,15 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
       mentorStream?.getTracks().forEach(track => track.stop());
     };
   },[roomId]); 
-// eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = mentorStream;
-      setIsPlaying(false);
-    }
-  }, [mentorStream]);
+useEffect(() => {
+  if (videoRef.current && mentorStream) {
+    videoRef.current.srcObject = mentorStream;
+    videoRef.current.play()
+      .then(() => setIsPlaying(true))
+      .catch(() => setIsPlaying(false));
+  }
+}, [mentorStream]);
+
 
   const handlePlayVideo = () => {
     if (videoRef.current && mentorStream) {
