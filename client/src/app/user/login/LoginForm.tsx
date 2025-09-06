@@ -204,7 +204,7 @@
 // }
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { ILogin } from "@/src/types/authTypes";
@@ -237,42 +237,48 @@ export default function LoginForm() {
       router.push("/user");
     }
   }, [user, router]);
+   const handleSubmit = useCallback(
+    async (overrideData?: ILogin, e?: React.FormEvent<HTMLFormElement>) => {
+      if (e) e.preventDefault();
+      setIsLoading(true);
+
+      const res = await UserAPIMethods.loginUser(overrideData || data);
+
+      if (res?.ok) {
+        setUser(res.data);
+        showSuccessToast(res.msg);
+        await fetchUserData();
+        refereshNotifcation();
+        window.location.href = "/user";
+      } else {
+        showErrorToast(res?.msg || "Login failed");
+      }
+      setIsLoading(false);
+    },
+    [data, fetchUserData, refereshNotifcation, setUser]
+  );
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/user");
+    }
+  }, [user, router]);
+
   useEffect(() => {
     if (session?.user?.email && session?.user?.id && !data.googleId) {
-      const googleLogin = async () => {
-        const googleData:ILogin = {
-          email: session.user.email||"",
-          password: "",
-          googleId: session.user.id,
-        };
-        setData(googleData);
-        await handleSubmit(googleData);
+      const googleData: ILogin = {
+        email: session.user.email || "",
+        password: "",
+        googleId: session.user.id,
       };
-      googleLogin();
+      setData(googleData);
+      handleSubmit(googleData); 
     }
-  }, [session]);
-  const handleSubmit = async (
-  overrideData?: ILogin,
-  e?: React.FormEvent<HTMLFormElement>
-) => {
-  if (e) e.preventDefault();
-  setIsLoading(true);
-
-  const res = await UserAPIMethods.loginUser(overrideData || data);
-
-  if (res?.ok) {
-    setUser(res.data);
-    showSuccessToast(res.msg);
-    fetchUserData();
-    refereshNotifcation();
-    window.location.href = "/user";
-    setIsLoading(false);
-    return;
-  }
-
-  showErrorToast(res?.msg || "Login failed");
-  setIsLoading(false);
-};
+  }, [session, data.googleId, handleSubmit]);
 
   const handleGoogleAuth = async () => {
     await signIn("google");

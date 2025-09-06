@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, ChangeEvent } from "react";
-import { Mic, Square, Save, XCircle, Edit } from "lucide-react";
+import { Mic, Square, Save, XCircle,  } from "lucide-react";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../shared/components/ui/dialog";
 import { Button } from "../../shared/components/ui/button";
 import { UserAPIMethods } from "@/src/services/methods/user.api";

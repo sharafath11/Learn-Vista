@@ -170,7 +170,7 @@ export default function UserLiveSession({ roomId }: { roomId: string }) {
       mentorStream?.getTracks().forEach(track => track.stop());
     };
   },[roomId]); 
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = mentorStream;

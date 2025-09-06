@@ -66,7 +66,7 @@ export default function LoginPage() {
                 showSuccessToast(res.msg);
       }
     },
-    [formData, validateForm, router, setMentor, refreshMentor, refreshMentorNotification]
+    [formData, validateForm,setMentor, refreshMentor, refreshMentorNotification]
   );
 
   const togglePasswordVisibility = useCallback(() => {

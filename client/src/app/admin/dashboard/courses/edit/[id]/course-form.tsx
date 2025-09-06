@@ -1,42 +1,49 @@
-"use client"
-import { useAdminContext } from "@/src/context/adminContext"
-import { Button } from "@/src/components/shared/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
-import { Input } from "@/src/components/shared/components/ui/input"
-import { Label } from "@/src/components/shared/components/ui/label"
+"use client";
+import { useAdminContext } from "@/src/context/adminContext";
+import { Button } from "@/src/components/shared/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/shared/components/ui/card";
+import { Input } from "@/src/components/shared/components/ui/input";
+import { Label } from "@/src/components/shared/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/src/components/shared/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
-import { Textarea } from "@/src/components/shared/components/ui/textarea"
-import { useEffect, useState } from "react"
-import { AdminAPIMethods } from "@/src/services/methods/admin.api"
-import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
-import { useRouter } from "next/navigation"
-import { IMentor } from "@/src/types/mentorTypes"
-import Image from "next/image"
+} from "@/src/components/shared/components/ui/select";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/src/components/shared/components/ui/tabs";
+import { Textarea } from "@/src/components/shared/components/ui/textarea";
+import { useEffect, useState } from "react";
+import { AdminAPIMethods } from "@/src/services/methods/admin.api";
+import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
+import { useRouter } from "next/navigation";
+import { IMentor } from "@/src/types/mentorTypes";
+import Image from "next/image";
 
 export function CourseFormDesign({ courseId }: { courseId: string }) {
-   const router=useRouter()
+  const router = useRouter();
   const { courses, avilbleMentors, setCourses, categories } = useAdminContext();
   const [mentors, setMentors] = useState<IMentor[]>();
-   useEffect(() => {
-     fetchAllMentors()
-     
-   }, [])
+  useEffect(() => {
+    fetchAllMentors();
+  }, []);
 
-   const fetchAllMentors = async () => {
-     const res = await AdminAPIMethods.getAllMentor();
-     if (res.ok) {
-       
-       setMentors(res.data)
-     }
-     else showErrorToast(res.msg)
-   }
+  const fetchAllMentors = async () => {
+    const res = await AdminAPIMethods.getAllMentor();
+    if (res.ok) {
+      setMentors(res.data);
+    } else showErrorToast(res.msg);
+  };
   const course = courses.find((i) => i.id === courseId);
   const [formData, setFormData] = useState({
     title: course?.title || "",
@@ -48,66 +55,63 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
     startDate: course?.startDate?.split("T")[0] || "",
     endDate: course?.endDate?.split("T")[0] || "",
     startTime: course?.startTime || "",
-    thumbnail: course?.thumbnail || ""
-  })
-    const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
+    thumbnail: course?.thumbnail || "",
+  });
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   if (!course) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
- 
-  
 
-
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [id]: value
-    }))
-  }
+      [id]: value,
+    }));
+  };
 
   const handleSelectChange = (key: string, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [key]: value
-    }))
-  }
+      [key]: value,
+    }));
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setThumbnailFile(e.target.files[0])
+      setThumbnailFile(e.target.files[0]);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const data = new FormData()
-    data.append('title', formData.title)
-    data.append('description', formData.description)
-    data.append('mentorId', formData.mentorId)
-    data.append('categoryId', formData.categoryId)
-    data.append('price', formData.price.toString())
-    data.append('courseLanguage', formData.courseLanguage)
-    data.append('startDate', formData.startDate)
-    data.append('endDate', formData.endDate)
-    data.append('startTime', formData.startTime);
-   
+    e.preventDefault();
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    data.append("mentorId", formData.mentorId);
+    data.append("categoryId", formData.categoryId);
+    data.append("price", formData.price.toString());
+    data.append("courseLanguage", formData.courseLanguage);
+    data.append("startDate", formData.startDate);
+    data.append("endDate", formData.endDate);
+    data.append("startTime", formData.startTime);
+
     if (thumbnailFile) {
-      data.append('thumbnail', thumbnailFile)
+      data.append("thumbnail", thumbnailFile);
     }
- 
+
     const res = await AdminAPIMethods.editCourse(courseId, data);
     if (res.ok) {
-      setCourses(prev => prev.map(c =>
-        c.id === courseId ? { ...c, ...res.data } : c
-      ));
+      setCourses((prev) =>
+        prev.map((c) => (c.id === courseId ? { ...c, ...res.data } : c))
+      );
       showSuccessToast(res.msg);
-      router.push("/admin/dashboard/courses")
-    
+      router.push("/admin/dashboard/courses");
     }
-  }
- 
+  };
+
   return (
     <form className="space-y-6 p-4" onSubmit={handleSubmit}>
       <Tabs defaultValue="basic" className="w-full">
@@ -149,14 +153,17 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Mentor * { course.mentor}</Label>
-                  <Select 
+                  <Label>Mentor * {course.mentor}</Label>
+                  <Select
                     value={formData.mentorId}
-                    onValueChange={(value) => handleSelectChange("mentorId", value)}
+                    onValueChange={(value) =>
+                      handleSelectChange("mentorId", value)
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select mentor">
-                        {avilbleMentors.find(m => m.id === formData.mentorId)?.id || "Select mentor"}
+                        {avilbleMentors.find((m) => m.id === formData.mentorId)
+                          ?.id || "Select mentor"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
@@ -170,22 +177,29 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Category *{ course.category}</Label>
-                  <Select 
+                  <Label>Category *{course.category}</Label>
+                  <Select
                     value={formData.categoryId}
-                    onValueChange={(value) => handleSelectChange("categoryId", value)}
+                    onValueChange={(value) =>
+                      handleSelectChange("categoryId", value)
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select category">
-                        {categories?.find(c => c.id === formData.categoryId)?.title || "Select category"}
+                        {categories?.find((c) => c.id === formData.categoryId)
+                          ?.title || "Select category"}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      {categories?.map((ca) => (
-                       ca.isBlock?"":( <SelectItem key={ca.id} value={ca.id as string}>
-                        {ca.title}
-                      </SelectItem>)
-                      ))}
+                      {categories?.map((ca) =>
+                        ca.isBlock ? (
+                          ""
+                        ) : (
+                          <SelectItem key={ca.id} value={ca.id as string}>
+                            {ca.title}
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -204,30 +218,32 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
                 <Label>Thumbnail</Label>
                 <div className="flex flex-col items-center gap-4">
                   <div className="border-2 border-dashed rounded-md p-8 w-full max-w-md text-center">
-  {thumbnailFile ? (
-    <img
-      src={URL.createObjectURL(thumbnailFile)}
-      alt="Course Thumbnail Preview"
-      className="w-full h-auto rounded-md"
-    />
-  ) : formData.thumbnail ? (
-    <Image
-      src={formData.thumbnail}
-      alt="Course Thumbnail"
-      width={600}
-      height={400}
-      className="w-full h-auto rounded-md"
-    />
-  ) : (
-    <p className="text-sm text-muted-foreground">
-      Drag and drop image here, or click to select
-    </p>
-  )}
-</div>
+                    {thumbnailFile ? (
+                      <Image
+                        src={URL.createObjectURL(thumbnailFile)}
+                        alt="Course Thumbnail Preview"
+                        className="w-full h-auto rounded-md"
+                        width={600}
+                        height={400}
+                      />
+                    ) : formData.thumbnail ? (
+                      <Image
+                        src={formData.thumbnail}
+                        alt="Course Thumbnail"
+                        width={600}
+                        height={400}
+                        className="w-full h-auto rounded-md"
+                      />
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Drag and drop image here, or click to select
+                      </p>
+                    )}
+                  </div>
 
-                  <Input 
-                    type="file" 
-                    accept="image/*" 
+                  <Input
+                    type="file"
+                    accept="image/*"
                     onChange={handleFileChange}
                   />
                 </div>
@@ -260,9 +276,11 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
 
               <div className="space-y-2">
                 <Label>Language *</Label>
-                <Select 
+                <Select
                   value={formData.courseLanguage}
-                  onValueChange={(value) => handleSelectChange("courseLanguage", value)}
+                  onValueChange={(value) =>
+                    handleSelectChange("courseLanguage", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select language" />
@@ -306,9 +324,9 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
 
               <div className="space-y-2">
                 <Label htmlFor="startTime">Start Time</Label>
-                <Input 
+                <Input
                   id="startTime"
-                  type="time" 
+                  type="time"
                   value={formData.startTime}
                   onChange={handleChange}
                 />
@@ -322,5 +340,5 @@ export function CourseFormDesign({ courseId }: { courseId: string }) {
         Save Course
       </Button>
     </form>
-  )
+  );
 }

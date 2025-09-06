@@ -53,7 +53,7 @@ const formatDuration = (seconds: number): string => {
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = Math.floor(seconds % 60);
 
-  const pad = (num: number) => num.toString().padStart(2, '0');
+  const pad = (num: number) => num.toString().padStart(2, "0");
 
   if (hours > 0) {
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
@@ -81,9 +81,13 @@ export function AddLessonModal({
   });
 
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(null);
+  const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(
+    null
+  );
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(null);
+  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(
+    null
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   const videoUrlValue = form.watch("videoUrl");
@@ -105,111 +109,126 @@ export function AddLessonModal({
     }
   }, [open, nextOrder, form]);
 
-  const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-  const file = event.target.files?.[0];
-  if (!file) return;
+  const handleVideoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-  setIsUploading(true);
-  setUploadedS3VideoUrl(null);
-  form.setValue("duration", "");
+    setIsUploading(true);
+    setUploadedS3VideoUrl(null);
+    form.setValue("duration", "");
 
-  try {
-    const res = await MentorAPIMethods.getS3DirectUploadUrl(file.name, file.type);
-    if (!res.ok || !res.data?.signedUploadUrl || !res.data?.publicVideoUrl) {
-      throw new Error(res.error?.message || "Failed to get S3 URLs from backend.");
+    try {
+      const res = await MentorAPIMethods.getS3DirectUploadUrl(
+        file.name,
+        file.type
+      );
+      if (!res.ok || !res.data?.signedUploadUrl || !res.data?.publicVideoUrl) {
+        throw new Error(
+          res.error?.message || "Failed to get S3 URLs from backend."
+        );
+      }
+
+      const { signedUploadUrl, publicVideoUrl, signedViewUrl } = res.data;
+
+      const uploadResponse = await fetch(signedUploadUrl, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        throw new Error(
+          `Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`
+        );
+      }
+
+      const tempVideo = document.createElement("video");
+      tempVideo.src = signedViewUrl;
+      tempVideo.preload = "metadata";
+
+      const handleMetadataLoaded = () => {
+        const durationInSeconds = tempVideo.duration;
+        const formattedDuration = formatDuration(durationInSeconds);
+        form.setValue("duration", formattedDuration, { shouldValidate: true });
+        form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
+        setUploadedS3VideoUrl(publicVideoUrl);
+        showSuccessToast("Video uploaded and duration fetched!");
+        tempVideo.removeEventListener("loadedmetadata", handleMetadataLoaded);
+        tempVideo.removeEventListener("error", handleVideoError);
+        if (document.body.contains(tempVideo)) {
+          document.body.removeChild(tempVideo);
+        }
+      };
+
+      const handleVideoError = (_e: Event) => {
+        showErrorToast(
+          "Could not retrieve video duration. Video might be corrupted or unsupported."
+        );
+        form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
+        setUploadedS3VideoUrl(publicVideoUrl);
+        tempVideo.removeEventListener("loadedmetadata", handleMetadataLoaded);
+        tempVideo.removeEventListener("error", handleVideoError);
+        if (document.body.contains(tempVideo)) {
+          document.body.removeChild(tempVideo);
+        }
+      };
+
+      tempVideo.addEventListener("loadedmetadata", handleMetadataLoaded);
+      tempVideo.addEventListener("error", handleVideoError);
+
+      document.body.appendChild(tempVideo);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showErrorToast(`Upload Failed: ${error.message}`);
+      } else {
+        showErrorToast("Upload Failed: Unexpected error.");
+      }
+      form.setValue("videoUrl", "");
+      setUploadedS3VideoUrl(null);
+      form.setValue("duration", "");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  const handleRemoveVideo = async () => {
+    const currentVideoUrl = form.getValues("videoUrl");
+    if (!currentVideoUrl) return;
+
+    const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl);
+
+    if (deleteResult.ok) {
+      showSuccessToast("Video removed from S3.");
+    } else {
+      showErrorToast(`Delete failed: ${deleteResult.error.message}`);
     }
 
-    const { signedUploadUrl, publicVideoUrl,signedViewUrl } = res.data;
-
-    const uploadResponse = await fetch(signedUploadUrl, {
-      method: 'PUT',
-      body: file,
-      headers: {
-        'Content-Type': file.type,
-      },
-    });
-
-    if (!uploadResponse.ok) {
-      const errorText = await uploadResponse.text();
-      throw new Error(`Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`);
-    }
-   
-    const tempVideo = document.createElement("video");
-    tempVideo.src = signedViewUrl
-    tempVideo.preload = "metadata";
-
-    const handleMetadataLoaded = () => {
-      const durationInSeconds = tempVideo.duration;
-      const formattedDuration = formatDuration(durationInSeconds);
-      form.setValue("duration", formattedDuration, { shouldValidate: true });
-      form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
-      setUploadedS3VideoUrl(publicVideoUrl);
-      showSuccessToast("Video uploaded and duration fetched!");
-      tempVideo.removeEventListener('loadedmetadata', handleMetadataLoaded);
-      tempVideo.removeEventListener('error', handleVideoError);
-      if (document.body.contains(tempVideo)) {
-        document.body.removeChild(tempVideo);
-      }
-    };
-
-    const handleVideoError = (_e: Event) => {
-      showErrorToast("Could not retrieve video duration. Video might be corrupted or unsupported.");
-      form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
-      setUploadedS3VideoUrl(publicVideoUrl);
-      tempVideo.removeEventListener('loadedmetadata', handleMetadataLoaded);
-      tempVideo.removeEventListener('error', handleVideoError);
-      if (document.body.contains(tempVideo)) {
-        document.body.removeChild(tempVideo);
-      }
-    };
-
-    tempVideo.addEventListener('loadedmetadata', handleMetadataLoaded);
-    tempVideo.addEventListener('error', handleVideoError);
-
-    document.body.appendChild(tempVideo);
-
-
-  } catch (error: unknown) {
-  if (error instanceof Error) {
-    showErrorToast(`Upload Failed: ${error.message}`);
-  } else {
-    showErrorToast("Upload Failed: Unexpected error.");
-  }
-  form.setValue("videoUrl", "");
-  setUploadedS3VideoUrl(null);
-  form.setValue("duration", "");
-}
-finally {
-    setIsUploading(false);
-  }
-};
-const handleRemoveVideo = async () => {
-  const currentVideoUrl = form.getValues("videoUrl");
-  if (!currentVideoUrl) return;
-
-  const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl);
-
-  if (deleteResult.ok) {
-    showSuccessToast("Video removed from S3.");
-  } else {
-    showErrorToast(`Delete failed: ${deleteResult.error.message}`);
-  }
-
-  form.setValue("videoUrl", "");
-  form.setValue("duration", "");
-  setUploadedS3VideoUrl(null);
-};
-
+    form.setValue("videoUrl", "");
+    form.setValue("duration", "");
+    setUploadedS3VideoUrl(null);
+  };
 
   const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
-      const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/gif'];
+      const allowedImageTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/jpg",
+        "image/gif",
+      ];
 
       if (!allowedImageTypes.includes(file.type)) {
-        showErrorToast('Please select a valid image file (JPEG, PNG, WEBP, JPG, GIF)');
-        e.target.value = '';
+        showErrorToast(
+          "Please select a valid image file (JPEG, PNG, WEBP, JPG, GIF)"
+        );
+        e.target.value = "";
         return;
       }
 
@@ -230,56 +249,65 @@ const handleRemoveVideo = async () => {
     form.setValue("thumbnail", "");
   };
 
-const handleSubmit = async (data: LessonFormValues) => {
-  if (isUploading) {
-    showErrorToast("Please wait for the video upload to complete.");
-    return;
-  }
+  const handleSubmit = async (data: LessonFormValues) => {
+    if (isUploading) {
+      showErrorToast("Please wait for the video upload to complete.");
+      return;
+    }
 
-  if (!data.videoUrl && (data.duration || data.thumbnail)) {
-    showErrorToast("Upload a video or clear the duration/thumbnail if no video is intended.");
-    return;
-  }
+    if (!data.videoUrl && (data.duration || data.thumbnail)) {
+      showErrorToast(
+        "Upload a video or clear the duration/thumbnail if no video is intended."
+      );
+      return;
+    }
 
-  setIsSaving(true);
+    setIsSaving(true);
 
-  const formData = new FormData();
-  formData.append("courseId", courseId);
-  formData.append("title", data.title);
-  formData.append("description", data.description);
-  formData.append("order", String(data.order));
-  formData.append("videoUrl", data.videoUrl || "");
-  formData.append("duration", data.duration || "");
+    const formData = new FormData();
+    formData.append("courseId", courseId);
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("order", String(data.order));
+    formData.append("videoUrl", data.videoUrl || "");
+    formData.append("duration", data.duration || "");
 
-  if (thumbnailFile instanceof File) {
-    formData.append("thumbnail", thumbnailFile);
-  } else if (typeof data.thumbnail === "string" && data.thumbnail.startsWith("http")) {
-    formData.append("thumbnailUrl", data.thumbnail);
-  }
+    if (thumbnailFile instanceof File) {
+      formData.append("thumbnail", thumbnailFile);
+    } else if (
+      typeof data.thumbnail === "string" &&
+      data.thumbnail.startsWith("http")
+    ) {
+      formData.append("thumbnailUrl", data.thumbnail);
+    }
 
-  const res = await MentorAPIMethods.addLesson(formData);
+    const res = await MentorAPIMethods.addLesson(formData);
 
-  if (res.ok) {
-    showSuccessToast("Lesson added successfully!");
-    onLessonAdded();
-    setOpen(false);
-  } else {
-    showErrorToast(res.error?.message || "Failed to add lesson");
-  }
+    if (res.ok) {
+      showSuccessToast("Lesson added successfully!");
+      onLessonAdded();
+      setOpen(false);
+    } else {
+      showErrorToast(res.error?.message || "Failed to add lesson");
+    }
 
-  setIsSaving(false);
-};
-
+    setIsSaving(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[525px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Lesson</DialogTitle>
-          <DialogDescription>Create a new lesson for this course.</DialogDescription>
+          <DialogDescription>
+            Create a new lesson for this course.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="title"
@@ -300,7 +328,10 @@ const handleSubmit = async (data: LessonFormValues) => {
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Enter lesson description" {...field} />
+                    <Textarea
+                      placeholder="Enter lesson description"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -315,7 +346,9 @@ const handleSubmit = async (data: LessonFormValues) => {
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
-                  <FormDescription>Lesson order within the course.</FormDescription>
+                  <FormDescription>
+                    Lesson order within the course.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -333,7 +366,8 @@ const handleSubmit = async (data: LessonFormValues) => {
                   />
                   {isUploading && (
                     <div className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin" /> Uploading video...
+                      <Loader2 className="h-4 w-4 animate-spin" /> Uploading
+                      video...
                     </div>
                   )}
                 </div>
@@ -360,7 +394,9 @@ const handleSubmit = async (data: LessonFormValues) => {
                 </div>
               )}
               {form.formState.errors.videoUrl && (
-                <FormMessage>{form.formState.errors.videoUrl.message}</FormMessage>
+                <FormMessage>
+                  {form.formState.errors.videoUrl.message}
+                </FormMessage>
               )}
             </FormItem>
             <FormField
@@ -378,7 +414,9 @@ const handleSubmit = async (data: LessonFormValues) => {
                     />
                   </FormControl>
                   <FormDescription>
-                    {videoUrlValue ? "Automatically fetched from video." : "Estimated video duration (MM:SS or HH:MM:SS)."}
+                    {videoUrlValue
+                      ? "Automatically fetched from video."
+                      : "Estimated video duration (MM:SS or HH:MM:SS)."}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -410,7 +448,9 @@ const handleSubmit = async (data: LessonFormValues) => {
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => document.getElementById("thumbnail-upload")?.click()}
+                        onClick={() =>
+                          document.getElementById("thumbnail-upload")?.click()
+                        }
                         disabled={isUploading || isSaving}
                       >
                         <FileImage className="h-4 w-4" />
@@ -434,23 +474,24 @@ const handleSubmit = async (data: LessonFormValues) => {
                   </FormDescription>
                   {(thumbnailPreviewUrl || field.value) && (
                     <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
-  {thumbnailPreviewUrl?.startsWith("blob:") ? (
-    <img
-      src={thumbnailPreviewUrl}
-      alt="Thumbnail Preview"
-      className="w-full h-full object-cover"
-    />
-  ) : (
-    <Image
-      src={field.value || "/placeholder.svg"}
-      alt="Thumbnail Preview"
-      fill
-      className="object-cover"
-      sizes="128px" // matches w-32
-    />
-  )}
-</div>
-
+                      {thumbnailPreviewUrl?.startsWith("blob:") ? (
+                        <Image
+                          src={thumbnailPreviewUrl}
+                          alt="Thumbnail Preview"
+                          className="w-full h-full object-cover"
+                          fill
+                          sizes="128px"
+                        />
+                      ) : (
+                        <Image
+                          src={field.value || "/placeholder.svg"}
+                          alt="Thumbnail Preview"
+                          fill
+                          className="object-cover"
+                          sizes="128px"
+                        />
+                      )}
+                    </div>
                   )}
                   <FormMessage />
                 </FormItem>

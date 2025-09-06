@@ -49,16 +49,17 @@ useEffect(() => {
     if (res.ok) setProgress(res.data);
     else showErrorToast("Somthing wrent wronghhh")
   }
-  const fetchNotifications = async () => {
-    const res = await SharedAPIMethods.getMyNotifications();
-   
-    if (res.ok) {
-      setUserNotifications(res.data);
-      const unread = res.data.filter((n: INotification) => !n.isRead).length;
-      setUnreadCount(unread);
-    }
-    else showInfoToast(res.msg)
+const fetchNotifications = useCallback(async () => {
+  const res = await SharedAPIMethods.getMyNotifications();
+  if (res.ok) {
+    setUserNotifications(res.data);
+    const unread = res.data.filter((n: INotification) => !n.isRead).length;
+    setUnreadCount(unread);
+  } else {
+    showInfoToast(res.msg);
   }
+}, []);
+
    
    const fetchLessons = async (courseId:string) => {
      const res = await UserAPIMethods.getLessons(courseId);

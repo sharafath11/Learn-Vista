@@ -209,10 +209,12 @@ export function RaiseConcernDialog({ courseId, onSuccess }: ConcernDialogProps) 
                       <div className="flex items-center gap-3">
   {att.type === "image" && att.previewUrl ? (
     att.previewUrl.startsWith("blob:") || att.previewUrl.startsWith("data:") ? (
-      <img
+      <Image
         src={att.previewUrl}
         alt="preview"
         className="w-8 h-8 object-cover rounded"
+        width={32}
+        height={32}
       />
     ) : (
       <Image

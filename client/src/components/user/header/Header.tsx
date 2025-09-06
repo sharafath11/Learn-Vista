@@ -72,12 +72,10 @@ export const Header = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      // Check if the click is outside the dropdown and notification popovers
       const target = event.target as HTMLElement
 
-      // Check if the click is outside the dropdown trigger and content
-      const dropdownTrigger = document.getElementById("user-dropdown-trigger") // Add ID to DropdownMenuTrigger
-      const dropdownContent = document.querySelector('[data-radix-popper-content][data-side="bottom"]') // Selector for DropdownMenuContent
+      const dropdownTrigger = document.getElementById("user-dropdown-trigger") 
+      const dropdownContent = document.querySelector('[data-radix-popper-content][data-side="bottom"]') 
 
       if (
         dropdownTrigger &&
@@ -87,10 +85,8 @@ export const Header = () => {
       ) {
         setIsDropdownOpen(false)
       }
-
-      // Check if the click is outside the notification trigger and content
-      const notificationTrigger = document.getElementById("notification-trigger") // Add ID to Bell button
-      const notificationContent = document.querySelector('[data-radix-popper-content][data-side="end"]') // Selector for PopoverContent
+      const notificationTrigger = document.getElementById("notification-trigger") 
+      const notificationContent = document.querySelector('[data-radix-popper-content][data-side="end"]') 
 
       if (
         notificationTrigger &&

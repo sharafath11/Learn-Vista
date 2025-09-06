@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect,useCallback } from "react";
 import { useParams } from "next/navigation";
-import { Search, Clock, ChevronDown, ChevronUp, X, Check, Edit, Trash2, Bot, User } from "lucide-react";
+import { Clock, ChevronDown, ChevronUp, X, Check, Edit, Trash2, Bot, User } from "lucide-react";
 import { showSuccessToast } from "@/src/utils/Toast";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { IVoiceNote, SortOption } from "@/src/types/lessons";
-import { Input } from "@/src/components/shared/components/ui/input";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { Card } from "@/src/components/shared/components/ui/card";
 import {

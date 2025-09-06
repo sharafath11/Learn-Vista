@@ -84,11 +84,14 @@ const Page = () => {
     setSelectedCourse(course)
     setIsModalOpen(true)
   }
-
-  const handleFilterChange = (newFilters: { search: string; category: string; sort: string }) => {
+const handleFilterChange = useCallback(
+  (newFilters: { search: string; category: string; sort: string }) => {
     setPage(1)
     setFilters(newFilters)
-  }
+  },
+  [] 
+)
+
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-16 sm:py-20">

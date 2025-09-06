@@ -1,16 +1,19 @@
-"use client"
+"use client";
 
-import React, { useState, useEffect } from "react"
-import { IConcern } from "@/src/types/concernTypes"
+import React, { useState, useEffect } from "react";
+import { IConcern } from "@/src/types/concernTypes";
 import {
   Card,
   CardContent,
-  CardHeader
-} from "@/src/components/shared/components/ui/card"
-import { Badge } from "@/src/components/shared/components/ui/badge"
-import { Button } from "@/src/components/shared/components/ui/button"
-import { Separator } from "@/src/components/shared/components/ui/separator"
-import { Dialog, DialogContent } from "@/src/components/shared/components/ui/dialog"
+  CardHeader,
+} from "@/src/components/shared/components/ui/card";
+import { Badge } from "@/src/components/shared/components/ui/badge";
+import { Button } from "@/src/components/shared/components/ui/button";
+import { Separator } from "@/src/components/shared/components/ui/separator";
+import {
+  Dialog,
+  DialogContent,
+} from "@/src/components/shared/components/ui/dialog";
 import {
   CheckCircle,
   Clock,
@@ -20,30 +23,31 @@ import {
   Music,
   FileText,
   XCircle,
-  Play
-} from "lucide-react"
-import Image from "next/image"
+  Play,
+} from "lucide-react";
+import Image from "next/image";
 
-type ConcernStatus = "open" | "in-progress" | "resolved"
+type ConcernStatus = "open" | "in-progress" | "resolved";
 
 interface ConcernCardProps {
-  concern: IConcern
-  
+  concern: IConcern;
 }
 
 const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
-  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null)
-  const [playingFile, setPlayingFile] = useState<string | null>(null)
-  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(
+    null
+  );
+  const [playingFile, setPlayingFile] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
       if (currentAudio) {
-        currentAudio.pause()
-        currentAudio.currentTime = 0
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
       }
-    }
-  }, [currentAudio])
+    };
+  }, [currentAudio]);
 
   const getStatusDisplay = (status: ConcernStatus) => {
     const statusConfig = {
@@ -51,53 +55,53 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
         icon: <CheckCircle className="w-4 h-4" />,
         colorClasses:
           "bg-emerald-500/15 text-emerald-400 border-emerald-500/25 shadow-emerald-500/10",
-        label: "Resolved"
+        label: "Resolved",
       },
       open: {
         icon: <Clock className="w-4 h-4" />,
         colorClasses:
           "bg-amber-500/15 text-amber-400 border-amber-500/25 shadow-amber-500/10",
-        label: "Open"
+        label: "Open",
       },
       "in-progress": {
         icon: <Eye className="w-4 h-4" />,
         colorClasses:
           "bg-blue-500/15 text-blue-400 border-blue-500/25 shadow-blue-500/10",
-        label: "In Progress"
-      }
-    }
-    return statusConfig[status] || statusConfig.open
-  }
+        label: "In Progress",
+      },
+    };
+    return statusConfig[status] || statusConfig.open;
+  };
 
   const getAttachmentIcon = (type: string) => {
-    const iconClass = "w-4 h-4"
+    const iconClass = "w-4 h-4";
     switch (type) {
       case "image":
-        return <ImageIcon className={`${iconClass} text-blue-400`} />
+        return <ImageIcon className={`${iconClass} text-blue-400`} />;
       case "audio":
-        return <Music className={`${iconClass} text-purple-400`} />
+        return <Music className={`${iconClass} text-purple-400`} />;
       default:
-        return <FileText className={`${iconClass} text-gray-400`} />
+        return <FileText className={`${iconClass} text-gray-400`} />;
     }
-  }
+  };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A"
+    if (!dateString) return "N/A";
     try {
       return new Date(dateString).toLocaleDateString("en-US", {
         year: "numeric",
         month: "short",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
-      })
+        minute: "2-digit",
+      });
     } catch (error) {
-      console.warn(error)
-      return "Invalid Date"
+      console.warn(error);
+      return "Invalid Date";
     }
-  }
+  };
 
-  const statusDisplay = getStatusDisplay(concern.status)
+  const statusDisplay = getStatusDisplay(concern.status);
   return (
     <>
       <Card className="bg-gray-800/50 border border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-lg hover:shadow-xl">
@@ -127,8 +131,12 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
 
         <CardContent className="pt-0 space-y-4">
           <div className="space-y-2">
-            <h3 className="text-orange-400 font-semibold text-lg">{concern.title}</h3>
-            <p className="text-gray-200 leading-relaxed text-base">{concern.message}</p>
+            <h3 className="text-orange-400 font-semibold text-lg">
+              {concern.title}
+            </h3>
+            <p className="text-gray-200 leading-relaxed text-base">
+              {concern.message}
+            </p>
           </div>
 
           {concern.attachments && concern.attachments.length > 0 && (
@@ -155,49 +163,47 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
                           <p className="text-gray-200 text-sm font-medium truncate">
                             {att.filename}
                           </p>
-                          
                         </div>
                       </div>
 
                       {att.url ? (
                         <Button
-  variant="ghost"
-  size="sm"
-  className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 p-2 rounded-lg transition-all"
-  onClick={() => {
-    if (att.type === "audio") {
-      if (playingFile === att.url) {
-        currentAudio?.pause()
-        if (currentAudio) currentAudio.currentTime = 0
-        setCurrentAudio(null)
-        setPlayingFile(null)
-      } else {
-        currentAudio?.pause()
-        if (currentAudio) currentAudio.currentTime = 0
-        const audio = new Audio(att.url)
-        audio.play()
-        setCurrentAudio(audio)
-        setPlayingFile(att.url || "")
+                          variant="ghost"
+                          size="sm"
+                          className="text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 p-2 rounded-lg transition-all"
+                          onClick={() => {
+                            if (att.type === "audio") {
+                              if (playingFile === att.url) {
+                                currentAudio?.pause();
+                                if (currentAudio) currentAudio.currentTime = 0;
+                                setCurrentAudio(null);
+                                setPlayingFile(null);
+                              } else {
+                                currentAudio?.pause();
+                                if (currentAudio) currentAudio.currentTime = 0;
+                                const audio = new Audio(att.url);
+                                audio.play();
+                                setCurrentAudio(audio);
+                                setPlayingFile(att.url || "");
 
-        audio.onended = () => {
-          setCurrentAudio(null)
-          setPlayingFile(null)
-        }
-      }
-    } else if (att.type === "image") {
-      setPreviewImage(att.url||"")
-    } else {
-      window.open(att.url, "_blank")
-    }
-  }}
->
-  {att.type === "audio" && playingFile === att.url ? (
-    <XCircle className="w-4 h-4 text-red-400" />
-  ) : (
-    <Play className="w-4 h-4" />
-  )}
-</Button>
-
+                                audio.onended = () => {
+                                  setCurrentAudio(null);
+                                  setPlayingFile(null);
+                                };
+                              }
+                            } else if (att.type === "image") {
+                              setPreviewImage(att.url || "");
+                            } else {
+                              window.open(att.url, "_blank");
+                            }
+                          }}
+                        >
+                          {att.type === "audio" && playingFile === att.url ? (
+                            <XCircle className="w-4 h-4 text-red-400" />
+                          ) : (
+                            <Play className="w-4 h-4" />
+                          )}
+                        </Button>
                       ) : (
                         <div className="text-red-400 text-xs flex items-center gap-1 px-2">
                           <XCircle className="w-3 h-3" />
@@ -230,36 +236,37 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
 
       <Dialog open={!!previewImage} onOpenChange={() => setPreviewImage(null)}>
         <DialogContent className="bg-gray-900 border border-gray-700 max-w-xl mx-auto">
-  {previewImage && (
-    <div className="relative max-h-[80vh] w-full">
-      {previewImage.startsWith("blob:") ? (
-        <img
-          src={previewImage}
-          alt="Preview"
-          className="rounded-lg max-h-[80vh] mx-auto"
-        />
-      ) : (
-        <Image
-          src={previewImage}
-          alt="Preview"
-          fill
-          className="rounded-lg object-contain mx-auto"
-          sizes="100vw"
-        />
-      )}
-    </div>
-  )}
-  <Button
-    className="mt-4 text-sm bg-red-600 hover:bg-red-700 text-white"
-    onClick={() => setPreviewImage(null)}
-  >
-    Close
-  </Button>
-</DialogContent>
-
+          {previewImage && (
+            <div className="relative max-h-[80vh] w-full">
+              {previewImage.startsWith("blob:") ? (
+                <Image
+                  fill
+                  sizes="100vw"
+                  src={previewImage}
+                  alt="Preview"
+                  className="rounded-lg max-h-[80vh] mx-auto"
+                />
+              ) : (
+                <Image
+                  src={previewImage}
+                  alt="Preview"
+                  fill
+                  className="rounded-lg object-contain mx-auto"
+                  sizes="100vw"
+                />
+              )}
+            </div>
+          )}
+          <Button
+            className="mt-4 text-sm bg-red-600 hover:bg-red-700 text-white"
+            onClick={() => setPreviewImage(null)}
+          >
+            Close
+          </Button>
+        </DialogContent>
       </Dialog>
     </>
-  )
-}
+  );
+};
 
-export default ConcernCard
+export default ConcernCard;

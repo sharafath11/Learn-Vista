@@ -64,14 +64,13 @@ const formatDuration = (seconds: number): string => {
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = Math.floor(seconds % 60);
 
-  const pad = (num: number) => num.toString().padStart(2, '0');
+  const pad = (num: number) => num.toString().padStart(2, "0");
 
   if (hours > 0) {
     return `${pad(hours)}:${pad(minutes)}:${pad(remainingSeconds)}`;
   }
   return `${pad(minutes)}:${pad(remainingSeconds)}`;
 };
-
 
 export function EditLessonModal({
   open,
@@ -92,9 +91,13 @@ export function EditLessonModal({
   });
 
   const [isUploadingVideo, setIsUploadingVideo] = useState(false);
-  const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(null);
+  const [uploadedS3VideoUrl, setUploadedS3VideoUrl] = useState<string | null>(
+    null
+  );
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(null);
+  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(
+    null
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   const videoUrlValue = form.watch("videoUrl"); // Watch videoUrl for conditional rendering/disabling
@@ -114,47 +117,55 @@ export function EditLessonModal({
       setThumbnailPreviewUrl(selectedLesson.thumbnail || null);
       setThumbnailFile(null);
     } else if (!open) {
-      // Reset state when modal closes
       form.reset();
       setUploadedS3VideoUrl(null);
       setThumbnailFile(null);
       setThumbnailPreviewUrl(null);
-      setIsUploadingVideo(false); // Ensure upload state is reset
+      setIsUploadingVideo(false);
     }
   }, [selectedLesson, open, form]);
 
-  const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setIsUploadingVideo(true);
     setUploadedS3VideoUrl(null);
-    form.setValue("duration", ""); // Clear duration when new video is selected
+    form.setValue("duration", "");
 
     try {
-      const res = await MentorAPIMethods.getS3DirectUploadUrl(file.name, file.type);
+      const res = await MentorAPIMethods.getS3DirectUploadUrl(
+        file.name,
+        file.type
+      );
       if (!res.ok || !res.data?.signedUploadUrl || !res.data?.publicVideoUrl) {
-        throw new Error(res.error?.message || "Failed to get S3 URLs from backend.");
+        throw new Error(
+          res.error?.message || "Failed to get S3 URLs from backend."
+        );
       }
 
-      const { signedUploadUrl, publicVideoUrl, signedViewUrl } = res.data; // Get signedViewUrl for duration check
+      const { signedUploadUrl, publicVideoUrl, signedViewUrl } = res.data;
 
       const uploadResponse = await fetch(signedUploadUrl, {
-        method: 'PUT',
+        method: "PUT",
         body: file,
         headers: {
-          'Content-Type': file.type,
+          "Content-Type": file.type,
         },
       });
 
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
-        throw new Error(`Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`);
+        throw new Error(
+          `Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`
+        );
       }
       const tempVideo = document.createElement("video");
       tempVideo.src = signedViewUrl;
       tempVideo.preload = "metadata";
-      tempVideo.style.display = "none"; 
+      tempVideo.style.display = "none";
 
       const handleMetadataLoaded = () => {
         const durationInSeconds = tempVideo.duration;
@@ -163,31 +174,30 @@ export function EditLessonModal({
         form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
         setUploadedS3VideoUrl(publicVideoUrl);
         showSuccessToast("Video uploaded and duration fetched!");
-        tempVideo.removeEventListener('loadedmetadata', handleMetadataLoaded);
-        tempVideo.removeEventListener('error', handleVideoError);
+        tempVideo.removeEventListener("loadedmetadata", handleMetadataLoaded);
+        tempVideo.removeEventListener("error", handleVideoError);
         if (document.body.contains(tempVideo)) {
           document.body.removeChild(tempVideo);
         }
       };
 
       const handleVideoError = () => {
-       
-        showErrorToast("Could not retrieve video duration. Video might be corrupted or unsupported.");
+        showErrorToast(
+          "Could not retrieve video duration. Video might be corrupted or unsupported."
+        );
         form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
         setUploadedS3VideoUrl(publicVideoUrl);
-        tempVideo.removeEventListener('loadedmetadata', handleMetadataLoaded);
-        tempVideo.removeEventListener('error', handleVideoError);
+        tempVideo.removeEventListener("loadedmetadata", handleMetadataLoaded);
+        tempVideo.removeEventListener("error", handleVideoError);
         if (document.body.contains(tempVideo)) {
           document.body.removeChild(tempVideo);
         }
       };
 
-      tempVideo.addEventListener('loadedmetadata', handleMetadataLoaded);
-      tempVideo.addEventListener('error', handleVideoError);
+      tempVideo.addEventListener("loadedmetadata", handleMetadataLoaded);
+      tempVideo.addEventListener("error", handleVideoError);
 
       document.body.appendChild(tempVideo);
-   
-
     } catch (error: any) {
       showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
       form.setValue("videoUrl", "");
@@ -203,18 +213,19 @@ export function EditLessonModal({
     if (!currentVideoUrl) return;
 
     try {
-    
       const deleteResult = await MentorAPIMethods.deleteS3file(currentVideoUrl);
       if (deleteResult.ok) {
         showSuccessToast("Video removed from S3.");
       } else {
-        showErrorToast(`Delete failed: ${deleteResult.error?.message || "Unknown error"}`);
+        showErrorToast(
+          `Delete failed: ${deleteResult.error?.message || "Unknown error"}`
+        );
       }
     } catch (error: any) {
       showErrorToast(`Delete Error: ${error.message || "Unexpected error."}`);
     } finally {
       form.setValue("videoUrl", "");
-      form.setValue("duration", ""); 
+      form.setValue("duration", "");
       setUploadedS3VideoUrl(null);
     }
   };
@@ -223,11 +234,19 @@ export function EditLessonModal({
     const file = e.target.files?.[0];
 
     if (file) {
-      const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'image/gif'];
+      const allowedImageTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/jpg",
+        "image/gif",
+      ];
 
       if (!allowedImageTypes.includes(file.type)) {
-        showErrorToast('Please select a valid image file (JPEG, PNG, WEBP, JPG, GIF)');
-        e.target.value = '';
+        showErrorToast(
+          "Please select a valid image file (JPEG, PNG, WEBP, JPG, GIF)"
+        );
+        e.target.value = "";
         return;
       }
 
@@ -258,18 +277,14 @@ export function EditLessonModal({
       showErrorToast("Lesson ID missing.");
       return;
     }
-
-    // Add validation similar to AddLessonModal for video/duration consistency
     if (!data.videoUrl && (data.duration || data.thumbnail)) {
-        showErrorToast("Upload a video or clear the duration/thumbnail if no video is intended.");
-        return;
+      showErrorToast(
+        "Upload a video or clear the duration/thumbnail if no video is intended."
+      );
+      return;
     }
-
-
     setIsSaving(true);
-
     const formData = new FormData();
-
     formData.append("title", data.title);
     formData.append("description", data.description);
     formData.append("order", data.order.toString());
@@ -278,15 +293,21 @@ export function EditLessonModal({
 
     if (thumbnailFile instanceof File) {
       formData.append("thumbnail", thumbnailFile);
-    } else if (!thumbnailPreviewUrl && selectedLesson.thumbnail && !data.thumbnail) {
-        // This condition correctly handles clearing the thumbnail if it was present
-        formData.append("clearThumbnail", "true");
+    } else if (
+      !thumbnailPreviewUrl &&
+      selectedLesson.thumbnail &&
+      !data.thumbnail
+    ) {
+      formData.append("clearThumbnail", "true");
     } else if (data.thumbnail && data.thumbnail.startsWith("http")) {
-        formData.append("thumbnailUrl", data.thumbnail);
+      formData.append("thumbnailUrl", data.thumbnail);
     }
 
     try {
-      const res = await MentorAPIMethods.updateLesson(selectedLesson.id, formData);
+      const res = await MentorAPIMethods.updateLesson(
+        selectedLesson.id,
+        formData
+      );
 
       if (!res.ok) throw new Error("Failed to update lesson");
 
@@ -294,7 +315,7 @@ export function EditLessonModal({
       onLessonUpdated();
       setOpen(false);
     } catch (error) {
-      console.warn(error)
+      console.warn(error);
       showErrorToast("Failed to update lesson.");
     } finally {
       setIsSaving(false);
@@ -306,10 +327,15 @@ export function EditLessonModal({
       <DialogContent className="sm:max-w-[525px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Lesson</DialogTitle>
-          <DialogDescription>Edit the details of this lesson.</DialogDescription>
+          <DialogDescription>
+            Edit the details of this lesson.
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pr-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4 pr-4"
+          >
             <FormField
               control={form.control}
               name="title"
@@ -330,7 +356,10 @@ export function EditLessonModal({
                 <FormItem>
                   <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Enter lesson description" {...field} />
+                    <Textarea
+                      placeholder="Enter lesson description"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -345,7 +374,9 @@ export function EditLessonModal({
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
-                  <FormDescription>Lesson order within the course.</FormDescription>
+                  <FormDescription>
+                    Lesson order within the course.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -363,7 +394,8 @@ export function EditLessonModal({
                   />
                   {isUploadingVideo && (
                     <div className="text-sm text-muted-foreground flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" /> Uploading video...
+                      <Loader2 className="h-4 w-4 animate-spin" /> Uploading
+                      video...
                     </div>
                   )}
                 </div>
@@ -390,7 +422,9 @@ export function EditLessonModal({
                 </div>
               )}
               {form.formState.errors.videoUrl && (
-                <FormMessage>{form.formState.errors.videoUrl.message}</FormMessage>
+                <FormMessage>
+                  {form.formState.errors.videoUrl.message}
+                </FormMessage>
               )}
             </FormItem>
             <FormField
@@ -403,12 +437,14 @@ export function EditLessonModal({
                     <Input
                       placeholder="e.g., 01:25 or 00:10:30"
                       {...field}
-                      readOnly={!!videoUrlValue} // Make read-only if videoUrl is present
+                      readOnly={!!videoUrlValue}
                       disabled={isUploadingVideo || isSaving}
                     />
                   </FormControl>
                   <FormDescription>
-                    {videoUrlValue ? "Automatically fetched from video." : "Estimated video duration (MM:SS or HH:MM:SS)."}
+                    {videoUrlValue
+                      ? "Automatically fetched from video."
+                      : "Estimated video duration (MM:SS or HH:MM:SS)."}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -426,21 +462,27 @@ export function EditLessonModal({
                         placeholder="Optional thumbnail URL"
                         {...field}
                         className="flex-1"
-                        disabled={!!thumbnailFile || isUploadingVideo || isSaving}
-                        value={thumbnailFile ? "" : (field.value || "")}
+                        disabled={
+                          !!thumbnailFile || isUploadingVideo || isSaving
+                        }
+                        value={thumbnailFile ? "" : field.value || ""}
                       />
                       <input
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        id="thumbnail-edit-upload" // Changed ID to avoid conflict with AddModal
+                        id="thumbnail-edit-upload"
                         onChange={handleThumbnailChange}
                         disabled={isUploadingVideo || isSaving}
                       />
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => document.getElementById("thumbnail-edit-upload")?.click()}
+                        onClick={() =>
+                          document
+                            .getElementById("thumbnail-edit-upload")
+                            ?.click()
+                        }
                         disabled={isUploadingVideo || isSaving}
                       >
                         <FileImage className="h-4 w-4" />
@@ -463,24 +505,26 @@ export function EditLessonModal({
                     Upload a new image or clear the existing one.
                   </FormDescription>
                   {(thumbnailPreviewUrl || field.value) && (
-  <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
-    {thumbnailPreviewUrl?.startsWith("blob:") ? (
-      <img
-        src={thumbnailPreviewUrl}
-        alt="Thumbnail Preview"
-        className="w-full h-full object-cover"
-      />
-    ) : (
-      <Image
-        src={field.value || "/placeholder.svg"}
-        alt="Thumbnail Preview"
-        fill
-        className="object-cover"
-        sizes="128px"
-      />
-    )}
-  </div>
-)}
+                    <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
+                      {thumbnailPreviewUrl?.startsWith("blob:") ? (
+                        <Image
+                          src={thumbnailPreviewUrl}
+                          alt="Thumbnail Preview"
+                          className="w-full h-full object-cover"
+                          fill
+                          sizes="128px"
+                        />
+                      ) : (
+                        <Image
+                          src={field.value || "/placeholder.svg"}
+                          alt="Thumbnail Preview"
+                          fill
+                          className="object-cover"
+                          sizes="128px"
+                        />
+                      )}
+                    </div>
+                  )}
 
                   <FormMessage />
                 </FormItem>
