@@ -41,7 +41,7 @@ const User = () => {
       limit: usersPerPage,
       sort,
     });
-  }, [currentPage, debouncedSearchTerm, statusFilter, sortOrder, getAllUsers]);
+  }, [currentPage, debouncedSearchTerm, statusFilter, sortOrder]);
 
   const totalPages = Math.ceil(totalUsersCount / usersPerPage);
 
