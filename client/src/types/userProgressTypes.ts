@@ -18,5 +18,5 @@ export interface IUserLessonProgress {
   practicalCompleted: boolean;
   mcqCompleted: boolean;
   overallProgressPercent: number;
-  videoCompleted:boolean
+  videoCompleted: boolean,
 }

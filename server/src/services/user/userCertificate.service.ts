@@ -40,8 +40,8 @@ export class UserCertificateService implements IUserCertificateService {
     page: number;
     limit: number;
     isRevoked?: boolean;
-  }): Promise<{ data: ICertificateResponseDto[]; total: number }> {
-     const { data, total } = await this._certificateRepo.findCertificatesWithFilter(filters);
+  },userId:string): Promise<{ data: ICertificateResponseDto[]; total: number }> {
+     const { data, total } = await this._certificateRepo.findCertificatesWithFilter(filters,userId);
      const sendData=data.map((i)=>CertificateMapper.certificateResponseDto(i))
     return { data:sendData, total };
   }

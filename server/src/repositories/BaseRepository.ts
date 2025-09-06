@@ -61,7 +61,7 @@ export abstract class BaseRepository<T extends Document, U>
     page: number = 1,
     limit: number = 2,
     search?: string,
-    sort: Record<string, 1 | -1> = { createdAt: -1 }
+    sort: Record<string, 1 | -1> = { createdAt: 1 }
   ): Promise<{ data: U[]; total: number; totalPages: number }> {
     try {
       const skip = (page - 1) * limit;

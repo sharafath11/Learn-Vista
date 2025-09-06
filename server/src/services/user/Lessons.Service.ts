@@ -79,21 +79,33 @@ export class UserLessonsService implements IUserLessonsService {
     return getSignedUrl(s3, command, { expiresIn: 3600 });
   }
 
+async getLessons(
+  courseId: string | ObjectId,
+  userId: string | ObjectId,
+  page: number,
+  limit: number
+): Promise<GetLessonsResponse> {
+  await this._userCourseService.validateUserEnrollment(userId, courseId);
+  const { data: lessons, total, totalPages } =
+    await this._lessonRepository.findPaginated({ courseId }, page, limit);
 
-
-  async getLessons(courseId: string | ObjectId, userId: string | ObjectId): Promise<GetLessonsResponse> {
-    await this._userCourseService.validateUserEnrollment(userId, courseId);
-    const lessons = await this._lessonRepository.findAll({ courseId });
-    if (!lessons || lessons.length === 0) {
-      throwError(Messages.LESSONS.NO_LESSONS_FOUND, StatusCode.NOT_FOUND);
-    }
-
-    const lessonProgress = await this._userLessonProgressRepo.findAll({ courseId, userId });
-    const sendData = await convertSignedUrlInArray(lessons, ["thumbnail"]);
-    const convetData = sendData.map((i) => LessonMapper.toLessonUserResponseDto(i))
-    const progressData=lessonProgress.map((i)=>LessonMapper.toLessonProgressUser(i))
-    return { lessons: convetData, progress: progressData };
+  if (!lessons || lessons.length === 0) {
+    throwError(Messages.LESSONS.NO_LESSONS_FOUND, StatusCode.NOT_FOUND);
   }
+  const lessonProgress = await this._userLessonProgressRepo.findAll({ courseId, userId });
+  const sendData = await convertSignedUrlInArray(lessons, ["thumbnail"]);
+  const convetData = sendData.map((i) => LessonMapper.toLessonUserResponseDto(i));
+  const progressData = lessonProgress.map((i) => LessonMapper.toLessonProgressUser(i));
+
+  return {
+    lessons: convetData,
+    progress: progressData,
+    total,
+    totalPages,
+  };
+}
+
+
 
   async getQuestions(lessonId: string | ObjectId): Promise<IUserQustionsDto[]> {
     const questions = await this._qustionRepository.findAll({ lessonId });

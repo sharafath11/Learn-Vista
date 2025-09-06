@@ -22,8 +22,11 @@ export class CertificateRepository extends BaseRepository<ICertificate, ICertifi
     page: number;
     limit: number;
     isRevoked?: boolean;
-  }): Promise<{ data: ICertificate[]; total: number }> { 
-    const query: any = {}; 
+  },userId:string): Promise<{ data: ICertificate[]; total: number }> { 
+     const query: any = {}; 
+     if (userId) {
+     query.userId = new mongoose.Types.ObjectId(userId);
+    }
 
     if (search) {
       const searchConditions: any[] = [

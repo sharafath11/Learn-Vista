@@ -14,10 +14,10 @@ export class UserLessonsController implements IUserLessonsController{
     ) { }
     async getLessons(req: Request, res: Response): Promise<void> {
         try {
-            const courseId = req.params.courseId;
-            
+        const courseId = req.params.courseId;
+        const { page, limit } = req.query;    
         const decode=decodeToken(req.cookies.token)
-        const result = await this._userLessonsService.getLessons(courseId, decode?.id as string);
+        const result = await this._userLessonsService.getLessons(courseId, decode?.id as string,Number(page), Number(limit));
         sendResponse(res,StatusCode.OK, Messages.LESSONS.FETCHED,true,result)
         } catch (error) {
             handleControllerError(res,error)

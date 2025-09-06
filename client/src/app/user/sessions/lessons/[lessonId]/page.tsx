@@ -105,19 +105,17 @@ export default function LessonPage() {
   useEffect(() => {
     fetchDetails();
   }, [fetchDetails]);
-
-  // MODIFIED: updateLessonProgressInDB now returns a boolean to indicate success
   const updateLessonProgressInDB = useCallback(async (updateData: Partial<IUserLessonProgress>): Promise<boolean> => {
     if (!lessonId) {
-      return false; // Return false if lessonId is missing
+      return false; 
     }
     const res = await UserAPIMethods.updateLessonProgress(lessonId, updateData);
     if (res.ok && res.data) {
       setLessonProgress(res.data);
-      return true; // Indicate success
+      return true; 
     } else {
       showErrorToast(res.msg || "Failed to save progress.");
-      return false; // Indicate failure
+      return false;
     }
   }, [lessonId]);
 
@@ -147,24 +145,21 @@ export default function LessonPage() {
     setVideoCompleted(true);
 
     const finalVideoTotalDuration = videoTotalDuration > 0 ? videoTotalDuration : (lesson?.duration && !isNaN(parseFloat(lesson.duration.toString())) ? parseFloat(lesson.duration.toString()) : 0);
-
-    // MODIFIED: Check the boolean result of updateLessonProgressInDB
     const success = await updateLessonProgressInDB({
         videoWatchedDuration: finalVideoTotalDuration,
         videoTotalDuration: finalVideoTotalDuration,
         videoCompleted: true
     });
-    if(success) { // Now 'success' is a boolean
+    if(success) { 
         showSuccessToast("Video completed!");
     } else {
         showErrorToast("Failed to mark video completed.");
     }
-  }, [lesson?.duration, updateLessonProgressInDB, videoTotalDuration]); // Removed lessonId from dependencies as it's not directly used here
+  }, [lesson?.duration, updateLessonProgressInDB, videoTotalDuration]); 
 
   const handleTheoryComplete = useCallback(async (answers: { question: string; answer: string }[]) => {
     setTheoryAnswers(answers.map((a) => ({ ...a, type: "theory" as const })));
     setTheoryCompleted(true);
-    // MODIFIED: Check the boolean result
     const success = await updateLessonProgressInDB({ theoryCompleted: true });
     if(success) {
         showSuccessToast("Theory section completed!");
@@ -176,7 +171,6 @@ export default function LessonPage() {
   const handlePracticalComplete = useCallback(async (answers: { question: string; answer: string }[]) => {
     setPracticalAnswers(answers.map((a) => ({ ...a, type: "practical" as const })));
     setPracticalCompleted(true);
-    // MODIFIED: Check the boolean result
     const success = await updateLessonProgressInDB({ practicalCompleted: true });
     if(success) {
         showSuccessToast("Coding Challenge completed!");
@@ -188,7 +182,6 @@ export default function LessonPage() {
   const handleMCQComplete = useCallback(async (answers: { question: string; answer: string }[]) => {
     setMcqAnswers(answers.map((a) => ({ ...a, type: "mcq" as const })));
     setMcqCompleted(true);
-    // MODIFIED: Check the boolean result
     const success = await updateLessonProgressInDB({ mcqCompleted: true });
     if(success) {
         showSuccessToast("MCQ section completed!");

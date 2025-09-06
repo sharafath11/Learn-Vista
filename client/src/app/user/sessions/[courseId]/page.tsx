@@ -46,13 +46,9 @@ export default function Home() {
             <span className="mr-2">📝</span> My Notes
           </button>
         </div>
-
-        {/* Title */}
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-white">
-          Interactive Coding Lessons
+         Welcome 
         </h1>
-
-        {/* Lessons */}
         <LessonList courseId={params.courseId as string} />
       </div>
     </main>

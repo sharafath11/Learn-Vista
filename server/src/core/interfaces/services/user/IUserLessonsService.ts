@@ -7,9 +7,12 @@ import { IUserCommentResponseAtLesson } from "../../../../shared/dtos/comment/co
 export interface GetLessonsResponse {
   lessons: IUserLessonResponseDto[];
   progress: IUserLessonProgressDto[];
+  total: number;
+  totalPages: number;
 }
+
 export interface IUserLessonsService {
-  getLessons(courseId: string | ObjectId, userId: string): Promise<GetLessonsResponse>
+  getLessons(courseId: string | ObjectId, userId: string,page:number, limit:number ): Promise<GetLessonsResponse>
   getQuestions(lessonId: string | ObjectId): Promise<IUserQustionsDto[]>
   getLessonDetils(lessonId: string | ObjectId, userId: string | ObjectId): Promise<ILessonDetails>
   lessonReport(userId: string | ObjectId, lessonId: string, data: LessonQuestionInput): Promise<IUserLessonReportResponse>

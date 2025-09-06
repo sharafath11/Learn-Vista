@@ -8,7 +8,7 @@ export interface IUserCertificateService {
     sort?: string
     page: number
     limit: number
-  }): Promise<{ data: ICertificateResponseDto[]; total: number }>
+  },userId:string): Promise<{ data: ICertificateResponseDto[]; total: number }>
 
   getCertificateById(id: string): Promise<ICertificateResponseDto | null>
 }

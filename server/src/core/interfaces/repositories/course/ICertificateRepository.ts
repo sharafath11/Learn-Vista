@@ -10,6 +10,7 @@ export interface ICertificateRepository extends IBaseRepository<ICertificate, IC
       page: number;
       limit: number;
       isRevoked?: boolean; 
-    }
+      },
+      userId:string
   ): Promise<{ data: ICertificate[]; total: number }>;
 }

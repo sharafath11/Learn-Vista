@@ -46,7 +46,7 @@ router.post("/lessons/:lessonId/voicenote", authenticateToken, checkUserBlock, u
 router.delete("/lessons/:lessonId/voicenotes", authenticateToken, checkUserBlock, userLessonsController.getVoiceNotes.bind(userLessonsController));
 router.get("/donations/:page", authenticateToken,checkUserBlock, userDonationController.getPaginatedDonations.bind(userDonationController));
 router.get("/certificates", authenticateToken,checkUserBlock, userCertificateController.getCertificates.bind(userCertificateController))
-router.get("/certificate/:certificateId",checkUserBlock, userCertificateController.getCertificate.bind(userCertificateController))
+router.get("/certificate/:certificateId",userCertificateController.getCertificate.bind(userCertificateController))
 router
   .route("/daily-task/today")
   .get(authenticateToken,checkUserBlock, userController.getDailyTask.bind(userController))
