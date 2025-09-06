@@ -62,7 +62,7 @@ const fetchNotifications = useCallback(async () => {
 
    
    const fetchLessons = async (courseId:string) => {
-     const res = await UserAPIMethods.getLessons(courseId);
+     const res = await UserAPIMethods.getLessons(courseId,{});
      if (res.ok) {
        return res.data
      }
