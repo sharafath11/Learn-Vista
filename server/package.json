@@ -54,6 +54,7 @@
     "diff": "^4.0.2",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
+    "express-rate-limit": "^8.1.0",
     "file-type": "^16.5.4",
     "fill-range": "^7.1.1",
     "glob-parent": "^5.1.2",

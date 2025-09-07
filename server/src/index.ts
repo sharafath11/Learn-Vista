@@ -18,6 +18,7 @@ import { CustomError } from "./types/errorTypes";
 import { StatusCode } from "./enums/statusCode.enum";
 import { sendResponse } from "./utils/ResANDError";
 import { Messages } from "./constants/messages";
+import globalLimiter from "./middlewares/rateLimiter";
 dotenv.config();
 
 const app = express();
@@ -31,6 +32,7 @@ const io = new Server(httpServer, {
 });
 socketHandler(io);
 setIOInstance(io);
+app.use(globalLimiter)
 app.use(express.json());
 app.use(cors({
   origin: process.env.CLIENT_URL,
