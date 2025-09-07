@@ -17,7 +17,6 @@ import { ICommentstRepository } from "../../core/interfaces/repositories/lessons
 import { getGemaniResponse } from "../../config/gemaniAi";
 import { buildMcqOptionsPrompt } from "../../utils/Rportprompt";
 import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
-import { logger } from "../../utils/logger";
 import { convertSignedUrlInArray, uploadThumbnail, deleteFromS3, convertSignedUrlInObject } from "../../utils/s3Utilits";
 import { Messages } from "../../constants/messages";
 import { IMentorLessonResponseDto } from "../../shared/dtos/lessons/lessonResponse.dto";

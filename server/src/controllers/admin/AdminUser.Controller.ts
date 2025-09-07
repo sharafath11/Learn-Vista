@@ -12,7 +12,7 @@ import { Messages } from "../../constants/messages";
 class AdminUserController implements IAdminUserController {
   constructor(
     @inject(TYPES.AdminUsersService)
-    private adminUserService: IAdminUserServices
+    private _adminUserService: IAdminUserServices
   ) {}
 
   async getAllUsers(req: Request, res: Response): Promise<void> {
@@ -38,7 +38,7 @@ class AdminUserController implements IAdminUserController {
         sort.createdAt = -1;
       }
 
-      const result = await this.adminUserService.getAllUsers(page, limit, search, filters, sort);
+      const result = await this._adminUserService.getAllUsers(page, limit, search, filters, sort);
 
       sendResponse(res, StatusCode.OK, Messages.USERS.FETCHED, true, {
         data: result.data,
@@ -57,7 +57,7 @@ class AdminUserController implements IAdminUserController {
       const userId = req.params.userId;
       if (!userId) throwError(Messages.USERS.MISSING_USER_ID, StatusCode.BAD_REQUEST);
 
-      const result = await this.adminUserService.getCertifcate(userId);
+      const result = await this._adminUserService.getCertifcate(userId);
       sendResponse(res, StatusCode.OK, Messages.CERTIFICATES.FETCHED, true, result);
     } catch (error) {
       handleControllerError(res, error);
@@ -73,7 +73,7 @@ class AdminUserController implements IAdminUserController {
         throwError(Messages.CERTIFICATES.MISSING_DATA, StatusCode.BAD_REQUEST);
       }
 
-      await this.adminUserService.revokCertificate(certificateId, isRevoked);
+      await this._adminUserService.revokCertificate(certificateId, isRevoked);
 
       const message = isRevoked
         ? Messages.CERTIFICATES.REVOKED
@@ -93,7 +93,7 @@ class AdminUserController implements IAdminUserController {
         throwError(Messages.USERS.MISSING_BLOCK_DATA, StatusCode.BAD_REQUEST);
       }
 
-      await this.adminUserService.blockUserServices(id, status);
+      await this._adminUserService.blockUserServices(id, status);
       sendResponse(res, StatusCode.OK, Messages.USERS.BLOCK_STATUS_UPDATED, true);
     } catch (error) {
       handleControllerError(res, error);

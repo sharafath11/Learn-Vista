@@ -14,7 +14,7 @@ import { Messages } from "../../constants/messages";
 @injectable()
 export class MentorProfileService implements IMentorProfileService {
     constructor(
-        @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
+        @inject(TYPES.MentorRepository) private _mentorRepo: IMentorRepository,
         @inject(TYPES.NotificationService) private _notificationService: INotificationService
     ) {}
 
@@ -25,7 +25,7 @@ export class MentorProfileService implements IMentorProfileService {
         expertise: string[] | string,
         id: string
     ): Promise<{ username: string; image: string; bio: string; expertise: string[] }> {
-        const mentor = await this.mentorRepo.findById(id);
+        const mentor = await this._mentorRepo.findById(id);
         if (!mentor) throwError(Messages.MENTOR.NOT_FOUND, StatusCode.NOT_FOUND);
         if (mentor.isBlock) throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
 
@@ -66,7 +66,7 @@ export class MentorProfileService implements IMentorProfileService {
             expertise: parsedExpertise,
         };
         const signedUrl = await getSignedS3Url(imageUrl as string)
-        await this.mentorRepo.update(id, updateData);
+        await this._mentorRepo.update(id, updateData);
 
         return {
             username: updatedUsername,
@@ -77,7 +77,7 @@ export class MentorProfileService implements IMentorProfileService {
     }
 
     async changePassword(mentorId: string, currentPassword: string, newPassword: string): Promise<void> {
-        const mentor = await this.mentorRepo.findById(mentorId);
+        const mentor = await this._mentorRepo.findById(mentorId);
         if (!mentor) {
             throwError(Messages.MENTOR.NOT_FOUND, StatusCode.NOT_FOUND);
         }
@@ -92,7 +92,7 @@ export class MentorProfileService implements IMentorProfileService {
             throwError(Messages.PROFILE.INVALID_CURRENT_PASSWORD, StatusCode.BAD_REQUEST);
         }
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        await this.mentorRepo.update(mentorId, { password: hashedPassword });
+        await this._mentorRepo.update(mentorId, { password: hashedPassword });
         await notifyWithSocket({
             notificationService: this._notificationService,
             userIds: [mentorId],

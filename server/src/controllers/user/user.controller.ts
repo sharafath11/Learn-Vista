@@ -12,7 +12,7 @@ import { Messages } from "../../constants/messages";
 
 export class UserController implements IUserController {
     constructor(
-        @inject(TYPES.UserService) private userService: IUserService
+        @inject(TYPES.UserService) private _userService: IUserService
     ) {}
 
     async getUser(req: Request, res: Response): Promise<void> {
@@ -22,7 +22,7 @@ export class UserController implements IUserController {
                 throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
             }
 
-            const user = await this.userService.getUser(decoded.id);
+            const user = await this._userService.getUser(decoded.id);
             if (!user) {
                 throwError(Messages.USERS.USER_NOT_FOUND, StatusCode.NOT_FOUND);
             }
@@ -40,7 +40,7 @@ export class UserController implements IUserController {
                 throwError(Messages.USERS.USER_NOT_FOUND, StatusCode.BAD_REQUEST);
             }
 
-            await this.userService.forgetPassword(email);
+            await this._userService.forgetPassword(email);
             sendResponse(res, StatusCode.OK,Messages.AUTH.FORGOT_PASSWORD_SUCCESS, true);
         } catch (error) {
             handleControllerError(res, error);
@@ -71,7 +71,7 @@ export class UserController implements IUserController {
                 throwError(Messages.AUTH.INVALID_TOKEN, StatusCode.UNAUTHORIZED);
             }
 
-            await this.userService.resetPassword(decoded.id, password);
+            await this._userService.resetPassword(decoded.id, password);
             sendResponse(res, StatusCode.OK, Messages.AUTH.PASSWORD_RESET_SUCCESS, true);
         } catch (error) {
             handleControllerError(res, error);
@@ -100,7 +100,7 @@ export class UserController implements IUserController {
       try {
           const decoded = decodeToken(req.cookies.token);
           if (!decoded?.id) throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
-          const result=await this.userService.getDailyTaskSevice(decoded.id)
+          const result=await this._userService.getDailyTaskSevice(decoded.id)
     sendResponse(res, StatusCode.OK,  Messages.USERS.DAILY_TASKS_GENERATED, true, result);
   } catch (error) {
     handleControllerError(res, error);
@@ -116,7 +116,7 @@ async updateDailyTask(req: Request, res: Response): Promise<void> {
       throwError(Messages.COMMON.MISSING_FIELDS, StatusCode.BAD_REQUEST);
     }
 
-    const result = await this.userService.updateDailyTask({
+    const result = await this._userService.updateDailyTask({
   taskId,
   taskType,
   answer,
@@ -132,7 +132,7 @@ async updateDailyTask(req: Request, res: Response): Promise<void> {
         try {
             const decoded = decodeToken(req.cookies.token);
             if (!decoded?.id) throwError(Messages.COMMON.UNAUTHORIZED);
-            const result = await this.userService.getAllDailyTasks(decoded?.id as string);
+            const result = await this._userService.getAllDailyTasks(decoded?.id as string);
             sendResponse(res,StatusCode.OK, Messages.USERS.ALL_DAILY_TASKS_FETCHED,true,result)
         } catch (error) {
             handleControllerError(res,error)

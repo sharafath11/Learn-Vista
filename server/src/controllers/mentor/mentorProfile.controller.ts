@@ -12,7 +12,7 @@ import { Messages } from "../../constants/messages";
 @injectable()
 export class MentorProfileController implements IMentorProfileController {
   constructor(
-    @inject(TYPES.MentorProfileService) private mentorProfileService: IMentorProfileService
+    @inject(TYPES.MentorProfileService) private _mentorProfileService: IMentorProfileService
   ) {}
 
  async editProfile(req: Request, res: Response): Promise<void> {
@@ -30,7 +30,7 @@ export class MentorProfileController implements IMentorProfileController {
       image: req.file || undefined,
     });
 
-    const updatedData = await this.mentorProfileService.editProfile(
+    const updatedData = await this._mentorProfileService.editProfile(
       username,
       bio,
       req.file?.buffer,
@@ -62,7 +62,7 @@ export class MentorProfileController implements IMentorProfileController {
       throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.UNAUTHORIZED);
     }
 
-    await this.mentorProfileService.changePassword(
+    await this._mentorProfileService.changePassword(
       decoded.id,
       password,
       newPassword

@@ -11,13 +11,13 @@ import { Messages } from "../../constants/messages";
 export class NotificationController implements INotificationController {
   constructor(
     @inject(TYPES.NotificationService)
-    private notificationService: INotificationService
+    private _notificationService: INotificationService
   ) {}
 
   async createNotification(req: Request, res: Response): Promise<void> {
   try {
     const io = req.app.get("io"); 
-    await this.notificationService.createNotification(req.body, io);
+    await this._notificationService.createNotification(req.body, io);
     sendResponse(res, StatusCode.CREATED, Messages.NOTIFICATIONS.CREATED, true);
   } catch (error) {
     handleControllerError(res, error);
@@ -28,7 +28,7 @@ export class NotificationController implements INotificationController {
     try {
       const userId = decodeToken(req.cookies.token)?.id
       if(!userId)throwError(Messages.COMMON.UNAUTHORIZED,StatusCode.UNAUTHORIZED)
-      const notifications = await this.notificationService.getMyNotifications(userId);
+      const notifications = await this._notificationService.getMyNotifications(userId);
       sendResponse(res, StatusCode.OK,Messages.NOTIFICATIONS.FETCHED, true, notifications);
     } catch (error) {
       handleControllerError(res, error);
@@ -38,7 +38,7 @@ export class NotificationController implements INotificationController {
   async markAsRead(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const result = await this.notificationService.markAsRead(id);
+      const result = await this._notificationService.markAsRead(id);
       sendResponse(res, StatusCode.OK, Messages.NOTIFICATIONS.MARKED_AS_READ, result);
     } catch (error) {
       handleControllerError(res, error);
@@ -49,7 +49,7 @@ export class NotificationController implements INotificationController {
     try {
       const decoded = decodeToken(req.cookies.token)
       if(!decoded) throwError( Messages.COMMON.UNAUTHORIZED,StatusCode.UNAUTHORIZED)
-      const count = await this.notificationService.markAllAsRead(decoded?.id);
+      const count = await this._notificationService.markAllAsRead(decoded?.id);
       sendResponse(res, StatusCode.OK,  Messages.NOTIFICATIONS.MARKED_ALL_AS_READ(count), true);
     } catch (error) {
       handleControllerError(res, error);

@@ -17,8 +17,8 @@ import { Messages } from "../../constants/messages";
 @injectable()
 export class ProfileService implements IProfileService {
   constructor(
-    @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-    @inject(TYPES.MentorRepository) private mentorRepo: IMentorRepository,
+    @inject(TYPES.UserRepository) private _userRepository: IUserRepository,
+    @inject(TYPES.MentorRepository) private _mentorRepo: IMentorRepository,
     @inject(TYPES.NotificationService) private _notificationService: INotificationService
   ) {}
 
@@ -39,8 +39,8 @@ export class ProfileService implements IProfileService {
     this.validateMentorApplication(userId, email);
 
     const [existingMentor, existingUserMentor] = await Promise.all([
-      this.mentorRepo.findOne({ email }),
-      this.mentorRepo.findOne({ userId }),
+      this._mentorRepo.findOne({ email }),
+      this._mentorRepo.findOne({ userId }),
     ]);
 if (existingMentor)throwError(Messages.MENTOR.APPLICATION_ALREADY_EXISTS, StatusCode.BAD_REQUEST);
 if (existingUserMentor) throwError(Messages.MENTOR.USER_ALREADY_APPLIED, StatusCode.BAD_REQUEST);
@@ -71,7 +71,7 @@ if (existingUserMentor) throwError(Messages.MENTOR.USER_ALREADY_APPLIED, StatusC
       socialLinks: typeof socialLinks === "string" ? JSON.parse(socialLinks) : socialLinks,
     };
 
-    const application = await this.userRepository.applyMentor(mentorData);
+    const application = await this._userRepository.applyMentor(mentorData);
     const ADMIN_ID = process.env.ADMIN_ID;
    if (!ADMIN_ID) throwError(Messages.CONFIG.ADMIN_ID_MISSING, StatusCode.INTERNAL_SERVER_ERROR);
 
@@ -93,7 +93,7 @@ await notifyWithSocket({
   }
 
   async editProfileService(username: string, imageBuffer: Buffer | undefined, id: string) {
-    const user = await this.userRepository.findById(id);
+    const user = await this._userRepository.findById(id);
     if (!user) return throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
     if (user.isBlocked) throwError(Messages.AUTH.BLOCKED, StatusCode.FORBIDDEN);
 
@@ -120,7 +120,7 @@ await notifyWithSocket({
       imageS3Key = newImageKey;
     }
 
-    await this.userRepository.update(id, {
+    await this._userRepository.update(id, {
       username: updatedUsername,
       profilePicture: imageS3Key || "",
     });
@@ -142,7 +142,7 @@ await notifyWithSocket({
   }
 
   async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
-    const user = await this.userRepository.findWithPassword({ _id: userId });
+    const user = await this._userRepository.findWithPassword({ _id: userId });
     if (!user) {
       throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.NOT_FOUND);
     }
@@ -160,7 +160,7 @@ if (!isPasswordValid) {
 }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await this.userRepository.update(userId, { password: hashedPassword });
+    await this._userRepository.update(userId, { password: hashedPassword });
   await notifyWithSocket({
   notificationService: this._notificationService,
   userIds: [userId],

@@ -18,16 +18,16 @@ import { UserMapper } from "../../shared/dtos/user/user.mapper";
 @injectable()
 export class AuthService implements IAuthService {
   constructor(
-    @inject(TYPES.UserRepository) private userRepository: IUserRepository,
-    @inject(TYPES.OtpRepository) private otpRepository: IOtpRepository
+    @inject(TYPES.UserRepository) private _userRepository: IUserRepository,
+    @inject(TYPES.OtpRepository) private _otpRepository: IOtpRepository
   ) {}
 
   async registerUser(userData: IUser): Promise<IUserResponseUser> {
     const { username, email, password, role } = userData;
 
     validateUserSignupInput(username, email, password, role);
-    const existingUser = await this.userRepository.findWithPassword({ email });
-    const existOtp = await this.otpRepository.findOne({ email });
+    const existingUser = await this._userRepository.findWithPassword({ email });
+    const existOtp = await this._otpRepository.findOne({ email });
 
     if (!existOtp) throwError(Messages.AUTH.OTP_EXPIRED, StatusCode.BAD_REQUEST);
     if (existingUser) throwError(Messages.AUTH.USER_ALREADY_EXISTS, StatusCode.CONFLICT);
@@ -38,21 +38,21 @@ export class AuthService implements IAuthService {
       isVerified: userData.isVerified,
     };
 
-    const user = await this.userRepository.create(userToCreate);
+    const user = await this._userRepository.create(userToCreate);
     return UserMapper.toResponseUserDto(user)
   }
 
   async sendOtp(email: string): Promise<void> {
     if (!email) throwError(Messages.AUTH.MISSING_EMAIL, StatusCode.BAD_REQUEST);
 
-    const existingUser = await this.userRepository.findOne({ email });
+    const existingUser = await this._userRepository.findOne({ email });
     if (existingUser) throwError(Messages.AUTH.EMAIL_ALREADY_REGISTERED, StatusCode.CONFLICT);
 
-    const exitOtp = await this.otpRepository.findOne({ email });
+    const exitOtp = await this._otpRepository.findOne({ email });
     if (exitOtp) throwError(Messages.AUTH.OTP_ALREADY_SENT, StatusCode.BAD_REQUEST);
 
     const otp = generateOtp();
-    await this.otpRepository.create({
+    await this._otpRepository.create({
       email,
       otp,
       expiresAt: new Date(Date.now() + 5 * 60 * 1000)
@@ -63,7 +63,7 @@ export class AuthService implements IAuthService {
   async verifyOtp(email: string, otp: string): Promise<void> {
     if (!email || !otp) throwError(Messages.AUTH.MISSING_EMAIL_OTP, StatusCode.BAD_REQUEST);
 
-    const otpRecord = await this.otpRepository.findOne({ email, otp });
+    const otpRecord = await this._otpRepository.findOne({ email, otp });
     if (!otpRecord) throwError(Messages.AUTH.INVALID_OTP, StatusCode.BAD_REQUEST);
   }
 
@@ -79,12 +79,12 @@ export class AuthService implements IAuthService {
     let user;
 
     if (googleId) {
-      user = await this.userRepository.findOne({ googleId });
+      user = await this._userRepository.findOne({ googleId });
 
       if (!user) throwError(Messages.AUTH.INVALID_GOOGLE_CREDENTIALS, StatusCode.BAD_REQUEST);
     } else {
       if (!email || !password) throwError(Messages.AUTH.MISSING_CREDENTIALS_EMAIL_PASSWORD, StatusCode.BAD_REQUEST);
-      user = await this.userRepository.findWithPassword({ email });
+      user = await this._userRepository.findWithPassword({ email });
       if (!user) throwError(Messages.AUTH.INVALID_CREDENTIALS, StatusCode.BAD_REQUEST);
     }
 
@@ -123,10 +123,10 @@ export class AuthService implements IAuthService {
       throwError(Messages.AUTH.INVALID_GOOGLE_PROFILE, StatusCode.BAD_REQUEST);
     }
 
-    let user = await this.userRepository.findOne({ email: profile.email });
+    let user = await this._userRepository.findOne({ email: profile.email });
 
     if (!user) {
-      user = await this.userRepository.create({
+      user = await this._userRepository.create({
         username: profile.username,
         email: profile.email,
         googleId: profile.googleId,
@@ -136,7 +136,7 @@ export class AuthService implements IAuthService {
         isVerified: true
       });
     } else if (!user.googleUser) {
-      user = await this.userRepository.update(user.id, {
+      user = await this._userRepository.update(user.id, {
         username: profile.username,
         email: profile.email,
         googleId: profile.googleId,

@@ -1,7 +1,7 @@
 import { ObjectId, Types } from "mongoose";
 import { IMentorStudentService } from "../../core/interfaces/services/mentor/IMentorStudent.Service";
 import { inject, injectable } from "inversify";
-import { IMentorStudentEnroledCourse, IUser } from "../../types/userTypes";
+import { IMentorStudentEnroledCourse} from "../../types/userTypes";
 import { TYPES } from "../../core/types";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { throwError } from "../../utils/ResANDError";

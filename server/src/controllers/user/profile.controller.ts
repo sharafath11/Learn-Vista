@@ -13,7 +13,7 @@ import { Messages } from "../../constants/messages";
 @injectable()
 export class ProfileController implements IProfileController {
   constructor(
-    @inject(TYPES.ProfileService) private profileService: IProfileService
+    @inject(TYPES.ProfileService) private _profileService: IProfileService
   ) {}
 
   async applyMentor(req: Request, res: Response) {
@@ -58,7 +58,7 @@ export class ProfileController implements IProfileController {
         return throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
 
-      await this.profileService.applyMentor(
+      await this._profileService.applyMentor(
         email,
         username,
         req.file,
@@ -88,7 +88,7 @@ export class ProfileController implements IProfileController {
         return throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
 
-      const result = await this.profileService.editProfileService(
+      const result = await this._profileService.editProfileService(
         username, 
         image || undefined, 
         decoded.id
@@ -104,7 +104,7 @@ export class ProfileController implements IProfileController {
      const { password, newPassword } = req.body;
      const decoded = decodeToken(req.cookies.token);
      if (!decoded) throwError(Messages.PROFILE.USER_NOT_FOUND, StatusCode.BAD_REQUEST);
-     await this.profileService.changePassword(decoded?.id as string, password, newPassword);
+     await this._profileService.changePassword(decoded?.id as string, password, newPassword);
      sendResponse(res,StatusCode.OK,Messages.AUTH.CHANGE_PASSWORD,true)
    } catch (error) {
     handleControllerError(res,error)

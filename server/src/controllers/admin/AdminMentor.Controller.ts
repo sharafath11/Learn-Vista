@@ -15,12 +15,12 @@ import { Messages } from "../../constants/messages";
 class AdminMentorController implements IAdminMentorController {
   constructor(
     @inject(TYPES.AdminMentorService)
-    private adminMentorService: IAdminMentorServices
+    private _adminMentorService: IAdminMentorServices
   ) {}
 
   async getAllMentorsNotFiltering(req: Request, res: Response): Promise<void> {
     try {
-      const mentors = await this.adminMentorService.getAllMentorWithoutFiltring();
+      const mentors = await this._adminMentorService.getAllMentorWithoutFiltring();
       if (!mentors) throwError("Something went wrong");
       sendResponse(res, StatusCode.OK, Messages.MENTOR.FETCHED, true, mentors);
     } catch (error) {
@@ -46,7 +46,7 @@ class AdminMentorController implements IAdminMentorController {
         sort.createdAt = -1;
       }
 
-      const result = await this.adminMentorService.getAllMentors(
+      const result = await this._adminMentorService.getAllMentors(
         page,
         limit,
         search,
@@ -80,7 +80,7 @@ class AdminMentorController implements IAdminMentorController {
         );
       }
 
-      await this.adminMentorService.changeMentorStatus(mentorId, status, email);
+      await this._adminMentorService.changeMentorStatus(mentorId, status, email);
       sendResponse(
         res,
         StatusCode.OK,
@@ -105,7 +105,7 @@ class AdminMentorController implements IAdminMentorController {
         );
       }
 
-      const result = await this.adminMentorService.toggleMentorBlock(
+      const result = await this._adminMentorService.toggleMentorBlock(
         mentorId,
         isBlock
       );
@@ -142,7 +142,7 @@ class AdminMentorController implements IAdminMentorController {
         );
       }
 
-      const mentor = await this.adminMentorService.mentorDetails(id);
+      const mentor = await this._adminMentorService.mentorDetails(id);
 
       if (!mentor) {
         throwError(Messages.MENTOR.NOT_FOUND, StatusCode.NOT_FOUND);
