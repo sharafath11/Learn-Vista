@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, User, Settings, LogOut, Trophy } from "lucide-react"
+import {  User,  LogOut, Trophy } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { cn } from "@/src/utils/cn"
@@ -44,17 +44,6 @@ export const MobileMenu = ({
           className="md:hidden fixed top-16 left-0 right-0 bg-zinc-900/95 backdrop-blur-md z-30 border-b border-zinc-700 shadow-lg"
         >
           <div className="px-4 py-4 max-h-[calc(100vh-4rem)] overflow-y-auto">
-            {/* Search */}
-            <div className="relative mb-4">
-              <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-              <input
-                type="text"
-                placeholder="Search courses..."
-                className="pl-10 pr-4 py-2.5 w-full bg-zinc-800 border border-zinc-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
-              />
-            </div>
-
-            {/* Navigation */}
             <nav className="space-y-1 mb-4">
               {navItems.map(({ name, path, icon: Icon }) => (
                 <Link

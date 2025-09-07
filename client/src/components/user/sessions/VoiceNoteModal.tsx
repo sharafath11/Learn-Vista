@@ -72,7 +72,7 @@ const startRecording = () => {
   const stopRecording = () => {
     recognitionRef.current?.stop();
     setRecording(false);
-    setIsEditing(true); // Enable editing once recording is stopped
+    setIsEditing(true); 
   };
 
   const handleTranscriptChange = (e: ChangeEvent<HTMLTextAreaElement>) => {

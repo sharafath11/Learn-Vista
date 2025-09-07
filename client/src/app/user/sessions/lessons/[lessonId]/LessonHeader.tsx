@@ -7,6 +7,7 @@ import { ILessons } from "@/src/types/lessons";
 import { EvaluatedAnswer } from "@/src/types/lessons";
 import VoiceNoteModal from "@/src/components/user/sessions/VoiceNoteModal";
 import { useRouter } from "next/navigation"; 
+import { useUserContext } from "@/src/context/userAuthContext";
 
 interface LessonHeaderProps {
   lesson: ILessons;
@@ -24,11 +25,12 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
   onViewReport,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {allCourses}=useUserContext()
   const router = useRouter();
   const handleViewNotes = () => {
     router.push(`/user/note/${lesson.id}`);
   };
-
+  const courseName=allCourses.filter((i)=>i.id===lesson.courseId)
   return (
     <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
       <Button
@@ -75,7 +77,7 @@ const LessonHeader: React.FC<LessonHeaderProps> = ({
       <VoiceNoteModal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        courseName={lesson.courseId ?? "Unknown Course"}
+        courseName={courseName[0].title ?? "Unknown Course"}
         lessonName={lesson.title}
         lesson={lesson}
       />
