@@ -85,7 +85,6 @@ export function DailyTaskCard({ task, taskId }: Props) {
         setAudioBlob(blob);
       };
 
-      // Speech Recognition
       if ("webkitSpeechRecognition" in window) {
         const recognition = new (window as any).webkitSpeechRecognition();
         recognitionRef.current = recognition;
@@ -251,21 +250,47 @@ export function DailyTaskCard({ task, taskId }: Props) {
           <div className="space-y-3">
             {!localTask.isCompleted && (
               <>
+                {/* Recording Control */}
                 <Button
                   variant={isRecording ? "destructive" : "outline"}
                   className="w-full"
                   onClick={isRecording ? stopRecording : startRecording}
                 >
-                  {isRecording ? "Stop Recording" : "Start Recording"}
+                  {isRecording ? (
+                    <>
+                      <div className="w-2 h-2 bg-white rounded-full animate-pulse mr-2" />
+                      Stop Recording
+                    </>
+                  ) : (
+                    <>
+                      <Mic className="h-4 w-4 mr-2" />
+                      Start Recording
+                    </>
+                  )}
                 </Button>
-                <Textarea
-                  placeholder="Your speech transcription will appear here..."
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  className="min-h-[100px] resize-none border-red-200 focus:border-red-400"
-                />
-                <div className="text-xs text-muted-foreground text-right">
-                  {answer.length} characters
+
+                {/* Playback after recording */}
+                {audioBlob && (
+                  <div className="mt-3">
+                    <p className="text-sm font-medium text-gray-700 mb-1">
+                      Preview Recording:
+                    </p>
+                    <audio controls src={URL.createObjectURL(audioBlob)} className="w-full" />
+                  </div>
+                )}
+
+                {/* Transcription */}
+                <div className="space-y-3 mt-3">
+                  <Textarea
+                    placeholder="Your speech transcription will appear here..."
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    onPaste={(e) => e.preventDefault()} // disable copy-paste
+                    className="min-h-[100px] resize-none border-red-200 focus:border-red-400"
+                  />
+                  <div className="text-xs text-muted-foreground text-right">
+                    {answer.length} characters
+                  </div>
                 </div>
               </>
             )}
@@ -282,6 +307,7 @@ export function DailyTaskCard({ task, taskId }: Props) {
                   placeholder="Write your answer here..."
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
+                  onPaste={(e) => e.preventDefault()} // disable copy-paste
                   className="min-h-[120px] resize-none border-blue-200 focus:border-blue-400"
                 />
                 <div className="text-xs text-muted-foreground text-right">
@@ -316,6 +342,7 @@ export function DailyTaskCard({ task, taskId }: Props) {
                   placeholder="Enter your answer here..."
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
+                  onPaste={(e) => e.preventDefault()} // disable copy-paste
                   className="min-h-[100px] resize-none border-green-200 focus:border-green-400"
                 />
                 <div className="text-xs text-muted-foreground text-right">
