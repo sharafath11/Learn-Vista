@@ -305,7 +305,7 @@ export const Messages = {
     FILTERED_FETCH_FAILED: "Failed to fetch filtered donations.",
     COUNT_FAILED: "Failed to count filtered donations.",
     SUCCESS_TITLE: "Donation Successful",
-    SUCCESS_MESSAGE: (amount: number) => `User donated ₹${amount}. Thank you!`,
+    SUCCESS_MESSAGE: (amount: number ,name:string) => `${name} donated ₹${amount}. Thank you!`,
     MISSING_CHARGE_ID: "Could not determine charge ID.",
   },
   GENAI: {

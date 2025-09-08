@@ -8,8 +8,10 @@ import Peer from "simple-peer"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { showInfoToast } from "@/src/utils/Toast"
+import { useUserContext } from "@/src/context/userAuthContext"
 
 export default function UserLiveSession({ roomId }: { roomId: string }) {
+  const {user}=useUserContext()
   const [mentorStream, setMentorStream] = useState<MediaStream | null>(null)
   const [comments, setComments] = useState<{text: string, sender: string}[]>([])
   const [newComment, setNewComment] = useState("")
@@ -193,7 +195,7 @@ useEffect(() => {
 
   const submitComment = () => {
     if (newComment.trim()) {
-      socketRef.current?.emit("send-comment", roomId, newComment, "Viewer");
+      socketRef.current?.emit("send-comment", roomId, newComment, user?.username);
       setNewComment("");
     }
   };

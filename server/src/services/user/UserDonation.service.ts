@@ -72,7 +72,7 @@ export class UserDonationServices implements IUserDonationServices {
   userIds: [userId, ADMIN_ID],
   roles: ["admin"],
   title: Messages.DONATION.SUCCESS_TITLE,
-  message: Messages.DONATION.SUCCESS_MESSAGE(donation.amount),
+  message: Messages.DONATION.SUCCESS_MESSAGE(donation.amount,donation.donorName),
   type: "success",
 });
 
