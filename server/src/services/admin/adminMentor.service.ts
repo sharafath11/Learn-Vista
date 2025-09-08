@@ -12,7 +12,7 @@ import { INotificationService } from "../../core/interfaces/services/notificatio
 import { convertSignedUrlInArray, convertSignedUrlInObject} from "../../utils/s3Utilits";
 import { Messages } from "../../constants/messages";
 import { MentorMapper} from "../../shared/dtos/mentor/mentor.mapper";
-import { IAdminAddCourseMentorsDto, IAdminMentorResponseDto } from "../../shared/dtos/mentor/mentor-response.dto";
+import { IAdminAddCourseMentorsDto, IAdminMentorResponseDto, IMentorResponseDto } from "../../shared/dtos/mentor/mentor-response.dto";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 
 @injectable()
@@ -70,7 +70,7 @@ const mappingDatas = await Promise.all(
   }
   
 
-  async changeMentorStatus(id: string, status: boolean, email: string): Promise<IMentor | null> {
+  async changeMentorStatus(id: string, status: boolean, email: string): Promise<IMentorResponseDto | null> {
       const statusString = status ? Messages.MENTOR.STATUS_APPROVED : Messages.MENTOR.STATUS_REJECTED;
     const updated = await this._mentorRepo.update(id, { status });
     if (!updated) {
@@ -91,7 +91,7 @@ const mappingDatas = await Promise.all(
       : Messages.MENTOR.REJECTED_MESSAGE,
     type: status ? "success" : "error",
   });
-    return updated;
+    return MentorMapper.toResponseDto(updated);
   }
 
   async toggleMentorBlock(id: string, isBlock: boolean): Promise<IAdminMentorResponseDto | null> {
