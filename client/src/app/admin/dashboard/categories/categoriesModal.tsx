@@ -9,20 +9,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/componen
 import { Input } from "@/src/components/shared/components/ui/input"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { Button } from "@/src/components/shared/components/ui/button"
+import { IAdminCategoryFormProps } from "@/src/types/categoryTypes"
 
-interface CategoryFormProps {
-  isOpen: boolean
-  onClose: () => void
-  onSuccess?: () => void
-  categoryId?: string | null
-}
+
 
 export default function CategoryForm({ 
   isOpen, 
   onClose, 
   onSuccess,
   categoryId 
-}: CategoryFormProps) {
+}: IAdminCategoryFormProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const { cat, setCat } = useAdminContext()

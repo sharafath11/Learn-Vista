@@ -1,6 +1,7 @@
 
 import { IConcern } from "./concernTypes";
 import { ICourse, IPopulatedCourse } from "./courseTypes";
+import { IQuestions, QuestionType } from "./lessons";
 import { INotification } from "./notificationsTypes";
 
 
@@ -10,7 +11,7 @@ export interface SocialLink {
   platform: "twitter" | "github" | "website" | "linkedin";
   url: string;
 }
-
+export type IMentorConcernStatus = "open" | "in-progress" | "resolved";
 export interface IMentor {
   id: string;
   students?:number
@@ -116,3 +117,27 @@ export interface MentorFilters {
   status?: MentorStatus;
 }
 
+export interface IMentorQuestionModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  question: IQuestions | null;
+  type: QuestionType;
+  onSave: (data: Omit<IQuestions, "id" | "isCompleted" | "lessonId">) => void;
+}
+
+export interface IMentorFetchParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  filters?: Record<string, any>;
+  sort?: Record<string, 1 | -1>;
+}
+export interface IMentorDeviceInfo {
+  deviceId: string;
+  label: string;
+}
+export interface IMentorFormData {
+  email: string;
+  password: string;
+  showPassword: boolean;
+}

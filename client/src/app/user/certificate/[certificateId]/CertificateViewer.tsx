@@ -1,11 +1,8 @@
 "use client"
-import type { ICertificate } from "@/src/types/certificateTypes"
+import { CertificateViewerProps } from "@/src/types/userProps"
 import Image from "next/image"
 import { forwardRef } from "react"
 
-interface CertificateViewerProps {
-  certificate: ICertificate
-}
 
 const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(
   ({ certificate }, ref) => {

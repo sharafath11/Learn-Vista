@@ -5,17 +5,9 @@ import { Card } from "@/src/components/shared/components/ui/card"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { cn } from "@/src/utils/cn"
-import { IPopulatedCourse } from "@/src/types/courseTypes"
+import { IUserSessionCardProps } from "@/src/types/userProps"
 
-interface SessionCardProps {
-  session: IPopulatedCourse
-  isExpired: boolean
-  joiningSession: string | null
-  onJoinCall: (courseId: string) => void
-  onViewContent: (courseId: string) => void
-}
-
-export const SessionCard = ({ session, isExpired, joiningSession, onJoinCall, onViewContent }: SessionCardProps) => {
+export const SessionCard = ({ session, isExpired, joiningSession, onJoinCall, onViewContent }: IUserSessionCardProps) => {
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A"
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -24,7 +16,6 @@ export const SessionCard = ({ session, isExpired, joiningSession, onJoinCall, on
       year: "numeric",
     })
   }
-
   const getStatusBadge = () => {
     if (isExpired) {
       return (
@@ -154,7 +145,6 @@ export const SessionCard = ({ session, isExpired, joiningSession, onJoinCall, on
               </p>
             </div>
           </div>
-
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
               <Users className="w-5 h-5 text-purple-600" />
@@ -177,8 +167,6 @@ export const SessionCard = ({ session, isExpired, joiningSession, onJoinCall, on
             </div>
           </div>
         </div>
-
-        {/* Action Button */}
         <div className="pt-2">{getActionButton()}</div>
       </div>
     </Card>

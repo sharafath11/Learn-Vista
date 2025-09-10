@@ -24,14 +24,8 @@ import {
 } from "@/src/components/shared/components/ui/pagination";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
+import { IMentorFetchParams } from "@/src/types/mentorTypes";
 
-interface FetchParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  filters?: Record<string, any>;
-  sort?: Record<string, 1 | -1>;
-}
 
 export default function Page() {
   const params = useParams();
@@ -46,7 +40,7 @@ export default function Page() {
   );
   const [shouldBlock, setShouldBlock] = useState<boolean>(false);
 
-  const [fetchParams, setFetchParams] = useState<FetchParams>({
+  const [fetchParams, setFetchParams] = useState<IMentorFetchParams>({
     page: 1,
     search: "",
     filters: {},

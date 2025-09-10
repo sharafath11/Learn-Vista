@@ -1,4 +1,3 @@
-// SignupForm.tsx
 
 "use client";
 import type React from "react";
@@ -14,15 +13,8 @@ import type { ILogin, IUserRegistration } from "@/src/types/authTypes";
 import { FormOTP } from "./FormOTP";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { validateSignup } from "@/src/validations/validation";
+import { IFormInputProps } from "@/src/types/userProps";
 
-interface FormInputProps {
-  label: string;
-  type: string;
-  id: keyof IUserRegistration;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  disabled?: boolean;
-}
 
 const FormInput = ({
   label,
@@ -31,7 +23,7 @@ const FormInput = ({
   onChange,
   placeholder,
   disabled = false,
-}: FormInputProps) => (
+}: IFormInputProps) => (
   <div className="space-y-1">
     <label htmlFor={id} className="block text-sm font-medium text-gray-700">
       {label}

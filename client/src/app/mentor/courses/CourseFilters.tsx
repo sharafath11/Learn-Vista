@@ -1,37 +1,31 @@
-"use client"
+"use client";
 
-import { Input } from "@/src/components/shared/components/ui/input"
+import { Input } from "@/src/components/shared/components/ui/input";
 import {
   Select,
   SelectTrigger,
   SelectItem,
   SelectContent,
   SelectValue,
-} from "@/src/components/shared/components/ui/select"
-import { ICategory } from "@/src/types/categoryTypes"
-import { useEffect, useState } from "react"
+} from "@/src/components/shared/components/ui/select";
+import { IMentorCourseFiltersProps } from "@/src/types/mentorProps";
+import { useEffect, useState } from "react";
 
-interface CourseFiltersProps {
-  categories: ICategory[]
-  onChange: (filters: {
-    search: string
-    sort: "latest" | "oldest"
-    category: string
-  }) => void
-}
-
-export const CourseFilters = ({ categories, onChange }: CourseFiltersProps) => {
-  const [search, setSearch] = useState("")
-  const [sort, setSort] = useState<"latest" | "oldest">("latest")
-  const [category, setCategory] = useState("all")
+export const CourseFilters = ({
+  categories,
+  onChange,
+}: IMentorCourseFiltersProps) => {
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<"latest" | "oldest">("latest");
+  const [category, setCategory] = useState("all");
 
   useEffect(() => {
     onChange({
       search,
       sort,
       category: category === "all" ? "" : category,
-    })
-  }, [search, sort, category, onChange])
+    });
+  }, [search, sort, category, onChange]);
 
   return (
     <div className="flex flex-wrap items-center gap-4 mb-8">
@@ -42,7 +36,10 @@ export const CourseFilters = ({ categories, onChange }: CourseFiltersProps) => {
         className="max-w-sm"
       />
 
-      <Select value={sort} onValueChange={(val) => setSort(val as "latest" | "oldest")}>
+      <Select
+        value={sort}
+        onValueChange={(val) => setSort(val as "latest" | "oldest")}
+      >
         <SelectTrigger className="w-40">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
@@ -59,15 +56,14 @@ export const CourseFilters = ({ categories, onChange }: CourseFiltersProps) => {
         <SelectContent>
           <SelectItem value="all">All Categories</SelectItem>
           {categories
-  .filter((c) => !!c.id && !!c.title)
-  .map((category) => (
-    <SelectItem key={category.id} value={category.id as string}>
-      {category.title}
-    </SelectItem>
-  ))}
-
+            .filter((c) => !!c.id && !!c.title)
+            .map((category) => (
+              <SelectItem key={category.id} value={category.id as string}>
+                {category.title}
+              </SelectItem>
+            ))}
         </SelectContent>
       </Select>
     </div>
-  )
-}
+  );
+};

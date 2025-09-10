@@ -1,65 +1,61 @@
-"use client"
-
-import type React from "react"
-
-import { useState, useCallback, useRef, useEffect } from "react"
-import { Mail, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react"
-import Link from "next/link"
-import { UserAPIMethods } from "@/src/services/methods/user.api"
-import { showSuccessToast } from "@/src/utils/Toast"
+"use client";
+import type React from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import { Mail, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
+import { showSuccessToast } from "@/src/utils/Toast";
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState("")
-  const [errors, setErrors] = useState<{ email?: string }>({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
-  const [animateIn, setAnimateIn] = useState(false)
-  const formRef = useRef<HTMLFormElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState<{ email?: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [animateIn, setAnimateIn] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setAnimateIn(true)
+    setAnimateIn(true);
     if (inputRef.current) {
-      inputRef.current.focus()
+      inputRef.current.focus();
     }
-  }, [])
+  }, []);
 
   const validateEmail = useCallback((email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return regex.test(email)
-  }, [])
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }, []);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
-      e.preventDefault()
-      setErrors({})
+      e.preventDefault();
+      setErrors({});
       if (!email.trim()) {
-        setErrors({ email: "Email is required" })
-        return
+        setErrors({ email: "Email is required" });
+        return;
       }
 
       if (!validateEmail(email)) {
-        setErrors({ email: "Please enter a valid email address" })
-        return
+        setErrors({ email: "Please enter a valid email address" });
+        return;
       }
-      setIsSubmitting(true)
+      setIsSubmitting(true);
       try {
         const res = await UserAPIMethods.forgotPassword(email);
         if (res.ok) {
           setIsSuccess(true);
-          showSuccessToast(res.msg)
+          showSuccessToast(res.msg);
         }
-        
       } catch (error) {
-        console.warn(error)
-        setErrors({ email: "Something went wrong. Please try again." })
+        console.warn(error);
+        setErrors({ email: "Something went wrong. Please try again." });
       } finally {
-        setIsSubmitting(false)
+        setIsSubmitting(false);
       }
     },
-    [email, validateEmail],
-  )
+    [email, validateEmail]
+  );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4 sm:px-6 lg:px-8">
@@ -69,7 +65,6 @@ export default function ForgotPassword() {
         }`}
       >
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden p-8 space-y-8">
-          {/* Logo */}
           <div className="text-center">
             <div className="mx-auto h-16 w-16 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 flex items-center justify-center transform transition-transform duration-500 hover:scale-105">
               <svg
@@ -87,7 +82,9 @@ export default function ForgotPassword() {
                 />
               </svg>
             </div>
-            <h2 className="mt-6 text-3xl font-bold text-gray-900">Reset your password</h2>
+            <h2 className="mt-6 text-3xl font-bold text-gray-900">
+              Reset your password
+            </h2>
             <p className="mt-2 text-sm text-gray-600">
               {`Enter your email address and we'll send you a link to reset your password.`}
             </p>
@@ -103,11 +100,15 @@ export default function ForgotPassword() {
                 <div className="flex-shrink-0 mb-4">
                   <CheckCircle2 className="h-12 w-12 text-emerald-500 animate-[pulse_2s_ease-in-out_infinite]" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900">Password reset email sent</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  Password reset email sent
+                </h3>
                 <div className="mt-2 text-sm text-gray-600">
                   <p>{`We've sent a password reset link to:`}</p>
                   <p className="font-medium text-gray-900 mt-1">{email}</p>
-                  <p className="mt-2">Please check your inbox and follow the instructions.</p>
+                  <p className="mt-2">
+                    Please check your inbox and follow the instructions.
+                  </p>
                 </div>
                 <div className="mt-6">
                   <Link
@@ -129,12 +130,18 @@ export default function ForgotPassword() {
               style={{ opacity: 1, transform: "scale(1)" }}
             >
               <div className="space-y-2">
-                <label htmlFor="email-address" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email-address"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Email address
                 </label>
                 <div className="relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    <Mail
+                      className="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
+                    />
                   </div>
                   <input
                     ref={inputRef}
@@ -153,7 +160,10 @@ export default function ForgotPassword() {
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-2 text-sm text-red-600 animate-[fadeIn_0.3s_ease-in-out]" id="email-error">
+                  <p
+                    className="mt-2 text-sm text-red-600 animate-[fadeIn_0.3s_ease-in-out]"
+                    id="email-error"
+                  >
                     {errors.email}
                   </p>
                 )}
@@ -169,7 +179,10 @@ export default function ForgotPassword() {
                     <Loader2 className="animate-spin h-5 w-5 mr-2" />
                   ) : (
                     <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                      <Mail className="h-5 w-5 text-violet-300 group-hover:text-violet-200" aria-hidden="true" />
+                      <Mail
+                        className="h-5 w-5 text-violet-300 group-hover:text-violet-200"
+                        aria-hidden="true"
+                      />
                     </span>
                   )}
                   {isSubmitting ? "Sending..." : "Reset password"}
@@ -190,5 +203,5 @@ export default function ForgotPassword() {
         </div>
       </div>
     </div>
-  )
+  );
 }

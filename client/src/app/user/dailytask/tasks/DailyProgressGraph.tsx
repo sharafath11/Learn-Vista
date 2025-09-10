@@ -1,16 +1,11 @@
 
 "use client";
-
-import { IDailyTask } from "@/src/types/dailyTaskTypes";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card";
+import { IUserDailyProps } from "@/src/types/userProps";
 
-interface Props {
-  dailyTasks: IDailyTask[];
-}
-
-export function DailyProgressGraph({ dailyTasks }: Props) {
+export function DailyProgressGraph({ dailyTasks }: IUserDailyProps) {
   const chartData = dailyTasks
     .filter(task => typeof task.overallScore === "number" && task.overallScore !== null)
     .sort((a, b) => new Date(a.createdAt||"").getTime() - new Date(b.createdAt||"").getTime())

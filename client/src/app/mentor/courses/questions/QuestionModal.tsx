@@ -15,17 +15,12 @@ import { Input } from "@/src/components/shared/components/ui/input";
 import { BookOpen, Code, ListChecks } from "lucide-react";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { useEffect, useState } from "react";
-import { IQuestions, QuestionType } from "@/src/types/lessons";
+import { IQuestions} from "@/src/types/lessons";
 import { showInfoToast } from "@/src/utils/Toast";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
+import { IMentorQuestionModalProps } from "@/src/types/mentorTypes";
 
-interface QuestionModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  question: IQuestions | null;
-  type: QuestionType;
-  onSave: (data: Omit<IQuestions, "id" | "isCompleted" | "lessonId">) => void;
-}
+
 
 export function QuestionModal({
   open,
@@ -33,7 +28,7 @@ export function QuestionModal({
   question,
   type,
   onSave,
-}: QuestionModalProps) {
+}: IMentorQuestionModalProps) {
   const [formData, setFormData] = useState({
     question: "",
     options: [] as string[],

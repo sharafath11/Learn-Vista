@@ -7,10 +7,9 @@ import { SessionProvider } from "next-auth/react";
 import { NotificationListener } from "@/src/components/NotificationListener";
 import { Header } from "@/src/components/user/header/Header";
 import ClientLayout from "../client-layout";
+import { IUserLayoutProps } from "@/src/types/userProps";
 
-interface UserLayoutProps {
-  children: ReactNode;
-}
+
 function NotificationWrapper() {
   const { user } = useUserContext();
 
@@ -25,7 +24,7 @@ function NotificationWrapper() {
 }
 
 
-export default function UserLayout({ children }: UserLayoutProps) {
+export default function UserLayout({ children }: IUserLayoutProps) {
   return (
     <SessionProvider>
       <UserProvider>

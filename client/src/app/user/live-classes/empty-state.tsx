@@ -3,13 +3,9 @@
 import { BookOpen } from "lucide-react"
 import { Card } from "@/src/components/shared/components/ui/card"
 import { Button } from "@/src/components/shared/components/ui/button"
+import { IEmptyStateProps } from "@/src/types/userProps"
 
-interface EmptyStateProps {
-  filter: "active" | "expired"
-  onExplore: () => void
-}
-
-export const EmptyState = ({ filter, onExplore }: EmptyStateProps) => {
+export const EmptyState = ({ filter, onExplore }: IEmptyStateProps) => {
   return (
     <Card className="p-8 sm:p-12 text-center bg-gradient-to-br from-gray-50 to-white border-0 shadow-lg">
       <div className="max-w-md mx-auto">

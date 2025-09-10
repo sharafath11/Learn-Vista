@@ -3,14 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/src/components/shared/components/ui/button";
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { EvaluatedAnswer } from '@/src/types/lessons';
+import { IReportModalProps } from '@/src/types/userProps';
 
-interface ReportModalProps {
-  report: string;
-  isOpen: boolean;
-  onClose: () => void;
-}
 
-export default function ReportModal({ report, isOpen, onClose }: ReportModalProps) {
+export default function ReportModal({ report, isOpen, onClose }: IReportModalProps) {
   if (!report) return null;
 
   const cleaned = report

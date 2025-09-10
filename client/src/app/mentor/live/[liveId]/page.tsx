@@ -10,7 +10,6 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
       <div className="flex flex-1 p-4">
-        {/* The MentorStream component handles all responsiveness internally */}
         <MentorStream roomId={liveId} />
       </div>
     </main>

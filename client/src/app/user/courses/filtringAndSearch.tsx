@@ -6,14 +6,11 @@ import { Input } from "@/src/components/shared/components/ui/input"
 import { Search, Filter, SortAsc } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/shared/components/ui/select"
 import useDebounce from "@/src/hooks/useDebouncing"
-import type { ICategory } from "@/src/types/categoryTypes"
+import { IUserCourseFilterProps } from "@/src/types/userProps"
 
-interface CourseFilterProps {
-  categories: ICategory[]
-  onFilter: (filters: { search: string; category: string; sort: string }) => void
-}
 
-const CourseFilter: React.FC<CourseFilterProps> = ({ categories, onFilter }) => {
+
+const CourseFilter: React.FC<IUserCourseFilterProps> = ({ categories, onFilter }) => {
   const [search, setSearch] = useState("")
   const [category, setCategory] = useState("All")
   const [sort, setSort] = useState("ASC")

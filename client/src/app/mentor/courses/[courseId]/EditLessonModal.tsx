@@ -28,16 +28,10 @@ import { FileImage, PlayCircle, XCircle, Loader2 } from "lucide-react";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import Image from "next/image";
+import { ILessons } from "@/src/types/lessons";
+import { IMentorEditLessonModalProps } from "@/src/types/mentorProps";
 
-interface ILessons {
-  id: string;
-  title: string;
-  description?: string;
-  order?: number;
-  thumbnail?: string;
-  videoUrl?: string;
-  duration?: string;
-}
+
 
 const lessonFormSchema = z.object({
   id: z.string().optional(),
@@ -51,13 +45,7 @@ const lessonFormSchema = z.object({
 
 type LessonFormValues = z.infer<typeof lessonFormSchema>;
 
-interface EditLessonModalProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  selectedLesson: ILessons | null;
-  onLessonUpdated: () => void;
-  courseId: string;
-}
+
 
 const formatDuration = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600);
@@ -77,7 +65,7 @@ export function EditLessonModal({
   setOpen,
   selectedLesson,
   onLessonUpdated,
-}: EditLessonModalProps) {
+}: IMentorEditLessonModalProps) {
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonFormSchema),
     defaultValues: {

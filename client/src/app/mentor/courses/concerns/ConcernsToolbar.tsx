@@ -3,46 +3,9 @@ import { Button } from "@/src/components/shared/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/src/components/shared/components/ui/dropdown-menu"
 import { Search, Filter, ChevronDown, ArrowUpDown, Clock, CheckCircle, Eye } from 'lucide-react'
 import React from "react"
-import { ICourse } from "@/src/types/courseTypes"
+import { IMentorConcernFilterOption, IMentorConcernStatus, IMentorConcernsToolbarProps, IMentorSortOption } from "@/src/types/concernTypes"
 
-type ConcernStatus = 'open' | 'in-progress' | 'resolved'
-
-interface SortOption {
-  value: string
-  label: string
-  defaultOrder?: 'asc' | 'desc'
-}
-
-interface FilterOption<T = string> {
-  value: T
-  label: string
-  count?: number
-  icon?: React.ReactNode
-}
-
-
-
-interface ConcernsToolbarProps {
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  statusFilter: ConcernStatus | "all";
-  setStatusFilter: (status: ConcernStatus | "all") => void;
-  courseFilter: string;
-  setCourseFilter: (courseId: string) => void;
-  sortBy: string;
-  setSortBy: (sortBy: string) => void;
-  sortOrder: "asc" | "desc";
-  setSortOrder: (order: "asc" | "desc") => void;
-  courses: ICourse[]; 
-  statusCounts: {
-    all: number;
-    open: number;
-    resolved: number;
-    'in-progress': number;
-  };
-}
-
-const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
+const ConcernsToolbar: React.FC<IMentorConcernsToolbarProps> = ({
   searchTerm,
   setSearchTerm,
   statusFilter,
@@ -56,7 +19,7 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
   statusCounts,
 }) => {
 
-  const statusFilterOptions: FilterOption<ConcernStatus | 'all'>[] = [
+  const statusFilterOptions: IMentorConcernFilterOption<IMentorConcernStatus | 'all'>[] = [
     { value: 'all', label: 'All Statuses', count: statusCounts.all },
     {
       value: 'open',
@@ -78,7 +41,7 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
     }
   ]
 
-  const courseFilterOptions: FilterOption[] = [
+  const courseFilterOptions: IMentorConcernFilterOption[] = [
     { value: 'all', label: 'All Courses' },
     ...(courses?.map(course => ({
       value: course.id,
@@ -86,7 +49,7 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
     })) || [])
   ]
 
-  const sortOptions: SortOption[] = [
+  const sortOptions: IMentorSortOption[] = [
     { value: 'createdAt', label: 'Newest First', defaultOrder: 'desc' },
     { value: 'createdAt', label: 'Oldest First', defaultOrder: 'asc' }
   ]
@@ -115,7 +78,7 @@ const ConcernsToolbar: React.FC<ConcernsToolbarProps> = ({
           {statusFilterOptions.map((option) => (
             <DropdownMenuItem
               key={option.value}
-              onClick={() => setStatusFilter(option.value as ConcernStatus | "all")}
+              onClick={() => setStatusFilter(option.value as IMentorConcernStatus | "all")}
               className="flex justify-between items-center text-amber-50"
             >
               <div className="flex items-center gap-2">

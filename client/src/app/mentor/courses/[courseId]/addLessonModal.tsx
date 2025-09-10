@@ -28,6 +28,7 @@ import { FileImage, PlayCircle, XCircle, Loader2 } from "lucide-react";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import Image from "next/image";
+import { IMentorAddLessonModalProps } from "@/src/types/mentorProps";
 
 const lessonFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -40,13 +41,6 @@ const lessonFormSchema = z.object({
 
 export type LessonFormValues = z.infer<typeof lessonFormSchema>;
 
-interface AddLessonModalProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  nextOrder: number;
-  courseId: string;
-  onLessonAdded: () => void;
-}
 
 const formatDuration = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600);
@@ -67,7 +61,7 @@ export function AddLessonModal({
   nextOrder,
   courseId,
   onLessonAdded,
-}: AddLessonModalProps) {
+}: IMentorAddLessonModalProps) {
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonFormSchema),
     defaultValues: {

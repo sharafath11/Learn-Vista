@@ -7,20 +7,16 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Progress } from "@/src/components/shared/components/ui/progress"
-import type { IcourseFromResponse} from "@/src/types/courseTypes"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 import { getCourseProgress } from "@/src/utils/getProgress"
+import { IUserCourseCardProps } from "@/src/types/userProps"
 
-interface CourseCardProps {
-  course: IcourseFromResponse
-  index: number
-  onDetailsClick: (course: IcourseFromResponse) => void
-}
 
-const CourseCard = ({ course, index, onDetailsClick }: CourseCardProps) => {
+
+const CourseCard = ({ course, index, onDetailsClick }: IUserCourseCardProps) => {
   const router = useRouter()
   const { user, setUser, progresses } = useUserContext()
 

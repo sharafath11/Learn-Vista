@@ -1,5 +1,7 @@
 // src/types/concernTypes.ts
 
+import { ICourse } from "./courseTypes";
+
 export interface ConcernAttachment {
   id: string;
   filename: string;
@@ -52,3 +54,47 @@ export type IConcernFilters = {
 export type IConcernSort = {
   createdAt?: 1 | -1;
 };
+
+export interface IAdminConcernModalProps {
+  concern: IConcern | null
+  onClose: () => void
+  onStatusChange: () => void
+}
+
+
+export type IMentorConcernStatus = 'open' | 'in-progress' | 'resolved'
+
+export interface IMentorSortOption {
+  value: string
+  label: string
+  defaultOrder?: 'asc' | 'desc'
+}
+
+export interface IMentorConcernFilterOption<T = string> {
+  value: T
+  label: string
+  count?: number
+  icon?: React.ReactNode
+}
+
+
+
+export interface IMentorConcernsToolbarProps {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  statusFilter: IMentorConcernStatus | "all";
+  setStatusFilter: (status: IMentorConcernStatus | "all") => void;
+  courseFilter: string;
+  setCourseFilter: (courseId: string) => void;
+  sortBy: string;
+  setSortBy: (sortBy: string) => void;
+  sortOrder: "asc" | "desc";
+  setSortOrder: (order: "asc" | "desc") => void;
+  courses: ICourse[]; 
+  statusCounts: {
+    all: number;
+    open: number;
+    resolved: number;
+    'in-progress': number;
+  };
+}

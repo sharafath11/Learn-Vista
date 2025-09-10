@@ -6,20 +6,19 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Card, CardContent } from "@/src/components/shared/components/ui/card"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { useMentorContext } from "@/src/context/mentorContext"
-import { IConcern } from "@/src/types/concernTypes"
+import { IConcern, IMentorConcernStatus } from "@/src/types/concernTypes"
 import ConcernsToolbar from "./ConcernsToolbar"
 import ConcernCard from "./ConcernCard"
 import useDebounce from "@/src/hooks/useDebouncing"
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 
-type ConcernStatus = 'open' | 'in-progress' | 'resolved'
 
 export default function ConcernsPage() {
   const { courses } = useMentorContext()
   const [concerns, setConcerns] = useState<IConcern[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const debouncedSearchTerm = useDebounce(searchTerm, 500)
-  const [statusFilter, setStatusFilter] = useState<ConcernStatus | "all">("all")
+  const [statusFilter, setStatusFilter] = useState<IMentorConcernStatus | "all">("all")
   const [courseFilter, setCourseFilter] = useState<string>("all")
   const [sortBy, setSortBy] = useState<string>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")

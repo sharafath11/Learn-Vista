@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, ChangeEvent,useContext } from 'react';
+import { useState, useEffect, ChangeEvent, useContext } from 'react';
 import { useTheme } from 'next-themes';
 import { FiMail, FiLock, FiUser, FiSun, FiMoon } from 'react-icons/fi';
 import { motion } from 'framer-motion';
@@ -7,18 +7,16 @@ import { postRequest } from '@/src/services/api';
 import { showSuccessToast } from '@/src/utils/Toast';
 import { AdminContext } from '@/src/context/adminContext';
 import { useRouter } from 'next/navigation';
+import { IData } from '@/src/types/adminTypes';
 
 const AdminLogin = () => {
-    interface IData{
-        email: string,
-        password:string
-    }
-    const [data, setData] = useState<IData>({email:"",password:""})
+
+  const [data, setData] = useState<IData>({ email: "", password: "" })
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const admin = useContext(AdminContext);
-  const route=useRouter()
-  
+  const route = useRouter()
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -31,14 +29,14 @@ const AdminLogin = () => {
   function onchangeHandler(e: ChangeEvent<HTMLInputElement>) {
     setData({ ...data, [e.target.id]: e.target.value });
   }
-    async function handleSubmit() {
-        const res = await postRequest("/admin/login", data);
-        if (res.ok) {
-          showSuccessToast(res.msg);
-          admin?.refreshAdminNotification()
-          admin?.setAdmin(true);
-          route.push("/admin/dashboard")
-        }
+  async function handleSubmit() {
+    const res = await postRequest("/admin/login", data);
+    if (res.ok) {
+      showSuccessToast(res.msg);
+      admin?.refreshAdminNotification()
+      admin?.setAdmin(true);
+      route.push("/admin/dashboard")
+    }
   }
   return (
     <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 to-purple-50'}`}>
@@ -85,12 +83,12 @@ const AdminLogin = () => {
             />
           </div>
 
-         
+
           <div className="relative">
             <motion.div
               animate={{
                 y: data.password ? -12 : 0,
-                scale:data.password ? 0.8 : 1,
+                scale: data.password ? 0.8 : 1,
               }}
               transition={{ type: 'spring', stiffness: 300 }}
               className={`absolute left-3 px-1 ${theme === 'dark' ? 'bg-gray-800/80 text-gray-300' : 'bg-white/80 text-gray-500'}`}
@@ -114,7 +112,7 @@ const AdminLogin = () => {
             whileTap={{ scale: 0.98 }}
             className={`w-full py-3 px-4 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium shadow-lg hover:shadow-xl ${theme === 'dark' ? 'hover:shadow-purple-500/20' : 'hover:shadow-purple-400/30'} transition-all duration-300`}
             onClick={handleSubmit}
-                  >
+          >
             Sign In
           </motion.button>
         </div>

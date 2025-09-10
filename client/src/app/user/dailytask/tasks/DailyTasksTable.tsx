@@ -19,18 +19,14 @@ import { Badge } from "@/src/components/shared/components/ui/badge";
 import { Mic, PenTool, Headphones, Play } from "lucide-react";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { handleTextToSpeech, stopTextToSpeech } from "@/src/utils/voice";
-
-interface Props {
-  dailyTasks: IDailyTask[];
-}
+import { IUserDailyProps } from "@/src/types/userProps";
 
 const taskIcons = {
   speaking: Mic,
   writing: PenTool,
   listening: Headphones,
 };
-
-export function DailyTasksTable({ dailyTasks }: Props) {
+export function DailyTasksTable({ dailyTasks }: IUserDailyProps) {
   const [selectedDailyTask, setSelectedDailyTask] = useState<IDailyTask | null>(
     null
   );

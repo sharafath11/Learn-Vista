@@ -5,20 +5,15 @@ import { Calendar, Clock, Users, Play, Radio, CheckCircle, Archive } from "lucid
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { IPopulatedCourse } from "@/src/types/courseTypes"
+import { IMentorSessionTableProps } from "@/src/types/mentorProps"
 
-interface SessionTableProps {
-  sessions: IPopulatedCourse[]
-  isEnded?: boolean
-  handleStartSession: (courseId: string) => void
-  getSessionStatus: (session: IPopulatedCourse) => string
-}
 
 export const SessionTable = ({ 
   sessions, 
   isEnded = false, 
   handleStartSession, 
   getSessionStatus 
-}: SessionTableProps) => {
+}: IMentorSessionTableProps) => {
   return (
     <div className="bg-gradient-to-br from-indigo-900/30 via-purple-900/30 to-blue-900/30 backdrop-blur-sm rounded-xl border border-indigo-500/20 overflow-hidden shadow-lg">
       {/* Table Header */}

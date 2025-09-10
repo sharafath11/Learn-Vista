@@ -86,3 +86,25 @@ export interface IVoiceNote {
 }
 
 
+export interface IAdminLessonModalProps {
+  open: boolean;
+  onClose: () => void;
+  type: 'comments' | 'questions' | null;
+  lesson: ILessons | null;
+  comments: IComment[];
+  questions: IQuestions[];
+}
+export interface IMentorCourseLessonsPageProps {
+  params: Promise<{
+    courseId: string;
+  }>
+}
+export type IMentorSortOption = "newest" | "oldest"
+export type IMentorFilterOption = "all" | string
+export interface IQuestion {
+  id?: number
+  question: string
+  options: string[]
+  correctAnswer: number
+  explanation: string
+}

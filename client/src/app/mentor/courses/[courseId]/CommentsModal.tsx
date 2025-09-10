@@ -5,12 +5,9 @@ import { showErrorToast } from "@/src/utils/Toast";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { formatDistanceToNow } from 'date-fns'; 
 import { IComment } from "@/src/types/lessons";
-interface CommentsModalProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  lessonId: string;
-}
-export function CommentsModal({ open, setOpen, lessonId }: CommentsModalProps) {
+import { IMentorCommentsModalProps } from "@/src/types/mentorProps";
+
+export function CommentsModal({ open, setOpen, lessonId }: IMentorCommentsModalProps) {
   const [comments, setComments] = useState<IComment[]>([]);
   const [, setNewComment] = useState("");
   const [loadingComments, setLoadingComments] = useState(true);

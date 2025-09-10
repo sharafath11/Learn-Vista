@@ -8,14 +8,8 @@ import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showErrorToast } from "@/src/utils/Toast"
+import { IQuestion } from "@/src/types/lessons"
 
-interface Question {
-  id?: number
-  question: string
-  options: string[]
-  correctAnswer: number
-  explanation: string
-}
 
 export default function LetsFunPSC() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -23,7 +17,7 @@ export default function LetsFunPSC() {
   const [showResult, setShowResult] = useState(false)
   const [score, setScore] = useState(0)
   const [answeredQuestions, setAnsweredQuestions] = useState(0)
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null)
+  const [currentQuestion, setCurrentQuestion] = useState<IQuestion | null>(null)
   const [loading, setLoading] = useState(false)
   const [apiUnavailable, setApiUnavailable] = useState(false)
 
@@ -210,7 +204,6 @@ export default function LetsFunPSC() {
                 </div>
               )}
 
-              {/* Question */}
               <div className="mb-8">
                 <Badge variant="outline" className="mb-4 bg-blue-50 text-blue-700 border-blue-200">
                   Question #{currentQuestionIndex + 1}

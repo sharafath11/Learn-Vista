@@ -7,12 +7,11 @@ import { CheckCircle2, Heart, Mail, ArrowLeft, Download, Loader2 } from "lucide-
 import { useUserContext } from "@/src/context/userAuthContext"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { generateReceiptPDF } from "@/src/utils/receiptGenerator"
+import { SuccessProps } from "@/src/types/userProps"
 
-type Props = {
-  session: IDonation
-}
 
-export default function SuccessView({ session }: Props) {
+
+export default function SuccessView({ session }: SuccessProps) {
   const router = useRouter()
   const { user } = useUserContext()
   const [downloadingPDF, setDownloadingPDF] = useState(false)

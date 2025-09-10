@@ -15,14 +15,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/src/components/shared/com
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { ScrollArea } from "@/src/components/shared/components/ui/scroll-area"
 import { useMentorContext } from "@/src/context/mentorContext"
+import { IMentorStudentDetailsModalProps } from "@/src/types/mentorProps"
 
-interface StudentDetailsModalProps {
-  student: IUser
-  isOpen: boolean
-  onClose: () => void
-}
 
-export default function StudentDetailsModal({ student, isOpen, onClose }: StudentDetailsModalProps) {
+export default function StudentDetailsModal({ student, isOpen, onClose }: IMentorStudentDetailsModalProps) {
   const { courses } = useMentorContext();
   const userCourses = student.enrolledCourses?.map((enrolledCourse) => {
     const courseDetail = courses.find(c => c.id === enrolledCourse.courseId);

@@ -1,26 +1,30 @@
-"use client"
-import { useState } from "react"
-import type React from "react"
-import SideBar from "@/src/components/admin/SideBar"
-import {FiChevronDown, FiMenu, FiLogOut } from "react-icons/fi"
-import { postRequest } from "@/src/services/api"
-import { useRouter } from "next/navigation"
-import { NotificationListener } from "@/src/components/NotificationListener"
-import AdminNotificationDropdown from "@/src/components/admin/AdminNotificationDropdown"
+"use client";
+import { useState } from "react";
+import type React from "react";
+import SideBar from "@/src/components/admin/SideBar";
+import { FiChevronDown, FiMenu, FiLogOut } from "react-icons/fi";
+import { postRequest } from "@/src/services/api";
+import { useRouter } from "next/navigation";
+import { NotificationListener } from "@/src/components/NotificationListener";
+import AdminNotificationDropdown from "@/src/components/admin/AdminNotificationDropdown";
 
 function NotificationWrapper() {
-  return <NotificationListener userId={"admin11Sharafath"} role="admin" />
+  return <NotificationListener userId={"admin11Sharafath"} role="admin" />;
 }
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("Dashboard")
-  const route = useRouter()
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("Dashboard");
+  const route = useRouter();
 
   async function handleLogout() {
-    await postRequest("/admin/logout", {})
-    route.push("/admin")
+    await postRequest("/admin/logout", {});
+    route.push("/admin");
   }
 
   return (
@@ -66,7 +70,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white font-semibold">
                     A
                   </div>
-                  <span className="hidden sm:inline font-medium text-white">Admin</span>
+                  <span className="hidden sm:inline font-medium text-white">
+                    Admin
+                  </span>
                   <FiChevronDown
                     className={`w-4 h-4 text-white transition-transform duration-200 ${
                       profileDropdownOpen ? "transform rotate-180" : ""
@@ -76,7 +82,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                 {profileDropdownOpen && (
                   <>
-                    <div className="fixed inset-0 z-10" onClick={() => setProfileDropdownOpen(false)} />
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setProfileDropdownOpen(false)}
+                    />
                     <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white border border-[#7a0244]/20 z-20 overflow-hidden">
                       <div className="p-2">
                         <hr className="my-2 border-[#7a0244]/10" />
@@ -102,5 +111,5 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </div>
     </>
-  )
+  );
 }

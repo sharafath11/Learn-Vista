@@ -15,16 +15,14 @@ import { Mic, Video, Radio } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
+import { IMentorDeviceInfo } from "@/src/types/mentorTypes";
 
-interface DeviceInfo {
-  deviceId: string;
-  label: string;
-}
+
 
 export default function LiveStarterPage() {
   const router = useRouter();
   const webcamRef = useRef<Webcam>(null);
-  const [devices, setDevices] = useState<DeviceInfo[]>([]);
+  const [devices, setDevices] = useState<IMentorDeviceInfo[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<string>("");
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

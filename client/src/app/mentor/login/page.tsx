@@ -6,15 +6,12 @@ import { FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa';
 import { useMentorContext } from '@/src/context/mentorContext';
 import { showSuccessToast } from '@/src/utils/Toast';
 import { MentorAPIMethods } from '@/src/services/methods/mentor.api';
+import { IMentorFormData } from '@/src/types/mentorTypes';
 
-interface FormData {
-  email: string;
-  password: string;
-  showPassword: boolean;
-}
+
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState<FormData>({ email: '', password: '', showPassword: false });
+  const [formData, setFormData] = useState<IMentorFormData>({ email: '', password: '', showPassword: false });
   const [errors, setErrors] = useState({ email: '', password: '' });
 
   const router = useRouter();

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { IConcern } from "@/src/types/concernTypes";
+import { IConcern, IMentorConcernStatus } from "@/src/types/concernTypes";
 import {
   Card,
   CardContent,
@@ -26,14 +26,8 @@ import {
   Play,
 } from "lucide-react";
 import Image from "next/image";
-
-type ConcernStatus = "open" | "in-progress" | "resolved";
-
-interface ConcernCardProps {
-  concern: IConcern;
-}
-
-const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
+import { IMentorConcernCardProps } from "@/src/types/mentorProps";
+const ConcernCard: React.FC<IMentorConcernCardProps> = ({ concern }) => {
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(
     null
   );
@@ -49,7 +43,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({ concern }) => {
     };
   }, [currentAudio]);
 
-  const getStatusDisplay = (status: ConcernStatus) => {
+  const getStatusDisplay = (status: IMentorConcernStatus) => {
     const statusConfig = {
       resolved: {
         icon: <CheckCircle className="w-4 h-4" />,

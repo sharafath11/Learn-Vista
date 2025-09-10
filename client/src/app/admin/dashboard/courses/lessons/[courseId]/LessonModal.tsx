@@ -1,16 +1,11 @@
-'use client';
+"use client";
 
-import { IComment, ILessons, IQuestions } from '@/src/types/lessons';
-
-interface LessonModalProps {
-  open: boolean;
-  onClose: () => void;
-  type: 'comments' | 'questions' | null;
-  lesson: ILessons | null;
-  comments: IComment[];
-  questions: IQuestions[];
-}
-
+import {
+  IAdminLessonModalProps,
+  IComment,
+  ILessons,
+  IQuestions,
+} from "@/src/types/lessons";
 export default function LessonModal({
   open,
   onClose,
@@ -18,11 +13,11 @@ export default function LessonModal({
   lesson,
   comments,
   questions,
-}: LessonModalProps) {
+}: IAdminLessonModalProps) {
   if (!open || !lesson || !type) return null;
 
   const data =
-    type === 'comments'
+    type === "comments"
       ? comments.filter((c) => c.lessonId === lesson?.id)
       : questions.filter((q) => q.lessonId === lesson?.id);
 
@@ -32,9 +27,12 @@ export default function LessonModal({
         {/* Modal Header */}
         <div className="flex justify-between items-center pb-4 border-b border-gray-200">
           <h2 className="text-xl md:text-2xl font-bold text-gray-800">
-            {type === 'comments' ? 'Lesson Comments' : 'Lesson Questions'}
+            {type === "comments" ? "Lesson Comments" : "Lesson Questions"}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors p-1">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -56,20 +54,30 @@ export default function LessonModal({
         {/* Modal Content */}
         <div className="mt-4 flex-1 overflow-y-auto pr-2">
           <p className="text-sm text-gray-500 mb-4">
-            Lesson: <span className="font-medium text-gray-900">{lesson?.title}</span>
+            Lesson:{" "}
+            <span className="font-medium text-gray-900">{lesson?.title}</span>
           </p>
           {data.length > 0 ? (
             <ul className="space-y-3">
               {data.map((item, idx) => (
-                <li key={idx} className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                  {type === 'comments' ? (
+                <li
+                  key={idx}
+                  className="bg-gray-50 border border-gray-200 rounded-lg p-3"
+                >
+                  {type === "comments" ? (
                     <>
-                      <div className="text-sm text-gray-800">{(item as IComment).comment}</div>
-                      <div className="mt-1 text-xs text-gray-500">— {(item as IComment).userName}</div>
+                      <div className="text-sm text-gray-800">
+                        {(item as IComment).comment}
+                      </div>
+                      <div className="mt-1 text-xs text-gray-500">
+                        — {(item as IComment).userName}
+                      </div>
                     </>
                   ) : (
                     <>
-                      <div className="text-sm text-gray-900 font-medium">{(item as IQuestions).question}</div>
+                      <div className="text-sm text-gray-900 font-medium">
+                        {(item as IQuestions).question}
+                      </div>
                       <div className="mt-1 flex items-center gap-2 text-xs">
                         <span className="inline-block bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full capitalize">
                           {(item as IQuestions).type}

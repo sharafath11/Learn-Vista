@@ -1,4 +1,3 @@
-// app/create-course/page.tsx
 "use client"
 
 import { AdminAPIMethods } from "@/src/services/methods/admin.api"

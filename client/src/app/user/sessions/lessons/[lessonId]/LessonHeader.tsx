@@ -3,21 +3,14 @@ import React, { useState } from "react";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { ArrowLeft, Mic, BookOpen } from "lucide-react";
 import DonationComponent from "@/src/components/user/donation/Donation";
-import { ILessons } from "@/src/types/lessons";
-import { EvaluatedAnswer } from "@/src/types/lessons";
 import VoiceNoteModal from "@/src/components/user/sessions/VoiceNoteModal";
 import { useRouter } from "next/navigation"; 
 import { useUserContext } from "@/src/context/userAuthContext";
+import { ILessonHeaderProps } from "@/src/types/userProps";
 
-interface LessonHeaderProps {
-  lesson: ILessons;
-  report: EvaluatedAnswer | null;
-  allSectionsCompleted: boolean;
-  onBack: () => void;
-  onViewReport: () => void;
-}
 
-const LessonHeader: React.FC<LessonHeaderProps> = ({
+
+const LessonHeader: React.FC<ILessonHeaderProps> = ({
   lesson,
   report,
   allSectionsCompleted,

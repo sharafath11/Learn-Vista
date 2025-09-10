@@ -1,12 +1,10 @@
 // components/user/sessions/LessonProgressBar.tsx
 import React from 'react';
 import { Progress } from "@/src/components/shared/components/ui/progress";
+import { ILessonProgressBarProps } from '@/src/types/userProps';
 
-interface LessonProgressBarProps {
-  progress: number;
-}
 
-const LessonProgressBar: React.FC<LessonProgressBarProps> = ({ progress }) => {
+const LessonProgressBar: React.FC<ILessonProgressBarProps> = ({ progress }) => {
   return (
     <div className="mb-6">
       <div className="flex justify-between items-center mb-2">

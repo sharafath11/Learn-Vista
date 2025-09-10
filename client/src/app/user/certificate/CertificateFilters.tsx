@@ -10,18 +10,11 @@ import {
   SelectValue,
 } from "@/src/components/shared/components/ui/select"
 import useDebounce from "@/src/hooks/useDebouncing"
+import { IFiltersProps } from "@/src/types/userProps"
 
-export interface CertificateFilterValues {
-  search: string
-  sort: "latest" | "oldest"
-  status: "all" | "revoked" | "valid"
-}
 
-interface FiltersProps {
-  onChange: (filters: CertificateFilterValues) => void
-}
 
-export default function CertificateFilters({ onChange }: FiltersProps) {
+export default function CertificateFilters({ onChange }: IFiltersProps) {
   const [search, setSearch] = useState("")
   const [sort, setSort] = useState<"latest" | "oldest">("latest")
   const [status, setStatus] = useState<"all" | "revoked" | "valid">("all")

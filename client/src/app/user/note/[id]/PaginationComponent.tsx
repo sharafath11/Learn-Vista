@@ -1,12 +1,7 @@
 import { Button } from "@/src/components/shared/components/ui/button";
+import { IPaginationComponentProps } from "@/src/types/userProps";
 
-interface PaginationComponentProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}
-
-export const PaginationComponent = ({ currentPage, totalPages, onPageChange }: PaginationComponentProps) => {
+export const PaginationComponent = ({ currentPage, totalPages, onPageChange }: IPaginationComponentProps) => {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (

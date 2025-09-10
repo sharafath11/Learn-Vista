@@ -1,22 +1,18 @@
 "use client"
-
 import { useEffect,useState } from "react"
 import { MessageSquare, Search } from "lucide-react"
 import { useMentorContext } from "@/src/context/mentorContext"
-import {  IMentorComments } from "@/src/types/lessons"
+import {  IMentorComments, IMentorFilterOption, IMentorSortOption} from "@/src/types/lessons"
 import CommentCard from "./comment-card"
 import useDebounce from "@/src/hooks/useDebouncing"
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
-
-type SortOption = "newest" | "oldest"
-type FilterOption = "all" | string
 
 const LIMIT = 2
 
 export default function ReviewsComponent() {
   const [comments, setComments] = useState<IMentorComments[]>([])
-  const [sortBy, setSortBy] = useState<SortOption>("newest")
-  const [filterByCourse, setFilterByCourse] = useState<FilterOption>("all")
+  const [sortBy, setSortBy] = useState<IMentorSortOption>("newest")
+  const [filterByCourse, setFilterByCourse] = useState<IMentorFilterOption>("all")
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
@@ -121,7 +117,7 @@ export default function ReviewsComponent() {
                 value={sortBy}
                 onChange={(e) => {
                   setPage(1)
-                  setSortBy(e.target.value as SortOption)
+                  setSortBy(e.target.value as IMentorSortOption)
                 }}
                 className="w-full px-4 py-2 bg-white/10 text-white border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
               >

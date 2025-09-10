@@ -1,13 +1,10 @@
 "use client"
+import { IVideoModalProps } from "@/src/types/userProps"
 import { X } from "lucide-react"
 import { useEffect, useRef } from "react"
 
-interface VideoModalProps {
-  showVideo: boolean
-  onClose: () => void
-}
 
-export default function VideoModal({ showVideo, onClose }: VideoModalProps) {
+export default function VideoModal({ showVideo, onClose }: IVideoModalProps) {
   const bodyRef = useRef<HTMLBodyElement | null>(null)
 
   useEffect(() => {

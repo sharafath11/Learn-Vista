@@ -119,3 +119,32 @@ export type CourseSort = {
   createdAt?: 1 | -1;
   updatedAt?: 1 | -1;
 };
+
+export interface IAdminCourseFormData {
+  title: string
+  description: string
+  mentorId: string
+  categoryId: string
+  categoryName?: string
+  language: string
+  tags: string[]
+  currentTag: string
+  startDate: string
+  endDate: string
+  startTime: string
+  thumbnail?: File | null
+  thumbnailPreview: string | null
+}
+
+export interface IAdminCourseFormProps {
+  initialData?: Partial<IAdminCourseFormData>
+  mentors: Array<{ id: string; username: string; expertise: string[] }>
+  categories: Array<{ id: string; title: string }>
+  languages: string[]
+  onSubmit: (data: IAdminCourseFormData) => Promise<void>
+}
+export interface IAdminEditCoursePageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}

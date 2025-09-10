@@ -1,16 +1,17 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import CertificateFilters, { CertificateFilterValues } from "./CertificateFilters"
+import CertificateFilters  from "./CertificateFilters"
 import CertificateCard from "./CertificateCard"
 import { Loader2 } from "lucide-react"
 import { ICertificate } from "@/src/types/certificateTypes"
 import { UserAPIMethods } from "@/src/services/methods/user.api"
+import { ICertificateFilterValues } from "@/src/types/userProps"
 
 export default function CertificateListPage() {
   const [certificates, setCertificates] = useState<ICertificate[]>([])
   const [loading, setLoading] = useState(true)
-  const [filters, setFilters] = useState<CertificateFilterValues>({
+  const [filters, setFilters] = useState<ICertificateFilterValues>({
     search: "",
     sort: "latest",
     status: "all",

@@ -19,7 +19,7 @@ export default function MentorQuestionManagePage() {
   const [currentTab, setCurrentTab] = useState<QuestionType>("theory");
   const params = useParams();
   const lessonId = params.lessonId as string;
-const fetchQuestions = useCallback(async () => {
+  const fetchQuestions = useCallback(async () => {
   const res = await MentorAPIMethods.getQustion(lessonId);
   if (res.ok) {
     setQuestions(res.data || []);

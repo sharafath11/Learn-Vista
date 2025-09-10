@@ -1,17 +1,11 @@
-// components/user/sessions/LessonDiscussion.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Textarea } from "@/src/components/shared/components/ui/textarea";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { format } from "date-fns";
-import { IComment } from "@/src/types/lessons"; 
+import { ILessonDiscussionProps } from '@/src/types/userProps';
 
-interface LessonDiscussionProps {
-  comments: IComment[];
-  videoCompleted: boolean;
-  onAddComment: (comment: string) => Promise<void>;
-}
 
-const LessonDiscussion: React.FC<LessonDiscussionProps> = ({
+const LessonDiscussion: React.FC<ILessonDiscussionProps> = ({
   comments,
   videoCompleted,
   onAddComment,

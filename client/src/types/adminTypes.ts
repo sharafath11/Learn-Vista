@@ -169,3 +169,8 @@ export interface ICreateCourseForm {
   categoryName: string
   thumbnail?: File
 }
+
+ export interface IData{
+        email: string,
+        password:string
+    }

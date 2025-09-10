@@ -1,18 +1,13 @@
 "use client"
 
 import { UserAPIMethods } from "@/src/services/methods/user.api"
+import { IFormOTPProps } from "@/src/types/userProps"
 import { useState, useEffect, useRef } from "react"
 import type React from "react"
 
-interface FormOTPProps {
-  label: string
-  onChange: (e: { target: { id: string; value: string } }) => void
-  onVerified: () => void
-  onResend?: () => void
-  email: string,
-}
 
-export const FormOTP = ({ label, onChange, onVerified, onResend,email }: FormOTPProps) => {
+
+export const FormOTP = ({ label, onChange, onVerified, onResend,email }: IFormOTPProps) => {
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""))
   const [activeInput, setActiveInput] = useState(0)
   const [isVerifying, setIsVerifying] = useState(false)

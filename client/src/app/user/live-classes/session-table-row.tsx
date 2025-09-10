@@ -1,19 +1,9 @@
 "use client"
-
 import { Calendar, Users, BookOpen, Play, Pause, AlertCircle, CheckCircle } from "lucide-react"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { cn } from "@/src/utils/cn"
-import { IPopulatedCourse } from "@/src/types/courseTypes"
-
-interface SessionTableRowProps {
-  session: IPopulatedCourse
-  index: number
-  isExpired: boolean
-  joiningSession: string | null
-  onJoinCall: (courseId: string) => void
-  onViewContent: (courseId: string) => void
-}
+import { ISessionTableRowProps } from "@/src/types/userProps"
 
 export const SessionTableRow = ({
   session,
@@ -22,7 +12,7 @@ export const SessionTableRow = ({
   joiningSession,
   onJoinCall,
   onViewContent,
-}: SessionTableRowProps) => {
+}: ISessionTableRowProps) => {
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A"
     return new Date(dateString).toLocaleDateString("en-US", {

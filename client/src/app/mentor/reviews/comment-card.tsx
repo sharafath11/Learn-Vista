@@ -1,15 +1,9 @@
 "use client"
-import {  IMentorComments } from "@/src/types/lessons"
+import { IMentorCommentCardProps } from "@/src/types/mentorProps"
 import { User, Clock, BookOpen } from "lucide-react"
 
-interface CommentCardProps {
-  comment: IMentorComments
-  course?: string 
-  lessonTitle: string
-  formatDate: (date: Date | undefined) => string
-}
 
-export default function CommentCard({ comment, course, lessonTitle, formatDate }: CommentCardProps) {
+export default function CommentCard({ comment, course, lessonTitle, formatDate }: IMentorCommentCardProps) {
   return (
     <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all duration-300">
       {/* Header */}

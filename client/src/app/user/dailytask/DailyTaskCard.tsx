@@ -24,13 +24,10 @@ import {
   showInfoToast,
   showSuccessToast,
 } from "@/src/utils/Toast";
-import { ITask } from "@/src/types/dailyTaskTypes";
 import { handleTextToSpeech, stopTextToSpeech } from "@/src/utils/voice";
+import { ITaskesProps } from "@/src/types/userProps";
 
-interface Props {
-  task: ITask;
-  taskId: string;
-}
+
 
 const taskIcons = {
   speaking: Mic,
@@ -50,7 +47,7 @@ const taskBgColors = {
   listening: "bg-green-50 border-green-200",
 };
 
-export function DailyTaskCard({ task, taskId }: Props) {
+export function DailyTaskCard({ task, taskId }: ITaskesProps) {
   const [localTask, setLocalTask] = useState(task);
   const [answer, setAnswer] = useState(localTask.userResponse ?? "");
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);

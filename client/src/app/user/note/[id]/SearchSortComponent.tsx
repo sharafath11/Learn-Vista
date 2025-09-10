@@ -1,21 +1,16 @@
 import { Search, Clock } from "lucide-react";
 import { Input } from "@/src/components/shared/components/ui/input";
 import { Button } from "@/src/components/shared/components/ui/button";
-import { SortOption } from "@/src/types/lessons";
+import { ISearchSortComponentProps } from "@/src/types/userProps";
 
-interface SearchSortComponentProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  sortBy: SortOption;
-  setSortBy: (sort: SortOption) => void;
-}
+
 
 export const SearchSortComponent = ({
   searchQuery,
   setSearchQuery,
   sortBy,
   setSortBy,
-}: SearchSortComponentProps) => {
+}: ISearchSortComponentProps) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
       <div className="relative flex-1">

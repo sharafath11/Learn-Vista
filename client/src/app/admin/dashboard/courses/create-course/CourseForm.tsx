@@ -4,35 +4,14 @@ import CourseAdditionalDetails from "@/src/components/admin/course/CourseAdditio
 import CourseBasicInfo from "@/src/components/admin/course/CourseBasicInfo"
 import CourseSchedule from "@/src/components/admin/course/CourseSchedule"
 import CourseThumbnail from "@/src/components/admin/course/CourseThumbnail"
+import { IAdminCourseFormData, IAdminCourseFormProps } from "@/src/types/courseTypes"
 import { showInfoToast } from "@/src/utils/Toast"
 import Link from "next/link"
 import { useState } from "react"
 
-interface ICourseFormData {
-  title: string
-  description: string
-  mentorId: string
-  categoryId: string
-  categoryName?: string
-  language: string
-  tags: string[]
-  currentTag: string
-  startDate: string
-  endDate: string
-  startTime: string
-  thumbnail?: File | null
-  thumbnailPreview: string | null
-}
 
-interface CourseFormProps {
-  initialData?: Partial<ICourseFormData>
-  mentors: Array<{ id: string; username: string; expertise: string[] }>
-  categories: Array<{ id: string; title: string }>
-  languages: string[]
-  onSubmit: (data: ICourseFormData) => Promise<void>
-}
 
-const initialFormData: ICourseFormData = {
+const initialFormData: IAdminCourseFormData = {
   title: "",
   description: "",
   mentorId: "",
@@ -55,8 +34,8 @@ export default function CourseForm({
   categories,
   languages,
   onSubmit,
-}: CourseFormProps) {
-  const [formData, setFormData] = useState<ICourseFormData>({
+}: IAdminCourseFormProps) {
+  const [formData, setFormData] = useState<IAdminCourseFormData>({
     ...initialFormData,
     ...initialData,
   })

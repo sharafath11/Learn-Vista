@@ -4,16 +4,11 @@ import { Calendar, Mail, User, Eye, Shield, ShieldOff } from "lucide-react"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/src/components/shared/components/ui/card"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { IUser } from "@/src/types/userTypes"
+import { IMentorStudentCardProps } from "@/src/types/mentorProps"
 
-interface StudentCardProps {
-  student: IUser
-  onView: (id: string) => void
-  onToggleBlock: (id: string, shouldBlock: boolean) => void
-  courseId: string
-}
 
-export default function StudentCard({ student, onView, onToggleBlock, courseId }: StudentCardProps) {
+
+export default function StudentCard({ student, onView, onToggleBlock, courseId }: IMentorStudentCardProps) {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -22,7 +17,6 @@ export default function StudentCard({ student, onView, onToggleBlock, courseId }
     })
   }
 
-  // Check if the student is blocked for this specific course
   const isBlocked = student.enrolledCourses?.some(
     (i) => i.courseId === courseId && !i.allowed
   ) ?? false

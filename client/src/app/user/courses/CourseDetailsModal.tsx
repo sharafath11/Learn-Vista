@@ -4,22 +4,14 @@ import { motion, AnimatePresence } from "framer-motion"
 import { X,Clock, Users, BookOpen, CheckCircle, Calendar, Tag, Languages } from "lucide-react"
 import Image from "next/image"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-import { IcourseFromResponse} from "@/src/types/courseTypes"
 import { format } from "date-fns"
-
-interface CourseDetailsModalProps {
-  course: IcourseFromResponse
-  isOpen: boolean
-  onClose: () => void
-  onEnroll: () => void
-  isEnrolled?: boolean
-}
+import { IUserCourseDetailsModalProps } from "@/src/types/userProps"
 
 const CourseDetailsModal = ({
   course,
   isOpen,
   onClose,
-}: CourseDetailsModalProps) => {
+}: IUserCourseDetailsModalProps) => {
    
   return (
     <AnimatePresence>

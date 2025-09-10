@@ -4,28 +4,10 @@ import VideoPlayer from "@/src/components/user/sessions/video-player";
 import TheoryQuestions from "@/src/components/user/sessions/theory-questions";
 import CodeChallenge from "@/src/components/user/sessions/CodeChallenge";
 import MCQQuestions from "@/src/components/user/sessions/MCQQuestions";
-import { IQuestions,EvaluatedAnswer } from '@/src/types/lessons';
+import { ILessonContentProps } from '@/src/types/userProps';
 
-interface LessonContentProps {
-  videoUrl: string;
-  lessonTitle: string;
-  lessonThumbnail: string;
-  initialVideoStartTime: number;
-  lessonDuration: number;
-  questions: IQuestions[];
-  videoCompleted: boolean;
-  theoryCompleted: boolean;
-  practicalCompleted: boolean;
-  mcqCompleted: boolean;
-  onVideoComplete: () => void;
-  onVideoProgress: (currentTime: number, totalDuration: number) => void;
-  onTheoryComplete: (answers: { question: string; answer: string }[]) => void;
-  onPracticalComplete: (answers: { question: string; answer: string }[]) => void;
-  onMCQComplete: (answers: { question: string; answer: string }[]) => void;
-  report: EvaluatedAnswer | null; 
-}
 
-const LessonContent: React.FC<LessonContentProps> = ({
+const LessonContent: React.FC<ILessonContentProps> = ({
   videoUrl,
   lessonTitle,
   lessonThumbnail,
@@ -41,13 +23,10 @@ const LessonContent: React.FC<LessonContentProps> = ({
   onTheoryComplete,
   onPracticalComplete,
   onMCQComplete,
-  report // Destructure the report prop
+  report 
 }) => {
   const [activeTab, setActiveTab] = useState<"theory" | "practical" | "mcq">("theory");
-
-  // Determine if questions should be shown
-  const showQuestions = videoCompleted && !report; // Show if video is completed AND no report exists
-
+  const showQuestions = videoCompleted && !report; 
   return (
     <div className="grid grid-cols-1 gap-6">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
@@ -62,8 +41,6 @@ const LessonContent: React.FC<LessonContentProps> = ({
           totalLengthFromAPI={lessonDuration}
         />
       </div>
-
-      {/* Conditionally render the entire question block */}
       {showQuestions && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
           <div className="border-b border-gray-200 dark:border-gray-700">
@@ -105,7 +82,6 @@ const LessonContent: React.FC<LessonContentProps> = ({
               <TheoryQuestions
                 questions={questions.filter((i) => i.type === "theory")}
                 onComplete={onTheoryComplete}
-                // isCompleted should be based on theoryCompleted prop, not report
                 isCompleted={theoryCompleted}
               />
             )}
@@ -113,7 +89,6 @@ const LessonContent: React.FC<LessonContentProps> = ({
               <CodeChallenge
                 questions={questions.filter((i) => i.type === "practical")}
                 onComplete={onPracticalComplete}
-                // isCompleted should be based on practicalCompleted prop, not report
                 isCompleted={practicalCompleted}
               />
             )}
@@ -121,7 +96,6 @@ const LessonContent: React.FC<LessonContentProps> = ({
               <MCQQuestions
                 questions={questions.filter((i) => i.type === "mcq")}
                 onComplete={onMCQComplete}
-                // isCompleted should be based on mcqCompleted prop, not report
                 isCompleted={mcqCompleted}
               />
             )}
@@ -129,7 +103,6 @@ const LessonContent: React.FC<LessonContentProps> = ({
         </div>
       )}
 
-      {/* Optionally, you might want to show a message if questions are hidden because a report exists */}
       {videoCompleted && report && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center text-gray-600 dark:text-gray-300">
           You have already completed this lesson and a report has been generated.
