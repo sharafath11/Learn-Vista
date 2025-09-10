@@ -6,15 +6,7 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/shared/components/ui/popover"
 import { NotificationCenter } from "../../notifications/notification-center"
-import { INotification } from "@/src/types/notificationsTypes"
-interface MentorNotificationProps {
-  mentorNotification: INotification[] 
-  setMentorNotifications: (notifications: any[]) => void
-  mentorUnreadNotification: number
-  setMentorUnreadNotification: (count: number) => void
-  refreshMentorNotification: () => void
-  isMobile?: boolean
-}
+import { IMentorNotificationProps } from "@/src/types/mentorProps"
 
 export function MentorNotification({
   mentorNotification,
@@ -23,7 +15,7 @@ export function MentorNotification({
   setMentorUnreadNotification,
   refreshMentorNotification,
   isMobile = false,
-}: MentorNotificationProps) {
+}: IMentorNotificationProps) {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false)
 
   return (

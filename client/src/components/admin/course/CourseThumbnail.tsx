@@ -1,19 +1,14 @@
 // components/course/CourseThumbnail.tsx
+import { IAdminCourseThumbnailProps } from "@/src/types/adminProps"
 import { Upload, X } from "lucide-react"
 import Image from "next/image"
 import React from "react"
-
-interface CourseThumbnailProps {
-  thumbnailPreview: string | null
-  handleThumbnailChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  clearThumbnail: () => void
-}
 
 export default function CourseThumbnail({
   thumbnailPreview,
   handleThumbnailChange,
   clearThumbnail,
-}: CourseThumbnailProps) {
+}: IAdminCourseThumbnailProps) {
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-medium text-gray-800">Course Thumbnail</h2>

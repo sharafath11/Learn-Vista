@@ -11,21 +11,14 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { CalendarIcon, Filter, X, RotateCcw } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/src/utils/cn"
-import { FilterOptions } from "@/src/types/adminTypes"
-
-interface TransactionFiltersProps {
-  filters: FilterOptions
-  onFilterChange: (filters: Partial<FilterOptions>) => void
-  loading: boolean
-  analyticsMode?: boolean
-}
+import { IAdminTransactionFiltersProps } from "@/src/types/adminProps"
 
 export function TransactionFilters({
   filters,
   onFilterChange,
   loading,
   analyticsMode = false,
-}: TransactionFiltersProps) {
+}: IAdminTransactionFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const dateRanges = [

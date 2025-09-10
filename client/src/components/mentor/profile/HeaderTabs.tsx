@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-// Assuming these modals are in the same directory, otherwise, adjust the path
 import EditProfileModal from "./EditProfileModal";  
 import ChangePasswordModal from "../../ChangePasswordModal";
 

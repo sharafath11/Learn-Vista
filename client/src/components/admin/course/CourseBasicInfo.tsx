@@ -11,20 +11,8 @@ import {
   SelectContent,
   SelectItem,
 } from "@/src/components/shared/components/ui/select"
+import { IAdminCourseBasicInfoProps } from "@/src/types/adminProps"
 
-interface CourseBasicInfoProps {
-  formData: {
-    title: string
-    description: string
-    mentorId: string
-    categoryId: string
-   
-  }
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-  handleSelectChange: (name: string, value: string) => void
-  mentors: Array<{ id: string; username: string; expertise: string[] }>
-  categories: Array<{ id: string; title: string }>
-}
 
 
 export default function CourseBasicInfo({
@@ -33,7 +21,7 @@ export default function CourseBasicInfo({
   handleSelectChange,
   mentors,
   categories,
-}: CourseBasicInfoProps) {
+}: IAdminCourseBasicInfoProps) {
    return (
     <Card>
       <CardHeader>

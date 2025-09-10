@@ -11,19 +11,8 @@ import {
   AlertDialogTitle,
 } from "@/src/components/shared/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
+import { ICustomAlertDialogProps } from "../types/sharedProps"
 
-interface CustomAlertDialogProps {
-  isOpen: boolean
-  onClose: () => void
-  title: string
-  description: string
-  onConfirm: () => void
-  onCancel: () => void
-  confirmText?: string
-  cancelText?: string
-  icon?: string 
-  variant?: "info" | "warning" | "error" | "success"
-}
 
 export function CustomAlertDialog({
   isOpen,
@@ -36,7 +25,7 @@ export function CustomAlertDialog({
   cancelText = "Cancel",
   icon,
   variant = "info",
-}: CustomAlertDialogProps) {
+}: ICustomAlertDialogProps) {
   const getVariantStyles = () => {
     switch (variant) {
       case "warning":

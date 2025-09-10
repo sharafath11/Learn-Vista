@@ -4,12 +4,10 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Frown, Shield, BookOpen, Users } from "lucide-react"
 import Image from "next/image"
+import { IRoleBasedNotFoundContentProps } from "../types/sharedProps"
 
-interface RoleBasedNotFoundContentProps {
-  randomImageUrl: string
-}
 
-export default function RoleBasedNotFoundContent({ randomImageUrl }: RoleBasedNotFoundContentProps) {
+export default function RoleBasedNotFoundContent({ randomImageUrl }: IRoleBasedNotFoundContentProps) {
   const [userRole, setUserRole] = useState<"admin" | "mentor" | "user" | "guest">("guest")
   const [isLoadingRole, setIsLoadingRole] = useState(true)
 

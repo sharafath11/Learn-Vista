@@ -6,14 +6,11 @@ import React from "react";
 import { showSuccessToast, showErrorToast } from "../utils/Toast";
 import { UserAPIMethods } from "../services/methods/user.api";
 import { MentorAPIMethods } from "../services/methods/mentor.api";
+import { IChangePasswordModalProps } from "../types/sharedProps";
 
-interface ChangePasswordModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  role: string; 
-}
 
-const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({
+
+const ChangePasswordModal: React.FC<IChangePasswordModalProps> = ({
   isOpen,
   onClose,
   role, 

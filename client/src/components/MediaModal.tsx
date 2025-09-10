@@ -2,15 +2,10 @@ import { Download, X } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./shared/components/ui/dialog";
 import { Button } from "./shared/components/ui/button";
 import Image from "next/image";
+import { IMediaModalProps } from "../types/sharedProps";
 
-interface MediaModalProps {
-  open: boolean;
-  onClose: () => void;
-  url: string;
-  type?: "image" | "video" | "audio" | "pdf" | "other";
-  title?: string;
-}
-export function MediaModal({ open, onClose, url, type, title }: MediaModalProps) {
+
+export function MediaModal({ open, onClose, url, type, title }: IMediaModalProps) {
   const getType = () => {
     if (type) return type;
     const ext = url.split("?")[0].split(".").pop()?.toLowerCase();

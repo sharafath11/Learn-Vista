@@ -6,12 +6,9 @@ import { SearchAndFilterBar } from '../SearchAndFilterBar';
 import { User } from 'lucide-react';
 import { AdminAPIMethods } from '@/src/services/methods/admin.api';
 import { MentorFilters, MentorStatus } from '@/src/types/mentorTypes';
+import { IAdminMentorTableProps } from '@/src/types/adminProps';
 
-interface MentorTableProps {
-  theme: string;
-}
-
-const MentorTable: FC<MentorTableProps> = ({ theme }) => {
+const MentorTable: FC<IAdminMentorTableProps> = ({ theme }) => {
   const { mentors, setMentors } = useAdminContext();
 
   const [searchTerm, setSearchTerm] = useState('');

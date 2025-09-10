@@ -1,13 +1,9 @@
 "use client"
 
 import { Button } from "@/src/components/shared/components/ui/button"
+import { IFormActionsProps } from "@/src/types/adminProps"
 
-interface FormActionsProps {
-  isLoading: boolean
-  onCancel: () => void
-}
-
-export function FormActions({ isLoading, onCancel }: FormActionsProps) {
+export function FormActions({ isLoading, onCancel }: IFormActionsProps) {
   return (
     <div className="flex justify-end gap-4">
       <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>

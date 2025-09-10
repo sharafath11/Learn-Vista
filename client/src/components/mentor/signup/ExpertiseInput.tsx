@@ -1,18 +1,14 @@
 "use client"
 import { useState } from "react";
-import type { IMentorSignupData } from "@/src/types/mentorTypes";
+import { IMentorExpertiseInputProps } from "@/src/types/mentorProps";
 
-type ExpertiseInputProps = {
-  mentorData: IMentorSignupData;
-  onAddExpertise: (expertise: string[]) => void;
-  onRemoveExpertise: (index: number) => void;
-};
+
 
 export const ExpertiseInput = ({
   mentorData,
   onAddExpertise,
   onRemoveExpertise
-}: ExpertiseInputProps) => {
+}: IMentorExpertiseInputProps) => {
   const [expertiseInput, setExpertiseInput] = useState("");
 
   const handleAddExpertise = () => {

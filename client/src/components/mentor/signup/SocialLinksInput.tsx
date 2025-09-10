@@ -1,17 +1,14 @@
 "use client"
 import { useState } from "react";
 import type { SocialLink, IMentorSignupData } from "@/src/types/mentorTypes";
-type SocialLinksInputProps = {
-  mentorData: IMentorSignupData;
-  onAddSocialLink: (link: SocialLink) => void;
-  onRemoveSocialLink: (index: number) => void;
-};
+import { IMentorSocialLinksInputProps } from "@/src/types/mentorProps";
+
 
 export const SocialLinksInput = ({
   mentorData,
   onAddSocialLink,
   onRemoveSocialLink
-}: SocialLinksInputProps) => {
+}: IMentorSocialLinksInputProps) => {
   const [socialLinkInput, setSocialLinkInput] = useState<Omit<SocialLink, 'url'> & { url: string }>({
     platform: "github",
     url: ""

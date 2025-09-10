@@ -17,17 +17,11 @@ import {
   Line,
 } from "recharts"
 import { Skeleton } from "@/src/components/shared/components/ui/skeleton"
-import type { IDonation } from "@/src/types/donationTyps"
-import { FilterOptions } from "@/src/types/adminTypes"
+import { IAdminTransactionChartProps } from "@/src/types/adminProps"
 
 
-interface TransactionChartProps {
-  transactions: IDonation[]
-  loading: boolean
-  filters: FilterOptions
-}
 
-export function TransactionChart({ transactions, loading,}: TransactionChartProps) {
+export function TransactionChart({ transactions, loading,}: IAdminTransactionChartProps) {
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(amount)
 

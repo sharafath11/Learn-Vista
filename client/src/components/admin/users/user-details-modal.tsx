@@ -30,20 +30,15 @@ import Link from "next/link"
 import { CustomAlertDialog } from "../../custom-alert-dialog"
 import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 import Image from "next/image"
+import { IAdminUserDetailsModalProps } from "@/src/types/adminProps"
 
-interface UserDetailsModalProps {
-  user: IUser | null
-  certificates: ICertificate[]
-  isOpen: boolean
-  onClose: () => void
-}
 
 export const UserDetailsModal = ({
   user,
   certificates,
   isOpen,
   onClose,
-}: UserDetailsModalProps) => {
+}: IAdminUserDetailsModalProps) => {
   const [revokingCertId, setRevokingCertId] = useState<string | null>(null)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [selectedCert, setSelectedCert] = useState<ICertificate | null>(null);

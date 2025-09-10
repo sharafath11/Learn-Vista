@@ -1,16 +1,14 @@
 "use client";
 import { AdminContext } from '@/src/context/adminContext';
 import { AdminAPIMethods } from '@/src/services/methods/admin.api';
-import { IMentor } from '@/src/types/mentorTypes';
+import { IAdminMentorInfoCardProps } from '@/src/types/adminProps';
 import { showSuccessToast } from '@/src/utils/Toast';
 import Image from 'next/image';
 import { useContext, useEffect, useState } from 'react';
 
-interface MentorInfoCardProps {
-  mentor: IMentor;
-}
 
-const MentorInfoCard = ({ mentor }: MentorInfoCardProps) => {
+
+const MentorInfoCard = ({ mentor }: IAdminMentorInfoCardProps) => {
   const adminContext = useContext(AdminContext);
   const [currentStatus, setCurrentStatus] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(true);

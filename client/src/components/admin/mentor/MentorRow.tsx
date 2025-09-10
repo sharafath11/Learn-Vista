@@ -9,14 +9,11 @@ import { IMentor } from '@/src/types/mentorTypes';
 import { AdminAPIMethods } from '@/src/services/methods/admin.api';
 import { CustomAlertDialog } from '@/src/components/custom-alert-dialog'; // ✅ import your dialog
 import Image from 'next/image';
+import { IAdminMentorRowProps } from '@/src/types/adminProps';
 
-interface MentorRowProps {
-  mentor: IMentor;
-  theme: string;
-  getStatusColor: (status: string) => string;
-}
 
-const MentorRow: FC<MentorRowProps> = ({ mentor, theme, getStatusColor }) => {
+
+const MentorRow: FC<IAdminMentorRowProps> = ({ mentor, theme, getStatusColor }) => {
   const route = useRouter();
   const adminDetil = useContext(AdminContext);
 

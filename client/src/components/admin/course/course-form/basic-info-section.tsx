@@ -1,18 +1,16 @@
 "use client"
 
-import type { UseFormReturn } from "react-hook-form"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
 import { Input } from "@/src/components/shared/components/ui/input"
 import { Label } from "@/src/components/shared/components/ui/label"
 import { Textarea } from "@/src/components/shared/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/shared/components/ui/select"
-import { type CourseFormValues, mentors, categories } from "./schema"
+import {  mentors, categories } from "./schema"
+import { IBasicInfoSectionProps } from "@/src/types/adminProps"
 
-interface BasicInfoSectionProps {
-  form: UseFormReturn<CourseFormValues>
-}
 
-export function BasicInfoSection({ form }: BasicInfoSectionProps) {
+
+export function BasicInfoSection({ form }: IBasicInfoSectionProps) {
   return (
     <Card>
       <CardHeader>

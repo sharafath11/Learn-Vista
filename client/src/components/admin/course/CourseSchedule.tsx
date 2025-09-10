@@ -1,16 +1,9 @@
+import { IAdminCourseScheduleProps } from "@/src/types/adminProps"
 import { Calendar, Clock } from "lucide-react"
 import React from "react"
 
-interface CourseScheduleProps {
-  formData: {
-    startDate: string
-    endDate: string
-    startTime: string
-  }
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-}
 
-export default function CourseSchedule({ formData, handleChange }: CourseScheduleProps) {
+export default function CourseSchedule({ formData, handleChange }: IAdminCourseScheduleProps) {
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-medium text-gray-800">Schedule</h2>

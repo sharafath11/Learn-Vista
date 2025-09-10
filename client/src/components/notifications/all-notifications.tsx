@@ -1,15 +1,10 @@
 "use client"
 import { formatDistanceToNow } from "date-fns"
-import type { INotification } from "@/src/types/notificationsTypes"
 import { cn } from "@/lib/utils"
+import { IAllNotificationsProps } from "@/src/types/sharedProps"
 
-interface AllNotificationsProps {
-  notifications: INotification[]
-  deleteNotification: (id: string) => void
-  variant?: "light" | "dark"
-}
 
-export const AllNotifications = ({ notifications,  variant = "dark" }: AllNotificationsProps) => {
+export const AllNotifications = ({ notifications,  variant = "dark" }: IAllNotificationsProps) => {
   const all = notifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
   const itemBgClass = variant === "dark" ? "bg-zinc-700 hover:bg-zinc-600" : "bg-gray-100 hover:bg-gray-200"

@@ -7,14 +7,10 @@ import { Label } from "@/src/components/shared/components/ui/label"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { X } from "lucide-react"
 import Image from "next/image"
+import { IAdminMediaSectionProps } from "@/src/types/adminProps"
 
-interface MediaSectionProps {
-  thumbnailPreview: string | null
-  handleThumbnailChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  removeThumbnail: () => void
-}
 
-export function MediaSection({ thumbnailPreview, handleThumbnailChange, removeThumbnail }: MediaSectionProps) {
+export function MediaSection({ thumbnailPreview, handleThumbnailChange, removeThumbnail }: IAdminMediaSectionProps) {
   return (
     <Card>
       <CardHeader>

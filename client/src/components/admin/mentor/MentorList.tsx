@@ -2,15 +2,9 @@
 import { FC } from 'react';
 import { motion } from 'framer-motion';
 import MentorTable from './MentorTable';
-import { IMentor } from '@/src/types/mentorTypes';
-
+import { IAdminMentorListProps } from '@/src/types/adminProps';
 const MotionH1 = motion('h1');
-
-interface MentorListProps {
-  mentors: IMentor[];
-}
-
-const MentorList: FC<MentorListProps> = () => {
+const MentorList: FC<IAdminMentorListProps> = () => {
   return (
     <div className="min-h-screen p-6 bg-gray-50 text-gray-800">
       <div className="max-w-7xl mx-auto">
@@ -22,9 +16,6 @@ const MentorList: FC<MentorListProps> = () => {
           >
             Mentor Management
           </MotionH1>
-          {/* <div className="flex items-center space-x-4">
-            <ApplyMentorButton />
-          </div> */}
         </div>
         <MentorTable theme="light" />
       </div>

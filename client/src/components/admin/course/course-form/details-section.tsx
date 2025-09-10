@@ -1,23 +1,15 @@
 "use client"
 
 import type React from "react"
-import type { UseFormReturn } from "react-hook-form"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
 import { Input } from "@/src/components/shared/components/ui/input"
 import { Label } from "@/src/components/shared/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/shared/components/ui/select"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { X } from "lucide-react"
-import { type CourseFormValues, languages } from "./schema"
+import {languages } from "./schema"
+import { IDetailsSectionProps } from "@/src/types/adminProps"
 
-interface DetailsSectionProps {
-  form: UseFormReturn<CourseFormValues>
-  tags: string[]
-  tagInput: string
-  setTagInput: (value: string) => void
-  handleTagKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void
-  removeTag: (tag: string) => void
-}
 
 export function DetailsSection({
   form,
@@ -26,7 +18,7 @@ export function DetailsSection({
   setTagInput,
   handleTagKeyDown,
   removeTag,
-}: DetailsSectionProps) {
+}: IDetailsSectionProps) {
   return (
     <Card>
       <CardHeader>

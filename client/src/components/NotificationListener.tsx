@@ -3,13 +3,10 @@ import { useEffect, useRef } from "react";
 import { initializeSocket } from "@/src/utils/socket";
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast";
 import { INotification } from "@/src/types/notificationsTypes";
+import { INotificationinProps } from "../types/sharedProps";
 
-interface Props {
-  userId: string;
-  role: "admin" | "mentor" | "user";
-}
 
-export const NotificationListener = ({ userId, role }: Props) => {
+export const NotificationListener = ({ userId, role }: INotificationinProps) => {
   const socketRef = useRef<any>(null);
 
   useEffect(() => {

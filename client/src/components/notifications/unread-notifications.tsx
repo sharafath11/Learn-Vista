@@ -1,21 +1,14 @@
 "use client";
 import { formatDistanceToNow } from "date-fns";
 import { Check } from "lucide-react";
-import type { INotification } from "@/src/types/notificationsTypes";
 import { cn } from "@/lib/utils";
-
-interface UnreadNotificationsProps {
-  notifications: INotification[];
-  markAsRead: (id: string) => void;
-  deleteNotification: (id: string) => void;
-  variant?: "light" | "dark";
-}
+import { IUnreadNotificationsProps } from "@/src/types/sharedProps";
 
 export const UnreadNotifications = ({
   notifications,
   markAsRead,
   variant = "dark",
-}: UnreadNotificationsProps) => {
+}: IUnreadNotificationsProps) => {
   const unread = notifications
     .filter((n) => !n.isRead)
     .sort(

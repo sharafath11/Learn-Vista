@@ -22,14 +22,11 @@ import { useMentorContext } from "@/src/context/mentorContext"
 import { showInfoToast } from "@/src/utils/Toast" 
 import { MentorNotification } from "./MentorNotification"
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
+import { IAdminNavItem } from "@/src/types/adminProps"
 
-interface NavItem {
-  name: string
-  path: string
-  icon: JSX.Element
-}
 
-const navItems: NavItem[] = [
+
+const navItems: IAdminNavItem[] = [
   { name: "Dashboard", path: "/mentor/home", icon: <LayoutDashboard className="w-4 h-4" /> },
   { name: "Upcoming", path: "/mentor/upcoming", icon: <Calendar className="w-4 h-4" /> },
   { name: "Courses", path: "/mentor/courses", icon: <BookOpen className="w-4 h-4" /> },

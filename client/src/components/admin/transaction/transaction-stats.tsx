@@ -3,14 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
 import { IndianRupee, TrendingUp, Target, Calendar } from "lucide-react"
 import { Skeleton } from "@/src/components/shared/components/ui/skeleton"
-import type { IDonation } from "@/src/types/donationTyps"
+import { IAdminTransactionStatsProps } from "@/src/types/adminProps"
 
-interface TransactionStatsProps {
-  transactions: IDonation[]
-  loading: boolean
-}
 
-export function TransactionStats({ transactions, loading }: TransactionStatsProps) {
+
+export function TransactionStats({ transactions, loading }: IAdminTransactionStatsProps) {
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(amount)
 

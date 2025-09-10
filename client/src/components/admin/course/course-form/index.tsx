@@ -13,12 +13,10 @@ import { DetailsSection } from "./details-section"
 import { ScheduleSection } from "./schedule-section"
 import { FormActions } from "./form-actions"
 import { showInfoToast } from "@/src/utils/Toast"
+import { IAdminCourseFormProps } from "@/src/types/adminProps"
 
-interface CourseFormProps {
-  courseId?: string
-}
 
-export function CourseForm({ courseId }: CourseFormProps) {
+export function CourseForm({ courseId }: IAdminCourseFormProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [tags, setTags] = useState<string[]>([])
@@ -26,7 +24,6 @@ export function CourseForm({ courseId }: CourseFormProps) {
   const [, setThumbnail] = useState<File | null>(null)
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null)
 
-  // Initialize form with react-hook-form
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema),
     defaultValues: {

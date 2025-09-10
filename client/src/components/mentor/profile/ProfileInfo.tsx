@@ -1,14 +1,11 @@
 "use client";
-import { IMentor } from "@/src/types/mentorTypes";
+import { IMentorProfileInfoProps } from "@/src/types/mentorProps";
 import Image from "next/image";
 import React, { useState } from "react";
 import { FiExternalLink, FiEdit2,FiClock, FiUsers } from "react-icons/fi";
 
-interface ProfileInfoProps {
-  mentor: IMentor | null;
-}
 
-export default function ProfileInfo({ mentor }: ProfileInfoProps) {
+export default function ProfileInfo({ mentor }: IMentorProfileInfoProps) {
   const [, setIsEditing] = useState(false);
 
   if (!mentor) return (
@@ -19,9 +16,7 @@ export default function ProfileInfo({ mentor }: ProfileInfoProps) {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Profile Header */}
       <div className="flex flex-col md:flex-row gap-8 mb-8">
-        {/* Profile Picture */}
         <div className="relative group w-32 h-32 md:w-40 md:h-40 flex-shrink-0">
           <Image
             src={mentor.profilePicture || "/default-avatar.png"}

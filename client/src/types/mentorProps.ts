@@ -2,6 +2,8 @@ import { ICategory } from "./categoryTypes";
 import { IConcern } from "./concernTypes";
 import { IPopulatedCourse } from "./courseTypes";
 import { ILessons, IMentorComments } from "./lessons";
+import { IMentor, IMentorSignupData, SocialLink } from "./mentorTypes";
+import { INotification } from "./notificationsTypes";
 import { IUser } from "./userTypes";
 
 export interface IMentorAddLessonModalProps {
@@ -59,3 +61,30 @@ export interface IMentorSessionTableProps {
   getSessionStatus: (session: IPopulatedCourse) => string
 }
 
+export interface IMentorNotificationProps {
+  mentorNotification: INotification[] 
+  setMentorNotifications: (notifications: any[]) => void
+  mentorUnreadNotification: number
+  setMentorUnreadNotification: (count: number) => void
+  refreshMentorNotification: () => void
+  isMobile?: boolean
+}
+export type IMentorView = "profile" | "forgotPassword" | "resetSent";
+
+export interface IMentorEditProfileModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+export interface IMentorProfileInfoProps {
+  mentor: IMentor | null;
+}
+export type IMentorExpertiseInputProps = {
+  mentorData: IMentorSignupData;
+  onAddExpertise: (expertise: string[]) => void;
+  onRemoveExpertise: (index: number) => void;
+};
+export type IMentorSocialLinksInputProps = {
+  mentorData: IMentorSignupData;
+  onAddSocialLink: (link: SocialLink) => void;
+  onRemoveSocialLink: (index: number) => void;
+};

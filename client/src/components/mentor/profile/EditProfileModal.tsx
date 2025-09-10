@@ -12,14 +12,10 @@ import { Input } from "@/src/components/shared/components/ui/input";
 import { Textarea } from "@/src/components/shared/components/ui/textarea";
 import { Card, CardHeader, CardContent } from "@/src/components/shared/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/src/components/shared/components/ui/avatar";
-import { cn } from "@/lib/utils"; //Added
+import { cn } from "@/lib/utils"; 
+import { IMentorEditProfileModalProps, IMentorView } from "@/src/types/mentorProps";
 
-type View = "profile" | "forgotPassword" | "resetSent";
 
-interface EditProfileModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
 
 const maskEmail = (email: string): string => {
   if (!email) return "";
@@ -28,17 +24,17 @@ const maskEmail = (email: string): string => {
   return `${username[0]}${'*'.repeat(Math.max(0, username.length - 1))}@${domain}`;
 };
 
-export default function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
+export default function EditProfileModal({ isOpen, onClose }: IMentorEditProfileModalProps) {
   const { mentor, setMentor } = useMentorContext();
   const [name, setName] = useState(mentor?.username || "");
   const [bio, setBio] = useState(mentor?.bio || "");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [currentView, setCurrentView] = useState<View>("profile");
+  const [currentView, setCurrentView] = useState<IMentorView>("profile");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-    const [expertise, setExpertise] = useState<string[]>(mentor?.expertise || []); // Added state for expertise
-  const [newExpertise, setNewExpertise] = useState(""); // Added state for new expertise input
+  const [expertise, setExpertise] = useState<string[]>(mentor?.expertise || []); 
+  const [newExpertise, setNewExpertise] = useState(""); 
 
   const resetState = useCallback(() => {
     setName(mentor?.username || "");
@@ -47,7 +43,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
     setSelectedImage(null);
     setImagePreview(null);
     setIsLoading(false);
-        setExpertise(mentor?.expertise || []); // Reset expertise
+        setExpertise(mentor?.expertise || []); 
         setNewExpertise("");
   }, [mentor?.username, mentor?.bio, mentor?.expertise]);
 
@@ -137,7 +133,7 @@ export default function EditProfileModal({ isOpen, onClose }: EditProfileModalPr
 
   if (!isOpen || !mentor) return null;
 
-  const views: Record<View, React.ReactNode> = {
+  const views: Record<IMentorView, React.ReactNode> = {
     profile: (
       <Card className="max-h-[600px] overflow-y-auto"> {/* Added max-h and overflow-y */}
         <CardHeader className="flex flex-col items-center">

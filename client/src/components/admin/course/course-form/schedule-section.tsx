@@ -1,6 +1,4 @@
 "use client"
-
-import type { UseFormReturn } from "react-hook-form"
 import { format } from "date-fns"
 import { CalendarIcon, Clock } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
@@ -10,13 +8,11 @@ import { Button } from "@/src/components/shared/components/ui/button"
 import { Calendar } from "@/src/components/shared/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/shared/components/ui/popover"
 import { cn } from "@/lib/utils"
-import type { CourseFormValues } from "./schema"
+import { IAdminScheduleSectionProps } from "@/src/types/adminProps"
 
-interface ScheduleSectionProps {
-  form: UseFormReturn<CourseFormValues>
-}
 
-export function ScheduleSection({ form }: ScheduleSectionProps) {
+
+export function ScheduleSection({ form }: IAdminScheduleSectionProps) {
   const startDate = form.watch("startDate");
   const endDate = form.watch("endDate");
 

@@ -1,16 +1,13 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/src/components/shared/components/ui/dialog";
+import { IVideoPreviewModalProps } from "../types/sharedProps";
 
-interface VideoPreviewModalProps {
-  open: boolean;
-  onClose: (open: boolean) => void;
-  videoUrl: string;
-}
+
 
 export default function VideoPreviewModal({
   open,
   onClose,
   videoUrl,
-}: VideoPreviewModalProps) {
+}: IVideoPreviewModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[800px] aspect-video p-0 overflow-hidden bg-gray-900">

@@ -1,17 +1,7 @@
+import { IAdminCourseAdditionalDetailsProps } from "@/src/types/adminProps"
 import { X } from "lucide-react"
 import React from "react"
 
-interface CourseAdditionalDetailsProps {
-  formData: {
-    language: string
-    tags: string[]
-    currentTag: string
-  }
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void
-  languages: string[]
-  handleAddTag: () => void
-  handleRemoveTag: (tagToRemove: string) => void
-}
 
 export default function CourseAdditionalDetails({
   formData,
@@ -19,7 +9,7 @@ export default function CourseAdditionalDetails({
   languages,
   handleAddTag,
   handleRemoveTag,
-}: CourseAdditionalDetailsProps) {
+}: IAdminCourseAdditionalDetailsProps) {
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-medium text-gray-800">Additional Details</h2>

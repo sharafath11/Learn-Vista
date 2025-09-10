@@ -8,18 +8,8 @@ import { UnreadNotifications } from "./unread-notifications"
 import { AllNotifications } from "./all-notifications"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { SharedAPIMethods } from "@/src/services/methods/shared.api"
+import { INotificationCenterProps } from "@/src/types/sharedProps"
 
-interface NotificationCenterProps {
-  isOpen: boolean
-  onClose: () => void
-  notifications: INotification[]
-  setNotifications: (notifications: INotification[]) => void
-  unreadCount: number
-  setUnreadCount: (count: number) => void
-  isMobile?: boolean
-  onRefresh?: () => void
-  variant?: "light" | "dark"
-}
 
 export const NotificationCenter = ({
   isOpen,
@@ -31,7 +21,7 @@ export const NotificationCenter = ({
   isMobile = false,
   onRefresh,
   variant = "dark",
-}: NotificationCenterProps) => {
+}: INotificationCenterProps) => {
   useEffect(() => {
     if (isOpen && onRefresh) {
       onRefresh()

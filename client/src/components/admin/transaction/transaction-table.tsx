@@ -7,16 +7,8 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/shared/components/ui/select"
 import { ChevronLeft, ChevronRight, Download, } from "lucide-react"
 import { Skeleton } from "@/src/components/shared/components/ui/skeleton"
-import type { IDonation } from "@/src/types/donationTyps"
-import { FilterOptions } from "@/src/types/adminTypes"
+import { IAdminTransactionTableProps } from "@/src/types/adminProps"
 
-interface TransactionTableProps {
-  transactions: IDonation[]
-  loading: boolean
-  totalCount: number
-  filters: FilterOptions
-  onFilterChange: (filters: Partial<FilterOptions>) => void
-}
 
 export function TransactionTable({
   transactions,
@@ -24,7 +16,7 @@ export function TransactionTable({
   totalCount,
   filters,
   onFilterChange,
-}: TransactionTableProps) {
+}: IAdminTransactionTableProps) {
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(amount)
 
