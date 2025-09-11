@@ -1,7 +1,7 @@
 import { injectable } from "inversify";
 import { IAdminAuthService } from "../../core/interfaces/services/admin/IAdminAuthService";
-import { generateAccessToken, generateRefreshToken } from "../../utils/JWTtoken";
-import { throwError } from "../../utils/ResANDError";  
+import { generateAccessToken, generateRefreshToken } from "../../utils/jwtToken";
+import { throwError } from "../../utils/resAndError";  
 import { StatusCode } from "../../enums/statusCode.enum"; 
 import { Messages } from "../../constants/messages";
 

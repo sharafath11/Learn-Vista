@@ -1,12 +1,12 @@
 import { inject } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserService } from "../../core/interfaces/services/user/IUserService";
-import { IUserController } from "../../core/interfaces/controllers/user/IUserController";
+import { IUserController } from "../../core/interfaces/controllers/user/IUser.controller";
 import { Request, Response } from "express";
-import { decodeToken, verifyAccessToken } from "../../utils/JWTtoken";
-import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
+import { decodeToken, verifyAccessToken } from "../../utils/jwtToken";
+import { handleControllerError, sendResponse, throwError } from "../../utils/resAndError";
 import { StatusCode } from "../../enums/statusCode.enum";
-import { pscPrompt } from "../../utils/Rportprompt";
+import { pscPrompt } from "../../utils/rportprompt";
 import { getGemaniResponse } from "../../config/gemaniAi";
 import { Messages } from "../../constants/messages";
 

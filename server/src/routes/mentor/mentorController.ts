@@ -1,13 +1,13 @@
 import container from "../../core/di/container";
-import { IMentorController } from "../../core/interfaces/controllers/mentor/IMentor.Controller";
-import { IMentorAuthController } from "../../core/interfaces/controllers/mentor/IMentorAuth.Controller";
+import { IMentorController } from "../../core/interfaces/controllers/mentor/IMentor.controller";
+import { IMentorAuthController } from "../../core/interfaces/controllers/mentor/IMentorAuth.controller";
 import { IMentorCommentsController } from "../../core/interfaces/controllers/mentor/IMentorComments.controller";
-import { IMentorConcernController } from "../../core/interfaces/controllers/mentor/IMentorConcern.Controller";
+import { IMentorConcernController } from "../../core/interfaces/controllers/mentor/IMentorConcern.controller";
 import { IMentorCourseController } from "../../core/interfaces/controllers/mentor/IMentorCourse.controller";
-import { IMentorLessonsController } from "../../core/interfaces/controllers/mentor/IMentorLesson.Controller";
+import { IMentorLessonsController } from "../../core/interfaces/controllers/mentor/IMentorLesson.controller";
 import { IMentorProfileController } from "../../core/interfaces/controllers/mentor/IMentorProfile.controller";
 import { IMentorStreamController } from "../../core/interfaces/controllers/mentor/IMentorStream.controller";
-import { IMentorStudentsController } from "../../core/interfaces/controllers/mentor/ImentorStudent.controller";
+import { IMentorStudentsController } from "../../core/interfaces/controllers/mentor/IMentorStudent.controller";
 import { TYPES } from "../../core/types";
 
 export const mentorAuthController = container.get<IMentorAuthController>(TYPES.MentorAuthController);

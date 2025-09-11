@@ -2,7 +2,7 @@ import { plainToInstance } from "class-transformer";
 import { validate, ValidationError } from "class-validator";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { StatusCode } from "../enums/statusCode.enum";
-import { sendResponse } from "../utils/ResANDError";
+import { sendResponse } from "../utils/resAndError";
 
 export function validateDto<T extends object>(dtoClass: new () => T): RequestHandler {
   return async (req: Request, res: Response, next: NextFunction) => {

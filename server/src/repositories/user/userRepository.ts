@@ -1,9 +1,9 @@
 // src/repositories/user/UserRepository.ts
 import { injectable } from "inversify";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
-import { userModel } from "../../models/user/userModel";
+import { userModel } from "../../models/user/UserModel";
 import { IMentor } from "../../types/mentorTypes";
-import { BaseRepository } from "../BaseRepository";
+import { BaseRepository } from "../baseRepository";
 import { IUser } from "../../types/userTypes";
 import { inject } from "inversify";
 import { TYPES } from "../../core/types";

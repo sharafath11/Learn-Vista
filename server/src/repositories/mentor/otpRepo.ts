@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { IMentorOtpRepository } from '../../core/interfaces/repositories/mentor/IMentorOtpRepository';
-import { MentorOtpModel } from '../../models/mentor/mentorOtp';
-import { BaseRepository } from '../BaseRepository';
+import { MentorOtpModel } from '../../models/mentor/MentorOtpModel';
+import { BaseRepository } from '../baseRepository';
 import { IMentorOtp } from '../../types/mentorTypes';
 
 @injectable()

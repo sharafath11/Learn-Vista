@@ -1,8 +1,8 @@
 import { FilterQuery } from "mongoose";
 import { IConcernRepository } from "../../core/interfaces/repositories/concern/IConcernRepository";
-import ConcernModel from "../../models/class/concernModel";
+import ConcernModel from "../../models/class/ConcernModel";
 import { IConcern } from "../../types/concernTypes";
-import { BaseRepository } from "../BaseRepository";
+import { BaseRepository } from "../baseRepository";
 
 export class ConcernRepository extends BaseRepository<IConcern, IConcern> implements IConcernRepository{
     constructor() {

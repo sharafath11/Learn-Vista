@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { throwError } from '../utils/ResANDError';
+import { throwError } from '../utils/resAndError';
 import { StatusCode } from '../enums/statusCode.enum';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_KEY!);

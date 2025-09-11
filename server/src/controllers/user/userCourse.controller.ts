@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { IUserCourseController } from "../../core/interfaces/controllers/user/IUserCourseController";
-import { decodeToken } from "../../utils/JWTtoken";
+import { IUserCourseController } from "../../core/interfaces/controllers/user/IUserCourse.controller";
+import { decodeToken } from "../../utils/jwtToken";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController";
-import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
+import { handleControllerError, sendResponse, throwError } from "../../utils/resAndError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { Messages } from "../../constants/messages";
 

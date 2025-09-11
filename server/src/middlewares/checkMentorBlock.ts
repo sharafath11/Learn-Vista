@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { decodeToken } from "../utils/JWTtoken";
-import { handleControllerError, sendResponse } from "../utils/ResANDError";
+import { decodeToken } from "../utils/jwtToken";
+import { handleControllerError, sendResponse } from "../utils/resAndError";
 import { StatusCode } from "../enums/statusCode.enum";
 import { Messages } from "../constants/messages";
 import container from "../core/di/container";
-import { MentorService } from "../services/mentor/Mentor.Service";
+import { MentorService } from "../services/mentor/mentor.service";
 import { TYPES } from "../core/types";
 
 export const checkMentorBlock = async (req: Request, res: Response, next: NextFunction) => {

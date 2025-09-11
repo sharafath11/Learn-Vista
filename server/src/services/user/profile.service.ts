@@ -6,7 +6,7 @@ import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRe
 import { IMentor, ISocialLink } from "../../types/mentorTypes";
 import { IProfileService } from "../../core/interfaces/services/user/IUserProfileService";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";
-import { throwError } from "../../utils/ResANDError";
+import { throwError } from "../../utils/resAndError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import bcrypt from "bcrypt";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";

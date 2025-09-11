@@ -3,7 +3,7 @@ import { TYPES } from "../../core/types";
 import { sendMentorStatusChangeEmail } from "../../utils/emailService";
 import { IAdminMentorServices } from "../../core/interfaces/services/admin/IAdminMentorServices";
 import { IMentor } from "../../types/mentorTypes";
-import { throwError } from "../../utils/ResANDError";  
+import { throwError } from "../../utils/resAndError";  
 import { StatusCode } from "../../enums/statusCode.enum";
 import { FilterQuery } from "mongoose";
 import { IMentorRepository } from "../../core/interfaces/repositories/mentor/IMentorRepository";

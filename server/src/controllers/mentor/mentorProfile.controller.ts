@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { IMentorProfileController } from "../../core/interfaces/controllers/mentor/IMentorProfile.controller";
-import { decodeToken } from "../../utils/JWTtoken";
-import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
+import { decodeToken } from "../../utils/jwtToken";
+import { handleControllerError, sendResponse, throwError } from "../../utils/resAndError";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IMentorProfileService } from "../../core/interfaces/services/mentor/IMentorProfile.Service";

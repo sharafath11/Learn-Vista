@@ -2,11 +2,11 @@ import { injectable, inject } from "inversify";
 import { Request, Response } from "express";
 import { TYPES } from "../../core/types";
 import { validateMentorApplyInput } from "../../validation/userValidation";
-import { IProfileController } from "../../core/interfaces/controllers/user/IProfileController";
+import { IProfileController } from "../../core/interfaces/controllers/user/IProfile.controller";
 import { IProfileService } from "../../core/interfaces/services/user/IUserProfileService";
 import { ISocialLink } from "../../types/mentorTypes";
-import { decodeToken, verifyAccessToken } from "../../utils/JWTtoken";
-import { sendResponse, handleControllerError, throwError } from "../../utils/ResANDError";
+import { decodeToken, verifyAccessToken } from "../../utils/jwtToken";
+import { sendResponse, handleControllerError, throwError } from "../../utils/resAndError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { Messages } from "../../constants/messages";
 

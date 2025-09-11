@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { decodeToken } from "../utils/JWTtoken";
-import { UserService } from "../services/user/User.service";
+import { decodeToken } from "../utils/jwtToken";
+import { UserService } from "../services/user/user.service";
 import container from "../core/di/container";
-import { handleControllerError, sendResponse } from "../utils/ResANDError";
+import { handleControllerError, sendResponse } from "../utils/resAndError";
 import { StatusCode } from "../enums/statusCode.enum";
 import { Messages } from "../constants/messages";
 import { TYPES } from "../core/types";

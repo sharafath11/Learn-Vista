@@ -8,7 +8,7 @@ import { ICourseRepository } from "../../core/interfaces/repositories/course/ICo
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
 import { notifyWithSocket } from "../../utils/notifyWithSocket";
 import { Messages } from "../../constants/messages";
-import { throwError } from "../../utils/ResANDError";
+import { throwError } from "../../utils/resAndError";
 
 @injectable()
 export class MentorStreamService implements IMentorStreamService{

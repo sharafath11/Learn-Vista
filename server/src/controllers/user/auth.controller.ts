@@ -2,9 +2,9 @@ import { inject, injectable } from "inversify";
 import { Request, Response } from "express";
 import { IAuthService } from "../../core/interfaces/services/user/IAuthService";
 import { TYPES } from "../../core/types";
-import { IAuthController } from "../../core/interfaces/controllers/user/IAuthController";
-import { clearTokens, setTokensInCookies } from "../../utils/JWTtoken";
-import { handleControllerError, sendResponse, throwError } from "../../utils/ResANDError";
+import { IAuthController } from "../../core/interfaces/controllers/user/IAuth.controller";
+import { clearTokens, setTokensInCookies } from "../../utils/jwtToken";
+import { handleControllerError, sendResponse, throwError } from "../../utils/resAndError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { Messages } from "../../constants/messages";
 

@@ -2,9 +2,9 @@ import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
 import { IMentorService } from '../../core/interfaces/services/mentor/IMentor.Service';
 import { TYPES } from '../../core/types';
-import { decodeToken } from '../../utils/JWTtoken';
-import { handleControllerError, sendResponse, throwError } from '../../utils/ResANDError';
-import { IMentorController } from '../../core/interfaces/controllers/mentor/IMentor.Controller';
+import { decodeToken } from '../../utils/jwtToken';
+import { handleControllerError, sendResponse, throwError } from '../../utils/resAndError';
+import { IMentorController } from '../../core/interfaces/controllers/mentor/IMentor.controller';
 import { StatusCode } from '../../enums/statusCode.enum';
 import { Messages } from '../../constants/messages'; 
 

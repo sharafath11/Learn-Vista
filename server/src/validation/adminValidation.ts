@@ -1,6 +1,6 @@
 import { VALIDATION_MESSAGES } from "../constants/validationMessages";
 import { CoursePayload, ICourse } from "../types/classTypes";
-import { throwError } from "../utils/ResANDError";
+import { throwError } from "../utils/resAndError";
 
 
 export function validateCoursePayload(data: Partial<ICourse>, thumbnail?: Buffer): void {

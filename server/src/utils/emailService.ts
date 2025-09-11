@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { logger } from "./logger";
-import { MailTemplates } from "../constants/MailTemplates";
+import { MailTemplates } from "../constants/mailTemplates";
 
 dotenv.config();
 

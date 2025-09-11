@@ -1,12 +1,12 @@
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
 import { IComment } from "../../types/lessons";
-import { BaseRepository } from "../BaseRepository";
+import { BaseRepository } from "../baseRepository";
 import { FilterQuery, ObjectId, SortOrder } from "mongoose";
 import { inject } from "inversify";
 import { TYPES } from "../../core/types";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
-import CommentModel from "../../models/class/comments";
+import CommentModel from "../../models/class/CommentsModel";
 
 export class CommentsRepository
   extends BaseRepository<IComment, IComment>

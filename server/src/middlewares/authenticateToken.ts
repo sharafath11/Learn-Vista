@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { clearTokens, clearTokensWithoutResponse, refreshAccessToken, setTokensInCookies, verifyAccessToken } from "../utils/JWTtoken";
-import { sendResponse } from "../utils/ResANDError";
+import { clearTokens, clearTokensWithoutResponse, refreshAccessToken, setTokensInCookies, verifyAccessToken } from "../utils/jwtToken";
+import { sendResponse } from "../utils/resAndError";
 import { TokenExpiredError, JsonWebTokenError } from "jsonwebtoken";
 import { StatusCode } from "../enums/statusCode.enum";
 import { Messages } from "../constants/messages";

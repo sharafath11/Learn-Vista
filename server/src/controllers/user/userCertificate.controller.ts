@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
 import { inject, injectable } from "inversify";
-import { IUserCertificateController } from "../../core/interfaces/controllers/user/IUserCertificateController";
+import { IUserCertificateController } from "../../core/interfaces/controllers/user/IUserCertificate.controller";
 import { IUserCertificateService } from "../../core/interfaces/services/user/IUserCertificateService";
 import { TYPES } from "../../core/types";
 import {
   handleControllerError,
   sendResponse,
   throwError,
-} from "../../utils/ResANDError";
+} from "../../utils/resAndError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { CertificateQueryParams } from "../../types/certificateTypes";
 import { Messages } from "../../constants/messages";
-import { decodeToken } from "../../utils/JWTtoken";
+import { decodeToken } from "../../utils/jwtToken";
 
 @injectable()
 export class UserCertificateController implements IUserCertificateController {

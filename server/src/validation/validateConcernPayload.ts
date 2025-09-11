@@ -1,5 +1,5 @@
 import { IConcern } from "../types/concernTypes";
-import { throwError } from "../utils/ResANDError";
+import { throwError } from "../utils/resAndError";
 import { VALIDATION_MESSAGES } from "../constants/validationMessages";
 
 export function validateConcernPayload(data: Partial<IConcern>): void {

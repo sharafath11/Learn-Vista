@@ -16,7 +16,7 @@ import { requestLogger } from "./middlewares/requestLogger";
 import { logger } from "./utils/logger";
 import { CustomError } from "./types/errorTypes";
 import { StatusCode } from "./enums/statusCode.enum";
-import { sendResponse } from "./utils/ResANDError";
+import { sendResponse } from "./utils/resAndError";
 import { Messages } from "./constants/messages";
 import globalLimiter from "./middlewares/rateLimiter";
 dotenv.config();

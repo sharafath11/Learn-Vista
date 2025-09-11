@@ -1,10 +1,10 @@
 import container from "../../core/di/container";
-import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IAdminAuth.Controller";
-import { IAdminCategoryController } from "../../core/interfaces/controllers/admin/IAdminCategory.Controller";
-import { IAdminConcernController } from "../../core/interfaces/controllers/admin/IAdminConcern.Controller";
-import { IAdminCourseController } from "../../core/interfaces/controllers/admin/IAdminCourse.Controller";
-import { IAdminDonationController } from "../../core/interfaces/controllers/admin/IAdminDonation.Controller";
-import { IAdminMentorController } from "../../core/interfaces/controllers/admin/IAdminMentor.Controller";
+import { IAdminAuthController } from "../../core/interfaces/controllers/admin/IAdminAuth.controller";
+import { IAdminCategoryController } from "../../core/interfaces/controllers/admin/IAdminCategory.controller";
+import { IAdminConcernController } from "../../core/interfaces/controllers/admin/IAdminConcern.controller";
+import { IAdminCourseController } from "../../core/interfaces/controllers/admin/IAdminCourse.controller";
+import { IAdminDonationController } from "../../core/interfaces/controllers/admin/IAdminDonation.controller";
+import { IAdminMentorController } from "../../core/interfaces/controllers/admin/IAdminMentor.controller";
 import { IAdminUserController } from "../../core/interfaces/controllers/admin/IAdminUser.controller";
 import { TYPES } from "../../core/types";
 

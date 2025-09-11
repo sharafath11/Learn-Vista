@@ -1,6 +1,6 @@
 import { IQuestions } from "../types/lessons";
 import { IMentor } from "../types/mentorTypes";
-import { throwError } from "../utils/ResANDError";
+import { throwError } from "../utils/resAndError";
 import { VALIDATION_MESSAGES } from "../constants/validationMessages";
 
 export const validateMentorSignupInput = (

@@ -1,6 +1,6 @@
 import { VALIDATION_MESSAGES } from "../constants/validationMessages";
 import { logger } from "../utils/logger";
-import { throwError } from "../utils/ResANDError";
+import { throwError } from "../utils/resAndError";
 
 
 export const validateUserSignupInput = (
