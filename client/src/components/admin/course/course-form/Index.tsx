@@ -7,13 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 import { courseSchema, type CourseFormValues } from "./schema"
-import { BasicInfoSection } from "./basic-info-section"
 import { MediaSection } from "./MediaSection"
 import { DetailsSection } from "./DetailsSection"
 import { ScheduleSection } from "./ScheduleSection"
 import { FormActions } from "./FormActions"
 import { showInfoToast } from "@/src/utils/Toast"
 import { IAdminCourseFormProps } from "@/src/types/adminProps"
+import { BasicInfoSection } from "./BasicInfoSection"
 
 
 export function CourseForm({ courseId }: IAdminCourseFormProps) {
