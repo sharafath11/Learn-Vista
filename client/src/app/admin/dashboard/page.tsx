@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/share
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { IndianRupee, Users, Clock, TrendingUp } from "lucide-react"
-import TransactionDashboard from "@/src/components/admin/transaction/transaction-dashboard"
+import TransactionDashboard from "@/src/components/admin/transaction/TransactionDashboard"
 import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 
 export default function AdminDashboard() {

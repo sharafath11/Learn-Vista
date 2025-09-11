@@ -1,6 +1,6 @@
 "use client";
 
-import UserLiveSession from "@/src/components/user/live/live-session";
+import UserLiveSession from "@/src/components/user/live/LiveSession";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { showErrorToast } from "@/src/utils/Toast";
 import { useEffect, useState } from "react";

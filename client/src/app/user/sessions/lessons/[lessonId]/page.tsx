@@ -6,12 +6,12 @@ import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import { IQuestions, ILessons, AnswerWithType, IComment, EvaluatedAnswer } from "@/src/types/lessons"
 import { IUserLessonProgress } from "@/src/types/userProgressTypes"
-import { CustomAlertDialog } from "@/src/components/custom-alert-dialog"
 
 import ReportModal from "./ReportModal"
 import LessonHeader from "./LessonHeader"
 import LessonContent from "./LessonContent"
 import LessonDiscussion from "./LessonDiscussion"
+import { CustomAlertDialog } from "@/src/components/Custom-alert-dialog"
 
 export default function LessonPage() {
   const params = useParams()

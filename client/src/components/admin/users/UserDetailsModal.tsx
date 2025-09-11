@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { ICertificate } from "@/src/types/certificateTypes"
-import { IUser } from "@/src/types/userTypes"
 import {
   FiCalendar,
   FiMail,
@@ -27,10 +26,10 @@ import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Separator } from "@/src/components/shared/components/ui/separator"
 import { Button } from "@/src/components/shared/components/ui/button"
 import Link from "next/link"
-import { CustomAlertDialog } from "../../custom-alert-dialog"
 import { AdminAPIMethods } from "@/src/services/methods/admin.api"
 import Image from "next/image"
 import { IAdminUserDetailsModalProps } from "@/src/types/adminProps"
+import { CustomAlertDialog } from "../../Custom-alert-dialog"
 
 
 export const UserDetailsModal = ({

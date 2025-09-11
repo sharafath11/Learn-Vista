@@ -1,6 +1,6 @@
 "use client";
 import { use } from "react";
-import { CourseFormDesign } from "./course-form";
+import { CourseFormDesign } from "./CourseForm";
 import { IAdminEditCoursePageProps } from "@/src/types/courseTypes";
 
 export default function EditCoursePage({ params }: IAdminEditCoursePageProps) {

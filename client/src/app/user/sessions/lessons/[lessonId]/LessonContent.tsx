@@ -1,7 +1,7 @@
 // components/user/sessions/LessonContent.tsx
 import React, { useState } from 'react';
-import VideoPlayer from "@/src/components/user/sessions/video-player";
-import TheoryQuestions from "@/src/components/user/sessions/theory-questions";
+import VideoPlayer from "@/src/components/user/sessions/VideoPlayer";
+import TheoryQuestions from "@/src/components/user/sessions/TheoryQuestions";
 import CodeChallenge from "@/src/components/user/sessions/CodeChallenge";
 import MCQQuestions from "@/src/components/user/sessions/MCQQuestions";
 import { ILessonContentProps } from '@/src/types/userProps';

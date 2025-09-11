@@ -28,7 +28,6 @@ import { FileImage, PlayCircle, XCircle, Loader2 } from "lucide-react";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
 import Image from "next/image";
-import { ILessons } from "@/src/types/lessons";
 import { IMentorEditLessonModalProps } from "@/src/types/mentorProps";
 
 

@@ -1,6 +1,6 @@
 import { IMentorSignupData } from "@/src/types/mentorTypes";
 import { showInfoToast } from "../utils/Toast";
-import { LessonFormValues } from "../app/mentor/courses/[courseId]/addLessonModal";
+import { LessonFormValues } from "../app/mentor/courses/[courseId]/AddLessonModal";
 import { IQuestions } from "../types/lessons";
 
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { IConcern, IMentorConcernStatus } from "@/src/types/concernTypes";
+import { IMentorConcernStatus } from "@/src/types/concernTypes";
 import {
   Card,
   CardContent,

@@ -13,11 +13,11 @@ import { useMentorContext } from "@/src/context/mentorContext";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { ILessons } from "@/src/types/lessons";
 import { ICourse } from "@/src/types/courseTypes";
-import { AddLessonModal } from "./addLessonModal";
+import { AddLessonModal } from "./AddLessonModal";
 import { EditLessonModal } from "./EditLessonModal";
 import { CommentsModal } from "./CommentsModal";
-import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 import VideoPreviewModal from "@/src/components/VideoPreviewModal";
+import { CustomAlertDialog } from "@/src/components/Custom-alert-dialog";
 
 export default function CourseLessonsPage() {
   const [showAddModal, setShowAddModal] = useState(false);

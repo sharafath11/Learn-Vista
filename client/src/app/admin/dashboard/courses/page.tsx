@@ -6,13 +6,13 @@ import { Calendar, Clock, PenSquare, BookOpen } from "lucide-react";
 import { useAdminContext } from "@/src/context/adminContext";
 import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { showSuccessToast } from "@/src/utils/Toast";
-import Cheader from "./header";
+import Cheader from "./Header";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { Card } from "@/src/components/shared/components/ui/card";
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { useRouter } from "next/navigation";
-import { ConcernModal } from "./concernModal";
-import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
+import { ConcernModal } from "./ConcernModal";
+import { CustomAlertDialog } from "@/src/components/Custom-alert-dialog";
 
 export default function CoursesAdminPage() {
   const { courses, setCourses, concern } = useAdminContext();

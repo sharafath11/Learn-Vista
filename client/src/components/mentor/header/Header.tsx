@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useState, type JSX } from "react"
+import { useCallback, useState, } from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
 import { motion } from "framer-motion"

@@ -14,10 +14,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/src/components/shared/components/ui/tooltip";
-import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 import { SearchSortComponent } from "./SearchSortComponent";
 import { PaginationComponent } from "./PaginationComponent";
 import useDebounce from "@/src/hooks/useDebouncing";
+import { CustomAlertDialog } from "@/src/components/Custom-alert-dialog";
 
 export default function VoiceNotesDashboard() {
   const params = useParams();

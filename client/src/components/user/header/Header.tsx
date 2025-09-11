@@ -11,10 +11,10 @@ import { useUserContext } from "@/src/context/userAuthContext"
 import { UserAPIMethods } from "@/src/services/methods/user.api" 
 import { cn } from "@/src/utils/cn" 
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast" 
-import { UserDropdown } from "./user-dropdown"
-import { MobileMenu } from "./mobile-menu" 
-import { NotificationCenter } from "../../notifications/notification-center"
-import { CustomAlertDialog } from "../../custom-alert-dialog"
+import { UserDropdown } from "./UserDropdown"
+import { MobileMenu } from "./MobileMenu" 
+import { NotificationCenter } from "../../notifications/NotificationCenter"
+import { CustomAlertDialog } from "../../Custom-alert-dialog"
 
 interface NavItem {
   name: string

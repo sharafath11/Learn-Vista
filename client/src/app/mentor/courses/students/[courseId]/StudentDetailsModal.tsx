@@ -1,6 +1,5 @@
 "use client"
 
-import { IUser } from "@/src/types/userTypes"
 import { format } from "date-fns"
 import { Mail, CalendarDays, Lock, CheckCircle2, XCircle } from "lucide-react"
 import {

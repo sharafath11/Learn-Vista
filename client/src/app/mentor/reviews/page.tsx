@@ -3,7 +3,7 @@ import { useEffect,useState } from "react"
 import { MessageSquare, Search } from "lucide-react"
 import { useMentorContext } from "@/src/context/mentorContext"
 import {  IMentorComments, IMentorFilterOption, IMentorSortOption} from "@/src/types/lessons"
-import CommentCard from "./comment-card"
+import CommentCard from "./CommentCard"
 import useDebounce from "@/src/hooks/useDebouncing"
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api"
 

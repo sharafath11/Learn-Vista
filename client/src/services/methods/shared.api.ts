@@ -1,7 +1,7 @@
 import { getRequest, patchRequest, postRequest } from "../api";
 import { INotificationPayload } from "../../types/notificationsTypes";
 import axios from "axios";
-import { baseURL } from "../AxiosInstance";
+import { baseURL } from "../axiosInstance";
 
 const get = getRequest;
 const patch = patchRequest;

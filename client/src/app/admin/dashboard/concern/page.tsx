@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { Calendar, AlertCircle, Search, ChevronDown, Layers, ImageIcon, FileIcon } from "lucide-react";
-import { ConcernModal } from "../courses/concernModal";
+import { ConcernModal } from "../courses/ConcernModal";
 import { cn } from "@/lib/utils";
 import { ICourse } from "@/src/types/courseTypes";
 import { IConcern, IConcernFilters } from "@/src/types/concernTypes";

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { MoreHorizontal, Pencil, Plus } from "lucide-react";
 import { useAdminContext } from "@/src/context/adminContext";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
-import CategoryForm from "./categoriesModal";
+import CategoryForm from "./CategoriesModal";
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { Button } from "@/src/components/shared/components/ui/button";
 import {
@@ -23,7 +23,7 @@ import {
 import { Badge } from "@/src/components/shared/components/ui/badge";
 import { AdminAPIMethods } from "@/src/services/methods/admin.api";
 import { ICategoryFilters } from "@/src/types/adminTypes";
-import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
+import { CustomAlertDialog } from "@/src/components/Custom-alert-dialog";
 
 
 

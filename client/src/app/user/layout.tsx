@@ -1,12 +1,11 @@
 "use client"
 
-import { ReactNode } from "react";
 import Footer from "@/src/components/user/Footer";
 import { UserProvider, useUserContext } from "@/src/context/userAuthContext";
 import { SessionProvider } from "next-auth/react";
 import { NotificationListener } from "@/src/components/NotificationListener";
 import { Header } from "@/src/components/user/header/Header";
-import ClientLayout from "../client-layout";
+import ClientLayout from "../ClientLayout";
 import { IUserLayoutProps } from "@/src/types/userProps";
 
 

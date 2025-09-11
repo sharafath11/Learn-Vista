@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
-import { baseURL } from "@/src/services/AxiosInstance";
+import { baseURL } from "@/src/services/axiosInstance";
 axios.defaults.timeout = 10000; 
 
 const handler = NextAuth({

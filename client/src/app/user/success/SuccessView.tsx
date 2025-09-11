@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-import type { IDonation} from "@/src/types/donationTyps"
 import { CheckCircle2, Heart, Mail, ArrowLeft, Download, Loader2 } from "lucide-react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { Button } from "@/src/components/shared/components/ui/button"

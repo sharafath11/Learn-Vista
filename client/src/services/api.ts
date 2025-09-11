@@ -1,4 +1,4 @@
-import axiosInstance from "./AxiosInstance";
+import axiosInstance from "./axiosInstance";
 import { showErrorToast, showInfoToast } from "../utils/Toast";
 
 type ApiOptions = {

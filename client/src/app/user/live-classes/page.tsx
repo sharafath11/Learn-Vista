@@ -7,9 +7,9 @@ import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showSuccessToast } from "@/src/utils/Toast"
 import { useRouter } from "next/navigation"
 import { cn } from "@/src/utils/cn"
-import { EmptyState } from "./empty-state"
-import { SessionTableRow } from "./session-table-row"
-import { SessionCard } from "./session-card"
+import { EmptyState } from "./EmptyState"
+import { SessionTableRow } from "./SessionTable-row"
+import { SessionCard } from "./SessionCard"
 
 
 export default function UpcomingSessions() {

@@ -5,7 +5,7 @@ import { Bell } from "lucide-react"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/shared/components/ui/popover"
-import { NotificationCenter } from "../../notifications/notification-center"
+import { NotificationCenter } from "../../notifications/NotificationCenter"
 import { IMentorNotificationProps } from "@/src/types/mentorProps"
 
 export function MentorNotification({

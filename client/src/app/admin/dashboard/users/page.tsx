@@ -2,7 +2,7 @@
 
 import { SearchAndFilterBar } from "@/src/components/admin/SearchAndFilterBar";
 import { UserTable } from "@/src/components/admin/users/UserTable";
-import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
+import { CustomAlertDialog } from "@/src/components/Custom-alert-dialog";
 import { useAdminContext } from "@/src/context/adminContext";
 import useDebounce from "@/src/hooks/useDebouncing";
 import { AdminAPIMethods } from "@/src/services/methods/admin.api";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import StudentCard from "./studentsCard";
+import StudentCard from "./StudentsCard";
 import { useParams } from "next/navigation";
 import { IUser } from "@/src/types/userTypes";
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast";
@@ -23,8 +23,8 @@ import {
   PaginationLink,
 } from "@/src/components/shared/components/ui/pagination";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
-import { CustomAlertDialog } from "@/src/components/custom-alert-dialog";
 import { IMentorFetchParams } from "@/src/types/mentorTypes";
+import { CustomAlertDialog } from "@/src/components/Custom-alert-dialog";
 
 
 export default function Page() {

@@ -5,7 +5,7 @@ import { Bell } from "lucide-react"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { useAdminContext } from "@/src/context/adminContext"
-import { NotificationCenter } from "../notifications/notification-center"
+import { NotificationCenter } from "../notifications/NotificationCenter"
 
 export default function AdminNotification() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false)

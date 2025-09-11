@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BookOpen, Award, Users, Clock, Star, CheckCircle } from "lucide-react";
 import { useUserContext } from "@/src/context/userAuthContext";
-import CourseCard from "@/src/components/user/Home/cards/course-card";
+import CourseCard from "@/src/components/user/Home/cards/CourseCard";
 import { ICourse } from "@/src/types/courseTypes";
 import HeroSection from "@/src/components/user/Home/HeroSection";
 import VideoModal from "./VideoModal";

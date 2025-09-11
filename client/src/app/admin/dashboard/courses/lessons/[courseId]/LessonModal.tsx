@@ -3,7 +3,6 @@
 import {
   IAdminLessonModalProps,
   IComment,
-  ILessons,
   IQuestions,
 } from "@/src/types/lessons";
 export default function LessonModal({

@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react";
-import type { SocialLink, IMentorSignupData } from "@/src/types/mentorTypes";
+import type { SocialLink, } from "@/src/types/mentorTypes";
 import { IMentorSocialLinksInputProps } from "@/src/types/mentorProps";
 
 

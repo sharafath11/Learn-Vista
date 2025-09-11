@@ -8,7 +8,6 @@ import { ILessons } from "@/src/types/lessons"
 import { IUserLessonProgress } from "@/src/types/userProgressTypes"
 import Image from "next/image"
 import { UserAPIMethods } from "@/src/services/methods/user.api"
-import { showErrorToast } from "@/src/utils/Toast"
 
 export default function LessonList({ courseId }: { courseId: string }) {
   const router = useRouter()

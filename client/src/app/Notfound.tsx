@@ -1,6 +1,6 @@
 import Image from "next/image"
-import RoleBasedNotFoundContent from "../components/role-based-not-found-content"
 import { getRandomUnsplashImage } from "../utils/unsplash"
+import RoleBasedNotFoundContent from "../components/Role-based-not-found-content"
 
 export default async function NotFound() {
   const randomImageUrl = await getRandomUnsplashImage()
