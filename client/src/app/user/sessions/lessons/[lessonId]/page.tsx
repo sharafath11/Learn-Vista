@@ -173,7 +173,12 @@ export default function LessonPage() {
       setTheoryAnswers(answers.map((a) => ({ ...a, type: "theory" as const })))
       setTheoryCompleted(true)
       const success = await updateLessonProgressInDB({ theoryCompleted: true })
-      success ? showSuccessToast("Theory section completed!") : showErrorToast("Failed to update theory progress.")
+      if (success) {
+  showSuccessToast("Theory section completed!")
+} else {
+  showErrorToast("Failed to update theory progress.")
+}
+
     },
     [updateLessonProgressInDB],
   )
@@ -183,9 +188,11 @@ export default function LessonPage() {
       setPracticalAnswers(answers.map((a) => ({ ...a, type: "practical" as const })))
       setPracticalCompleted(true)
       const success = await updateLessonProgressInDB({ practicalCompleted: true })
-      success
-        ? showSuccessToast("Coding Challenge completed!")
-        : showErrorToast("Failed to update practical progress.")
+     if (success) {
+  showSuccessToast("Coding Challenge completed!")
+} else {
+  showErrorToast("Failed to update practical progress.")
+}
     },
     [updateLessonProgressInDB],
   )
@@ -195,7 +202,11 @@ export default function LessonPage() {
       setMcqAnswers(answers.map((a) => ({ ...a, type: "mcq" as const })))
       setMcqCompleted(true)
       const success = await updateLessonProgressInDB({ mcqCompleted: true })
-      success ? showSuccessToast("MCQ section completed!") : showErrorToast("Failed to update MCQ progress.")
+      if (success) {
+  showSuccessToast("MCQ section completed!")
+} else {
+  showErrorToast("Failed to update MCQ progress.")
+}
     },
     [updateLessonProgressInDB],
   )

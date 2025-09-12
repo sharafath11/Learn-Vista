@@ -219,7 +219,7 @@ export default function StatsCard() {
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-green-800">
-                  🎉 You've completed {overallStats.completedCourses} course
+                🎉 You&apos;ve completed {overallStats.completedCourses} course
                   {overallStats.completedCourses !== 1 ? "s" : ""}!
                 </p>
                 <p className="text-xs text-green-600 mt-1">Keep up the excellent work!</p>
