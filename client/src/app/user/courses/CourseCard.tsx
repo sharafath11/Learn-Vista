@@ -43,7 +43,7 @@ const CourseCard = ({ course, index, onDetailsClick }: IUserCourseCardProps) => 
       transition={{ duration: 0.4, delay: index * 0.1 }}
       className="group"
     >
-      <Card className="h-full flex flex-col overflow-hidden rounded-2xl shadow-lg border-0 bg-white hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02]">
+      <Card className="h-full flex flex-col  rounded-2xl shadow-lg border-0 bg-white hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02]">
         
         {/* Course Image */}
         <WithTooltip content="Click to view course details.">

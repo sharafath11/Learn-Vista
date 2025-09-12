@@ -7,8 +7,7 @@ import VoiceNoteModal from "@/src/components/user/sessions/VoiceNoteModal";
 import { useRouter } from "next/navigation"; 
 import { useUserContext } from "@/src/context/userAuthContext";
 import { ILessonHeaderProps } from "@/src/types/userProps";
-
-
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";  
 
 const LessonHeader: React.FC<ILessonHeaderProps> = ({
   lesson,
@@ -18,22 +17,28 @@ const LessonHeader: React.FC<ILessonHeaderProps> = ({
   onViewReport,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const {allCourses}=useUserContext()
+  const { allCourses } = useUserContext();
   const router = useRouter();
+
   const handleViewNotes = () => {
     router.push(`/user/note/${lesson.id}`);
   };
-  const courseName=allCourses.filter((i)=>i.id===lesson.courseId)
+
+  const courseName = allCourses.filter((i) => i.id === lesson.courseId);
+
   return (
     <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-      <Button
-        variant="outline"
-        onClick={onBack}
-        className="flex items-center gap-2 bg-transparent"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Lessons
-      </Button>
+      {/* Back Button with Tooltip */}
+      <WithTooltip content="Return to all lessons in this course">
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className="flex items-center gap-2 bg-transparent"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Lessons
+        </Button>
+      </WithTooltip>
 
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white text-center flex-1">
         Lesson {lesson.order}: {lesson.title}
@@ -41,29 +46,39 @@ const LessonHeader: React.FC<ILessonHeaderProps> = ({
 
       <div className="flex items-center gap-3">
         {allSectionsCompleted && report ? (
-          <Button
-            onClick={onViewReport}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            View Report
-          </Button>
+          <WithTooltip content="View your lesson report with evaluation details">
+            <Button
+              onClick={onViewReport}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              View Report
+            </Button>
+          </WithTooltip>
         ) : (
-          <DonationComponent />
+          <WithTooltip content="Support us with a donation to keep lessons free">
+            <DonationComponent />
+          </WithTooltip>
         )}
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
-        >
-          <Mic className="h-4 w-4" />
-          Add Voice Note
-        </Button>
-        <Button
-          onClick={handleViewNotes}
-          className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
-        >
-          <BookOpen className="h-4 w-4" />
-          View My Notes
-        </Button>
+
+        <WithTooltip content="Record and attach a voice note to this lesson">
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
+          >
+            <Mic className="h-4 w-4" />
+            Add Voice Note
+          </Button>
+        </WithTooltip>
+
+        <WithTooltip content="View and manage your saved lesson notes">
+          <Button
+            onClick={handleViewNotes}
+            className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
+          >
+            <BookOpen className="h-4 w-4" />
+            View My Notes
+          </Button>
+        </WithTooltip>
       </div>
 
       {/* Voice Note Modal */}
