@@ -9,7 +9,7 @@ import type { ICourse } from "@/src/types/courseTypes"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { useRouter } from "next/navigation"
 import { getCourseProgress } from "@/src/utils/getProgress"
-import { WithTooltip } from "@/src/hooks/UseTooltipProps" // ✅ tooltip wrapper
+import { WithTooltip } from "@/src/hooks/UseTooltipProps" 
 
 const CourseCard = ({ course }: { course: ICourse }) => {
   const { title, categoryName, mentorId, thumbnail, sessions, startDate, endDate } = course

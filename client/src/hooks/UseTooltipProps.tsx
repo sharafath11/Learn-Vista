@@ -1,35 +1,21 @@
 "use client"
 
-import { cn } from "@/lib/utils"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../components/Tooltip"
-import { UseTooltipProps } from "../types/toolTip"
+import type { ReactNode } from "react"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/Tooltip"
 
-export function WithTooltip({
-  children,
-  content,
-  side = "top",
-  delayDuration = 300,
-  className,
-}: UseTooltipProps & { className?: string }) {
+interface UseTooltipProps {
+  children: ReactNode
+  content: string
+  side?: "top" | "right" | "bottom" | "left"
+  delayDuration?: number
+}
+
+export function WithTooltip({ children, content, side = "top", delayDuration = 300 }: UseTooltipProps) {
   return (
     <TooltipProvider delayDuration={delayDuration}>
       <Tooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent
-          side={side}
-          className={cn(
-            "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-lg",
-            // ✅ Only fade in/out (no zoom pop effect)
-            "animate-in fade-in-0 animate-out fade-out-0",
-            "transition-all duration-200 ease-out",
-            className
-          )}
-        >
+        <TooltipContent side={side}>
           <p>{content}</p>
         </TooltipContent>
       </Tooltip>

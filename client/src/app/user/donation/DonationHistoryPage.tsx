@@ -23,11 +23,22 @@ export default function DonationHistoryPage() {
   const [totalDonationsAmount, setTotalDonationsAmount] = useState(0)
   const observerTarget = useRef<HTMLDivElement>(null)
 
+  // ---------- FETCH DONATIONS ----------
   const fetchDonations = useCallback(async (currentPage: number) => {
     if (!user || loading || !hasMore) return
     setLoading(true)
+
     try {
       const res = await UserAPIMethods.getMyDonations(currentPage)
+
+      if (!res || !res.data) {
+        console.error("❌ Donations API returned no data:", res)
+        setHasMore(false)
+        return
+      }
+
+      console.log("✅ Donations fetched (page " + currentPage + "):", res.data)
+
       setDonations(prev => {
         const newDonations = res.data.data.filter(
           (d: IDonation) => !prev.find((p) => p.id === d.id)
@@ -36,10 +47,11 @@ export default function DonationHistoryPage() {
         setTotalDonationsAmount(updated.reduce((sum, d) => sum + d.amount, 0))
         return updated
       })
-      setHasMore(res.data.hasMore)
+
+      setHasMore(res.data.hasMore ?? false)
       setPage(currentPage + 1)
     } catch (err) {
-      console.warn(err)
+      console.error("❌ Error fetching donations:", err)
     } finally {
       setLoading(false)
     }
@@ -49,6 +61,7 @@ export default function DonationHistoryPage() {
     if (user) fetchDonations(1)
   }, [user, fetchDonations])
 
+  // ---------- INFINITE SCROLL ----------
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore && !loading) {
@@ -63,9 +76,11 @@ export default function DonationHistoryPage() {
     }
   }, [hasMore, loading, page, fetchDonations])
 
+  // ---------- DOWNLOAD RECEIPT ----------
   const handleDownloadCustomReceipt = async (donation: IDonation) => {
     if (!user) return
     setDownloadingPDFId(donation.paymentIntentId)
+
     try {
       const receiptData = {
         organizationName: "Learn Vista Foundation",
@@ -86,9 +101,14 @@ export default function DonationHistoryPage() {
         isRecurring: false,
         notes: "Thank you for supporting education and making a difference in students' lives."
       }
-      await generateReceiptPDF(receiptData)
+
+      console.log("📄 Generating PDF receipt with data:", receiptData)
+
+      const pdfResult = await generateReceiptPDF(receiptData)
+
+      console.log("✅ PDF generated successfully:", pdfResult)
     } catch (error) {
-      console.warn(error)
+      console.error("❌ Error generating PDF receipt:", error)
     } finally {
       setDownloadingPDFId(null)
     }

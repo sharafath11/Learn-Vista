@@ -1,5 +1,4 @@
-import { Award } from "lucide-react";
-import { Calendar } from "../components/shared/components/ui/calendar";
+import { Award, Calendar } from "lucide-react";
 
 export const testimonials = [
   {
