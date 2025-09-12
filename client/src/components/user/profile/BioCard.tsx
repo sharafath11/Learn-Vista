@@ -14,14 +14,15 @@ export default function BioCard() {
       </WithTooltip>
 
       <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
-        {bioDetails.map(({ icon: Icon, text, tooltip }, index) => (
-  <WithTooltip key={index} content={tooltip || text}>
+   {bioDetails.map(({ icon: Icon, text, tooltip }) => (
+  <WithTooltip key={text} content={tooltip || text}>
     <div className="flex items-center text-sm text-gray-500 cursor-default">
       <Icon className="h-4 w-4 mr-2" />
       <span>{text}</span>
     </div>
   </WithTooltip>
 ))}
+
 
       </div>
     </div>
