@@ -9,14 +9,8 @@ import { useUserContext } from "@/src/context/userAuthContext"
 import { showSuccessToast, showErrorToast, showInfoToast } from "@/src/utils/Toast"
 import { Input } from "../../shared/components/ui/input"
 import { Button } from "../../shared/components/ui/button"
-type View = "profile"
-
-interface EditProfileModalProps {
-  isOpen: boolean
-  onClose: () => void
-  username?: string
-  email?: string
-}
+import { IEditProfileModalProps, ViewUserProfile } from "@/src/types/userProps"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 const maskEmail = (email: string): string => {
   if (!email) return ""
@@ -30,11 +24,11 @@ export default function EditProfileModal({
   onClose,
   username = "",
   email = "",
-}: EditProfileModalProps) {
+}: IEditProfileModalProps) {
   const [name, setName] = useState(username)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [currentView] = useState<View>("profile")
+  const [currentView] = useState<ViewUserProfile>("profile")
   const [isLoading, setIsLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { setUser } = useUserContext()
@@ -50,7 +44,7 @@ export default function EditProfileModal({
     if (isOpen) resetState()
   }, [isOpen, resetState])
 
-  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -91,7 +85,7 @@ export default function EditProfileModal({
         showSuccessToast(res.msg)
         onClose()
       }
-    } catch{
+    } catch {
       showErrorToast("Failed to save changes")
     } finally {
       setIsLoading(false)
@@ -100,33 +94,36 @@ export default function EditProfileModal({
 
   if (!isOpen) return null
 
-  const views: Record<View, JSX.Element> = {
+  const views: Record<ViewUserProfile, JSX.Element> = {
     profile: (
       <>
         <div className="flex flex-col items-center mb-6">
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            className="relative h-28 w-28 rounded-full bg-gray-100 border-4 border-white shadow-lg cursor-pointer group overflow-hidden"
-            aria-label="Profile picture"
-          >
-            {imagePreview ? (
-              <Image
-                src={imagePreview}
-                alt="Preview"
-                fill
-                className="object-cover"
-                priority
-                sizes="112px"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-indigo-100 to-purple-100">
-                <User size={48} className="text-indigo-400" />
+          <WithTooltip content="Click to upload or change your profile picture">
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="relative h-28 w-28 rounded-full bg-gray-100 border-4 border-white shadow-lg cursor-pointer group overflow-hidden"
+              aria-label="Profile picture"
+            >
+              {imagePreview ? (
+                <Image
+                  src={imagePreview}
+                  alt="Preview"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="112px"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full w-full bg-gradient-to-br from-indigo-100 to-purple-100">
+                  <User size={48} className="text-indigo-400" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera size={24} className="text-white" />
               </div>
-            )}
-            <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Camera size={24} className="text-white" />
             </div>
-          </div>
+          </WithTooltip>
+
           <input
             ref={fileInputRef}
             type="file"
@@ -140,31 +137,37 @@ export default function EditProfileModal({
         </div>
 
         <div className="space-y-4">
-          {/* Username with icon */}
-          <div className="relative">
-            <User size={18} className="absolute left-3 top-3 text-gray-400" />
-            <Input
-              value={name}
-             onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-              placeholder="Enter your username"
-              className="pl-10"
-            />
-          </div>
+          {/* Username with tooltip */}
+          <WithTooltip content="Your username must be at least 6 characters">
+            <div className="relative">
+              <User size={18} className="absolute left-3 top-3 text-gray-400" />
+              <Input
+                value={name}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                placeholder="Enter your username"
+                className="pl-10"
+              />
+            </div>
+          </WithTooltip>
 
-          {/* Email (read-only) */}
-          <div className="relative">
-            <Mail size={18} className="absolute left-3 top-3 text-gray-400" />
-            <Input
-              value={maskEmail(email)}
-              readOnly
-              className="pl-10 bg-gray-100 cursor-not-allowed"
-            />
-          </div>
+          {/* Email with tooltip */}
+          <WithTooltip content="Your email is read-only">
+            <div className="relative">
+              <Mail size={18} className="absolute left-3 top-3 text-gray-400" />
+              <Input
+                value={maskEmail(email)}
+                readOnly
+                className="pl-10 bg-gray-100 cursor-not-allowed"
+              />
+            </div>
+          </WithTooltip>
 
           {/* Save button */}
-          <Button onClick={handleSaveChanges} disabled={isLoading} className="w-full">
-            {isLoading ? <Loader2 className="animate-spin h-5 w-5" /> : "Save Changes"}
-          </Button>
+          <WithTooltip content="Click to save your profile changes">
+            <Button onClick={handleSaveChanges} disabled={isLoading} className="w-full">
+              {isLoading ? <Loader2 className="animate-spin h-5 w-5" /> : "Save Changes"}
+            </Button>
+          </WithTooltip>
         </div>
       </>
     ),

@@ -14,6 +14,7 @@ import { Badge } from "@/src/components/shared/components/ui/badge";
 import { DailyTaskCard } from "./DailyTaskCard";
 import Link from "next/link";
 import { useUserContext } from "@/src/context/userAuthContext";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
 export default function DailyTaskPage() {
   const { dailyTask } = useUserContext();
@@ -56,13 +57,16 @@ export default function DailyTaskPage() {
           </p>
           {dailyTask.overallScore}
         </div>
+
         <div className="flex justify-end max-w-2xl mx-auto">
-          <Link
-            href="/user/dailytask/tasks"
-            className="inline-block text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-          >
-            View All Tasks & Progress
-          </Link>
+          <WithTooltip content="View the full list of your tasks and detailed progress.">
+            <Link
+              href="/user/dailytask/tasks"
+              className="inline-block text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+            >
+              View All Tasks & Progress
+            </Link>
+          </WithTooltip>
         </div>
 
         {/* Progress Overview */}
@@ -77,7 +81,9 @@ export default function DailyTaskPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-green-500" />
-                <span className="font-medium">Completed Tasks</span>
+                <WithTooltip content="Number of tasks you have completed today.">
+                  <span className="font-medium">Completed Tasks</span>
+                </WithTooltip>
               </div>
               <Badge
                 variant={
@@ -88,18 +94,22 @@ export default function DailyTaskPage() {
                 {completedTasks} / {totalTasks}
               </Badge>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500 ease-out"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
+            <WithTooltip content="Your progress bar shows the percentage of completed tasks today.">
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div
+                  className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${progressPercentage}%` }}
+                />
+              </div>
+            </WithTooltip>
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <span>{Math.round(progressPercentage)}% Complete</span>
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                <span>Today</span>
-              </div>
+              <WithTooltip content="All tasks and progress are for today.">
+                <div className="flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  <span>Today</span>
+                </div>
+              </WithTooltip>
             </div>
           </CardContent>
         </Card>

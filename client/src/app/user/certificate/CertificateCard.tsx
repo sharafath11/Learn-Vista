@@ -1,11 +1,15 @@
 import Link from "next/link"
-
-
-import { CalendarIcon, GraduationCapIcon, AwardIcon} from "lucide-react"
+import { CalendarIcon, GraduationCapIcon, AwardIcon } from "lucide-react"
 import { ICertificate } from "@/src/types/certificateTypes"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/shared/components/ui/card"
 import { Badge } from "@/src/components/shared/components/ui/badge"
-
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 export default function CertificateCard({ certificate }: { certificate: ICertificate }) {
   return (
@@ -22,9 +26,11 @@ export default function CertificateCard({ certificate }: { certificate: ICertifi
           />
           <div className="relative z-10 flex items-center gap-3">
             <AwardIcon className="h-8 w-8 text-white" />
-            <CardTitle className="text-2xl font-bold tracking-tight group-hover:underline sm:text-3xl truncate">
-              {certificate.courseTitle}
-            </CardTitle>
+            <WithTooltip content={certificate.courseTitle}>
+              <CardTitle className="text-2xl font-bold tracking-tight group-hover:underline sm:text-3xl truncate cursor-help">
+                {certificate.courseTitle}
+              </CardTitle>
+            </WithTooltip>
           </div>
           <CardDescription className="relative z-10 mt-2 text-base font-medium text-white/90 opacity-90">
             <GraduationCapIcon className="inline-block h-4 w-4 mr-1 -mt-0.5" />
@@ -32,24 +38,34 @@ export default function CertificateCard({ certificate }: { certificate: ICertifi
           </CardDescription>
         </CardHeader>
 
-        {/* Card Content */}
         <CardContent className="p-6 space-y-4 text-gray-800">
           <div className="flex items-center justify-between">
-            <p className="text-base">
-              <span className="font-medium text-gray-500">ID:</span>{" "}
-              <span className="font-semibold text-gray-900">{certificate.certificateId}</span>
-            </p>
+            <WithTooltip content="Unique identifier used to verify this certificate.">
+              <p className="text-base cursor-help">
+                <span className="font-medium text-gray-500">ID:</span>{" "}
+                <span className="font-semibold text-gray-900">{certificate.certificateId}</span>
+              </p>
+            </WithTooltip>
             {certificate.isRevoked && (
-              <Badge variant="destructive" className="px-3 py-1 text-sm font-semibold shadow-sm">
-                Revoked
-              </Badge>
+              <WithTooltip content="This certificate has been revoked by the issuer.">
+                <Badge
+                  variant="destructive"
+                  className="px-3 py-1 text-sm font-semibold shadow-sm cursor-help"
+                >
+                  Revoked
+                </Badge>
+              </WithTooltip>
             )}
           </div>
-          <p className="flex items-center text-base">
-            <CalendarIcon className="h-4 w-4 mr-2 text-gray-500" />
-            <span className="font-medium text-gray-500">Issued:</span>{" "}
-            <span className="font-semibold text-gray-900">{certificate.issuedDateFormatted}</span>
-          </p>
+          <WithTooltip content="Date when the certificate was officially issued.">
+            <p className="flex items-center text-base cursor-help">
+              <CalendarIcon className="h-4 w-4 mr-2 text-gray-500" />
+              <span className="font-medium text-gray-500">Issued:</span>{" "}
+              <span className="font-semibold text-gray-900">
+                {certificate.issuedDateFormatted}
+              </span>
+            </p>
+          </WithTooltip>
         </CardContent>
       </Card>
     </Link>

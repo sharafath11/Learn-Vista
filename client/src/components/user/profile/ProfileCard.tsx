@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { Settings } from "lucide-react";
 import { useUserContext } from "@/src/context/userAuthContext";
-import { useState} from "react"; 
+import { useState } from "react"; 
 import EditProfileModal from "./EditProfileModal";
 import ChangePasswordModal from "../../ChangePasswordModal";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
 export default function ProfileCard() {
   const { user } = useUserContext();
@@ -44,23 +45,26 @@ export default function ProfileCard() {
                 {user?.email ?? "N/A"} 
               </p>
             </div>
-           
           </div>
 
-          <button
-            className="mt-6 w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center transition-colors"
-            onClick={() => setShowEditProfileModal(true)}
-          >
-            <Settings className="h-4 w-4 mr-2" />
-            Edit Profile
-          </button>
+          <WithTooltip content="Edit your profile information">
+            <button
+              className="mt-6 w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center transition-colors"
+              onClick={() => setShowEditProfileModal(true)}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Edit Profile
+            </button>
+          </WithTooltip>
 
-          <button
-            className="mt-3 w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center transition-colors"
-            onClick={() => setShowChangePasswordModal(true)}
-          >
-            Change Password
-          </button>
+          <WithTooltip content="Change your account password">
+            <button
+              className="mt-3 w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg flex items-center justify-center transition-colors"
+              onClick={() => setShowChangePasswordModal(true)}
+            >
+              Change Password
+            </button>
+          </WithTooltip>
         </div>
       </div>
 

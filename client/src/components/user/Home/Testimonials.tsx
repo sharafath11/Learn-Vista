@@ -1,36 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Star } from "lucide-react";
-
-const testimonials = [
-  {
-    name: "Alex Thompson",
-    role: "Senior Full-Stack Developer",
-    company: "Microsoft",
-    content:
-      "This platform completely transformed my career trajectory. The quality of instruction and hands-on projects gave me the confidence to land my dream job at a Fortune 500 company.",
-    avatar: "AT",
-    rating: 5,
-  },
-  {
-    name: "Jessica Chen",
-    role: "Data Science Manager",
-    company: "Google",
-    content:
-      "The comprehensive curriculum and expert mentorship helped me transition from marketing to data science. The practical skills I gained were immediately applicable in my new role.",
-    avatar: "JC",
-    rating: 5,
-  },
-  {
-    name: "Marcus Johnson",
-    role: "UX Design Lead",
-    company: "Airbnb",
-    content:
-      "Outstanding platform with world-class instructors. The collaborative learning environment and networking opportunities opened doors I never thought possible.",
-    avatar: "MJ",
-    rating: 5,
-  },
-];
+import { testimonials } from "@/src/lib/testimonials";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
 export default function Testimonials() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -45,10 +17,13 @@ export default function Testimonials() {
   return (
     <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Student Success Stories</h2>
           <p className="text-xl text-gray-600">Real transformations from our learning community</p>
         </div>
+
+        {/* Testimonial cards */}
         <div className="relative max-w-4xl mx-auto">
           {testimonials.map((testimonial, index) => (
             <div
@@ -61,19 +36,28 @@ export default function Testimonials() {
             >
               <div className="bg-white rounded-3xl p-12 shadow-xl border border-gray-100">
                 <div className="text-center mb-8">
+                  {/* ⭐ Rating with tooltip */}
                   <div className="flex justify-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-6 w-6 text-[#FFB800] fill-current" />
+                      <WithTooltip key={i} content={`${testimonial.rating} out of 5 stars`}>
+                        <Star className="h-6 w-6 text-[#FFB800] fill-current" />
+                      </WithTooltip>
                     ))}
                   </div>
+
+                  {/* Quote */}
                   <blockquote className="text-xl text-gray-700 leading-relaxed mb-8 italic">
                     {`"${testimonial.content}"`}
                   </blockquote>
                 </div>
+
+                {/* Avatar & Info */}
                 <div className="flex items-center justify-center">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#8525FF] to-[#A855F7] flex items-center justify-center text-white font-bold text-lg mr-4">
-                    {testimonial.avatar}
-                  </div>
+                  <WithTooltip content={`Student: ${testimonial.name}`}>
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#8525FF] to-[#A855F7] flex items-center justify-center text-white font-bold text-lg mr-4 cursor-default">
+                      {testimonial.avatar}
+                    </div>
+                  </WithTooltip>
                   <div className="text-left">
                     <div className="font-bold text-gray-900 text-lg">{testimonial.name}</div>
                     <div className="text-gray-600">{testimonial.role}</div>
@@ -84,15 +68,18 @@ export default function Testimonials() {
             </div>
           ))}
         </div>
+
+        {/* Pagination dots with tooltips */}
         <div className="flex justify-center mt-12 space-x-3">
-          {testimonials.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveTestimonial(i)}
-              className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                i === activeTestimonial ? "bg-[#8525FF] scale-125" : "bg-gray-300 hover:bg-gray-400"
-              }`}
-            />
+          {testimonials.map((t, i) => (
+            <WithTooltip key={i} content={`Go to testimonial by ${t.name}`}>
+              <button
+                onClick={() => setActiveTestimonial(i)}
+                className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                  i === activeTestimonial ? "bg-[#8525FF] scale-125" : "bg-gray-300 hover:bg-gray-400"
+                }`}
+              />
+            </WithTooltip>
           ))}
         </div>
       </div>

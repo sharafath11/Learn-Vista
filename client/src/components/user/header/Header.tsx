@@ -15,6 +15,7 @@ import { UserDropdown } from "./UserDropdown"
 import { MobileMenu } from "./MobileMenu" 
 import { NotificationCenter } from "../../notifications/NotificationCenter"
 import { CustomAlertDialog } from "../../Custom-alert-dialog"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"  
 
 interface NavItem {
   name: string
@@ -42,21 +43,20 @@ export const Header = () => {
   const { unreadCount, setUnreadCount, userNotifications, setUserNotifications, refereshNotifcation } = useUserContext()
   const router = useRouter()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
- const confirmLogout = useCallback(async () => {
-  setShowLogoutConfirm(false);
 
-  await signOut({ redirect: false });
+  const confirmLogout = useCallback(async () => {
+    setShowLogoutConfirm(false)
+    await signOut({ redirect: false })
 
-  const res = await UserAPIMethods.logout();
-
-  if (res?.ok) {
-    setUser(null);
-    showSuccessToast("Logged out successfully!");
-    router.push("/user/login");
-  } else {
-    showErrorToast(res?.msg || "Logout failed. Please try again.");
-  }
-},[router, setUser]);
+    const res = await UserAPIMethods.logout()
+    if (res?.ok) {
+      setUser(null)
+      showSuccessToast("Logged out successfully!")
+      router.push("/user/login")
+    } else {
+      showErrorToast(res?.msg || "Logout failed. Please try again.")
+    }
+  }, [router, setUser])
 
   const handleLogout = useCallback(() => {
     setShowLogoutConfirm(true)
@@ -76,24 +76,13 @@ export const Header = () => {
 
       const dropdownTrigger = document.getElementById("user-dropdown-trigger") 
       const dropdownContent = document.querySelector('[data-radix-popper-content][data-side="bottom"]') 
-
-      if (
-        dropdownTrigger &&
-        !dropdownTrigger.contains(target) &&
-        dropdownContent &&
-        !dropdownContent.contains(target)
-      ) {
+      if (dropdownTrigger && !dropdownTrigger.contains(target) && dropdownContent && !dropdownContent.contains(target)) {
         setIsDropdownOpen(false)
       }
+
       const notificationTrigger = document.getElementById("notification-trigger") 
       const notificationContent = document.querySelector('[data-radix-popper-content][data-side="end"]') 
-
-      if (
-        notificationTrigger &&
-        !notificationTrigger.contains(target) &&
-        notificationContent &&
-        !notificationContent.contains(target)
-      ) {
+      if (notificationTrigger && !notificationTrigger.contains(target) && notificationContent && !notificationContent.contains(target)) {
         setIsNotificationOpen(false)
         setIsMobileNotificationOpen(false)
       }
@@ -130,36 +119,109 @@ export const Header = () => {
                 Learn Vista
               </span>
             </Link>
+
+            {/* Navigation */}
             <nav className="hidden lg:flex items-center space-x-1">
               {NAV_ITEMS.map(({ name, path, icon: Icon }) => (
-                <Link
-                  key={name}
-                  href={path}
-                  onClick={() => setActiveLink(path)}
-                  className={cn(
-                    "relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200",
-                    activeLink === path
-                      ? "bg-purple-900/20 text-purple-400"
-                      : "text-gray-300 hover:bg-zinc-800 hover:text-purple-400",
-                  )}
-                >
-                  <Icon size={16} />
-                  <span>{name}</span>
-                </Link>
+                <WithTooltip key={name} content={name}>
+                  <Link
+                    href={path}
+                    onClick={() => setActiveLink(path)}
+                    className={cn(
+                      "relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200",
+                      activeLink === path
+                        ? "bg-purple-900/20 text-purple-400"
+                        : "text-gray-300 hover:bg-zinc-800 hover:text-purple-400",
+                    )}
+                  >
+                    <Icon size={16} />
+                    <span>{name}</span>
+                  </Link>
+                </WithTooltip>
               ))}
             </nav>
 
+            {/* Right section */}
             <div className="hidden md:flex items-center space-x-3">
               {user ? (
                 <div className="flex items-center space-x-2">
+                  {/* Notification */}
+                  <WithTooltip content="Notifications">
+                    <div className="relative">
+                      <button
+                        id="notification-trigger" 
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setIsNotificationOpen(!isNotificationOpen)
+                          setIsDropdownOpen(false)
+                          refereshNotifcation()
+                        }}
+                        className="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-zinc-800 hover:text-purple-400"
+                      >
+                        <Bell size={20} />
+                        {unreadCount > 0 && (
+                          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
+                            {unreadCount > 9 ? "9+" : unreadCount}
+                          </span>
+                        )}
+                      </button>
+                      {isNotificationOpen && (
+                        <NotificationCenter
+                          isOpen={isNotificationOpen}
+                          onClose={() => setIsNotificationOpen(false)}
+                          unreadCount={unreadCount}
+                          setUnreadCount={setUnreadCount}
+                          setNotifications={setUserNotifications}
+                          notifications={userNotifications}
+                          onRefresh={refereshNotifcation}
+                          variant="dark"
+                        />
+                      )}
+                    </div>
+                  </WithTooltip>
+
+                  {/* User dropdown */}
+                  <WithTooltip content="Account settings">
+                    <UserDropdown
+                      user={user}
+                      isDropdownOpen={isDropdownOpen}
+                      setIsDropdownOpen={setIsDropdownOpen}
+                      handleLogout={handleLogout}
+                    />
+                  </WithTooltip>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <WithTooltip content="Log into your account">
+                    <Link
+                      href="/user/login"
+                      className="rounded-lg px-4 py-2 font-medium text-gray-300 transition-colors hover:bg-zinc-800 hover:text-purple-400"
+                    >
+                      Log in
+                    </Link>
+                  </WithTooltip>
+                  <WithTooltip content="Create a new account">
+                    <Link
+                      href="/user/signup"
+                      className="bg-gradient-to-r from-purple-600 to-purple-500 px-4 py-2 font-medium text-white shadow-sm transition-all duration-200 hover:from-purple-700 hover:to-purple-600"
+                    >
+                      Sign up
+                    </Link>
+                  </WithTooltip>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile menu & notifications */}
+            <div className="flex items-center space-x-2 md:hidden">
+              {user && (
+                <WithTooltip content="Notifications">
                   <div className="relative">
                     <button
-                      id="notification-trigger" 
                       onClick={(e) => {
                         e.stopPropagation()
-                        setIsNotificationOpen(!isNotificationOpen)
-                        setIsDropdownOpen(false)
-                        refereshNotifcation()
+                        setIsMobileNotificationOpen(!isMobileNotificationOpen)
+                        setIsMobileMenuOpen(false)
                       }}
                       className="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-zinc-800 hover:text-purple-400"
                     >
@@ -170,75 +232,23 @@ export const Header = () => {
                         </span>
                       )}
                     </button>
-                    {isNotificationOpen && (
-                      <NotificationCenter
-                        isOpen={isNotificationOpen}
-                        onClose={() => setIsNotificationOpen(false)}
-                        unreadCount={unreadCount}
-                        setUnreadCount={setUnreadCount}
-                        setNotifications={setUserNotifications}
-                        notifications={userNotifications}
-                        onRefresh={refereshNotifcation}
-                        variant="dark"
-                      />
-                    )}
                   </div>
-                  <UserDropdown
-                    user={user}
-                    isDropdownOpen={isDropdownOpen}
-                    setIsDropdownOpen={setIsDropdownOpen}
-                    handleLogout={handleLogout}
-                  />
-                </div>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <Link
-                    href="/user/login"
-                    className="rounded-lg px-4 py-2 font-medium text-gray-300 transition-colors hover:bg-zinc-800 hover:text-purple-400"
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/user/signup"
-                    className="bg-gradient-to-r from-purple-600 to-purple-500 px-4 py-2 font-medium text-white shadow-sm transition-all duration-200 hover:from-purple-700 hover:to-purple-600"
-                  >
-                    Sign up
-                  </Link>
-                </div>
+                </WithTooltip>
               )}
-            </div>
-
-            <div className="flex items-center space-x-2 md:hidden">
-              {user && (
-                <div className="relative">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setIsMobileNotificationOpen(!isMobileNotificationOpen)
-                      setIsMobileMenuOpen(false)
-                    }}
-                    className="relative rounded-lg p-2 text-gray-400 transition-colors hover:bg-zinc-800 hover:text-purple-400"
-                  >
-                    <Bell size={20} />
-                    {unreadCount > 0 && (
-                      <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-medium text-white">
-                        {unreadCount > 9 ? "9+" : unreadCount}
-                      </span>
-                    )}
-                  </button>
-                </div>
-              )}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="rounded-lg p-2 text-gray-300 transition-colors hover:bg-zinc-800 hover:text-purple-400"
-                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              >
-                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
+              <WithTooltip content={isMobileMenuOpen ? "Close menu" : "Open menu"}>
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="rounded-lg p-2 text-gray-300 transition-colors hover:bg-zinc-800 hover:text-purple-400"
+                  aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                >
+                  {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+              </WithTooltip>
             </div>
           </div>
         </div>
 
+        {/* Mobile notification dropdown */}
         {user && isMobileNotificationOpen && (
           <div className="absolute left-0 right-0 top-full z-40 md:hidden">
             <NotificationCenter
@@ -265,6 +275,8 @@ export const Header = () => {
         setActiveLink={setActiveLink}
         navItems={NAV_ITEMS}
       />
+
+      {/* Logout confirm dialog */}
       <CustomAlertDialog
         isOpen={showLogoutConfirm}
         onClose={() => setShowLogoutConfirm(false)} 

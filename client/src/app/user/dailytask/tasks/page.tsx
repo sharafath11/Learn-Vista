@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,15 +5,15 @@ import { IDailyTask } from "@/src/types/dailyTaskTypes";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { showErrorToast } from "@/src/utils/Toast";
 import { Skeleton } from "@/src/components/shared/components/ui/skeleton";
-
 import { Button } from "@/src/components/shared/components/ui/button";
 import { DailyTasksTable } from "./DailyTasksTable";
 import { DailyProgressGraph } from "./DailyProgressGraph";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
 export default function DailyTaskListPage() {
   const [dailyTasks, setDailyTasks] = useState<IDailyTask[]>([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<'table' | 'graph'>('table');
+  const [view, setView] = useState<"table" | "graph">("table");
 
   useEffect(() => {
     const fetchDailyTask = async () => {
@@ -43,15 +42,27 @@ export default function DailyTaskListPage() {
 
   return (
     <div className="max-w-5xl mx-auto py-10 px-4 space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Your Daily Task History</h1>
+      <WithTooltip content="Here you can review your completed tasks and performance history">
+        <h1 className="text-2xl font-bold text-gray-800">
+          Your Daily Task History
+        </h1>
+      </WithTooltip>
 
       <div className="flex justify-end">
-        <Button onClick={() => setView(view === 'table' ? 'graph' : 'table')}>
-          {view === 'table' ? 'Show Graph' : 'Show Table'}
-        </Button>
+        <WithTooltip
+          content={
+            view === "table"
+              ? "Switch to graph view to visualize your progress over time"
+              : "Switch to table view to see detailed task history"
+          }
+        >
+          <Button onClick={() => setView(view === "table" ? "graph" : "table")}>
+            {view === "table" ? "Show Graph" : "Show Table"}
+          </Button>
+        </WithTooltip>
       </div>
 
-      {view === 'table' ? (
+      {view === "table" ? (
         <DailyTasksTable dailyTasks={dailyTasks} />
       ) : (
         <DailyProgressGraph dailyTasks={dailyTasks} />

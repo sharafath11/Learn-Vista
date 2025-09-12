@@ -1,23 +1,17 @@
-// theory-questions.tsx
 "use client"
 
 import { useState, useEffect } from "react"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Alert, AlertDescription } from "@/src/components/shared/components/ui/alert"
 import { CheckCircle2 } from "lucide-react"
-import { IQuestions } from "@/src/types/lessons"
-
-interface TheoryQuestionsProps {
-  questions: IQuestions[]
-  onComplete: (answers: { question: string; answer: string }[]) => void
-  isCompleted: boolean
-}
+import { ITheoryQuestionsProps } from "@/src/types/userProps"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 export default function TheoryQuestions({
   questions,
   onComplete,
   isCompleted,
-}: TheoryQuestionsProps) {
+}: ITheoryQuestionsProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswers, setSelectedAnswers] = useState<{ question: string; answer: string }[]>([])
   const [currentAnswer, setCurrentAnswer] = useState("")
@@ -86,35 +80,44 @@ export default function TheoryQuestions({
         </div>
         <h3 className="text-xl font-bold mb-2">All Questions Completed!</h3>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-         {` You've successfully completed all the theory questions for this lesson.`}
+          {`You've successfully completed all the theory questions for this lesson.`}
         </p>
-        <Button onClick={() => setAllQuestionsAnswered(false)}>Review Questions</Button>
+        <WithTooltip content="Review all the questions again">
+          <Button onClick={() => setAllQuestionsAnswered(false)}>Review Questions</Button>
+        </WithTooltip>
       </div>
     )
   }
 
   return (
     <div>
+      {/* Header with tooltip */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold">Theory Questions</h3>
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          Question {currentQuestionIndex + 1} of {questions.length}
-        </div>
+        <WithTooltip content={`Question ${currentQuestionIndex + 1} of ${questions.length}`}>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Question {currentQuestionIndex + 1} of {questions.length}
+          </div>
+        </WithTooltip>
       </div>
 
+      {/* Question text */}
       <div className="mb-4 p-4 border rounded bg-muted">
         <p className="text-lg font-medium">{currentQuestion.question}</p>
       </div>
 
-      <textarea
-        rows={6}
-        className="w-full p-3 border rounded bg-background text-foreground"
-        placeholder="Write your answer here..."
-        value={currentAnswer}
-        onChange={(e) => setCurrentAnswer(e.target.value)}
-        disabled={isQuestionSubmitted}
-        maxLength={1000}
-      />
+      {/* Textarea with tooltip */}
+      <WithTooltip content="Write your detailed answer here">
+        <textarea
+          rows={6}
+          className="w-full p-3 border rounded bg-background text-foreground"
+          placeholder="Write your answer here..."
+          value={currentAnswer}
+          onChange={(e) => setCurrentAnswer(e.target.value)}
+          disabled={isQuestionSubmitted}
+          maxLength={1000}
+        />
+      </WithTooltip>
 
       <div className="text-sm text-gray-500 mt-2">
         {currentAnswer.trim().length} / 1000 characters
@@ -137,19 +140,26 @@ export default function TheoryQuestions({
         </Alert>
       )}
 
+      {/* Navigation buttons with tooltips */}
       <div className="flex justify-between mt-6">
-        <Button variant="outline" onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
-          Previous
-        </Button>
+        <WithTooltip content="Go to previous question">
+          <Button variant="outline" onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
+            Previous
+          </Button>
+        </WithTooltip>
 
         {!isQuestionSubmitted ? (
-          <Button onClick={handleSubmit} disabled={!isAnswerValid}>
-            Mark as Complete
-          </Button>
+          <WithTooltip content="Save your answer and mark this question as complete">
+            <Button onClick={handleSubmit} disabled={!isAnswerValid}>
+              Mark as Complete
+            </Button>
+          </WithTooltip>
         ) : (
-          <Button onClick={handleNext}>
-            {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish"}
-          </Button>
+          <WithTooltip content="Go to next question or finish">
+            <Button onClick={handleNext}>
+              {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish"}
+            </Button>
+          </WithTooltip>
         )}
       </div>
     </div>

@@ -3,6 +3,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IUnreadNotificationsProps } from "@/src/types/sharedProps";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
 export const UnreadNotifications = ({
   notifications,
@@ -29,51 +30,54 @@ export const UnreadNotifications = ({
 
   return (
     <div className="space-y-2">
-      {unread.length === 0 ? (
-        <p className={cn("text-sm text-center py-4", timeTextClass)}>
-          No unread notifications.
-        </p>
-      ) : (
-        unread.map((notification) => (
+  {unread.length === 0 ? (
+    <p className={cn("text-sm text-center py-4", timeTextClass)}>
+      No unread notifications.
+    </p>
+  ) : (
+    unread.map((notification) => (
+      <div
+        key={notification.id}
+        className={cn(
+          "flex items-center justify-between p-3 rounded-lg transition-colors", 
+          itemBgClass
+        )}
+      >
+        <WithTooltip content={notification.message||""}>
           <div
-            key={notification.id}
-            className={cn(
-              "flex items-center justify-between p-3 rounded-lg transition-colors", 
-              itemBgClass
-            )}
+            className="flex-1 cursor-pointer"
+            onClick={() => markAsRead(notification.id)}
           >
-            <div
-              className="flex-1 cursor-pointer"
-              onClick={() => markAsRead(notification.id)}
-            >
-              {" "}
-
-              <p className={cn("text-sm font-medium", itemTextClass)}>
-                {notification.message}
-              </p>
+            <p className={cn("text-sm font-medium", itemTextClass)}>
+              {notification.message}
+            </p>
+            <WithTooltip content={new Date(notification.createdAt).toLocaleString()}>
               <p className={cn("text-xs", timeTextClass)}>
                 {formatDistanceToNow(new Date(notification.createdAt), {
                   addSuffix: true,
                 })}
               </p>
-            </div>
-            <div className="flex items-center gap-1">
-              {" "}
-              {/* Group buttons */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  markAsRead(notification.id);
-                }}
-                className={cn("p-1 rounded-md", markAsReadButtonClass)}
-                title="Mark as read"
-              >
-                <Check size={16} />
-              </button>
-            </div>
+            </WithTooltip>
           </div>
-        ))
-      )}
-    </div>
+        </WithTooltip>
+
+        <div className="flex items-center gap-1">
+          <WithTooltip content="Mark as read">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                markAsRead(notification.id);
+              }}
+              className={cn("p-1 rounded-md", markAsReadButtonClass)}
+            >
+              <Check size={16} />
+            </button>
+          </WithTooltip>
+        </div>
+      </div>
+    ))
+  )}
+</div>
+
   );
 };

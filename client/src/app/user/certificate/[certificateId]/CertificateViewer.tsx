@@ -2,7 +2,7 @@
 import { CertificateViewerProps } from "@/src/types/userProps"
 import Image from "next/image"
 import { forwardRef } from "react"
-
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(
   ({ certificate }, ref) => {
@@ -19,11 +19,13 @@ const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(
           }`}
         >
           {certificate.isRevoked && (
-            <div className="absolute inset-0 flex items-center justify-center z-10 bg-red-100 bg-opacity-70 rounded-xl">
-              <span className="text-red-600 text-5xl sm:text-6xl md:text-8xl font-extrabold rotate-[-20deg] opacity-75 select-none pointer-events-none">
-                REVOKED
-              </span>
-            </div>
+            <WithTooltip content="This certificate is no longer valid. Please contact the issuer for details.">
+              <div className="absolute inset-0 flex items-center justify-center z-10 bg-red-100 bg-opacity-70 rounded-xl cursor-help">
+                <span className="text-red-600 text-5xl sm:text-6xl md:text-8xl font-extrabold rotate-[-20deg] opacity-75 select-none pointer-events-none">
+                  REVOKED
+                </span>
+              </div>
+            </WithTooltip>
           )}
 
           <div
@@ -31,7 +33,6 @@ const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(
               certificate.isRevoked ? "filter grayscale opacity-80" : ""
             }`}
           >
-            {/* Header */}
             <div className="text-center mb-8 sm:mb-10">
               <Image
                 src="/images/logo.png"
@@ -53,7 +54,6 @@ const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(
               </p>
             </div>
 
-            {/* Recipient */}
             <div className="text-center mb-8 sm:mb-10">
               <p className="text-sm sm:text-lg text-gray-700 mb-2">
                 This is to certify that
@@ -73,7 +73,6 @@ const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(
               </h3>
             </div>
 
-            {/* Details */}
             <div className="flex flex-col sm:flex-row justify-center gap-8 sm:gap-16 mb-8 sm:mb-10">
               <div className="text-center">
                 <p className="text-xs sm:text-sm text-gray-500">Issued On</p>
@@ -85,15 +84,15 @@ const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(
                 <p className="text-xs sm:text-sm text-gray-500">
                   Certificate ID
                 </p>
-                <p className="text-sm sm:text-base font-medium text-gray-800 break-words w-[200px] sm:w-[260px] mx-auto">
-                  {certificate.certificateId}
-                </p>
+                <WithTooltip content="Unique identifier for verifying this certificate.">
+                  <p className="text-sm sm:text-base font-medium text-gray-800 break-words w-[200px] sm:w-[260px] mx-auto cursor-help">
+                    {certificate.certificateId}
+                  </p>
+                </WithTooltip>
               </div>
             </div>
 
-            {/* Footer: Signature, QR, Seal */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-8 pt-6 border-t border-gray-200">
-              {/* Signature */}
               <div className="text-center flex-1">
                 <p className="text-gray-800 font-medium text-xs sm:text-sm mb-3">
                   Authorized Signature
@@ -101,31 +100,33 @@ const CertificateViewer = forwardRef<HTMLDivElement, CertificateViewerProps>(
                 <div className="mt-1 h-10 sm:h-14 w-32 sm:w-40 mx-auto border-b-2 border-gray-400"></div>
               </div>
 
-              {/* QR Code */}
               {certificate.qrCodeUrl && (
                 <div className="text-center flex-1">
-                  <Image
-                    src={certificate.qrCodeUrl || "/placeholder.png"}
-                    width={90}
-                    height={90}
-                    alt="Verification QR Code"
-                    className="mx-auto border border-gray-200 rounded-md p-1 bg-white"
-                    crossOrigin="anonymous"
-                  />
+                  <WithTooltip content="Scan with your mobile device to confirm this certificate's authenticity.">
+                    <Image
+                      src={certificate.qrCodeUrl || "/placeholder.png"}
+                      width={90}
+                      height={90}
+                      alt="Verification QR Code"
+                      className="mx-auto border border-gray-200 rounded-md p-1 bg-white cursor-help"
+                      crossOrigin="anonymous"
+                    />
+                  </WithTooltip>
                   <p className="text-xs text-gray-600 mt-2">
                     Scan to verify authenticity
                   </p>
                 </div>
               )}
 
-              {/* Seal */}
               <div className="text-center flex-1">
                 <p className="text-gray-800 font-medium text-xs sm:text-sm mb-3">
                   Official Seal
                 </p>
-                <div className="mt-1 h-10 sm:h-14 w-32 sm:w-40 mx-auto border-2 border-gray-400 flex items-center justify-center text-gray-500 text-[10px] sm:text-xs">
-                  OFFICIAL SEAL
-                </div>
+                <WithTooltip content="The official seal validates this certificate as issued by the organization.">
+                  <div className="mt-1 h-10 sm:h-14 w-32 sm:w-40 mx-auto border-2 border-gray-400 flex items-center justify-center text-gray-500 text-[10px] sm:text-xs cursor-help">
+                    OFFICIAL SEAL
+                  </div>
+                </WithTooltip>
               </div>
             </div>
           </div>

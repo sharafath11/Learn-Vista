@@ -6,6 +6,7 @@ import { Button } from "../../shared/components/ui/button";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { ILessons } from "@/src/types/lessons";
 import { showInfoToast, showSuccessToast } from "@/src/utils/Toast";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
 export default function VoiceNoteModal({
   open,
@@ -127,53 +128,65 @@ const startRecording = () => {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md rounded-2xl shadow-lg p-6">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold">🎤 Add Voice Note</DialogTitle>
-          <p className="text-sm text-gray-500">
-            {courseName} • {lessonName}
-          </p>
-        </DialogHeader>
+  <DialogContent className="max-w-md rounded-2xl shadow-lg p-6">
+    <DialogHeader>
+      <DialogTitle className="text-xl font-bold">🎤 Add Voice Note</DialogTitle>
+      <p className="text-sm text-gray-500">
+        {courseName} • {lessonName}
+      </p>
+    </DialogHeader>
 
-        <div className="flex flex-col items-center gap-4">
-          {!recording ? (
-            <Button
-              onClick={startRecording}
-              className="rounded-full p-6 bg-red-500 hover:bg-red-600 transition-all"
-            >
-              <Mic className="w-6 h-6 text-white" />
-            </Button>
-          ) : (
-            <Button
-              onClick={stopRecording}
-              className="rounded-full p-6 bg-gray-800 hover:bg-gray-900 animate-pulse transition-all"
-            >
-              <Square className="w-6 h-6 text-white" />
-            </Button>
-          )}
-
-          <p className="text-sm font-medium text-gray-600">
-            {recording ? "Recording... Click to stop." : "Click the microphone to start recording."}
-          </p>
-
-          <textarea
-            className="w-full h-32 p-3 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-            value={transcript}
-            onChange={handleTranscriptChange}
-            readOnly={recording} // Only set to read-only when recording is active
-            placeholder="Your voice note will appear here..."
-          />
-        </div>
-
-        <DialogFooter className="flex justify-between mt-4">
-          <Button variant="outline" onClick={handleClose}>
-            Cancel
+    <div className="flex flex-col items-center gap-4">
+      {!recording ? (
+        <WithTooltip content="Start recording your voice note">
+          <Button
+            onClick={startRecording}
+            className="rounded-full p-6 bg-red-500 hover:bg-red-600 transition-all"
+          >
+            <Mic className="w-6 h-6 text-white" />
           </Button>
-          <Button onClick={handleSave} disabled={!transcript.trim() || recording}>
-            <Save className="w-4 h-4 mr-2" /> Save Note
+        </WithTooltip>
+      ) : (
+        <WithTooltip content="Stop recording">
+          <Button
+            onClick={stopRecording}
+            className="rounded-full p-6 bg-gray-800 hover:bg-gray-900 animate-pulse transition-all"
+          >
+            <Square className="w-6 h-6 text-white" />
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </WithTooltip>
+      )}
+
+      <p className="text-sm font-medium text-gray-600">
+        {recording ? "Recording... Click to stop." : "Click the microphone to start recording."}
+      </p>
+
+      <WithTooltip content="Your voice note will appear here">
+        <textarea
+          className="w-full h-32 p-3 border rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          value={transcript}
+          onChange={handleTranscriptChange}
+          readOnly={recording} // Only read-only when recording
+          placeholder="Your voice note will appear here..."
+        />
+      </WithTooltip>
+    </div>
+
+    <DialogFooter className="flex justify-between mt-4">
+      <WithTooltip content="Cancel and close dialog">
+        <Button variant="outline" onClick={handleClose}>
+          Cancel
+        </Button>
+      </WithTooltip>
+
+      <WithTooltip content="Save your voice note">
+        <Button onClick={handleSave} disabled={!transcript.trim() || recording}>
+          <Save className="w-4 h-4 mr-2" /> Save Note
+        </Button>
+      </WithTooltip>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+
   );
 }

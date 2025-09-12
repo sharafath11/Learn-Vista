@@ -20,16 +20,19 @@ import { Mic, PenTool, Headphones, Play } from "lucide-react";
 import { Button } from "@/src/components/shared/components/ui/button";
 import { handleTextToSpeech, stopTextToSpeech } from "@/src/utils/voice";
 import { IUserDailyProps } from "@/src/types/userProps";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
 const taskIcons = {
   speaking: Mic,
   writing: PenTool,
   listening: Headphones,
 };
+
 export function DailyTasksTable({ dailyTasks }: IUserDailyProps) {
   const [selectedDailyTask, setSelectedDailyTask] = useState<IDailyTask | null>(
     null
   );
+
   const getCompletedTasksCount = (tasks: ITask[]) =>
     tasks.filter((task) => task.isCompleted).length;
 
@@ -70,9 +73,13 @@ export function DailyTasksTable({ dailyTasks }: IUserDailyProps) {
                       {dailyTask.tasks.length}
                     </td>
                     <td className="px-4 py-3">
-                      {dailyTask.overallScore !== null
-                        ? `${dailyTask.overallScore?`${dailyTask.overallScore}/5`:"You not complete this task"}`
-                        : "-"}
+                      <WithTooltip content="Average score across all tasks (out of 5)">
+                        <span>
+                          {dailyTask.overallScore !== null
+                            ? `${dailyTask.overallScore}/5`
+                            : "Not Completed"}
+                        </span>
+                      </WithTooltip>
                     </td>
                     <td className="px-4 py-3 text-blue-500 hover:underline">
                       View Details
@@ -85,6 +92,7 @@ export function DailyTasksTable({ dailyTasks }: IUserDailyProps) {
         </CardContent>
       </Card>
 
+      {/* Dialog with detailed tasks */}
       <Dialog
         open={!!selectedDailyTask}
         onOpenChange={() => setSelectedDailyTask(null)}
@@ -121,7 +129,6 @@ export function DailyTasksTable({ dailyTasks }: IUserDailyProps) {
                 <h3 className="font-semibold text-base">Individual Tasks:</h3>
                 {selectedDailyTask.tasks.map((task, index) => {
                   const Icon = taskIcons[task.type];
-
                   return (
                     <div
                       key={index}
@@ -129,17 +136,31 @@ export function DailyTasksTable({ dailyTasks }: IUserDailyProps) {
                     >
                       <div className="flex justify-between items-center">
                         <div className="flex items-center space-x-2">
-                          <Icon className="h-4 w-4 text-gray-600" />
+                          <WithTooltip
+                            content={`This is a ${task.type} task`}
+                          >
+                            <Icon className="h-4 w-4 text-gray-600" />
+                          </WithTooltip>
                           <h4 className="font-medium capitalize text-base">
                             {task.type}
                           </h4>
                         </div>
-                        <Badge
-                          variant={task.isCompleted ? "default" : "secondary"}
+
+                        <WithTooltip
+                          content={
+                            task.isCompleted
+                              ? "You finished this task"
+                              : "Task not yet completed"
+                          }
                         >
-                          {task.isCompleted ? "Completed" : "Not Completed"}
-                        </Badge>
+                          <Badge
+                            variant={task.isCompleted ? "default" : "secondary"}
+                          >
+                            {task.isCompleted ? "Completed" : "Not Completed"}
+                          </Badge>
+                        </WithTooltip>
                       </div>
+
                       {task.prompt && (
                         <div>
                           <p className="text-sm font-semibold">Prompt:</p>
@@ -165,6 +186,7 @@ export function DailyTasksTable({ dailyTasks }: IUserDailyProps) {
                           )}
                         </div>
                       )}
+
                       {task.isCompleted && task.userResponse && (
                         <div className="text-sm text-gray-800">
                           <p className="font-semibold">Your Answer:</p>
@@ -174,9 +196,7 @@ export function DailyTasksTable({ dailyTasks }: IUserDailyProps) {
                               controls
                               src={task.userResponse}
                               className="mt-2 w-full"
-                            >
-                              Your browser does not support the audio element.
-                            </audio>
+                            />
                           ) : (
                             <p className="mt-1 p-2 bg-white rounded border border-gray-200">
                               {task.userResponse}
@@ -186,12 +206,16 @@ export function DailyTasksTable({ dailyTasks }: IUserDailyProps) {
                       )}
 
                       {task.isCompleted && task.aiFeedback && (
-                        <div>
-                          <p className="text-sm font-semibold">AI Feedback:</p>
-                          <p className="text-gray-800 mt-1">
-                            {task.aiFeedback}
-                          </p>
-                        </div>
+                        <WithTooltip content="Feedback generated by AI for your improvement">
+                          <div>
+                            <p className="text-sm font-semibold">
+                              AI Feedback:
+                            </p>
+                            <p className="text-gray-800 mt-1">
+                              {task.aiFeedback}
+                            </p>
+                          </div>
+                        </WithTooltip>
                       )}
 
                       {typeof task.score === "number" && (

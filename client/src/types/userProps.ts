@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
 import { ICategory } from "./categoryTypes";
 import { ICertificate } from "./certificateTypes";
-import { IcourseFromResponse, IPopulatedCourse } from "./courseTypes";
+import { ICourse, IcourseFromResponse, IPopulatedCourse } from "./courseTypes";
 import { IDailyTask, ITask } from "./dailyTaskTypes";
 import { IDonation } from "./donationTyps";
-import { EvaluatedAnswer, IComment, ILessons, IQuestions, SortOption } from "./lessons";
-import { IUserRegistration } from "./userTypes";
+import { EvaluatedAnswer, IComment, ILessons, IQuestions, Level, SortOption } from "./lessons";
+import { IUser, IUserRegistration } from "./userTypes";
 
 export interface CertificateViewerProps {
   certificate: ICertificate
@@ -136,4 +136,72 @@ export interface IUserLayoutProps {
 export interface IVideoModalProps {
   showVideo: boolean
   onClose: () => void
+}
+export interface IUserDropdownProps {
+  user: IUser | null
+  isDropdownOpen: boolean
+  setIsDropdownOpen: (value: boolean) => void
+  handleLogout: () => void
+}
+
+export interface ICategoryCardProps {
+  icon: ReactNode
+  title: string
+  courses: number
+}
+export interface ICourseCardProps {
+  course: ICourse
+}
+export interface IFeatureCardProps {
+  icon: ReactNode;
+  title: string;
+  description: string;
+  features: string[];
+}
+export interface ITestimonialCardProps {
+  name: string;
+  role: string;
+  content: string;
+  avatar: ReactNode;
+  active: boolean;
+  onClick?: () => void;
+}
+export type ViewUserProfile = "profile"
+export interface IEditProfileModalProps {
+  isOpen: boolean
+  onClose: () => void
+  username?: string
+  email?: string
+}
+export interface ICodeChallengeProps {
+  questions: IQuestions[]
+  onComplete: (answers: { question: string; answer: string }[]) => void
+  isCompleted: boolean
+}
+export interface ILevelNavigationProps {
+  levels: Level[]
+  currentLevelId: number
+  completedLevels: number[]
+  onLevelSelect: (levelId: number) => void
+  isLevelUnlocked: (levelId: number) => boolean
+}
+export interface IMCQQuestionsProps {
+  questions: IQuestions[]
+  onComplete: (answers: { question: string; answer: string }[]) => void
+  isCompleted: boolean
+}
+export interface ITheoryQuestionsProps {
+  questions: IQuestions[]
+  onComplete: (answers: { question: string; answer: string }[]) => void
+  isCompleted: boolean
+}
+export interface IVideoPlayerProps {
+  videoUrl: string
+  title: string
+  onComplete: () => void
+  onProgress: (currentTime: number, totalDuration: number) => void
+  isCompleted: boolean
+  thumbnail: string
+  startTime: number
+  totalLengthFromAPI?: number
 }

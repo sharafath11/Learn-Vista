@@ -9,6 +9,7 @@ import { IDonation } from "@/src/types/donationTyps";
 import { NotificationListener } from "@/src/components/NotificationListener";
 import { useUserContext } from "@/src/context/userAuthContext";
 import { showErrorToast } from "@/src/utils/Toast";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"; 
 
 export default function SuccessContent() {
   const searchParams = useSearchParams();
@@ -36,7 +37,9 @@ export default function SuccessContent() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
-        <LoaderCircle className="w-10 h-10 animate-spin text-blue-500" />
+        <WithTooltip content="We’re fetching your donation receipt, please wait...">
+          <LoaderCircle className="w-10 h-10 animate-spin text-blue-500" />
+        </WithTooltip>
         <p className="mt-3 text-gray-600">Fetching your donation receipt...</p>
       </div>
     );
@@ -45,9 +48,13 @@ export default function SuccessContent() {
   if (!session) {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-center">
-        <h2 className="text-2xl font-semibold text-red-600">Invalid or Missing Session</h2>
+        <WithTooltip content="The donation session ID is missing or invalid">
+          <h2 className="text-2xl font-semibold text-red-600">
+            Invalid or Missing Session
+          </h2>
+        </WithTooltip>
         <p className="mt-2 text-gray-500">
-         {` We couldn't find your donation session. Please try again.`}
+          {`We couldn't find your donation session. Please try again.`}
         </p>
       </div>
     );
@@ -56,7 +63,9 @@ export default function SuccessContent() {
   return (
     <>
       {user?.id && <NotificationListener userId={user.id} role={"user"} />}
-      <SuccessView session={session} />
+      <WithTooltip content="Here’s your donation receipt">
+        <SuccessView session={session} />
+      </WithTooltip>
     </>
   );
 }

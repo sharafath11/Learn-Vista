@@ -8,6 +8,7 @@ import { AllNotifications } from "./AllNotifications"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { SharedAPIMethods } from "@/src/services/methods/shared.api"
 import { INotificationCenterProps } from "@/src/types/sharedProps"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 
 export const NotificationCenter = ({
@@ -71,64 +72,72 @@ export const NotificationCenter = ({
 
   return (
     <motion.div
-      initial={false}
-      animate={{
-        opacity: isOpen ? 1 : 0,
-        y: isOpen ? 0 : -10,
-        scale: isOpen ? 1 : 0.95,
-        pointerEvents: isOpen ? "auto" : "none",
-      }}
-      transition={{ duration: 0.2 }}
-      className={cn(
-        "notification-center shadow-xl rounded-xl z-50 transition-all",
-        variant === "dark"
-          ? "bg-zinc-800/95 backdrop-blur-md border border-zinc-700"
-          : "bg-white border border-gray-200",
-        isMobile ? "mx-4 mt-2 max-h-[70vh] w-auto" : "absolute right-0 mt-2 w-[600px]",
+  initial={false}
+  animate={{
+    opacity: isOpen ? 1 : 0,
+    y: isOpen ? 0 : -10,
+    scale: isOpen ? 1 : 0.95,
+    pointerEvents: isOpen ? "auto" : "none",
+  }}
+  transition={{ duration: 0.2 }}
+  className={cn(
+    "notification-center shadow-xl rounded-xl z-50 transition-all",
+    variant === "dark"
+      ? "bg-zinc-800/95 backdrop-blur-md border border-zinc-700"
+      : "bg-white border border-gray-200",
+    isMobile ? "mx-4 mt-2 max-h-[70vh] w-auto" : "absolute right-0 mt-2 w-[600px]",
+  )}
+  onClick={(e) => e.stopPropagation()}
+>
+  {/* Header */}
+  <div className={cn("flex items-center justify-between p-4", headerClasses)}>
+    <div className="flex items-center gap-2">
+      <WithTooltip content="Notification Center">
+        <Bell size={18} className={iconClasses} />
+      </WithTooltip>
+      <h3 className={cn("font-semibold", textClasses)}>Notifications</h3>
+      {unreadCount > 0 && (
+        <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-medium">{unreadCount}</span>
       )}
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* Header */}
-      <div className={cn("flex items-center justify-between p-4", headerClasses)}>
-        <div className="flex items-center gap-2">
-          <Bell size={18} className={iconClasses} />
-          <h3 className={cn("font-semibold", textClasses)}>Notifications</h3>
-          {unreadCount > 0 && (
-            <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-medium">{unreadCount}</span>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          {unreadCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={markAllAsRead} className={cn("text-xs", buttonTextClasses)}>
-              Mark all as read
-            </Button>
-          )}
-          <button onClick={onClose} className={cn("p-1 rounded transition-colors", closeButtonClasses)}>
-            <X size={16} />
-          </button>
-        </div>
-      </div>
-      {/* Notification Columns */}
-      <div
-        className={cn(
-          "flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x max-h-96 overflow-y-auto",
-          dividerClasses,
-        )}
-      >
-        <div className="w-full md:w-1/2 p-2">
-          <h4 className={cn("text-xs font-semibold mb-2", sectionHeaderClasses)}>Unread</h4>
-          <UnreadNotifications
-            notifications={notifications}
-            markAsRead={markAsRead}
-            deleteNotification={deleteNotification}
-            variant={variant}
-          />
-        </div>
-        <div className="w-full md:w-1/2 p-2">
-          <h4 className={cn("text-xs font-semibold mb-2", sectionHeaderClasses)}>All</h4>
-          <AllNotifications notifications={notifications} deleteNotification={deleteNotification} variant={variant} />
-        </div>
-      </div>
-    </motion.div>
+    </div>
+    <div className="flex items-center gap-2">
+      {unreadCount > 0 && (
+        <WithTooltip content="Mark all notifications as read">
+          <Button variant="ghost" size="sm" onClick={markAllAsRead} className={cn("text-xs", buttonTextClasses)}>
+            Mark all as read
+          </Button>
+        </WithTooltip>
+      )}
+      <WithTooltip content="Close Notifications">
+        <button onClick={onClose} className={cn("p-1 rounded transition-colors", closeButtonClasses)}>
+          <X size={16} />
+        </button>
+      </WithTooltip>
+    </div>
+  </div>
+
+  {/* Notification Columns */}
+  <div
+    className={cn(
+      "flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x max-h-96 overflow-y-auto",
+      dividerClasses,
+    )}
+  >
+    <div className="w-full md:w-1/2 p-2">
+      <h4 className={cn("text-xs font-semibold mb-2", sectionHeaderClasses)}>Unread</h4>
+      <UnreadNotifications
+        notifications={notifications}
+        markAsRead={markAsRead}
+        deleteNotification={deleteNotification}
+        variant={variant}
+      />
+    </div>
+    <div className="w-full md:w-1/2 p-2">
+      <h4 className={cn("text-xs font-semibold mb-2", sectionHeaderClasses)}>All</h4>
+      <AllNotifications notifications={notifications} deleteNotification={deleteNotification} variant={variant} />
+    </div>
+  </div>
+</motion.div>
+
   )
 }

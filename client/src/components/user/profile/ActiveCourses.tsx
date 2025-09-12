@@ -9,9 +9,10 @@ import type { ICourse } from "@/src/types/courseTypes"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { useRouter } from "next/navigation"
 import { getCourseProgress } from "@/src/utils/getProgress"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps" // ✅ tooltip wrapper
 
 const CourseCard = ({ course }: { course: ICourse }) => {
-  const { title, categoryName, mentorId, thumbnail, sessions, startDate, endDate} = course
+  const { title, categoryName, mentorId, thumbnail, sessions, startDate, endDate } = course
 
   const { progresses } = useUserContext()
   const router = useRouter()
@@ -24,60 +25,94 @@ const CourseCard = ({ course }: { course: ICourse }) => {
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 bg-white">
+      {/* Thumbnail + Category */}
       <div className="relative h-40">
-        <Image
-          src={thumbnail || "/placeholder.svg?height=200&width=400"}
-          alt={title}
-          width={400}
-          height={200}
-          className="h-full w-full object-cover"
-        />
+        <WithTooltip content={`Category: ${categoryName || "General"}`}>
+          <Image
+            src={thumbnail || "/placeholder.svg?height=200&width=400"}
+            alt={title}
+            width={400}
+            height={200}
+            className="h-full w-full object-cover"
+          />
+        </WithTooltip>
+
         <span className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium shadow-sm border">
           {categoryName || "General"}
         </span>
+
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
           <h3 className="text-white font-semibold text-sm mb-1 line-clamp-2">{title}</h3>
-          <p className="text-xs text-white/90">{mentorName as string}</p>
+          <WithTooltip content={`Instructor: ${mentorName}`}>
+            <p className="text-xs text-white/90">{mentorName as string}</p>
+          </WithTooltip>
         </div>
       </div>
 
+      {/* Content */}
       <div className="p-4">
+        {/* Dates & Lessons */}
         <div className="flex justify-between text-sm text-gray-600 mb-4">
-          <div className="flex items-center">
-            <Clock className="h-4 w-4 mr-1" />
-            <span className="text-xs">
-              {startDate && endDate
-                ? `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`
-                : "Ongoing"}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <BookOpen className="h-4 w-4 mr-1" />
-            <span className="text-xs">{lessons} lessons</span>
-          </div>
+          <WithTooltip
+            content={
+              startDate && endDate
+                ? `Start: ${new Date(startDate).toLocaleDateString()} | End: ${new Date(endDate).toLocaleDateString()}`
+                : "Ongoing course"
+            }
+          >
+            <div className="flex items-center cursor-default">
+              <Clock className="h-4 w-4 mr-1" />
+              <span className="text-xs">
+                {startDate && endDate
+                  ? `${new Date(startDate).toLocaleDateString()} - ${new Date(endDate).toLocaleDateString()}`
+                  : "Ongoing"}
+              </span>
+            </div>
+          </WithTooltip>
+
+          <WithTooltip content={`${lessons} lessons included`}>
+            <div className="flex items-center cursor-default">
+              <BookOpen className="h-4 w-4 mr-1" />
+              <span className="text-xs">{lessons} lessons</span>
+            </div>
+          </WithTooltip>
         </div>
 
-        <div className="mb-4">
-          <div className="flex justify-between text-xs mb-2">
-            <span className="font-medium text-gray-700">Progress: {progress}%</span>
-            <span className="text-gray-500">
-              {completedLessons}/{lessons} completed
-            </span>
+        {/* Progress */}
+        <WithTooltip content={`Completed ${completedLessons} of ${lessons} lessons`}>
+          <div className="mb-4 cursor-default">
+            <div className="flex justify-between text-xs mb-2">
+              <span className="font-medium text-gray-700">Progress: {progress}%</span>
+              <span className="text-gray-500">
+                {completedLessons}/{lessons} completed
+              </span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-full rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${Math.min(progress, 100)}%` }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-full rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${Math.min(progress, 100)}%` }}
-            />
-          </div>
-        </div>
+        </WithTooltip>
 
-        <Button
-          className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
-          onClick={() => router.push(`/user/sessions/${course.id}`)}
+        {/* Action button */}
+        <WithTooltip
+          content={
+            progress === 0
+              ? "Start the course"
+              : progress === 100
+              ? "Review completed lessons"
+              : "Resume from where you left off"
+          }
         >
-          {progress === 0 ? "Start Learning" : progress === 100 ? "Review Course" : "Continue Learning"}
-        </Button>
+          <Button
+            className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-md"
+            onClick={() => router.push(`/user/sessions/${course.id}`)}
+          >
+            {progress === 0 ? "Start Learning" : progress === 100 ? "Review Course" : "Continue Learning"}
+          </Button>
+        </WithTooltip>
       </div>
     </div>
   )
@@ -146,7 +181,8 @@ export default function ActiveCourses() {
               </>
             ) : (
               <>
-                View All Courses ({userEnrolledCourses.length - 4} more) <ChevronDown className="h-4 w-4 ml-2" />
+                View All Courses ({userEnrolledCourses.length - 4} more){" "}
+                <ChevronDown className="h-4 w-4 ml-2" />
               </>
             )}
           </Button>

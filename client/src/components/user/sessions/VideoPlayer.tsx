@@ -4,17 +4,9 @@ import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { Play, Pause, Volume2, VolumeX, Maximize, Minimize } from "lucide-react"
 import Image from "next/image"
+import { IVideoPlayerProps } from "@/src/types/userProps"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
-interface VideoPlayerProps {
-  videoUrl: string
-  title: string
-  onComplete: () => void
-  onProgress: (currentTime: number, totalDuration: number) => void
-  isCompleted: boolean
-  thumbnail: string
-  startTime: number
-  totalLengthFromAPI?: number
-}
 
 export default function VideoPlayer({
   videoUrl,
@@ -25,7 +17,7 @@ export default function VideoPlayer({
   thumbnail,
   startTime =0,
   totalLengthFromAPI,
-}: VideoPlayerProps) {
+}: IVideoPlayerProps) {
 
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -201,81 +193,101 @@ export default function VideoPlayer({
 
   return (
     <div className="relative" ref={containerRef}>
-      <div className="aspect-video bg-black relative">
-        <video
-          ref={videoRef}
-          className="w-full h-full"
-          src={videoUrl}
-          poster={thumbnail}
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={handleLoadedMetadata}
-          onPlay={onPlayHandler}
-          onPause={() => setIsPlaying(false)}
-          onEnded={() => {
-            setIsPlaying(false)
-            if (!hasWatched) {
-              setHasWatched(true)
-              onComplete()
-              if (videoRef.current) {
-                onProgress(videoRef.current.duration, videoRef.current.duration);
-              }
-            }
-          }}
-        >
-          Your browser does not support the video .
-        </video>
-        {!hasStartedPlaying && !isCompleted && (
-          <Image
-            src={thumbnail}
-            alt={title}
-            className="absolute top-0 left-0 w-full h-full object-cover cursor-pointer"
-            onClick={handlePlayPause}
-          />
-        )}
+  <div className="aspect-video bg-black relative">
+    <video
+      ref={videoRef}
+      className="w-full h-full"
+      src={videoUrl}
+      poster={thumbnail}
+      onTimeUpdate={handleTimeUpdate}
+      onLoadedMetadata={handleLoadedMetadata}
+      onPlay={onPlayHandler}
+      onPause={() => setIsPlaying(false)}
+      onEnded={() => {
+        setIsPlaying(false)
+        if (!hasWatched) {
+          setHasWatched(true)
+          onComplete()
+          if (videoRef.current) {
+            onProgress(videoRef.current.duration, videoRef.current.duration)
+          }
+        }
+      }}
+    >
+      Your browser does not support the video.
+    </video>
+
+    {!hasStartedPlaying && !isCompleted && (
+      <Image
+        src={thumbnail}
+        alt={title}
+        className="absolute top-0 left-0 w-full h-full object-cover cursor-pointer"
+        onClick={handlePlayPause}
+      />
+    )}
+  </div>
+
+  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+    <WithTooltip content="Click to seek in the video">
+      <div
+        className="w-full h-2 bg-gray-600 rounded-full mb-4 cursor-pointer"
+        onClick={handleProgressClick}
+      >
+        <div
+          className="h-2 bg-blue-500 rounded-full"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+    </WithTooltip>
+
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-4">
+        <WithTooltip content={isPlaying ? "Pause video" : "Play video"}>
+          <button onClick={handlePlayPause} className="text-white hover:text-blue-400 transition-colors">
+            {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+          </button>
+        </WithTooltip>
+
+        <div className="flex items-center gap-2">
+          <WithTooltip content={isMuted ? "Unmute" : "Mute"}>
+            <button onClick={toggleMute} className="text-white hover:text-blue-400 transition-colors">
+              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+            </button>
+          </WithTooltip>
+
+          <WithTooltip content="Adjust volume">
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value={isMuted ? 0 : volume}
+              onChange={handleVolumeChange}
+              className="w-20 accent-blue-500"
+            />
+          </WithTooltip>
+        </div>
+
+        <div className="text-white text-sm">
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-        <div className="w-full h-2 bg-gray-600 rounded-full mb-4 cursor-pointer" onClick={handleProgressClick}>
-          <div className="h-2 bg-blue-500 rounded-full" style={{ width: `${progress}%` }}></div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button onClick={handlePlayPause} className="text-white hover:text-blue-400 transition-colors">
-              {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-            </button>
-
-            <div className="flex items-center gap-2">
-              <button onClick={toggleMute} className="text-white hover:text-blue-400 transition-colors">
-                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-              </button>
-
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={isMuted ? 0 : volume}
-                onChange={handleVolumeChange}
-                className="w-20 accent-blue-500"
-              />
-            </div>
-
-            <div className="text-white text-sm">
-              {formatTime(currentTime)} / {formatTime(duration)}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            {hasWatched && (
-              <div className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</div>
-            )}
-            <button onClick={handleFullScreenToggle} className="text-white hover:text-blue-400 transition-colors">
-              {isFullScreen ? <Minimize className="h-6 w-6" /> : <Maximize className="h-6 w-6" />}
-            </button>
-          </div>
-        </div>
+      <div className="flex items-center gap-4">
+        {hasWatched && (
+          <WithTooltip content="You have completed this video">
+            <div className="bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</div>
+          </WithTooltip>
+        )}
+        <WithTooltip content={isFullScreen ? "Exit Fullscreen" : "Fullscreen"}>
+          <button onClick={handleFullScreenToggle} className="text-white hover:text-blue-400 transition-colors">
+            {isFullScreen ? <Minimize className="h-6 w-6" /> : <Maximize className="h-6 w-6" />}
+          </button>
+        </WithTooltip>
       </div>
     </div>
+  </div>
+</div>
+
   )
 }

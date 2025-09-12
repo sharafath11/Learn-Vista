@@ -10,6 +10,7 @@ import { Button } from "@/src/components/shared/components/ui/button"
 import { Badge } from "@/src/components/shared/components/ui/badge"
 import CertificateViewer from "./CertificateViewer"
 import { UserAPIMethods } from "@/src/services/methods/user.api"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 export default function CertificatePage() {
   const params = useParams()
@@ -88,28 +89,52 @@ export default function CertificatePage() {
             <ShieldCheck className="h-5 w-5 text-indigo-600" />
             Certificate Verification
           </h1>
-          <Badge variant={certificate.isRevoked ? "destructive" : "default"}>
-            {certificate.isRevoked ? "Revoked" : "Valid"}
-          </Badge>
+          <WithTooltip
+            content={
+              certificate.isRevoked
+                ? "This certificate has been revoked and is no longer valid."
+                : "This certificate is valid and can be verified."
+            }
+          >
+            <Badge
+              variant={certificate.isRevoked ? "destructive" : "default"}
+              className="cursor-help"
+            >
+              {certificate.isRevoked ? "Revoked" : "Valid"}
+            </Badge>
+          </WithTooltip>
         </div>
       </header>
+
       <main className="max-w-6xl mx-auto p-6">
         <CertificateViewer ref={certificateRef} certificate={certificate} />
         <div className="flex flex-col md:flex-row justify-center gap-4 mt-8">
-          <Button
-            onClick={handleDownloadCertificate}
-            disabled={certificate.isRevoked}
-            className="gap-2 px-6 py-3 text-base"
+          <WithTooltip
+            content={
+              certificate.isRevoked
+                ? "Revoked certificates cannot be downloaded."
+                : "Download this certificate as a PDF for offline use."
+            }
           >
-            <DownloadIcon className="w-5 h-5" /> Download Certificate
-          </Button>
+            <Button
+              onClick={handleDownloadCertificate}
+              disabled={certificate.isRevoked}
+              className="gap-2 px-6 py-3 text-base cursor-help"
+            >
+              <DownloadIcon className="w-5 h-5" /> Download Certificate
+            </Button>
+          </WithTooltip>
+
           {certificate.isRevoked && (
-            <div className="text-red-600 text-sm bg-red-50 px-4 py-2 rounded-md text-center">
-              This certificate has been revoked and cannot be downloaded.
-            </div>
+            <WithTooltip content="The issuing authority has revoked this certificate. Please contact support for more info.">
+              <div className="text-red-600 text-sm bg-red-50 px-4 py-2 rounded-md text-center cursor-help">
+                This certificate has been revoked and cannot be downloaded.
+              </div>
+            </WithTooltip>
           )}
         </div>
       </main>
+
       <footer className="bg-white border-t py-6 mt-12 text-center text-xs text-gray-500">
         &copy; {new Date().getFullYear()} Your Company. All rights reserved.
       </footer>

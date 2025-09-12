@@ -11,6 +11,7 @@ import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { IDonation } from "@/src/types/donationTyps"
 import { generateReceiptPDF } from "@/src/utils/receiptGenerator"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 export default function DonationHistoryPage() {
   const { user } = useUserContext()
@@ -96,14 +97,20 @@ export default function DonationHistoryPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-yellow-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-purple-700 mb-4">Your Donation History 💖</h1>
+        <WithTooltip content="This section displays your full donation history and total contributions">
+          <h1 className="text-4xl md:text-5xl font-bold text-purple-700 mb-4">
+            Your Donation History 💖
+          </h1>
+        </WithTooltip>
         <p className="text-gray-600 text-lg md:text-xl mb-6">
           {"Thank you for your generosity! Here's a record of your past contributions."}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
-          <div className="text-2xl font-semibold text-gray-800">
-            Total Donations: <span className="text-purple-600">₹{totalDonationsAmount.toFixed(2)}</span>
-          </div>
+          <WithTooltip content={`Total donations made by you: ₹${totalDonationsAmount.toFixed(2)}`}>
+            <div className="text-2xl font-semibold text-gray-800">
+              Total Donations: <span className="text-purple-600">₹{totalDonationsAmount.toFixed(2)}</span>
+            </div>
+          </WithTooltip>
           <DonationComponent />
         </div>
       </div>
@@ -127,42 +134,56 @@ export default function DonationHistoryPage() {
             <TableBody>
               {donations.map((donation) => (
                 <TableRow key={donation.paymentIntentId} className="align-middle">
-                  <TableCell className="font-medium">{donation.donorName || "Anonymous"}</TableCell>
-                  <TableCell>{donation.amount} INR</TableCell>
+                  <TableCell>
+                    <WithTooltip content={donation.donorName ? `Donor: ${donation.donorName}` : "Anonymous Donor"}>
+                      <span className="font-medium">{donation.donorName || "Anonymous"}</span>
+                    </WithTooltip>
+                  </TableCell>
+                  <TableCell>
+                    <WithTooltip content={`Amount donated: ₹${donation.amount}`}>
+                      {donation.amount} INR
+                    </WithTooltip>
+                  </TableCell>
                   <TableCell className="hidden md:table-cell">
-                    {new Date(donation.createdAt).toLocaleDateString()}
+                    <WithTooltip content={`Donation date: ${new Date(donation.createdAt).toLocaleDateString()}`}>
+                      {new Date(donation.createdAt).toLocaleDateString()}
+                    </WithTooltip>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <Badge
-                      variant="outline"
-                      className={`capitalize px-2 py-1 rounded-md ${
-                        donation.status === "succeeded"
-                          ? "bg-green-100 text-green-700"
-                          : donation.status === "failed"
-                          ? "bg-red-100 text-red-700"
-                          : donation.status === "processing"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-gray-100 text-gray-700"
-                      }`}
-                    >
-                      {donation.status}
-                    </Badge>
+                    <WithTooltip content={
+                      donation.status === "succeeded"
+                        ? "Your donation was successful"
+                        : donation.status === "failed"
+                        ? "Your donation failed"
+                        : donation.status === "processing"
+                        ? "Your donation is being processed"
+                        : "Unknown status"
+                    }>
+                      <Badge
+                        variant="outline"
+                        className={`capitalize px-2 py-1 rounded-md`}
+                      >
+                        {donation.status}
+                      </Badge>
+                    </WithTooltip>
                   </TableCell>
                   <TableCell className="text-right">
-                    <button
-                      onClick={() => handleDownloadCustomReceipt(donation)}
-                      disabled={downloadingPDFId === donation.paymentIntentId}
-                      className={`inline-flex items-center gap-1 text-purple-600 hover:underline text-sm ${
-                        downloadingPDFId === donation.paymentIntentId ? "cursor-not-allowed opacity-70" : ""
-                      }`}
-                    >
-                      {downloadingPDFId === donation.paymentIntentId ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <Download className="w-4 h-4" />
-                      )}
-                      Receipt
-                    </button>
+                    <WithTooltip content="Download PDF receipt for this donation">
+                      <button
+                        onClick={() => handleDownloadCustomReceipt(donation)}
+                        disabled={downloadingPDFId === donation.paymentIntentId}
+                        className={`inline-flex items-center gap-1 text-purple-600 hover:underline text-sm ${
+                          downloadingPDFId === donation.paymentIntentId ? "cursor-not-allowed opacity-70" : ""
+                        }`}
+                      >
+                        {downloadingPDFId === donation.paymentIntentId ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Download className="w-4 h-4" />
+                        )}
+                        Receipt
+                      </button>
+                    </WithTooltip>
                   </TableCell>
                 </TableRow>
               ))}

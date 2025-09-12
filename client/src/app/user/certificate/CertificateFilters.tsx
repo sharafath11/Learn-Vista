@@ -11,8 +11,7 @@ import {
 } from "@/src/components/shared/components/ui/select"
 import useDebounce from "@/src/hooks/useDebouncing"
 import { IFiltersProps } from "@/src/types/userProps"
-
-
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 export default function CertificateFilters({ onChange }: IFiltersProps) {
   const [search, setSearch] = useState("")
@@ -26,33 +25,39 @@ export default function CertificateFilters({ onChange }: IFiltersProps) {
 
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end">
-      <Input
-        placeholder=" Search by course title or ID..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full sm:w-1/3 rounded-lg border border-gray-300 shadow-sm"
-      />
+      <WithTooltip content="Search certificates by course title or unique certificate ID.">
+        <Input
+          placeholder=" Search by course title or ID..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full sm:w-1/3 rounded-lg border border-gray-300 shadow-sm cursor-help"
+        />
+      </WithTooltip>
 
-      <Select value={sort} onValueChange={(v) => setSort(v as any)}>
-        <SelectTrigger className="w-full sm:w-40 rounded-lg border border-gray-300 shadow-sm">
-          <SelectValue placeholder="Sort by" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="latest">📅 Latest</SelectItem>
-          <SelectItem value="oldest">📂 Oldest</SelectItem>
-        </SelectContent>
-      </Select>
+      <WithTooltip content="Sort certificates by latest or oldest issue date.">
+        <Select value={sort} onValueChange={(v) => setSort(v as any)}>
+          <SelectTrigger className="w-full sm:w-40 rounded-lg border border-gray-300 shadow-sm cursor-help">
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="latest">📅 Latest</SelectItem>
+            <SelectItem value="oldest">📂 Oldest</SelectItem>
+          </SelectContent>
+        </Select>
+      </WithTooltip>
 
-      <Select value={status} onValueChange={(v) => setStatus(v as any)}>
-        <SelectTrigger className="w-full sm:w-40 rounded-lg border border-gray-300 shadow-sm">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          <SelectItem value="valid">Valid</SelectItem>
-          <SelectItem value="revoked"> Revoked</SelectItem>
-        </SelectContent>
-      </Select>
+      <WithTooltip content="Filter certificates by status: Valid, Revoked, or All.">
+        <Select value={status} onValueChange={(v) => setStatus(v as any)}>
+          <SelectTrigger className="w-full sm:w-40 rounded-lg border border-gray-300 shadow-sm cursor-help">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="valid">Valid</SelectItem>
+            <SelectItem value="revoked">Revoked</SelectItem>
+          </SelectContent>
+        </Select>
+      </WithTooltip>
     </div>
   )
 }

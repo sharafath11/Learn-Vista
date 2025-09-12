@@ -1,14 +1,8 @@
-import { motion } from "framer-motion";
-import { ReactNode } from "react";
+"use client"
 
-interface TestimonialCardProps {
-  name: string;
-  role: string;
-  content: string;
-  avatar: ReactNode;
-  active: boolean;
-  onClick?: () => void;
-}
+import { ITestimonialCardProps } from "@/src/types/userProps";
+import { motion } from "framer-motion";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"; 
 
 export default function TestimonialCard({
   name,
@@ -17,7 +11,7 @@ export default function TestimonialCard({
   avatar,
   active,
   onClick,
-}: TestimonialCardProps) {
+}: ITestimonialCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -29,15 +23,30 @@ export default function TestimonialCard({
       onClick={onClick}
     >
       <div className="flex items-center gap-4 mb-6">
-        <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
-          {avatar}
-        </div>
+        {/* Avatar with tooltip */}
+        <WithTooltip content={name}>
+          <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
+            {avatar}
+          </div>
+        </WithTooltip>
+
         <div>
-          <h4 className="text-base sm:text-lg font-semibold text-gray-900">{name}</h4>
-          <p className="text-sm text-gray-600">{role}</p>
+          {/* Name with tooltip */}
+          <WithTooltip content={name}>
+            <h4 className="text-base sm:text-lg font-semibold text-gray-900">{name}</h4>
+          </WithTooltip>
+
+          {/* Role with tooltip */}
+          <WithTooltip content={role}>
+            <p className="text-sm text-gray-600">{role}</p>
+          </WithTooltip>
         </div>
       </div>
-      <p className="text-gray-700 text-sm sm:text-lg italic">{`"${content}"`}</p>
+
+      {/* Content (testimonial) with tooltip */}
+      <WithTooltip content={content}>
+        <p className="text-gray-700 text-sm sm:text-lg italic">{`"${content}"`}</p>
+      </WithTooltip>
     </motion.div>
   );
 }

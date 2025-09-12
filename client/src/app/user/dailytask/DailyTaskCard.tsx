@@ -26,8 +26,7 @@ import {
 } from "@/src/utils/Toast";
 import { handleTextToSpeech, stopTextToSpeech } from "@/src/utils/voice";
 import { ITaskesProps } from "@/src/types/userProps";
-
-
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
 const taskIcons = {
   speaking: Mic,
@@ -158,37 +157,46 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
       <div className="p-4 mt-3 bg-gray-50 rounded border border-gray-200 space-y-2">
         {localTask.type === "listening" && localTask.prompt && (
           <div>
-            <p className="text-sm font-semibold">Prompt:</p>
-            <Button className="w-full" onClick={() => handleTextToSpeech(task.prompt)}>
-              <Play className="h-4 w-4 mr-2" />
-              Play Audio
-            </Button>
-            <Button variant="ghost" className="w-full" onClick={stopTextToSpeech}>
-              Stop Audio
-            </Button>
+            <WithTooltip content="Listen to the prompt audio before answering.">
+              <Button className="w-full" onClick={() => handleTextToSpeech(task.prompt)}>
+                <Play className="h-4 w-4 mr-2" />
+                Play Audio
+              </Button>
+            </WithTooltip>
+            <WithTooltip content="Stop audio playback.">
+              <Button variant="ghost" className="w-full" onClick={stopTextToSpeech}>
+                Stop Audio
+              </Button>
+            </WithTooltip>
           </div>
         )}
         {localTask.userResponse && (
-          <div className="text-sm text-gray-800">
-            <strong>Your Answer:</strong>
-            <br />
-            {localTask.type !== "speaking" ? (
-              localTask.userResponse
-            ) : (
-              <audio controls src={localTask.userResponse} className="mt-2" />
-            )}
-          </div>
+          <WithTooltip content="This shows the answer you submitted.">
+            <div className="text-sm text-gray-800">
+              <strong>Your Answer:</strong>
+              <br />
+              {localTask.type !== "speaking" ? (
+                localTask.userResponse
+              ) : (
+                <audio controls src={localTask.userResponse} className="mt-2" />
+              )}
+            </div>
+          </WithTooltip>
         )}
         {localTask.aiFeedback && (
-          <p className="text-sm text-gray-800">
-            <strong>AI Feedback:</strong> <br />
-            {localTask.aiFeedback}
-          </p>
+          <WithTooltip content="AI-generated feedback based on your response.">
+            <p className="text-sm text-gray-800">
+              <strong>AI Feedback:</strong> <br />
+              {localTask.aiFeedback}
+            </p>
+          </WithTooltip>
         )}
         {typeof localTask.score === "number" && (
-          <p className="text-sm text-gray-800">
-            <strong>Score:</strong> {localTask.score} / 5
-          </p>
+          <WithTooltip content="Your score out of 5 based on AI evaluation.">
+            <p className="text-sm text-gray-800">
+              <strong>Score:</strong> {localTask.score} / 5
+            </p>
+          </WithTooltip>
         )}
       </div>
     );
@@ -247,26 +255,26 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
           <div className="space-y-3">
             {!localTask.isCompleted && (
               <>
-                {/* Recording Control */}
-                <Button
-                  variant={isRecording ? "destructive" : "outline"}
-                  className="w-full"
-                  onClick={isRecording ? stopRecording : startRecording}
-                >
-                  {isRecording ? (
-                    <>
-                      <div className="w-2 h-2 bg-white rounded-full animate-pulse mr-2" />
-                      Stop Recording
-                    </>
-                  ) : (
-                    <>
-                      <Mic className="h-4 w-4 mr-2" />
-                      Start Recording
-                    </>
-                  )}
-                </Button>
+                <WithTooltip content={isRecording ? "Click to stop recording and save your response." : "Click to start recording your answer. Your speech will also be transcribed automatically."}>
+                  <Button
+                    variant={isRecording ? "destructive" : "outline"}
+                    className="w-full"
+                    onClick={isRecording ? stopRecording : startRecording}
+                  >
+                    {isRecording ? (
+                      <>
+                        <div className="w-2 h-2 bg-white rounded-full animate-pulse mr-2" />
+                        Stop Recording
+                      </>
+                    ) : (
+                      <>
+                        <Mic className="h-4 w-4 mr-2" />
+                        Start Recording
+                      </>
+                    )}
+                  </Button>
+                </WithTooltip>
 
-                {/* Playback after recording */}
                 {audioBlob && (
                   <div className="mt-3">
                     <p className="text-sm font-medium text-gray-700 mb-1">
@@ -276,18 +284,17 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
                   </div>
                 )}
 
-                {/* Transcription */}
-                <div className="space-y-3 mt-3">
+                <WithTooltip content="Type your transcription here. Copy-paste is disabled.">
                   <Textarea
                     placeholder="Your speech transcription will appear here..."
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    onPaste={(e) => e.preventDefault()} // disable copy-paste
+                    onPaste={(e) => e.preventDefault()} 
                     className="min-h-[100px] resize-none border-red-200 focus:border-red-400"
                   />
-                  <div className="text-xs text-muted-foreground text-right">
-                    {answer.length} characters
-                  </div>
+                </WithTooltip>
+                <div className="text-xs text-muted-foreground text-right">
+                  {answer.length} characters
                 </div>
               </>
             )}
@@ -300,13 +307,15 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
           <div className="space-y-3">
             {!localTask.isCompleted && (
               <>
-                <Textarea
-                  placeholder="Write your answer here..."
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  onPaste={(e) => e.preventDefault()} // disable copy-paste
-                  className="min-h-[120px] resize-none border-blue-200 focus:border-blue-400"
-                />
+                <WithTooltip content="Type your answer here. Copy-paste is disabled.">
+                  <Textarea
+                    placeholder="Write your answer here..."
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    onPaste={(e) => e.preventDefault()} 
+                    className="min-h-[120px] resize-none border-blue-200 focus:border-blue-400"
+                  />
+                </WithTooltip>
                 <div className="text-xs text-muted-foreground text-right">
                   {answer.length} characters
                 </div>
@@ -321,27 +330,26 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
           <div className="space-y-3">
             {!localTask.isCompleted && (
               <>
-                <Button
-                  className="w-full"
-                  onClick={() => handleTextToSpeech(localTask.prompt)}
-                >
-                  <Play className="h-4 w-4 mr-2" />
-                  Play Audio
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full"
-                  onClick={stopTextToSpeech}
-                >
-                  Stop Audio
-                </Button>
-                <Textarea
-                  placeholder="Enter your answer here..."
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  onPaste={(e) => e.preventDefault()} // disable copy-paste
-                  className="min-h-[100px] resize-none border-green-200 focus:border-green-400"
-                />
+                <WithTooltip content="Listen to the audio prompt before answering.">
+                  <Button className="w-full" onClick={() => handleTextToSpeech(localTask.prompt)}>
+                    <Play className="h-4 w-4 mr-2" />
+                    Play Audio
+                  </Button>
+                </WithTooltip>
+                <WithTooltip content="Stop the audio playback.">
+                  <Button variant="ghost" className="w-full" onClick={stopTextToSpeech}>
+                    Stop Audio
+                  </Button>
+                </WithTooltip>
+                <WithTooltip content="Type your answer here. Copy-paste is disabled.">
+                  <Textarea
+                    placeholder="Enter your answer here..."
+                    value={answer}
+                    onChange={(e) => setAnswer(e.target.value)}
+                    onPaste={(e) => e.preventDefault()} 
+                    className="min-h-[100px] resize-none border-green-200 focus:border-green-400"
+                  />
+                </WithTooltip>
                 <div className="text-xs text-muted-foreground text-right">
                   {answer.length} characters
                 </div>
@@ -352,13 +360,15 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
         )}
 
         {!localTask.isCompleted && (
-          <Button
-            className="w-full"
-            onClick={handleSubmit}
-            disabled={isSubmitting || !answer.trim()}
-          >
-            {isSubmitting ? "Submitting..." : "Submit Task"}
-          </Button>
+          <WithTooltip content="Submit your answer for AI evaluation and feedback.">
+            <Button
+              className="w-full"
+              onClick={handleSubmit}
+              disabled={isSubmitting || !answer.trim()}
+            >
+              {isSubmitting ? "Submitting..." : "Submit Task"}
+            </Button>
+          </WithTooltip>
         )}
       </CardContent>
     </Card>

@@ -13,9 +13,10 @@ import { UserAPIMethods } from "@/src/services/methods/user.api"
 import { showErrorToast, showSuccessToast } from "@/src/utils/Toast"
 import type { ICategory } from "@/src/types/categoryTypes"
 import CourseCard from "./CourseCard"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 const Page = () => {
-    const { user, setUser } = useUserContext()
+  const { user, setUser } = useUserContext()
   const [courses, setCourses] = useState<IcourseFromResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [page, setPage] = useState(1)
@@ -43,55 +44,53 @@ const Page = () => {
   }, [fetchCategories])
 
   useEffect(() => {
-  const fetchCourses = async () => {
-    setLoading(true)
+    const fetchCourses = async () => {
+      setLoading(true)
 
-    let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
-    if (filters.sort === "ASC") {
-      mongoSort = { createdAt: -1 }
-    } else if (filters.sort === "DESC") {
-      mongoSort = { createdAt: 1 }
+      let mongoSort: Record<string, 1 | -1> = { createdAt: -1 }
+      if (filters.sort === "ASC") {
+        mongoSort = { createdAt: -1 }
+      } else if (filters.sort === "DESC") {
+        mongoSort = { createdAt: 1 }
+      }
+
+      const res = await UserAPIMethods.fetchAllCourse({
+        page,
+        limit: 3,
+        search: filters.search || "",
+        filters: {
+          categoryId: filters.category === "All" ? "" : filters.category,
+        },
+        sort: mongoSort,
+      })
+
+      if (res.ok) {
+        const { data: newCourses, totalPages } = res.data
+        setCourses(newCourses.filter((i: IPopulatedCourse) => !i.isBlock))
+        setTotalPages(totalPages)
+      } else {
+        setCourses([])
+        setTotalPages(0)
+      }
+
+      setLoading(false)
     }
 
-    const res = await UserAPIMethods.fetchAllCourse({
-      page,
-      limit: 3,
-      search: filters.search || "",
-      filters: {
-        categoryId: filters.category === "All" ? "" : filters.category,
-      },
-      sort: mongoSort,
-    })
-
-    if (res.ok) {
-      const { data: newCourses, totalPages } = res.data
-      setCourses(newCourses.filter((i: IPopulatedCourse) => !i.isBlock))
-      setTotalPages(totalPages)
-    } else {
-      setCourses([])
-      setTotalPages(0)
-    }
-
-    setLoading(false)
-  }
-
-  fetchCourses()
-}, [page, filters])
-
-
+    fetchCourses()
+  }, [page, filters])
 
   const handleDetailsClick = (course: IcourseFromResponse) => {
     setSelectedCourse(course)
     setIsModalOpen(true)
   }
-const handleFilterChange = useCallback(
-  (newFilters: { search: string; category: string; sort: string }) => {
-    setPage(1)
-    setFilters(newFilters)
-  },
-  [] 
-)
 
+  const handleFilterChange = useCallback(
+    (newFilters: { search: string; category: string; sort: string }) => {
+      setPage(1)
+      setFilters(newFilters)
+    },
+    []
+  )
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-16 sm:py-20">
@@ -146,19 +145,24 @@ const handleFilterChange = useCallback(
             transition={{ duration: 0.8, delay: 0.3 }}
             className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-            >
-              <BookOpen className="w-5 h-5 mr-2" />
-              Explore Our Courses
-            </Button>
-            <div className="flex items-center gap-6 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-green-600" />
-                <span className="font-medium">10k+ Students</span>
+            <WithTooltip content="See the full course catalog">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-2xl text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+              >
+                <BookOpen className="w-5 h-5 mr-2" />
+                Explore Our Courses
+              </Button>
+            </WithTooltip>
+
+            <WithTooltip content="Number of learners already enrolled">
+              <div className="flex items-center gap-6 text-sm text-gray-600 cursor-help">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-green-600" />
+                  <span className="font-medium">10k+ Students</span>
+                </div>
               </div>
-            </div>
+            </WithTooltip>
           </motion.div>
         </div>
 
@@ -208,13 +212,16 @@ const handleFilterChange = useCallback(
                   <br />
                   Try broadening your search or selecting a different category.
                 </p>
-                <Button
-                  variant="outline"
-                  className="mt-6 px-6 py-2 rounded-xl border-blue-300 text-blue-700 hover:bg-blue-50 bg-transparent"
-                  onClick={() => setFilters({ search: "", category: "", sort: "newest" })}
-                >
-                  Clear Filters
-                </Button>
+
+                <WithTooltip content="Reset filters and show all courses">
+                  <Button
+                    variant="outline"
+                    className="mt-6 px-6 py-2 rounded-xl border-blue-300 text-blue-700 hover:bg-blue-50 bg-transparent"
+                    onClick={() => setFilters({ search: "", category: "", sort: "newest" })}
+                  >
+                    Clear Filters
+                  </Button>
+                </WithTooltip>
               </div>
             </motion.div>
           )}
@@ -227,31 +234,37 @@ const handleFilterChange = useCallback(
           transition={{ duration: 0.6, delay: 0.6 }}
           className="flex justify-center items-center gap-6 mt-16"
         >
-          <Button
-            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-            disabled={page === 1 || loading}
-            variant="outline"
-            size="lg"
-            className="px-8 py-3 text-lg font-semibold border-blue-300 text-blue-700 hover:bg-blue-50 hover:text-blue-800 transition-all rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Previous
-          </Button>
+          <WithTooltip content="Go to the previous page">
+            <Button
+              onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+              disabled={page === 1 || loading}
+              variant="outline"
+              size="lg"
+              className="px-8 py-3 text-lg font-semibold border-blue-300 text-blue-700 hover:bg-blue-50 hover:text-blue-800 transition-all rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </Button>
+          </WithTooltip>
 
-          <div className="flex items-center gap-2 px-6 py-3 bg-white/70 backdrop-blur-sm rounded-xl shadow-sm border border-white/20">
-            <span className="text-lg font-medium text-gray-700">
-              Page {page} of {totalPages === 0 ? 1 : totalPages}
-            </span>
-          </div>
+          <WithTooltip content="Current page of available courses">
+            <div className="flex items-center gap-2 px-6 py-3 bg-white/70 backdrop-blur-sm rounded-xl shadow-sm border border-white/20 cursor-help">
+              <span className="text-lg font-medium text-gray-700">
+                Page {page} of {totalPages === 0 ? 1 : totalPages}
+              </span>
+            </div>
+          </WithTooltip>
 
-          <Button
-            onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
-            disabled={page === totalPages || loading || totalPages === 0}
-            variant="outline"
-            size="lg"
-            className="px-8 py-3 text-lg font-semibold border-blue-300 text-blue-700 hover:bg-blue-50 hover:text-blue-800 transition-all rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Next
-          </Button>
+          <WithTooltip content="Go to the next page">
+            <Button
+              onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+              disabled={page === totalPages || loading || totalPages === 0}
+              variant="outline"
+              size="lg"
+              className="px-8 py-3 text-lg font-semibold border-blue-300 text-blue-700 hover:bg-blue-50 hover:text-blue-800 transition-all rounded-xl shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </Button>
+          </WithTooltip>
         </motion.div>
 
         {/* Course Details Modal */}

@@ -4,19 +4,14 @@ import { useState, useEffect } from "react"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { Alert, AlertDescription } from "@/src/components/shared/components/ui/alert"
 import { CheckCircle2 } from "lucide-react"
-import { IQuestions } from "@/src/types/lessons"
-
-interface MCQQuestionsProps {
-  questions: IQuestions[]
-  onComplete: (answers: { question: string; answer: string }[]) => void
-  isCompleted: boolean
-}
+import { IMCQQuestionsProps } from "@/src/types/userProps"
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 export default function MCQQuestions({
   questions,
   onComplete,
   isCompleted,
-}: MCQQuestionsProps) {
+}: IMCQQuestionsProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [selectedAnswers, setSelectedAnswers] = useState<{ question: string; answer: string }[]>([])
   const [currentAnswer, setCurrentAnswer] = useState("")
@@ -90,49 +85,61 @@ export default function MCQQuestions({
         <p className="text-gray-600 dark:text-gray-400 mb-6">
           {`You've successfully completed all the MCQ questions for this lesson.`}
         </p>
-        <Button onClick={() => setAllQuestionsAnswered(false)}>Review Questions</Button>
+        <WithTooltip content="Review all the questions again">
+          <Button onClick={() => setAllQuestionsAnswered(false)}>Review Questions</Button>
+        </WithTooltip>
       </div>
     )
   }
 
   return (
     <div>
+      {/* Header with question counter tooltip */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-bold">MCQ Questions</h3>
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          Question {currentQuestionIndex + 1} of {questions.length}
-        </div>
+        <WithTooltip content={`Question ${currentQuestionIndex + 1} out of ${questions.length}`}>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Question {currentQuestionIndex + 1} of {questions.length}
+          </div>
+        </WithTooltip>
       </div>
 
+      {/* Question text */}
       <div className="mb-4 p-4 border rounded bg-muted">
         <p className="text-lg font-medium">{currentQuestion.question}</p>
       </div>
 
+      {/* Options with tooltips */}
       <div className="space-y-3 mb-6">
         {currentQuestion.options?.map((option, index) => (
-          <div 
+          <WithTooltip
             key={index}
-            className={`p-3 border rounded cursor-pointer transition-colors ${
-              currentAnswer === option 
-                ? 'bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700'
-                : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-            }`}
-            onClick={() => !isQuestionSubmitted && handleOptionSelect(option)}
+            content={`Select option ${String.fromCharCode(65 + index)}`}
           >
-            <div className="flex items-center">
-              <div className={`w-5 h-5 rounded-full border mr-3 flex items-center justify-center ${
+            <div 
+              className={`p-3 border rounded cursor-pointer transition-colors ${
                 currentAnswer === option 
-                  ? 'bg-blue-500 border-blue-500 text-white'
-                  : 'border-gray-400'
-              }`}>
-                {String.fromCharCode(65 + index)}
+                  ? 'bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+              }`}
+              onClick={() => !isQuestionSubmitted && handleOptionSelect(option)}
+            >
+              <div className="flex items-center">
+                <div className={`w-5 h-5 rounded-full border mr-3 flex items-center justify-center ${
+                  currentAnswer === option 
+                    ? 'bg-blue-500 border-blue-500 text-white'
+                    : 'border-gray-400'
+                }`}>
+                  {String.fromCharCode(65 + index)}
+                </div>
+                <span>{option}</span>
               </div>
-              <span>{option}</span>
             </div>
-          </div>
+          </WithTooltip>
         ))}
       </div>
 
+      {/* Submission alert */}
       {isQuestionSubmitted && (
         <Alert className="mb-6 mt-4 border-green-500">
           <div className="flex items-center gap-2">
@@ -142,19 +149,26 @@ export default function MCQQuestions({
         </Alert>
       )}
 
+      {/* Navigation buttons with tooltips */}
       <div className="flex justify-between mt-6">
-        <Button variant="outline" onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
-          Previous
-        </Button>
+        <WithTooltip content="Go to previous question">
+          <Button variant="outline" onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
+            Previous
+          </Button>
+        </WithTooltip>
 
         {!isQuestionSubmitted ? (
-          <Button onClick={handleSubmit} disabled={!currentAnswer}>
-            Mark as Complete
-          </Button>
+          <WithTooltip content="Save your answer and mark this question as complete">
+            <Button onClick={handleSubmit} disabled={!currentAnswer}>
+              Mark as Complete
+            </Button>
+          </WithTooltip>
         ) : (
-          <Button onClick={handleNext}>
-            {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish"}
-          </Button>
+          <WithTooltip content="Go to next question or finish">
+            <Button onClick={handleNext}>
+              {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Finish"}
+            </Button>
+          </WithTooltip>
         )}
       </div>
     </div>

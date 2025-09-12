@@ -7,8 +7,7 @@ import { useUserContext } from "@/src/context/userAuthContext"
 import { Button } from "@/src/components/shared/components/ui/button"
 import { generateReceiptPDF } from "@/src/utils/receiptGenerator"
 import { SuccessProps } from "@/src/types/userProps"
-
-
+import { WithTooltip } from "@/src/hooks/UseTooltipProps"
 
 export default function SuccessView({ session }: SuccessProps) {
   const router = useRouter()
@@ -47,7 +46,7 @@ export default function SuccessView({ session }: SuccessProps) {
 
       await generateReceiptPDF(receiptData)
     } catch (error) {
-     console.warn(error)
+      console.warn(error)
     } finally {
       setDownloadingPDF(false)
     }
@@ -63,12 +62,17 @@ export default function SuccessView({ session }: SuccessProps) {
             <div className="absolute bottom-0 right-0 w-24 h-24 bg-white/10 rounded-full translate-x-12 translate-y-12"></div>
 
             <div className="relative">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4">
-                <CheckCircle2 className="h-10 w-10 text-green-600" />
-              </div>
-              <div className="absolute -top-2 -right-2">
-                <Heart className="h-6 w-6 text-red-400 animate-pulse" fill="currentColor" />
-              </div>
+              <WithTooltip content="Your donation was processed successfully 🎉">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4">
+                  <CheckCircle2 className="h-10 w-10 text-green-600" />
+                </div>
+              </WithTooltip>
+
+              <WithTooltip content="We truly appreciate your support 💜">
+                <div className="absolute -top-2 -right-2">
+                  <Heart className="h-6 w-6 text-red-400 animate-pulse" fill="currentColor" />
+                </div>
+              </WithTooltip>
             </div>
 
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Thank You!</h1>
@@ -93,45 +97,51 @@ export default function SuccessView({ session }: SuccessProps) {
             </div>
 
             {/* Email Confirmation */}
-            <div className="flex items-center justify-center gap-3 mb-8 p-4 bg-blue-50 rounded-xl">
-              <div className="flex-shrink-0">
-                <Mail className="h-5 w-5 text-blue-600" />
+            <WithTooltip content="A confirmation has been sent to your email address">
+              <div className="flex items-center justify-center gap-3 mb-8 p-4 bg-blue-50 rounded-xl">
+                <div className="flex-shrink-0">
+                  <Mail className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm text-gray-600">Confirmation sent to</p>
+                  <p className="font-semibold text-gray-800 break-all">{session.donorEmail}</p>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="text-sm text-gray-600">Confirmation sent to</p>
-                <p className="font-semibold text-gray-800 break-all">{session.donorEmail}</p>
-              </div>
-            </div>
+            </WithTooltip>
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-4 mb-6">
               {/* Custom Receipt */}
-              <Button
-                onClick={handleDownloadCustomReceipt}
-                disabled={downloadingPDF}
-                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
-              >
-                {downloadingPDF ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    Generating PDF...
-                  </>
-                ) : (
-                  <>
-                    <Download className="h-5 w-5" />
-                    Download Receipt
-                  </>
-                )}
-              </Button>
+              <WithTooltip content="Download an official PDF receipt for your donation">
+                <Button
+                  onClick={handleDownloadCustomReceipt}
+                  disabled={downloadingPDF}
+                  className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:transform-none"
+                >
+                  {downloadingPDF ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Generating PDF...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-5 w-5" />
+                      Download Receipt
+                    </>
+                  )}
+                </Button>
+              </WithTooltip>
 
               {/* Continue Button */}
-              <button
-                onClick={handleBack}
-                className="inline-flex items-center justify-center gap-2 px-6 py-4 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded-xl font-medium transition-all duration-200"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Continue to Learning
-              </button>
+              <WithTooltip content="Return to your learning dashboard">
+                <button
+                  onClick={handleBack}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-4 border border-gray-300 text-gray-700 hover:bg-gray-100 rounded-xl font-medium transition-all duration-200"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Continue to Learning
+                </button>
+              </WithTooltip>
             </div>
           </div>
 

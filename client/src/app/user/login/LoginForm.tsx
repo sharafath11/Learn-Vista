@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -9,9 +8,10 @@ import { useUserContext } from "@/src/context/userAuthContext";
 import { showSuccessToast, showErrorToast } from "@/src/utils/Toast";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
-import { UserAPIMethods } from "@/src/services/methods/user.api";
 import Link from "next/link";
 import Image from "next/image";
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
+import { UserAPIMethods } from "@/src/services/methods/user.api";
 
 export default function LoginForm() {
   const [data, setData] = useState<ILogin>({
@@ -26,15 +26,14 @@ export default function LoginForm() {
   const { setUser, user, fetchUserData, refereshNotifcation } = useUserContext();
   const router = useRouter();
   const { data: session } = useSession();
+
+  useEffect(() => setIsMounted(true), []);
+
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  useEffect(() => {
-    if (user) {
-      router.push("/user");
-    }
+    if (user) router.push("/user");
   }, [user, router]);
-   const handleSubmit = useCallback(
+
+  const handleSubmit = useCallback(
     async (overrideData?: ILogin, e?: React.FormEvent<HTMLFormElement>) => {
       if (e) e.preventDefault();
       setIsLoading(true);
@@ -56,16 +55,6 @@ export default function LoginForm() {
   );
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      router.push("/user");
-    }
-  }, [user, router]);
-
-  useEffect(() => {
     if (session?.user?.email && session?.user?.id && !data.googleId) {
       const googleData: ILogin = {
         email: session.user.email || "",
@@ -73,13 +62,11 @@ export default function LoginForm() {
         googleId: session.user.id,
       };
       setData(googleData);
-      handleSubmit(googleData); 
+      handleSubmit(googleData);
     }
   }, [session, data.googleId, handleSubmit]);
 
-  const handleGoogleAuth = async () => {
-    await signIn("google");
-  };
+  const handleGoogleAuth = async () => await signIn("google");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
@@ -102,7 +89,9 @@ export default function LoginForm() {
     <div className="max-w-md mx-auto p-6 sm:p-8 rounded-xl shadow-lg bg-white">
       {/* Logo */}
       <div className="mb-6 flex items-center justify-center">
-        <Image src="/images/logo.png" alt="Learn Vista Logo" width={40} height={40} />
+        <WithTooltip content="Learn Vista logo">
+          <Image src="/images/logo.png" alt="Learn Vista Logo" width={40} height={40} />
+        </WithTooltip>
         <span className="ml-2 text-2xl font-bold text-purple-700">Learn Vista</span>
       </div>
 
@@ -111,22 +100,27 @@ export default function LoginForm() {
 
       {/* Form */}
       <form className="mt-6 space-y-5" onSubmit={(e) => handleSubmit(undefined, e)}>
-        <FormInput
-          label="Email"
-          type="email"
-          id="email"
-          onChange={handleChange}
-          value={data.email}
-        />
-        <FormInput
-          label="Password"
-          type="password"
-          id="password"
-          onChange={handleChange}
-          value={data.password}
-          showPassword={showPassword}
-          togglePassword={() => setShowPassword((prev) => !prev)}
-        />
+        <WithTooltip content="Enter your email address">
+          <FormInput
+            label="Email"
+            type="email"
+            id="email"
+            onChange={handleChange}
+            value={data.email}
+          />
+        </WithTooltip>
+
+        <WithTooltip content="Enter your password">
+          <FormInput
+            label="Password"
+            type="password"
+            id="password"
+            onChange={handleChange}
+            value={data.password}
+            showPassword={showPassword}
+            togglePassword={() => setShowPassword((prev) => !prev)}
+          />
+        </WithTooltip>
 
         <div className="flex justify-between text-sm text-gray-500">
           <label className="flex items-center">
@@ -137,15 +131,17 @@ export default function LoginForm() {
           </Link>
         </div>
 
-        <button
-          type="submit"
-          className={`w-full bg-purple-600 py-3 text-white rounded-lg font-medium shadow-md hover:bg-purple-700 transition duration-200 ${
-            isLoading ? "opacity-60 cursor-not-allowed" : ""
-          }`}
-          disabled={isLoading}
-        >
-          {isLoading ? "Signing in..." : "Sign in"}
-        </button>
+        <WithTooltip content="Click to sign in">
+          <button
+            type="submit"
+            className={`w-full bg-purple-600 py-3 text-white rounded-lg font-medium shadow-md hover:bg-purple-700 transition duration-200 ${
+              isLoading ? "opacity-60 cursor-not-allowed" : ""
+            }`}
+            disabled={isLoading}
+          >
+            {isLoading ? "Signing in..." : "Sign in"}
+          </button>
+        </WithTooltip>
       </form>
 
       {/* Divider */}
@@ -159,13 +155,15 @@ export default function LoginForm() {
       </div>
 
       {/* Google Auth */}
-      <button
-        type="button"
-        onClick={handleGoogleAuth}
-        className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
-      >
-        <FcGoogle className="text-lg" /> Sign in with Google
-      </button>
+      <WithTooltip content="Sign in using your Google account">
+        <button
+          type="button"
+          onClick={handleGoogleAuth}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition"
+        >
+          <FcGoogle className="text-lg" /> Sign in with Google
+        </button>
+      </WithTooltip>
 
       <p className="mt-6 text-center text-sm text-gray-500">
         Don&apos;t have an account?{" "}
@@ -211,13 +209,15 @@ function FormInput({
         className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100 transition"
       />
       {isPasswordField && togglePassword && (
-        <button
-          type="button"
-          onClick={togglePassword}
-          className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-purple-600"
-        >
-          {showPassword ? <HiEyeOff className="w-5 h-5" /> : <HiEye className="w-5 h-5" />}
-        </button>
+        <WithTooltip content={showPassword ? "Hide password" : "Show password"}>
+          <button
+            type="button"
+            onClick={togglePassword}
+            className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-purple-600"
+          >
+            {showPassword ? <HiEyeOff className="w-5 h-5" /> : <HiEye className="w-5 h-5" />}
+          </button>
+        </WithTooltip>
       )}
     </div>
   );

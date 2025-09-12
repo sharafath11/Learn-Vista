@@ -1,4 +1,3 @@
-
 "use client";
 import type React from "react";
 import { useState, useEffect } from "react";
@@ -14,7 +13,7 @@ import { FormOTP } from "./FormOTP";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { validateSignup } from "@/src/validations/validation";
 import { IFormInputProps } from "@/src/types/userProps";
-
+import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
 const FormInput = ({
   label,
@@ -79,48 +78,47 @@ export default function SignupForm() {
     setOtpVerified(false);
     handleSendOtp();
   };
-const handleSendOtp = async () => {
-  if (!userData.email) {
-    showErrorToast("Please enter your email address");
-    return;
-  }
 
-  const res = await UserAPIMethods.sendOtp(userData.email);
+  const handleSendOtp = async () => {
+    if (!userData.email) {
+      showErrorToast("Please enter your email address");
+      return;
+    }
 
-  if (res?.ok || (typeof res === "string" && res.includes("OTP already send it"))) {
-    setOtpSent(true);
-    showSuccessToast("OTP sent to your email");
-  }
-};
+    const res = await UserAPIMethods.sendOtp(userData.email);
 
+    if (res?.ok || (typeof res === "string" && res.includes("OTP already send it"))) {
+      setOtpSent(true);
+      showSuccessToast("OTP sent to your email");
+    }
+  };
 
- const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-  const validation = validateSignup(userData);
-  if (!validation.isValid) {
-    showErrorToast(validation.message);
-    return;
-  }
+    const validation = validateSignup(userData);
+    if (!validation.isValid) {
+      showErrorToast(validation.message);
+      return;
+    }
 
-  if (!otpVerified) {
-    showSuccessToast("Please verify your OTP first");
-    return;
-  }
+    if (!otpVerified) {
+      showSuccessToast("Please verify your OTP first");
+      return;
+    }
 
-  setIsSubmitting(true);
+    setIsSubmitting(true);
 
-  const res = await UserAPIMethods.signUp(userData); 
-  if (res?.ok) {
-    showSuccessToast("Signup successful");
-    router.push("/user/login");
-  } else {
-    showErrorToast("Signup failed. Please try again.");
-  }
+    const res = await UserAPIMethods.signUp(userData);
+    if (res?.ok) {
+      showSuccessToast("Signup successful");
+      router.push("/user/login");
+    } else {
+      showErrorToast("Signup failed. Please try again.");
+    }
 
-  setIsSubmitting(false);
-};
-
+    setIsSubmitting(false);
+  };
 
   const googleSignup = async () => {
     try {
@@ -130,7 +128,7 @@ const handleSendOtp = async () => {
         router.push("/");
       }
     } catch (error) {
-      console.warn(error)
+      console.warn(error);
       showErrorToast("Signup failed, please try again.");
     }
   };
@@ -148,19 +146,18 @@ const handleSendOtp = async () => {
 
   useEffect(() => {
     const autoLogin = async () => {
-  if (autoSubmit && loginData) {
-    const res = await UserAPIMethods.loginUser(loginData).catch(() => null);
+      if (autoSubmit && loginData) {
+        const res = await UserAPIMethods.loginUser(loginData).catch(() => null);
 
-    if (res?.ok) {
-      showSuccessToast(res.msg);
-      router.push("/");
-    }
-  }
-};
-
+        if (res?.ok) {
+          showSuccessToast(res.msg);
+          router.push("/");
+        }
+      }
+    };
 
     autoLogin();
-  },[autoSubmit, router, loginData]);
+  }, [autoSubmit, router, loginData]);
 
   return (
     <div className="flex w-full max-w-6xl overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg">
@@ -201,13 +198,15 @@ const handleSendOtp = async () => {
 
             {!otpSent ? (
               <div className="mt-2">
-                <button
-                  type="button"
-                  onClick={handleSendOtp}
-                  className="w-full rounded-lg bg-purple-600 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors"
-                >
-                  Send OTP
-                </button>
+                <WithTooltip content="Send a verification code to your email">
+                  <button
+                    type="button"
+                    onClick={handleSendOtp}
+                    className="w-full rounded-lg bg-purple-600 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors"
+                  >
+                    Send OTP
+                  </button>
+                </WithTooltip>
               </div>
             ) : (
               <FormOTP
@@ -219,13 +218,15 @@ const handleSendOtp = async () => {
               />
             )}
 
-            <button
-              type="submit"
-              disabled={(!otpVerified && otpSent) || isSubmitting}
-              className="w-full rounded-lg bg-purple-600 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors disabled:bg-purple-300 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? "Signing up..." : "Sign up"}
-            </button>
+            <WithTooltip content="Complete your registration">
+              <button
+                type="submit"
+                disabled={(!otpVerified && otpSent) || isSubmitting}
+                className="w-full rounded-lg bg-purple-600 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors disabled:bg-purple-300 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? "Signing up..." : "Sign up"}
+              </button>
+            </WithTooltip>
           </form>
 
           <div className="relative mt-6 flex items-center">
@@ -234,14 +235,16 @@ const handleSendOtp = async () => {
             <div className="flex-grow border-t border-gray-200" />
           </div>
 
-          <button
-            onClick={googleSignup}
-            type="button"
-            className="mt-5 flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all"
-          >
-            <FcGoogle className="mr-2 h-5 w-5" />
-            Sign up with Google
-          </button>
+          <WithTooltip content="Use your Google account to sign up">
+            <button
+              onClick={googleSignup}
+              type="button"
+              className="mt-5 flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all"
+            >
+              <FcGoogle className="mr-2 h-5 w-5" />
+              Sign up with Google
+            </button>
+          </WithTooltip>
 
           <p className="mt-6 text-center text-sm text-gray-500">
             Already have an account?{" "}
