@@ -12,6 +12,7 @@ export interface IMentorResponseDto {
   googleMentor: boolean;
   courses?: string[];
   role: 'mentor';
+  password:string
   googleId?: string;
   status: 'pending' | 'approved' | 'rejected';
   isBlock: boolean;

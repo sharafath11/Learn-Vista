@@ -17,7 +17,7 @@ import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/I
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
 import { Messages } from "../../constants/messages";
-import { ICourseAdminResponse } from "../../shared/dtos/courses/course-response.dto";
+import { ICourseAdminResponse, ICourseResponseDto } from "../../shared/dtos/courses/course-response.dto";
 import { CourseMapper } from "../../shared/dtos/courses/course.mapping";
 import { LessonMapper } from "../../shared/dtos/lessons/lesson.mapper";
 import { IAdminLessonResponseDto} from "../../shared/dtos/lessons/lessonResponse.dto";
@@ -133,7 +133,7 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourseAdm
 
   async editCourseService(
     courseId: string,
-    data: Partial<ICourse>,
+    data: Partial<ICourseResponseDto>,
     thumbnail?: Buffer
   ): Promise<ICourseAdminResponse> {
     const currentCourse = await this._courseRepo.findById(courseId);
@@ -141,7 +141,7 @@ async createClass(data: Partial<ICourse>, thumbnail: Buffer): Promise<ICourseAdm
       throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
     }
 
-    const updateData: Partial<ICourse> = { ...data };
+    const updateData: Partial<ICourseResponseDto> = { ...data };
 if (typeof updateData.mentorId === 'string' && updateData.mentorId === '') {
     delete updateData.mentorId;
 }
@@ -149,7 +149,9 @@ if (typeof updateData.categoryId === 'string' && updateData.categoryId === '') {
     delete updateData.categoryId;
 }
     const newMentorId = data.mentorId || currentCourse.mentorId;
-    const isMentorChanged = !!data.mentorId && data.mentorId !== currentCourse.mentorId;
+    const isMentorChanged =
+  !!data.mentorId &&
+  data.mentorId !== currentCourse.mentorId.toString();
 
     const isTimeChanged = (!!data.startTime && data.startTime !== currentCourse.startTime);
 

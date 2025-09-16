@@ -3,7 +3,7 @@
 import { ObjectId } from "mongoose";
 import { ICourse } from "../../../../types/classTypes";
 
-import { ICourseAdminResponse } from "../../../../shared/dtos/courses/course-response.dto";
+import { ICourseAdminResponse, ICourseResponseDto } from "../../../../shared/dtos/courses/course-response.dto";
 import { IAdminLessonResponseDto} from "../../../../shared/dtos/lessons/lessonResponse.dto";
 import { IAdminCommentResponseDto } from "../../../../shared/dtos/comment/commentResponse.dto";
 import { IQuestionAdminResponseDto } from "../../../../shared/dtos/question/question-response.dto";
@@ -18,7 +18,7 @@ export interface IAdminCourseServices {
     filters?: Record<string, any>,
     sort?: Record<string, 1 | -1>
   ): Promise<{ data: ICourseAdminResponse[]; total: number; totalPages?: number }>;
-  editCourseService(courseId: string, data: ICourse, thumbnail?: Buffer): Promise<ICourseAdminResponse>;
+  editCourseService(courseId: string, data: ICourseResponseDto, thumbnail?: Buffer): Promise<ICourseAdminResponse>;
   getLessons(courseId:string|ObjectId):Promise<{
     lessons: IAdminLessonResponseDto[];
     comments: IAdminCommentResponseDto[];

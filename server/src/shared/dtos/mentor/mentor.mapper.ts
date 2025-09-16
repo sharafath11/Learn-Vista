@@ -1,7 +1,5 @@
-import { inject } from "inversify";
 import { IMentor } from "../../../types/mentorTypes";
 import { IMentorResponseDto, IAdminMentorResponseDto, IAdminAddCourseMentorsDto, IMentorMentorResponseDto } from "./mentor-response.dto";
-import { TYPES } from "../../../core/types";
 import { ICourse } from "../../../types/classTypes";
 
 export class MentorMapper {
@@ -22,6 +20,7 @@ export class MentorMapper {
       status: mentor.status,
       isBlock: mentor.isBlock,
       bio: mentor.bio,
+      password:mentor.password,
       socialLinks: mentor.socialLinks,
       liveClasses: mentor.liveClasses.map(c => c.toString()),
       coursesCreated: mentor.coursesCreated.map(c => c.toString()),

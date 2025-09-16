@@ -14,7 +14,7 @@ import { StatusCode } from '../../enums/statusCode.enum';
 import { INotificationService } from '../../core/interfaces/services/notifications/INotificationService';
 import { notifyWithSocket } from '../../utils/notifyWithSocket';
 import { Messages } from '../../constants/messages';
-import { IMentorMentorResponseDto } from '../../shared/dtos/mentor/mentor-response.dto';
+import { IMentorMentorResponseDto, IMentorResponseDto } from '../../shared/dtos/mentor/mentor-response.dto';
 import { MentorMapper } from '../../shared/dtos/mentor/mentor.mapper';
 import { getSignedS3Url } from '../../utils/s3Utilits';
 
@@ -72,7 +72,7 @@ export class MentorAuthService implements IMentorAuthService {
     }
   }
 
-  async mentorSignup(data: Partial<IMentor>) {
+  async mentorSignup(data: Partial<IMentorResponseDto>) {
     const { isValid, errorMessage } = validateMentorSignupInput(data);
     if (!isValid) throwError(errorMessage || Messages.COMMON.INTERNAL_ERROR, StatusCode.BAD_REQUEST);
     const existMentor = await this._mentorRepo.findOne({ email: data.email });

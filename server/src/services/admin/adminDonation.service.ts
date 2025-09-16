@@ -1,6 +1,5 @@
 import { inject, injectable } from "inversify";
 import { IAdminDonationServices } from "../../core/interfaces/services/admin/IAdminDonationService";
-import { IDonation } from "../../types/donationTypes";
 import { TYPES } from "../../core/types";
 import { IDonationRepoitory } from "../../core/interfaces/repositories/donation/IDonationRepoitory";
 import { throwError } from "../../utils/resAndError";

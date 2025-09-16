@@ -1,10 +1,10 @@
 import { IQuestions } from "../types/lessons";
-import { IMentor } from "../types/mentorTypes";
 import { throwError } from "../utils/resAndError";
 import { VALIDATION_MESSAGES } from "../constants/validationMessages";
+import { IMentorResponseDto } from "../shared/dtos/mentor/mentor-response.dto";
 
 export const validateMentorSignupInput = (
-  data?: Partial<IMentor>
+  data?: Partial<IMentorResponseDto>
 ): { isValid: boolean; errorMessage?: string } => {
   if (!data || typeof data !== "object") {
     return { isValid: false, errorMessage: VALIDATION_MESSAGES.MENTOR.INVALID_DATA };

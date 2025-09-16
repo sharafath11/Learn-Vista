@@ -4,7 +4,6 @@ import { TYPES } from "../../core/types";
 import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
 import mongoose, { ObjectId } from "mongoose";
 import {
-  IComment,
   ILesson,
   ILessonUpdateData,
   IQuestions,
