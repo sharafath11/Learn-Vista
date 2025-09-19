@@ -159,12 +159,12 @@ export default function DonationHistoryPage() {
                   </TableCell>
                   <TableCell>
                     <WithTooltip content={`Amount donated: ₹${donation.amount}`}>
-                      {donation.amount} INR
+                      <span>{donation.amount} INR</span>
                     </WithTooltip>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <WithTooltip content={`Donation date: ${new Date(donation.createdAt).toLocaleDateString()}`}>
-                      {new Date(donation.createdAt).toLocaleDateString()}
+                      <span>{new Date(donation.createdAt).toLocaleDateString()}</span>
                     </WithTooltip>
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
@@ -187,20 +187,22 @@ export default function DonationHistoryPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <WithTooltip content="Download PDF receipt for this donation">
-  <button  className={`inline-flex items-center gap-1 text-purple-600 hover:underline text-sm ${
+                      <button 
+                        onClick={() => handleDownloadCustomReceipt(donation)}
+                        className={`inline-flex items-center gap-1 text-purple-600 hover:underline text-sm ${
                           downloadingPDFId === donation.paymentIntentId ? "cursor-not-allowed opacity-70" : ""
-                        }`}>
-    <span className="inline-flex items-center gap-1">
-      {downloadingPDFId === donation.paymentIntentId ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
-      ) : (
-        <Download className="w-4 h-4" />
-      )}
-      Receipt
-    </span>
-  </button>
-</WithTooltip>
-
+                        }`}
+                      >
+                        <span className="inline-flex items-center gap-1">
+                          {downloadingPDFId === donation.paymentIntentId ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Download className="w-4 h-4" />
+                          )}
+                          Receipt
+                        </span>
+                      </button>
+                    </WithTooltip>
                   </TableCell>
                 </TableRow>
               ))}
