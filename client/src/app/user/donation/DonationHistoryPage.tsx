@@ -61,7 +61,6 @@ export default function DonationHistoryPage() {
     if (user) fetchDonations(1)
   }, [user, fetchDonations])
 
-  // ---------- INFINITE SCROLL ----------
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasMore && !loading) {
@@ -76,7 +75,6 @@ export default function DonationHistoryPage() {
     }
   }, [hasMore, loading, page, fetchDonations])
 
-  // ---------- DOWNLOAD RECEIPT ----------
   const handleDownloadCustomReceipt = async (donation: IDonation) => {
     if (!user) return
     setDownloadingPDFId(donation.paymentIntentId)
@@ -189,21 +187,20 @@ export default function DonationHistoryPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <WithTooltip content="Download PDF receipt for this donation">
-                      <button
-                        onClick={() => handleDownloadCustomReceipt(donation)}
-                        disabled={downloadingPDFId === donation.paymentIntentId}
-                        className={`inline-flex items-center gap-1 text-purple-600 hover:underline text-sm ${
+  <button  className={`inline-flex items-center gap-1 text-purple-600 hover:underline text-sm ${
                           downloadingPDFId === donation.paymentIntentId ? "cursor-not-allowed opacity-70" : ""
-                        }`}
-                      >
-                        {downloadingPDFId === donation.paymentIntentId ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Download className="w-4 h-4" />
-                        )}
-                        Receipt
-                      </button>
-                    </WithTooltip>
+                        }`}>
+    <span className="inline-flex items-center gap-1">
+      {downloadingPDFId === donation.paymentIntentId ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <Download className="w-4 h-4" />
+      )}
+      Receipt
+    </span>
+  </button>
+</WithTooltip>
+
                   </TableCell>
                 </TableRow>
               ))}
