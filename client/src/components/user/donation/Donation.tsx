@@ -88,13 +88,14 @@ export default function DonationComponent() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <WithTooltip content="Support our mission 💜 Every contribution counts!">
-          <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 flex items-center gap-2">
-            <Heart className="h-5 w-5 fill-current" /> Donate
-          </Button>
-        </WithTooltip>
-      </DialogTrigger>
+      <WithTooltip content="Support our mission 💜 Every contribution counts!">
+  <DialogTrigger asChild>
+    <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 flex items-center gap-2">
+      <Heart className="h-5 w-5 fill-current" /> Donate
+    </Button>
+  </DialogTrigger>
+</WithTooltip>
+
 
       <DialogContent className="sm:max-w-[425px] p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
         <DialogHeader>
