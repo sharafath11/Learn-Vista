@@ -23,7 +23,6 @@ export default function DonationHistoryPage() {
   const [totalDonationsAmount, setTotalDonationsAmount] = useState(0)
   const observerTarget = useRef<HTMLDivElement>(null)
 
-  // ---------- FETCH DONATIONS ----------
   const fetchDonations = useCallback(async (currentPage: number) => {
     if (!user || loading || !hasMore) return
     setLoading(true)
@@ -32,12 +31,12 @@ export default function DonationHistoryPage() {
       const res = await UserAPIMethods.getMyDonations(currentPage)
 
       if (!res || !res.data) {
-        console.error("❌ Donations API returned no data:", res)
+        console.error(" Donations API returned no data:", res)
         setHasMore(false)
         return
       }
 
-      console.log("✅ Donations fetched (page " + currentPage + "):", res.data)
+      console.log(" Donations fetched (page " + currentPage + "):", res.data)
 
       setDonations(prev => {
         const newDonations = res.data.data.filter(
@@ -51,7 +50,7 @@ export default function DonationHistoryPage() {
       setHasMore(res.data.hasMore ?? false)
       setPage(currentPage + 1)
     } catch (err) {
-      console.error("❌ Error fetching donations:", err)
+      console.error(" Error fetching donations:", err)
     } finally {
       setLoading(false)
     }
@@ -100,13 +99,13 @@ export default function DonationHistoryPage() {
         notes: "Thank you for supporting education and making a difference in students' lives."
       }
 
-      console.log("📄 Generating PDF receipt with data:", receiptData)
+      console.log(" Generating PDF receipt with data:", receiptData)
 
       const pdfResult = await generateReceiptPDF(receiptData)
 
-      console.log("✅ PDF generated successfully:", pdfResult)
+      console.log(" PDF generated successfully:", pdfResult)
     } catch (error) {
-      console.error("❌ Error generating PDF receipt:", error)
+      console.error(" Error generating PDF receipt:", error)
     } finally {
       setDownloadingPDFId(null)
     }
