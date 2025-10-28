@@ -1,7 +1,17 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/shared/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/src/components/shared/components/ui/tabs";
 import {
   BarChart,
   Bar,
@@ -15,15 +25,20 @@ import {
   Cell,
   LineChart,
   Line,
-} from "recharts"
-import { Skeleton } from "@/src/components/shared/components/ui/skeleton"
-import { IAdminTransactionChartProps } from "@/src/types/adminProps"
+  PieLabelRenderProps,
+} from "recharts";
+import { Skeleton } from "@/src/components/shared/components/ui/skeleton";
+import { IAdminTransactionChartProps } from "@/src/types/adminProps";
 
-
-
-export function TransactionChart({ transactions, loading,}: IAdminTransactionChartProps) {
+export function TransactionChart({
+  transactions,
+  loading,
+}: IAdminTransactionChartProps) {
   const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(amount)
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }).format(amount);
 
   if (loading) {
     return (
@@ -39,24 +54,26 @@ export function TransactionChart({ transactions, loading,}: IAdminTransactionCha
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   // Prepare data for charts
   const dailyData = transactions.reduce(
     (acc, transaction) => {
-      const date = new Date(transaction.date || "").toLocaleDateString("en-IN")
+      const date = new Date(transaction.date || "").toLocaleDateString("en-IN");
       if (!acc[date]) {
-        acc[date] = { date, amount: 0, count: 0 }
+        acc[date] = { date, amount: 0, count: 0 };
       }
-      acc[date].amount += transaction.amount || 0
-      acc[date].count += 1
-      return acc
+      acc[date].amount += transaction.amount || 0;
+      acc[date].count += 1;
+      return acc;
     },
-    {} as Record<string, { date: string; amount: number; count: number }>,
-  )
+    {} as Record<string, { date: string; amount: number; count: number }>
+  );
 
-  const chartData = Object.values(dailyData).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  const chartData = Object.values(dailyData).sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
 
   // Amount range distribution
   const amountRanges = [
@@ -64,32 +81,38 @@ export function TransactionChart({ transactions, loading,}: IAdminTransactionCha
     { name: "₹500-₹1K", min: 500, max: 1000, count: 0, color: "#82ca9d" },
     { name: "₹1K-₹5K", min: 1000, max: 5000, count: 0, color: "#ffc658" },
     { name: "₹5K-₹10K", min: 5000, max: 10000, count: 0, color: "#ff7300" },
-    { name: "Above ₹10K", min: 10000, max: Number.POSITIVE_INFINITY, count: 0, color: "#8dd1e1" },
-  ]
+    {
+      name: "Above ₹10K",
+      min: 10000,
+      max: Number.POSITIVE_INFINITY,
+      count: 0,
+      color: "#8dd1e1",
+    },
+  ];
 
   transactions.forEach((transaction) => {
-    const amount = transaction.amount || 0
-    const range = amountRanges.find((r) => amount >= r.min && amount < r.max)
-    if (range) range.count++
-  })
+    const amount = transaction.amount || 0;
+    const range = amountRanges.find((r) => amount >= r.min && amount < r.max);
+    if (range) range.count++;
+  });
 
-  const pieData = amountRanges.filter((range) => range.count > 0)
+  const pieData = amountRanges.filter((range) => range.count > 0);
 
   // Status distribution
   const statusData = transactions.reduce(
     (acc, transaction) => {
-      const status = transaction.status || "succeeded"
+      const status = transaction.status || "succeeded";
       if (!acc[status]) {
-        acc[status] = { status, count: 0, amount: 0 }
+        acc[status] = { status, count: 0, amount: 0 };
       }
-      acc[status].count += 1
-      acc[status].amount += transaction.amount || 0
-      return acc
+      acc[status].count += 1;
+      acc[status].amount += transaction.amount || 0;
+      return acc;
     },
-    {} as Record<string, { status: string; count: number; amount: number }>,
-  )
+    {} as Record<string, { status: string; count: number; amount: number }>
+  );
 
-  const statusChartData = Object.values(statusData)
+  const statusChartData = Object.values(statusData);
 
   return (
     <div className="space-y-6">
@@ -112,7 +135,12 @@ export function TransactionChart({ transactions, loading,}: IAdminTransactionCha
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis tickFormatter={(value) => `₹${value}`} />
-                    <Tooltip formatter={(value) => [formatCurrency(Number(value)), "Amount"]} />
+                    <Tooltip
+                      formatter={(value) => [
+                        formatCurrency(Number(value)),
+                        "Amount",
+                      ]}
+                    />
                     <Bar dataKey="amount" fill="#059669" />
                   </BarChart>
                 </ResponsiveContainer>
@@ -130,7 +158,12 @@ export function TransactionChart({ transactions, loading,}: IAdminTransactionCha
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip />
-                    <Line type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} />
+                    <Line
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#3b82f6"
+                      strokeWidth={2}
+                    />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -151,7 +184,9 @@ export function TransactionChart({ transactions, loading,}: IAdminTransactionCha
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, count, percent }) => `${name}: ${count} (${(percent||0 * 100).toFixed(0)}%)`}
+                    label={({ name, value, percent }: PieLabelRenderProps) =>
+                      `${name}: ${value} (${((percent || (0 as any)) * 100).toFixed(0)}%)`
+                    }
                     outerRadius={120}
                     fill="#8884d8"
                     dataKey="count"
@@ -160,6 +195,7 @@ export function TransactionChart({ transactions, loading,}: IAdminTransactionCha
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
+
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
@@ -187,5 +223,5 @@ export function TransactionChart({ transactions, loading,}: IAdminTransactionCha
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
