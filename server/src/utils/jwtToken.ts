@@ -13,22 +13,22 @@ export interface TokenPayload {
   role: string;
 }
 
-const cookieOptions = {
-  httpOnly: true,
-  secure: process.env.COOKIE_SECURE === "true",
-  sameSite: process.env.COOKIE_SAMESITE || "none",
-  domain: process.env.COOKIE_DOMAIN || ".learnvista.com",
-  path: "/",
-};
-
-
 // const cookieOptions = {
 //   httpOnly: true,
-//   secure: process.env.NODE_ENV === "production", 
-//   sameSite: "none" as const,                    
-//   domain: ".sharafathabi.cloud", 
-//   path: "/",                                     
+//   secure: process.env.COOKIE_SECURE === "true",
+//   sameSite: process.env.COOKIE_SAMESITE || "none",
+//   domain: process.env.COOKIE_DOMAIN || ".learnvista.com",
+//   path: "/",
 // };
+
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production", 
+  sameSite: "none" as const,                    
+  domain: ".sharafathabi.cloud", 
+  path: "/",                                     
+};
 
 export const generateAccessToken = (id: string, role: string): string => {
   const payload: TokenPayload = { id, role };
