@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { Button } from "@/src/components/shared/components/ui/button";
-import { Heart, X } from "lucide-react"; 
+import { Heart, X } from "lucide-react";
 import { loadStripe } from "@stripe/stripe-js";
-import { showErrorToast } from "@/src/utils/Toast"; 
+import { showErrorToast } from "@/src/utils/Toast";
 import {
   Dialog,
   DialogContent,
@@ -16,13 +16,18 @@ import {
 } from "@/src/components/shared/components/ui/dialog";
 import { Input } from "@/src/components/shared/components/ui/input";
 import { Label } from "@/src/components/shared/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/src/components/shared/components/ui/radio-group";
+import {
+  RadioGroup,
+  RadioGroupItem,
+} from "@/src/components/shared/components/ui/radio-group";
 import { UserAPIMethods } from "@/src/services/methods/user.api";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useUserContext } from "@/src/context/userAuthContext";
 import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+);
 const predefinedAmounts = [100, 250, 500, 1000];
 
 export default function DonationComponent() {
@@ -81,7 +86,9 @@ export default function DonationComponent() {
     });
 
     if (result.error) {
-      showErrorToast(result.error.message || "Failed to redirect to Stripe Checkout.");
+      showErrorToast(
+        result.error.message || "Failed to redirect to Stripe Checkout."
+      );
       return;
     }
   };
@@ -89,24 +96,29 @@ export default function DonationComponent() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <WithTooltip content="Support our mission 💜 Every contribution counts!">
-  <DialogTrigger asChild>
-    <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 flex items-center gap-2">
-      <Heart className="h-5 w-5 fill-current" /> Donate
-    </Button>
-  </DialogTrigger>
-</WithTooltip>
-
+        <DialogTrigger asChild>
+          <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg transform transition-transform duration-300 hover:scale-105 flex items-center gap-2">
+            <Heart className="h-5 w-5 fill-current" /> Donate
+          </Button>
+        </DialogTrigger>
+      </WithTooltip>
 
       <DialogContent className="sm:max-w-[425px] p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">Make a Donation</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+            Make a Donation
+          </DialogTitle>
           <DialogDescription className="text-gray-600 dark:text-gray-300 mt-2">
-            Your contribution helps us continue providing quality educational content.
+            Your contribution helps us continue providing quality educational
+            content.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
-          <Label htmlFor="amount" className="text-lg font-medium text-gray-800 dark:text-gray-200">
+          <Label
+            htmlFor="amount"
+            className="text-lg font-medium text-gray-800 dark:text-gray-200"
+          >
             Choose an amount:
           </Label>
           <RadioGroup
@@ -115,9 +127,16 @@ export default function DonationComponent() {
             className="flex flex-wrap gap-3"
           >
             {predefinedAmounts.map((amount) => (
-              <WithTooltip key={amount} content={`Donate ₹${amount} to support education`}>
+              <WithTooltip
+                key={amount}
+                content={`Donate ₹${amount} to support education`}
+              >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={amount.toString()} id={`amount-${amount}`} className="peer sr-only" />
+                  <RadioGroupItem
+                    value={amount.toString()}
+                    id={`amount-${amount}`}
+                    className="peer sr-only"
+                  />
                   <Label
                     htmlFor={`amount-${amount}`}
                     className="flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md cursor-pointer text-sm font-medium
@@ -132,7 +151,11 @@ export default function DonationComponent() {
 
             <WithTooltip content="Set your own donation amount">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="custom" id="amount-custom" className="peer sr-only" />
+                <RadioGroupItem
+                  value="custom"
+                  id="amount-custom"
+                  className="peer sr-only"
+                />
                 <Label
                   htmlFor="amount-custom"
                   className="flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md cursor-pointer text-sm font-medium
@@ -168,7 +191,11 @@ export default function DonationComponent() {
 
         <DialogFooter className="flex justify-end gap-3 mt-4">
           <WithTooltip content="Cancel and close donation window">
-            <Button variant="outline" onClick={() => setIsOpen(false)} className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-1"
+            >
               <X className="h-4 w-4" /> Cancel
             </Button>
           </WithTooltip>
