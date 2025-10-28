@@ -49,8 +49,10 @@ app.use((err: CustomError, req: Request, res: Response, _next: NextFunction) => 
   console.error(err.stack);
   sendResponse(res,StatusCode.INTERNAL_SERVER_ERROR,Messages.COMMON.INTERNAL_ERROR,true)
 });
-const PORT = process.env.PORT || 4000;
+
 connectDb();
-httpServer.listen(PORT, () => {
+const PORT = Number(process.env.PORT) || 4000;
+
+httpServer.listen(PORT, "0.0.0.0", () => {
   logger.info(Messages.CONFIG.RUN(PORT));
 });
