@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value || req.cookies.get("refreshToken")?.value;
+  console.log("Token in middleware:", token);
   const path = req.nextUrl.pathname;
   const publicRoutes = [
     "/user/login",
