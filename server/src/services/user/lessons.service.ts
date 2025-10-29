@@ -13,7 +13,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { s3 } from "../../config/AWS";
 import { ILessonReportRepository } from "../../core/interfaces/repositories/lessons/ILessonReportRepository";
 import { buildPerfectNotePrompt, buildPrompt } from "../../utils/rportprompt";
-import { getGemaniResponse } from "../../config/gemaniAi";
+import { getAIResponse } from "../../config/gemaniAi";
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
 import { IUserRepository } from "../../core/interfaces/repositories/user/IUserRepository";
 import { INotificationService } from "../../core/interfaces/services/notifications/INotificationService";
@@ -150,7 +150,7 @@ async getLessons(
     if (!course) throwError(Messages.COURSE.NOT_FOUND, StatusCode.NOT_FOUND);
 
     const prompt = buildPrompt(data);
-    const geminiReport = await getGemaniResponse(prompt);
+    const geminiReport = await getAIResponse(prompt);
     if (!geminiReport)
       throwError(Messages.LESSONS.REPORT_GENERATION_FAILED, StatusCode.INTERNAL_SERVER_ERROR);
 
@@ -352,7 +352,7 @@ async updateLessonProgress(
     throwError(Messages.LESSONS.INVALID_DATA, StatusCode.BAD_REQUEST);
      }
     const prompt = buildPerfectNotePrompt(note);
-    const AiResponse = await getGemaniResponse(prompt);
+    const AiResponse = await getAIResponse(prompt);
     const savedNote = await this._voiceRepo.create({
   userId,
   courseId,
@@ -432,7 +432,7 @@ async getVoiceNotes(
   }
 
   const prompt = buildPerfectNotePrompt(note);
-  const aiResponse = await getGemaniResponse(prompt) || "I can't understand your note 😵‍💫";
+  const aiResponse = await getAIResponse(prompt) || "I can't understand your note 😵‍💫";
 
   const updatedNote = await this._voiceRepo.update(
     voiceNoteId.toString(),

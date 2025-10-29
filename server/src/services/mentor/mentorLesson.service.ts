@@ -13,7 +13,7 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import { IQuestionsRepository } from "../../core/interfaces/repositories/lessons/IQuestionsRepository";
 import { ICourseRepository } from "../../core/interfaces/repositories/course/ICourseRepository";
 import { ICommentstRepository } from "../../core/interfaces/repositories/lessons/ICommentsRepository";
-import { getGemaniResponse } from "../../config/gemaniAi";
+import { getAIResponse } from "../../config/gemaniAi";
 import { buildMcqOptionsPrompt } from "../../utils/rportprompt";
 import { IUserCourseProgressRepository } from "../../core/interfaces/repositories/user/IUserCourseProgressRepository";
 import { convertSignedUrlInArray, uploadThumbnail, deleteFromS3, convertSignedUrlInObject } from "../../utils/s3Utilits";
@@ -209,7 +209,7 @@ export class MentorLessonService implements IMentorLessonService {
       throwError(Messages.QUESTIONS.INVALID_GENERATION_INPUT);
     }
     const prompt = buildMcqOptionsPrompt(question);
-    const resultRaw = await getGemaniResponse(prompt);
+    const resultRaw = await getAIResponse(prompt);
 let parsed: string[];
 
 try {

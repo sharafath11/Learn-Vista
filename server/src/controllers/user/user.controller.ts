@@ -7,7 +7,7 @@ import { decodeToken, verifyAccessToken } from "../../utils/jwtToken";
 import { handleControllerError, sendResponse, throwError } from "../../utils/resAndError";
 import { StatusCode } from "../../enums/statusCode.enum";
 import { pscPrompt } from "../../utils/rportprompt";
-import { getGemaniResponse } from "../../config/gemaniAi";
+import { getAIResponse } from "../../config/gemaniAi";
 import { Messages } from "../../constants/messages";
 
 export class UserController implements IUserController {
@@ -87,7 +87,7 @@ export class UserController implements IUserController {
         return;
       }
         const prompot=pscPrompt(number)
-        const answer = await getGemaniResponse(prompot);
+        const answer = await getAIResponse(prompot);
       
         sendResponse(res, StatusCode.OK, "", true, answer);
     } catch (error) {

@@ -14,9 +14,8 @@ export default function CourseCard({ course }: ICourseCardProps) {
       transition={{ duration: 0.3 }}
       className="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow group flex flex-col h-full"
     >
-      <Link href={`/user/sessions/${course.id || course.id}`} className="block h-full">
+      <Link href={`/user/courses`} className="block h-full">
         <div className="flex flex-col items-center text-center h-full">
-          {/* Thumbnail / Icon */}
           <WithTooltip content={course.title}>
             <div className="p-4 bg-blue-900 rounded-full group-hover:bg-blue-700 transition-colors">
               {course.thumbnail ? (

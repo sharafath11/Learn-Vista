@@ -9,7 +9,7 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import { ISharedController } from "../../core/interfaces/controllers/shared/IShared.controller";
 import { refreshAccessToken, setTokensInCookies } from "../../utils/jwtToken";
 import { batmanPrompt } from "../../utils/rportprompt";
-import { getGemaniResponse } from "../../config/gemaniAi";
+import { getAIResponse } from "../../config/gemaniAi";
 import { Messages } from "../../constants/messages";
 
 export class SharedController implements ISharedController {
@@ -53,7 +53,7 @@ export class SharedController implements ISharedController {
   async batmanAi(req: Request, res: Response): Promise<void> {
     try {
       const prompt = batmanPrompt(req.body.text);
-      const answer = await getGemaniResponse(prompt);
+      const answer = await getAIResponse(prompt);
       sendResponse(
         res,
         StatusCode.OK,

@@ -20,7 +20,7 @@ import {
   buildDailyTaskEvaluationPrompt,
   dailyTaskPrompt,
 } from "../../utils/rportprompt";
-import { getGemaniResponse } from "../../config/gemaniAi";
+import { getAIResponse } from "../../config/gemaniAi";
 import { IDailyTaskRepository } from "../../core/interfaces/repositories/user/IDailyTaskRepository";
 import {
   IDailyTask,
@@ -143,7 +143,7 @@ export class UserService implements IUserService {
     let geminiResponse: string | null = null;
 
     try {
-      geminiResponse = await getGemaniResponse(prompt);
+      geminiResponse = await getAIResponse(prompt);
       let cleanResponse = geminiResponse;
       const jsonMatch = geminiResponse.match(/```json\s*([\s\S]*?)\s*```/);
       if (jsonMatch && jsonMatch[1]) {
@@ -245,7 +245,7 @@ export class UserService implements IUserService {
         userResponse: userTextForEvaluation,
       });
 
-      const evaluationResponse = await getGemaniResponse(promptForEvaluation);
+      const evaluationResponse = await getAIResponse(promptForEvaluation);
 
       const jsonMatch = evaluationResponse.match(/```json\s*([\s\S]*?)\s*```/);
       let cleanResponse = jsonMatch ? jsonMatch[1].trim() : evaluationResponse;
