@@ -1,5 +1,5 @@
-import { Suspense } from "react"
-import SuccessContent from "./SuccessContent"
+import { Suspense } from "react";
+import SuccessContent from "./SuccessContent";
 
 export default function SuccessPage() {
   return (
@@ -19,7 +19,8 @@ export default function SuccessPage() {
                 Processing Your Donation
               </h2>
               <p className="text-gray-600">
-                We're confirming your generous contribution. This won't take long!
+                We&apos;re confirming your generous contribution. This
+                won&apos;t take long!
               </p>
             </div>
 
@@ -39,5 +40,5 @@ export default function SuccessPage() {
     >
       <SuccessContent />
     </Suspense>
-  )
+  );
 }
