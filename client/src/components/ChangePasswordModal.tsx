@@ -8,6 +8,7 @@ import { UserAPIMethods } from "../services/methods/user.api";
 import { MentorAPIMethods } from "../services/methods/mentor.api";
 import { IChangePasswordModalProps } from "../types/sharedProps";
 import { WithTooltip } from "../hooks/UseTooltipProps";
+import { validatePasswordChange } from "../validations/validatePasswordChange";
 
 
 
@@ -28,11 +29,16 @@ const ChangePasswordModal: React.FC<IChangePasswordModalProps> = ({
   const handleSubmit = async(e: React.FormEvent) => {
       e.preventDefault();
 
-      if (newPassword !== confirmPassword) {
-        showErrorToast("New password and confirm password do not match.");
-        return;
-      }
+  const validation = validatePasswordChange(
+    currentPassword,
+    newPassword,
+    confirmPassword
+  );
 
+  if (!validation.isValid) {
+    showErrorToast(validation.message||"");
+    return;
+  }
       if (role === "user") {
           const res = await UserAPIMethods.changePassword(currentPassword, newPassword);
           if (res.ok) {

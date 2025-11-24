@@ -36,11 +36,13 @@ export class UserCourseService implements IUserCourseService {
     @inject(TYPES.NotificationService) private _notificationService: INotificationService
   ) {}
   async getAllCourses(
+   
     page: number = 1,
     limit: number = 1,
     search?: string,
     filters: FilterQuery<IPopulatedCourse> = {},
-    sort: Record<string, 1 | -1> = { createdAt: -1 }
+    sort: Record<string, 1 | -1> = { createdAt: -1 },
+    userId ?:string,
   ): Promise<{ data: ICourseUserResponseDto[]; total: number; totalPages?: number }> {
     const queryParams = {
       page,
@@ -57,7 +59,7 @@ export class UserCourseService implements IUserCourseService {
     const sendDatas = await Promise.all(
   sendData.map(async (i) => {
     const photo = await getSignedS3Url(i.mentorId.profilePicture as string);
-    return CourseMapper.toResponseUserCourse(i, photo);
+    return CourseMapper.toResponseUserCourse(i, photo,userId||"");
   })
     );
     return {data:sendDatas, total, totalPages };

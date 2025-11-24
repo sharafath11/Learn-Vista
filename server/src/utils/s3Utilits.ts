@@ -248,4 +248,3 @@ export const updateTasksWithSignedUrls = async (
 ): Promise<ISubTask[]> => {
   return await Promise.all(tasks.map(addSignedUrlToTask));
 };
-

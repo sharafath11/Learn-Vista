@@ -1,7 +1,7 @@
 import express from "express";
 import { notificationController, sharedController } from "./sharedController";
 
-const router = express.Router();
+const   router = express.Router();
 
 router
   .route("/notifications")

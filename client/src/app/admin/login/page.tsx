@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { FiMail, FiLock, FiUser, FiSun, FiMoon } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { postRequest } from '@/src/services/api';
-import { showSuccessToast } from '@/src/utils/Toast';
+import { showErrorToast, showSuccessToast } from '@/src/utils/Toast';
 import { AdminContext } from '@/src/context/adminContext';
 import { useRouter } from 'next/navigation';
 import { IData } from '@/src/types/adminTypes';
@@ -37,6 +37,7 @@ const AdminLogin = () => {
       admin?.setAdmin(true);
       route.push("/admin/dashboard")
     }
+    else showErrorToast(res.msg)
   }
   return (
     <div className={`min-h-screen flex items-center justify-center transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-gradient-to-br from-blue-50 to-purple-50'}`}>

@@ -84,6 +84,11 @@ export default function SignupForm() {
       showErrorToast("Please enter your email address");
       return;
     }
+      const validation = validateSignup(userData);
+    if (!validation.isValid) {
+      showErrorToast(validation.message);
+      return;
+    }
 
     const res = await UserAPIMethods.sendOtp(userData.email);
 

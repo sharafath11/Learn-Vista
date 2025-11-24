@@ -13,7 +13,7 @@ export interface IUserCourseService {
     search?: string,
     filters?: FilterQuery<IPopulatedCourse>,
       sort?: Record<string, 1 | -1>,
-    userId?:string|ObjectId
+    userId ?:string
   ): Promise<{ data: ICourseUserResponseDto[]; total: number; totalPages?: number }>;
   updateUserCourse(courseId: string, userId: string): Promise<void>;
   getCategries(): Promise<ICategoryUserCourseResponse[]>;

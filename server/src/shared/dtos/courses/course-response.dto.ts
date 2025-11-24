@@ -75,7 +75,7 @@ export interface ICourseUserResponseDto{
   tags?:string[]
   categoryName: string,
   thumbnail: string,
-  students:number,
+  totelStudents:number,
   isBlock:boolean
   startDate: Date,
   endDate: Date,

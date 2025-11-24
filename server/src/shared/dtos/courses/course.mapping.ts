@@ -70,7 +70,7 @@ export class CourseMapper {
       
     };
   }
- static  toResponseUserCourse(c: IPopulatedCourse,mentorPhoto:string): ICourseUserResponseDto {
+ static  toResponseUserCourse(c: IPopulatedCourse,mentorPhoto:string,userId:string): ICourseUserResponseDto {
   return {
     id: c._id.toString(),
     title: c.title,
@@ -81,10 +81,10 @@ export class CourseMapper {
     mentorExpertise: c.mentorId?.expertise ?? [], 
     sessions: c.sessions?.length ?? 0,
     isStreaming:c.isStreaming,
-    enrolledUsers: c.enrolledUsers.map((i) => i.toString()),
+    enrolledUsers: [userId],
     categoryName: c.category?.title ?? c.categoryName ?? "",
     thumbnail: c.thumbnail ?? "",
-    students: c.enrolledUsers.length ?? 0,
+    totelStudents: c.enrolledUsers.length ?? 0,
     isBlock: c.isBlock,
     tags:c.tags,
     courseLanguage:c.courseLanguage,

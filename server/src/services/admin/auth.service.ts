@@ -20,7 +20,7 @@ class AdminAuthService implements IAdminAuthService {
         refreshToken,
       };
     } else {
-      throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED); 
+      throwError(Messages.AUTH.INVALID_CREDENTIALS, StatusCode.BAD_REQUEST); 
     }
   }
 }

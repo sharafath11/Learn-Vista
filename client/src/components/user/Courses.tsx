@@ -73,9 +73,9 @@ const Courses = () => {
                 </div>
               </WithTooltip>
 
-              <WithTooltip content={`${course.enrolledUsers?.length || 0} students enrolled`}>
+              <WithTooltip content={`${course.totelStudents || 0} students enrolled`}>
                 <span className="text-gray-600">
-                  {course.enrolledUsers?.length || 0} students
+                  {course.totelStudents || 0} students
                 </span>
               </WithTooltip>
             </div>

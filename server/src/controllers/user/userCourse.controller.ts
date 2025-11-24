@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { IUserCourseController } from "../../core/interfaces/controllers/user/IUserCourse.controller";
-import { decodeToken } from "../../utils/jwtToken";
+import { decodeToken, } from "../../utils/jwtToken";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../../core/types";
 import { IUserCourseService } from "../../core/interfaces/services/user/IUserCourseController";
@@ -22,7 +22,6 @@ export class UserCourseController implements IUserCourseController {
          const limit = Math.min(Math.max(Number(queryParams.limit) || 10, 1), 100);
          const search = queryParams.search?.toString() || '';
          const sort: Record<string, 1 | -1> = {};
-       
      
          if (queryParams.sort) {
            for (const key in queryParams.sort) {

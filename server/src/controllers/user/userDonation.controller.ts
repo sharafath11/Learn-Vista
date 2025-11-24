@@ -37,8 +37,8 @@ export class UserDonationController implements IUserDonationController {
           StatusCode.BAD_REQUEST
         );
       }
-      const successUrl = `${process.env.FRONTEND_URL}/user/success?session_id={CHECKOUT_SESSION_ID}`;
-      const cancelUrl = `${process.env.FRONTEND_URL}/user/cancel`;
+      const successUrl = `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = `${process.env.FRONTEND_URL}/cancel`;
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],

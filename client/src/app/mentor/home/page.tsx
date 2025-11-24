@@ -21,7 +21,7 @@ export default function MentorDashboard() {
   let totalStudent = 0
   let totalLessons = 0
   courses.forEach((course) => {
-    totalStudent += course.totelStudent as number
+    totalStudent += course.totelStudents as number
     totalLessons += course?.sessions as number
   })
 
@@ -171,7 +171,7 @@ export default function MentorDashboard() {
                         description={course.description || "No description available"}
                         progress={Math.floor(Math.random() * 100)}
                         status={index === 0 ? "Active" : index === 1 ? "New" : "Draft"}
-                        students={course.enrolledUsers?.length || 0}
+                        students={course.totelStudents || 0}
                         lessons={course.sessions as number || 0}
                       />
                     ))}

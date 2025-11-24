@@ -3,7 +3,7 @@ export const MailTemplates = {
   OTP: {
     SUBJECT: "Your OTP Code",
     TEXT: (otp: string) =>
-      `Your OTP code is ${otp}. It will expire in 5 minutes.`,
+      `Your OTP code is ${otp}. It will expire in 1 minutes.`,
   },
 
   MENTOR_STATUS_CHANGE: {

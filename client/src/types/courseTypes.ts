@@ -23,7 +23,8 @@ export interface ICourse {
   startTime: string;
   isStreaming?:boolean
   thumbnail?: string;
-  isActive:boolean
+  isActive: boolean,
+  totelStudents:number,
   thumbnailPreview?: string | null;
   Lessons: string[] | ILessons[]
    lessons?:string[]|ILessons[]
@@ -32,7 +33,7 @@ export interface ICourse {
 }
 
 export interface IPopulatedCourse extends Omit<ICourse, 'mentorId' | 'categoryId'> {
-  totelStudent?:number
+  
   category?:string
   mentorId: IMentor;
   

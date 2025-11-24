@@ -183,14 +183,14 @@ export default function EditProfileModal({
             exit={{ opacity: 0, y: 20 }}
             className="relative w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden"
           >
-            <button
+            <Button
               onClick={onClose}
               className="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 transition-colors"
               disabled={isLoading}
               aria-label="Close modal"
             >
               <X size={24} />
-            </button>
+            </Button>
 
             <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white">
               <h2 className="text-2xl font-bold text-center">Edit Profile</h2>

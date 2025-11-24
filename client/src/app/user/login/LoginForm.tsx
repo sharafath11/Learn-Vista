@@ -47,7 +47,7 @@ export default function LoginForm() {
         refereshNotifcation();
         window.location.href = "/user";
       } else {
-        showErrorToast(res?.msg || "Login failed");
+        showErrorToast(res?.msg);
       }
       setIsLoading(false);
     },
