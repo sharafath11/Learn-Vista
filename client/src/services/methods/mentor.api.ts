@@ -12,6 +12,7 @@ const patch = patchRequest;
 export const MentorAPIMethods = {
   signup: (mentorData: IMentorSignupData) => post("/mentor/auth/signup", mentorData),
   otpSend: (email: string) => post("/mentor/auth/signup/otp", { email }),
+  verifyOtp:(email:string,otp:string)=>post("/mentor/auth/signup/otp/verify",{email,otp}),
   login: (email: string, password: string) => post("/mentor/auth/login", { email, password }),
   logout: () => post("/mentor/auth/logout", {}),
   getMentor: () => get("/mentor/me"),

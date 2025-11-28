@@ -1,5 +1,6 @@
 "use client";
 import { postRequest } from "@/src/services/api";
+import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { MentorSignupOtpProps } from "@/src/types/mentorTypes";
 import { useEffect, useRef, useState } from "react";
 
@@ -57,7 +58,7 @@ export const FormOTP = ({ label, onChange, onVerified, onResend, email }: Mentor
 
     setIsVerifying(true);
     try {
-      const res = await postRequest("/mentor/otp/verify", { email, otp: fullOtp });
+      const res = await MentorAPIMethods.verifyOtp(email,fullOtp)
       if (res.ok) {
         setIsVerified(true);
         onVerified();

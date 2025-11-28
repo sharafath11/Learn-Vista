@@ -90,6 +90,17 @@ const mappingDatas = await Promise.all(
       ? Messages.MENTOR.APPROVED_MESSAGE
       : Messages.MENTOR.REJECTED_MESSAGE,
     type: status ? "success" : "error",
+    });
+        await notifyWithSocket({
+    notificationService: this._notificationService,
+    userId: updated.userId as unknown as string,
+    title: status
+      ? Messages.MENTOR.APPROVED_TITLE
+      : Messages.MENTOR.REJECTED_TITLE,
+    message: status
+      ? Messages.MENTOR.APPROVED_MESSAGE
+      : Messages.MENTOR.REJECTED_MESSAGE,
+    type: status ? "success" : "error",
   });
     return MentorMapper.toResponseDto(updated);
   }

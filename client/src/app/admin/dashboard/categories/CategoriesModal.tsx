@@ -42,10 +42,18 @@ export default function CategoryForm({
       showInfoToast("Title must be at least 3 characters long");
       return;
     }
+    if (title.length > 35) {
+      showInfoToast("Title must be under 35 characters");
+      return
+    }
   
     if (!description.trim() || description.length <= 10) {
       showInfoToast("Description must be more than 10 characters long");
       return;
+    }
+    if (description.length > 150) {
+      showInfoToast("Description under 150 characters");
+      return 
     }
     if (categoryId && category) {
      

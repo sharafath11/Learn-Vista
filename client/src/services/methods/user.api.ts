@@ -57,5 +57,6 @@ export const UserAPIMethods = {
   voiceNote: (lessonId: string, courseId: string, note: string) =>post(`/lessons/${lessonId}/voicenote`, { note, courseId }),
   getVoiceNotes: (lessonId: string, params?: { search?: string; sort?: "asc" | "desc",limit:number,page:number}) => get(`/lessons/${lessonId}/voicenotes`, { params }),
   deleteVoiceNote: (lessonId: string, noteId: string) => deleteApi(`lessons/${lessonId}/voicenote/${noteId}`,),
-  editVoiceNote:(lessonId: string, noteId: string,note:string) => patch(`lessons/${lessonId}/voicenote/${noteId}`,{note})
+  editVoiceNote: (lessonId: string, noteId: string, note: string) => patch(`lessons/${lessonId}/voicenote/${noteId}`, { note }),
+   checkPSCAnswer: (data: { questionId: number; selectedOption: number }) =>post("/psc/check-answer", data),
 } as const;
