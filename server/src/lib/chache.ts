@@ -1,5 +1,5 @@
 import NodeCache from "node-cache";
-//NodeCache is better for this 
+//NodeCache is better for this 1
 export const cache = new NodeCache({
   stdTTL: 86400,
   checkperiod: 600, 
