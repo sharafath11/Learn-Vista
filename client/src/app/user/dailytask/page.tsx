@@ -70,7 +70,7 @@ export default function DailyTaskPage() {
         </div>
 
         {/* Progress Overview */}
-        <Card className="max-w-2xl mx-auto border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+        {/* <Card className="max-w-2xl mx-auto border-0 shadow-lg bg-white/80 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-2 text-xl">
               <Trophy className="h-5 w-5 text-yellow-500" />
@@ -112,7 +112,7 @@ export default function DailyTaskPage() {
               </WithTooltip>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
 
         {/* Tasks Grid */}
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

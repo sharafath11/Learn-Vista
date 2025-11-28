@@ -9,6 +9,8 @@ import { StatusCode } from "../../enums/statusCode.enum";
 import { pscPrompt } from "../../utils/rportprompt";
 import { getAIResponse } from "../../config/gemaniAi";
 import { Messages } from "../../constants/messages";
+import { cache } from "../../lib/chache";
+import { extractJSON } from "../../utils/extractJSON";
 
 export class UserController implements IUserController {
     constructor(
@@ -78,24 +80,61 @@ export class UserController implements IUserController {
         }
     }
 
-  async getQuestionByNumber(req: Request, res: Response): Promise<void> {
-    try {
-        const number = parseInt(req.query.number as string);
-     
-      if (isNaN(number)) {
-        sendResponse(res,StatusCode.BAD_REQUEST, Messages.USERS.INVALID_QUESTION_NUMBER,false)
-        return;
-      }
-        const prompot=pscPrompt(number)
-        const answer = await getAIResponse(prompot);
-      
-        sendResponse(res, StatusCode.OK, "", true, answer);
-    } catch (error) {
-     handleControllerError(res,error)
+ async getQuestionByNumber(req: Request, res: Response): Promise<void> {
+  try {
+    const number = parseInt(req.query.number as string);
+
+    if (isNaN(number)) {
+      return sendResponse(
+        res,
+        StatusCode.BAD_REQUEST,
+        Messages.USERS.INVALID_QUESTION_NUMBER,
+        false
+      );
     }
-      
-  
+    const correctKey = `psc_correct_answer_${number}`;
+    const explanationKey = `psc_explanation_${number}`;
+    const prompt = pscPrompt(number);
+    const aiRaw = await getAIResponse(prompt);
+    const parsed = extractJSON(aiRaw);
+    if (!parsed ||typeof parsed.correctAnswer !== "number" ||!Array.isArray(parsed.options)) {
+      throwError("Invalid AI response structure");
+    }
+    cache.set(correctKey, parsed.correctAnswer);
+    cache.set(explanationKey, parsed.explanation);
+    const { correctAnswer, explanation, ...frontendData } = parsed;
+    return sendResponse(res, StatusCode.OK, "", true, frontendData);
+
+  } catch (error) {
+    handleControllerError(res, error);
   }
+}
+  async checkPSCAnswer(req: Request, res: Response): Promise<void>{
+   try {
+    const { questionId, selectedOption } = req.body;
+
+    const correctKey = `psc_correct_answer_${questionId}`;
+    const explanationKey = `psc_explanation_${questionId}`;
+
+    const correctAnswer = cache.get<number>(correctKey);
+    const explanation = cache.get<string>(explanationKey);
+
+    if (correctAnswer === undefined) {
+      return sendResponse(res, 400, "Answer not found", false);
+    }
+
+    const isCorrect = selectedOption === correctAnswer;
+
+    return sendResponse(res, 200, "", true, {
+      isCorrect,
+      correctAnswer,
+      explanation,
+    });
+
+  } catch (err) {
+    handleControllerError(res, err);
+  }
+ }
   async getDailyTask(req: Request, res: Response): Promise<void> {
       try {
           const decoded = decodeToken(req.cookies.token);

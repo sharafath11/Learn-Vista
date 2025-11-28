@@ -64,6 +64,11 @@ export default function EditProfileModal({
       setIsLoading(false)
       return
     }
+     if (name.length > 15) {
+      showInfoToast("Username maximum 15 characters")
+      setIsLoading(false)
+      return
+    }
 
     try {
       const formData = new FormData()

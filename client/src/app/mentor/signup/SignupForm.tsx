@@ -37,7 +37,9 @@ export default function MentorSignupForm() {
     setOtpVerified(true);
   };
 
-const handleSendOtp = async () => {
+  const handleSendOtp = async () => {
+   const error = validateMentorSignup(mentorData);
+  if (error) return showInfoToast(error);
   if (!mentorData.email) {
     showErrorToast("Email is required");
     return;
@@ -141,11 +143,6 @@ const handleSendOtp = async () => {
             <span>or</span>
             <div className="flex-1 border-t" />
           </div>
-
-          <button className="flex w-full items-center justify-center rounded-lg border border-gray-300 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">
-            <FcGoogle className="mr-2 h-5 w-5" />
-            Sign up with Google
-          </button>
 
           <p className="mt-4 text-center text-sm text-gray-500">
             Already a mentor?{" "}

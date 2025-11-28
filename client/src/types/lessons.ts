@@ -108,3 +108,13 @@ export interface IQuestion {
   correctAnswer: number
   explanation: string
 }
+export interface PSCQuestion {
+  id: number;
+  question: string;
+  options: string[];
+}
+export interface PSCCheckResponse {
+  isCorrect: boolean;
+  correctAnswer: number;
+  explanation: string;
+}

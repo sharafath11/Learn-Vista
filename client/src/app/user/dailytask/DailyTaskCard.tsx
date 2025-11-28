@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Clock,
   Play,
+  RotateCcw, // Added for Re-record icon
 } from "lucide-react";
 import { Badge } from "@/src/components/shared/components/ui/badge";
 import { Button } from "@/src/components/shared/components/ui/button";
@@ -65,6 +66,10 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
   }, [task]);
 
   const startRecording = async () => {
+    // Clear previous recording and transcription
+    setAudioBlob(null);
+    setAnswer("");
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioChunksRef.current = [];
@@ -119,8 +124,16 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
 
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
-    recognitionRef.current?.stop();
+    if (recognitionRef.current) {
+        recognitionRef.current.stop();
+    }
     setIsRecording(false);
+  };
+
+  const handleRerecord = () => {
+    setAudioBlob(null);
+    setAnswer("");
+    startRecording();
   };
 
   const handleSubmit = async () => {
@@ -255,35 +268,48 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
           <div className="space-y-3">
             {!localTask.isCompleted && (
               <>
-                <WithTooltip content={isRecording ? "Click to stop recording and save your response." : "Click to start recording your answer. Your speech will also be transcribed automatically."}>
-                  <Button
-                    variant={isRecording ? "destructive" : "outline"}
-                    className="w-full"
-                    onClick={isRecording ? stopRecording : startRecording}
-                  >
-                    {isRecording ? (
-                      <>
-                        <div className="w-2 h-2 bg-white rounded-full animate-pulse mr-2" />
-                        Stop Recording
-                      </>
-                    ) : (
-                      <>
-                        <Mic className="h-4 w-4 mr-2" />
-                        Start Recording
-                      </>
-                    )}
-                  </Button>
-                </WithTooltip>
-
-                {audioBlob && (
-                  <div className="mt-3">
-                    <p className="text-sm font-medium text-gray-700 mb-1">
-                      Preview Recording:
-                    </p>
-                    <audio controls src={URL.createObjectURL(audioBlob)} className="w-full" />
-                  </div>
+                {!audioBlob ? (
+                  <WithTooltip content={isRecording ? "Click to stop recording and save your response." : "Click to start recording your answer. Your speech will also be transcribed automatically."}>
+                    <Button
+                      variant={isRecording ? "destructive" : "outline"}
+                      className="w-full"
+                      onClick={isRecording ? stopRecording : startRecording}
+                      disabled={isRecording && !mediaRecorderRef.current} // Disable if recording, but mediaRecorder isn't ready
+                    >
+                      {isRecording ? (
+                        <>
+                          <div className="w-2 h-2 bg-white rounded-full animate-pulse mr-2" />
+                          Stop Recording
+                        </>
+                      ) : (
+                        <>
+                          <Mic className="h-4 w-4 mr-2" />
+                          Start Recording
+                        </>
+                      )}
+                    </Button>
+                  </WithTooltip>
+                ) : (
+                  <>
+                    <div className="mt-3 space-y-2">
+                      <p className="text-sm font-medium text-gray-700 mb-1">
+                        Review Recording:
+                      </p>
+                      <audio controls src={URL.createObjectURL(audioBlob)} className="w-full" />
+                      <WithTooltip content="Discard current recording and start a new one.">
+                        <Button
+                          variant="ghost"
+                          className="w-full text-red-500 hover:text-red-600"
+                          onClick={handleRerecord}
+                        >
+                          <RotateCcw className="h-4 w-4 mr-2" />
+                          Re-record
+                        </Button>
+                      </WithTooltip>
+                    </div>
+                  </>
                 )}
-
+                
                 <WithTooltip content="Type your transcription here. Copy-paste is disabled.">
                   <Textarea
                     placeholder="Your speech transcription will appear here..."
@@ -291,6 +317,7 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
                     onChange={(e) => setAnswer(e.target.value)}
                     onPaste={(e) => e.preventDefault()} 
                     className="min-h-[100px] resize-none border-red-200 focus:border-red-400"
+                    disabled={isRecording}
                   />
                 </WithTooltip>
                 <div className="text-xs text-muted-foreground text-right">
@@ -364,7 +391,7 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
             <Button
               className="w-full"
               onClick={handleSubmit}
-              disabled={isSubmitting || !answer.trim()}
+              disabled={isSubmitting || !answer.trim() || (localTask.type === "speaking" && !audioBlob)}
             >
               {isSubmitting ? "Submitting..." : "Submit Task"}
             </Button>
