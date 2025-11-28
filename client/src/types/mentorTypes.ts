@@ -87,6 +87,7 @@ export interface MentorSignupOtpProps {
   onChange: (e: { target: { id: string; value: string } }) => void;
   onVerified: () => void;
   onResend?: () => void;
+  emailDisabled?: boolean; 
 }
 export interface IMentorSingupFormInputProps {
   label: string;
@@ -96,6 +97,8 @@ export interface IMentorSingupFormInputProps {
   value?: string;
   placeholder?: string;
   required?: boolean;
+  name: string; 
+    disabled?: boolean; 
 };
 type SortDirection = 1 | -1
 type StudentStatus = "allowed" | "blocked"

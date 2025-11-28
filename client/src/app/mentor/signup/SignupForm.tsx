@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/src/utils/Toast";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons for password toggle
 
 import { FormOTP } from "./FormOTP";
 import { FormInput } from "@/src/components/mentor/signup/FormInput";
@@ -25,11 +26,18 @@ export default function MentorSignupForm() {
 
   const [otpVerified, setOtpVerified] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // New state for password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // New state for confirm password visibility
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setMentorData((prev) => ({ ...prev, [name]: value }));
+    // For experience, ensure it's a number
+    if (name === 'experience') {
+        setMentorData((prev) => ({ ...prev, [name]: parseInt(value) || 0 }));
+    } else {
+        setMentorData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleOtpVerified = () => {
@@ -39,20 +47,29 @@ export default function MentorSignupForm() {
 
   const handleSendOtp = async () => {
    const error = validateMentorSignup(mentorData);
+  // Only check for fields required BEFORE sending OTP if you don't want to validate everything
+  // before sending OTP. Keeping original logic here:
   if (error) return showInfoToast(error);
+  
   if (!mentorData.email) {
     showErrorToast("Email is required");
     return;
   }
 
-  setOtpSent(true);
+  // Check if OTP is already verified or sent to prevent resending unnecessarily
+  if (otpSent && !otpVerified) {
+      showInfoToast("OTP already sent. Please verify or wait before resending.");
+      return;
+  }
 
   const res = await MentorAPIMethods.otpSend(mentorData.email);
 
   if (res?.ok) {
-    showSuccessToast("OTP sent");
+    showSuccessToast("OTP sent successfully to " + mentorData.email);
+    setOtpSent(true); // Set state AFTER successful send
   } else {
-    showErrorToast("Failed to send OTP");
+    showErrorToast("Failed to send OTP. Please check the email and try again.");
+    setOtpSent(false);
   }
 };
 
@@ -66,10 +83,53 @@ export default function MentorSignupForm() {
 
     const res = await MentorAPIMethods.signup(mentorData);
     if (res?.ok) {
-      showSuccessToast("Signup successful");
+      showSuccessToast("Signup successful. Redirecting to login...");
       router.push("/mentor/login");
+    } else {
+        showErrorToast("Signup failed. Please try again.");
     }
   };
+
+  // Helper component for the Password input field with toggle
+  const PasswordInputWithToggle = ({
+    label,
+    id,
+    value,
+    onChange,
+    showToggle,
+    setShowToggle,
+  }: {
+    label: string;
+    id: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    showToggle: boolean;
+    setShowToggle: React.Dispatch<React.SetStateAction<boolean>>;
+  }) => (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700">{label}</label>
+      <div className="relative mt-1">
+        <input
+          type={showToggle ? "text" : "password"}
+          id={id}
+          name={id}
+          value={value}
+          onChange={onChange}
+          required
+          className="w-full rounded-lg border border-gray-300 p-2 pr-10 text-sm shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-100"
+        />
+        <button
+          type="button"
+          onClick={() => setShowToggle(prev => !prev)}
+          className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+          aria-label={showToggle ? "Hide password" : "Show password"}
+        >
+          {showToggle ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+        </button>
+      </div>
+    </div>
+  );
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-8">
@@ -92,11 +152,40 @@ export default function MentorSignupForm() {
           <p className="mb-6 text-sm text-gray-500">Inspire, guide, and shape the future of learners</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <FormInput label="Email" type="email" id="email" value={mentorData.email} onChange={handleChange} required />
-            <FormInput label="Password" type="password" id="password" value={mentorData.password} onChange={handleChange} required />
-            <FormInput label="Confirm Password" type="password" id="confirmPassword" value={mentorData.confirmPassword} onChange={handleChange} required />
-            <FormInput label="Phone Number" type="tel" id="phoneNumber" value={mentorData.phoneNumber} onChange={handleChange} required placeholder="+1234567890" />
-            <FormInput label="Experience (Years)" type="number" id="experience" value={mentorData.experience.toString()} onChange={handleChange} required />
+            {/* Email Field: Disabled after OTP is sent */}
+            <FormInput
+              label="Email"
+              type="email"
+              id="email"
+              name="email"
+              value={mentorData.email}
+              onChange={handleChange}
+              required
+              disabled={otpSent}
+            />
+            
+            {/* Password Field with Eye Toggle */}
+            <PasswordInputWithToggle
+              label="Password"
+              id="password"
+              value={mentorData.password}
+              onChange={handleChange}
+              showToggle={showPassword}
+              setShowToggle={setShowPassword}
+            />
+
+            {/* Confirm Password Field with Eye Toggle */}
+            <PasswordInputWithToggle
+              label="Confirm Password"
+              id="confirmPassword"
+              value={mentorData.confirmPassword}
+              onChange={handleChange}
+              showToggle={showConfirmPassword}
+              setShowToggle={setShowConfirmPassword}
+            />
+
+            <FormInput label="Phone Number" type="tel" id="phoneNumber" name="phoneNumber" value={mentorData.phoneNumber} onChange={handleChange} required placeholder="+1234567890" />
+            <FormInput label="Experience (Years)" type="number" id="experience" name="experience" value={mentorData.experience.toString()} onChange={handleChange} required />
 
             <div>
               <label htmlFor="bio" className="block text-sm font-medium text-gray-700">Professional Bio</label>
@@ -126,12 +215,14 @@ export default function MentorSignupForm() {
                 onVerified={handleOtpVerified}
                 onResend={handleSendOtp}
                 email={mentorData.email}
+                // Optional: Pass the disabled status of email for display in FormOTP if needed
+                emailDisabled={otpSent} 
               />
             )}
 
             <button
               type="submit"
-              disabled={!otpVerified && otpSent}
+              disabled={!otpVerified || !otpSent} // Disabled if OTP is not verified OR if OTP wasn't sent yet
               className="w-full rounded-lg bg-purple-600 py-2 text-white font-semibold hover:bg-purple-700 disabled:bg-purple-300 disabled:cursor-not-allowed transition"
             >
               Register as Mentor

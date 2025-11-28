@@ -175,7 +175,6 @@ export default function LoginForm() {
   );
 }
 
-// Input component
 function FormInput({
   label,
   type,
@@ -213,7 +212,7 @@ function FormInput({
           <button
             type="button"
             onClick={togglePassword}
-            className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-purple-600"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-purple-600"
           >
             {showPassword ? <HiEyeOff className="w-5 h-5" /> : <HiEye className="w-5 h-5" />}
           </button>

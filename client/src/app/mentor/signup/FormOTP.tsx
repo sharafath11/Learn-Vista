@@ -2,11 +2,18 @@
 import { postRequest } from "@/src/services/api";
 import { MentorAPIMethods } from "@/src/services/methods/mentor.api";
 import { MentorSignupOtpProps } from "@/src/types/mentorTypes";
+// Assuming MentorSignupOtpProps is imported from here or defined locally
+// import { MentorSignupOtpProps } from "@/src/types/mentorTypes"; 
 import { useEffect, useRef, useState } from "react";
 
+// ⚠️ MODIFICATION 1: Update the interface to include emailDisabled
+// Since I don't have access to the types file, I'll redefine the props inline for the fix.
 
-export const FormOTP = ({ label, onChange, onVerified, onResend, email }: MentorSignupOtpProps) => {
+
+export const FormOTP = ({ label, onChange, onVerified, onResend, email, emailDisabled }: MentorSignupOtpProps) => { // 👈 ADDED emailDisabled here
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
+// ... existing state and logic ...
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
@@ -21,6 +28,7 @@ export const FormOTP = ({ label, onChange, onVerified, onResend, email }: Mentor
       return () => clearTimeout(timer);
     }
   }, [timeLeft, isVerified]);
+// ... existing handleInputChange and handleKeyDown ...
 
   // Handle OTP input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, idx: number) => {
@@ -80,8 +88,16 @@ export const FormOTP = ({ label, onChange, onVerified, onResend, email }: Mentor
 
   return (
     <div className="space-y-4">
-      <label className="block text-sm font-medium text-gray-700">{label}</label>
-
+      <label className="block text-sm font-medium text-gray-700">
+        {label} 
+        {/* ⚠️ OPTIONAL: Added email display for UX */}
+        {emailDisabled && (
+            <span className="ml-2 text-xs text-gray-500 font-normal">
+                (Sent to: {email})
+            </span>
+        )}
+      </label>
+      {/* ... rest of the component ... */}
       <div className="flex items-center gap-3">
         <div className="flex gap-2">
           {otp.map((digit, idx) => (

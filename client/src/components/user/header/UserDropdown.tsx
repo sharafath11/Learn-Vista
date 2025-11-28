@@ -35,7 +35,7 @@ export const UserDropdown = ({ user, isDropdownOpen, setIsDropdownOpen, handleLo
       >
         <div className="relative">
           <Image
-            src={user?.profilePicture || "/svg/avatar-svgrepo-com.svg"}
+            src={user?.profilePicture || "/images/svg/avatar-svgrepo-com.svg"}
             alt="Profile"
             width={48}
             height={48}
@@ -65,7 +65,7 @@ export const UserDropdown = ({ user, isDropdownOpen, setIsDropdownOpen, handleLo
             >
               <div className="flex items-center gap-3">
                 <Image
-                  src={user?.profilePicture || "/svg/avatar-svgrepo-com.svg"}
+                  src={user?.profilePicture || "/images/svg/avatar-svgrepo-com.svg"}
                   alt="Profile"
                   width={40}
                   height={40}
