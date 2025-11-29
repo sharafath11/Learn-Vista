@@ -2,8 +2,7 @@ import {  PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-s
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuidv4 } from "uuid";
 import { s3 } from "../config/AWS";
-// CommonJS require
-const { fileTypeFromBuffer } = require("file-type");
+import { fileTypeFromBuffer } from "file-type";
 
 import { IConcern } from "../types/concernTypes";
 import { logger } from "./logger";

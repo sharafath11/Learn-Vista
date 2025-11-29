@@ -44,7 +44,9 @@ export class MentorAuthService implements IMentorAuthService {
   
     const token = generateAccessToken(mentor._id.toString(), "mentor");
     const refreshToken = generateRefreshToken(mentor._id.toString(), "mentor");
-    const signedUrl=await getSignedS3Url(mentor.profilePicture as string)
+    const signedUrl = mentor.profilePicture
+  ? await getSignedS3Url(mentor.profilePicture)
+  : "";
     const sendData=MentorMapper.toMentorMentorResponse(mentor,signedUrl?signedUrl:"")
     return {
       mentor:sendData,
@@ -56,8 +58,8 @@ export class MentorAuthService implements IMentorAuthService {
   async sendOtp(email: string): Promise<void> {
     const existingMentor = await this._mentorOtpRepo.findOne({ email });
     const existMentorInmentor = await this._mentorRepo.findOne({ email, isVerified: true });
-    
     if (existMentorInmentor) throwError(Messages.AUTH.ALREADY_REGISTERED, StatusCode.BAD_REQUEST);
+    if(existMentorInmentor)  throwError(Messages.AUTH.APPLY_FIRST, 400);
     if (existingMentor) throwError(Messages.AUTH.OTP_ALREADY_SENT, StatusCode.BAD_REQUEST);
     
     const otp = generateOtp();

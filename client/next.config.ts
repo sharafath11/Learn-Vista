@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'learn-vista.s3.ap-south-1.amazonaws.com',
+        hostname: 'learnvista-prod-uploads-2025.s3.eu-north-1.amazonaws.com',
         port: '',
         pathname: '/**',
       },

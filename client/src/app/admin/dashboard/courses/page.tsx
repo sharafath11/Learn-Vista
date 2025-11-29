@@ -159,7 +159,8 @@ export default function CoursesAdminPage() {
     fill
     className="object-cover"
     sizes="100vw"
-    priority={false} 
+                       priority={false} 
+                      
   />
   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 </div>
