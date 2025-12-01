@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
@@ -35,25 +34,21 @@ import {
   handleS3VideoDelete,
   handleLocalVideoDuration,
   handleThumbnailFileChange,
+  formatDuration,
 } from "@/src/utils/lessonFileHelpers";
-import { formatDuration } from "@/src/utils/lessonFileHelpers"; 
 
-const lessonFormSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-  order: z.coerce.number().int().positive("Order must be a positive number"),
-  thumbnail: z.string().optional(),
-  videoUrl: z.string().optional(),
-  duration: z.string().optional(),
-}).refine(
-  (data) => !data.videoUrl || data.duration,
-  {
-    message: "Video upload requires duration to be calculated.",
-    path: ["duration"],
-  }
-);
+const lessonFormSchema = z
+  .object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string().min(1, "Description is required"),
+    order: z.coerce.number().int().positive("Order must be a positive number"),
+    thumbnail: z.string().optional(),
+    videoUrl: z.string().optional(),
+    duration: z.string().optional(),
+  });
 
 export type LessonFormValues = z.infer<typeof lessonFormSchema>;
+
 export function AddLessonModal({
   open,
   setOpen,
@@ -75,22 +70,25 @@ export function AddLessonModal({
   });
 
   const [isUploading, setIsUploading] = useState(false);
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+
+  // FIX: proper preview URL state
+  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(null);
 
   const videoUrlValue = form.watch("videoUrl");
   const thumbnailValue = form.watch("thumbnail");
 
-  const thumbnailPreviewUrl = useMemo(() => {
+  // FIX: create + cleanup thumbnail preview URL properly
+  useEffect(() => {
     if (thumbnailFile) {
-      return URL.createObjectURL(thumbnailFile);
+      const url = URL.createObjectURL(thumbnailFile);
+      setThumbnailPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setThumbnailPreviewUrl(null);
     }
-    if (thumbnailValue && thumbnailValue.startsWith("http")) {
-      return thumbnailValue;
-    }
-    return null;
-  }, [thumbnailFile, thumbnailValue]);
-
+  }, [thumbnailFile]);
 
   const resetFormAndState = useCallback(() => {
     form.reset({
@@ -103,43 +101,48 @@ export function AddLessonModal({
     });
     setIsUploading(false);
     setThumbnailFile(null);
+    setThumbnailPreviewUrl(null);
   }, [nextOrder, form]);
 
   useEffect(() => {
     if (open) {
       resetFormAndState();
     }
-    return () => {
-      if (thumbnailFile) {
-          URL.revokeObjectURL(thumbnailFile.toString());
-      }
-    };
-  }, [open, resetFormAndState, thumbnailFile]);
+  }, [open, resetFormAndState]);
 
   const handleVideoUploadChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    form.setValue("videoUrl", "");
-    form.setValue("duration", "");
+
+    // FIX: don’t clear existing video until upload succeeds
+    const previousVideoUrl = form.getValues("videoUrl");
+    const previousDuration = form.getValues("duration");
+
     setIsUploading(true);
-    
+
     try {
       const durationInSeconds = await handleLocalVideoDuration(file);
       const formattedDuration = formatDuration(durationInSeconds);
+
       const publicVideoUrl = await handleS3VideoUpload(file);
+
       form.setValue("duration", formattedDuration, { shouldValidate: true });
       form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
-      showSuccessToast("Video uploaded and duration fetched!");
 
+      showSuccessToast("Video uploaded and duration fetched!");
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Upload Failed: Unexpected error.";
-      showErrorToast(errorMessage);
-      form.setError("videoUrl", { message: errorMessage });
+      // FIX: revert back to previous values
+      form.setValue("videoUrl", previousVideoUrl);
+      form.setValue("duration", previousDuration);
+
+      const msg = error instanceof Error ? error.message : "Upload failed.";
+      showErrorToast(msg);
+      form.setError("videoUrl", { message: msg });
     } finally {
       setIsUploading(false);
-      event.target.value = ''; 
+      event.target.value = "";
     }
   };
 
@@ -149,15 +152,12 @@ export function AddLessonModal({
 
     try {
       await handleS3VideoDelete(currentVideoUrl);
-      showSuccessToast("Video removed from S3.");
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to delete video.";
-      showErrorToast(errorMessage);
-      form.setError("videoUrl", { message: `Deletion failed: ${errorMessage}` });
-    } finally {
       form.setValue("videoUrl", "");
       form.setValue("duration", "");
-      form.clearErrors("videoUrl");
+      showSuccessToast("Video removed from S3.");
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : "Failed to delete video.";
+      showErrorToast(msg);
     }
   };
 
@@ -165,39 +165,34 @@ export function AddLessonModal({
     const file = handleThumbnailFileChange(e);
     if (file) {
       setThumbnailFile(file);
-      form.setValue("thumbnail", 'local-file-uploaded'); 
-      form.clearErrors("thumbnail");
-    } else {
-      e.target.value = '';
+      form.setValue("thumbnail", "");
     }
+    e.target.value = "";
   };
 
   const clearThumbnail = () => {
-    if (thumbnailFile) {
-        URL.revokeObjectURL(thumbnailFile.toString());
-    }
     setThumbnailFile(null);
+    setThumbnailPreviewUrl(null);
     form.setValue("thumbnail", "");
   };
 
   const handleSubmit = async (data: LessonFormValues) => {
     if (isUploading) {
-      showErrorToast("Please wait for the video upload to complete.");
+      showErrorToast("Please wait for video upload.");
       return;
     }
-
-    if (!data.videoUrl && data.duration) {
-      showErrorToast("Clear the duration field if no video is uploaded.");
-      return;
-    }    
     if (data.videoUrl && !data.duration) {
-        showErrorToast("Cannot save: Video duration could not be fetched.");
-        return;
+      showErrorToast("Video duration missing.");
+      return;
+    }
+    if (!data.videoUrl && data.duration) {
+      showErrorToast("Clear duration if no video uploaded.");
+      return;
     }
 
     setIsSaving(true);
-
     const formData = new FormData();
+
     formData.append("courseId", courseId);
     formData.append("title", data.title);
     formData.append("description", data.description);
@@ -207,27 +202,25 @@ export function AddLessonModal({
 
     if (thumbnailFile) {
       formData.append("thumbnail", thumbnailFile);
-    } else if (data.thumbnail && data.thumbnail.startsWith("http")) {
+    } else if (data.thumbnail?.startsWith("http")) {
       formData.append("thumbnailUrl", data.thumbnail);
     } else {
-      formData.append("thumbnailUrl", ""); 
+      formData.append("thumbnailUrl", "");
     }
-    
-    try {
-        const res = await MentorAPIMethods.addLesson(formData);
 
-        if (res.ok) {
-          showSuccessToast("Lesson added successfully!");
-          onLessonAdded();
-          setOpen(false);
-          if (thumbnailFile) URL.revokeObjectURL(thumbnailFile.toString());
-        } else {
-          showErrorToast(res.error?.message || "Failed to add lesson");
-        }
-    } catch (error) {
-        showErrorToast("An error occurred during lesson creation.");
+    try {
+      const res = await MentorAPIMethods.addLesson(formData);
+      if (res.ok) {
+        showSuccessToast("Lesson added successfully!");
+        onLessonAdded();
+        setOpen(false);
+      } else {
+        showErrorToast(res.error?.message || "Failed to add lesson");
+      }
+    } catch {
+      showErrorToast("An error occurred.");
     } finally {
-        setIsSaving(false);
+      setIsSaving(false);
     }
   };
 
@@ -236,106 +229,84 @@ export function AddLessonModal({
       <DialogContent className="sm:max-w-[525px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Lesson</DialogTitle>
-          <DialogDescription>
-            Create a new lesson for this course.
-          </DialogDescription>
+          <DialogDescription>Create a new lesson for this course.</DialogDescription>
         </DialogHeader>
+
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            {/* Title */}
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter lesson title" {...field} />
-                  </FormControl>
+                  <FormControl><Input {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {/* Description */}
             <FormField
               control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Enter lesson description"
-                      {...field}
-                    />
-                  </FormControl>
+                  <FormControl><Textarea {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {/* Order */}
             <FormField
               control={form.control}
               name="order"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Order</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Lesson order within the course.
-                  </FormDescription>
+                  <FormControl><Input type="number" {...field} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            {/* Video Upload */}
             <FormItem>
               <FormLabel>Video File</FormLabel>
               <FormControl>
-                <div className="flex flex-col gap-2">
-                  <Input
-                    type="file"
-                    accept="video/*"
-                    onChange={handleVideoUploadChange}
-                    className="w-full"
-                    disabled={isUploading || isSaving}
-                  />
-                  {isUploading && (
-                    <div className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin" /> Uploading
-                      video...
-                    </div>
-                  )}
-                </div>
+                <Input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoUploadChange}
+                  disabled={isUploading || isSaving}
+                />
               </FormControl>
-              <FormDescription>Upload a video.</FormDescription>
+
+              {isUploading && (
+                <div className="text-sm flex items-center gap-2">
+                  <Loader2 className="animate-spin h-4 w-4" /> Uploading...
+                </div>
+              )}
+
               {videoUrlValue && !isUploading && (
-                <div className="flex items-center justify-between mt-2 p-2 border rounded-md bg-green-50/50">
+                <div className="flex justify-between mt-2 p-2 border rounded bg-green-50">
                   <div className="flex items-center gap-2">
                     <PlayCircle className="h-5 w-5 text-green-600" />
-                    <span className="text-sm text-green-700 truncate w-[200px]">
-                      Uploaded: {videoUrlValue}
-                    </span>
+                    <span className="truncate w-[200px]">{videoUrlValue}</span>
                   </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleRemoveVideo}
-                    className="text-red-500 hover:bg-red-50"
-                    disabled={isSaving}
-                  >
+                  <Button type="button" size="sm" variant="ghost" onClick={handleRemoveVideo}>
                     Remove
                   </Button>
                 </div>
               )}
-              {form.formState.errors.videoUrl && (
-                <FormMessage>
-                  {form.formState.errors.videoUrl.message}
-                </FormMessage>
-              )}
+
+              <FormMessage />
             </FormItem>
+
+            {/* Duration */}
             <FormField
               control={form.control}
               name="duration"
@@ -343,24 +314,14 @@ export function AddLessonModal({
                 <FormItem>
                   <FormLabel>Duration</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="e.g., 01:25 or 00:10:30"
-                      {...field}
-                      readOnly={!!videoUrlValue}
-                      disabled={isUploading || isSaving}
-                    />
+                    <Input {...field} readOnly={!!videoUrlValue} disabled={isUploading} />
                   </FormControl>
-                  <FormDescription>
-                    {videoUrlValue
-                      ? "Automatically fetched from video."
-                      : "Estimated video duration (MM:SS or HH:MM:SS)."}
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            
-            {/* --- Thumbnail Field --- */}
+
+            {/* Thumbnail */}
             <FormField
               control={form.control}
               name="thumbnail"
@@ -370,58 +331,45 @@ export function AddLessonModal({
                   <FormControl>
                     <div className="flex items-center gap-2">
                       <Input
-                        placeholder="Optional thumbnail URL"
                         {...field}
-                        className="flex-1"
-                        disabled={!!thumbnailFile || isUploading || isSaving}
+                        disabled={!!thumbnailFile}
                         value={thumbnailFile ? "" : field.value}
                       />
                       <input
                         type="file"
                         accept="image/*"
+                        onChange={handleThumbnailFileInput}
                         className="hidden"
                         id="thumbnail-upload"
-                        onChange={handleThumbnailFileInput}
-                        disabled={isUploading || isSaving}
                       />
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() =>
-                          document.getElementById("thumbnail-upload")?.click()
-                        }
-                        disabled={isUploading || isSaving}
+                        onClick={() => document.getElementById("thumbnail-upload")?.click()}
                       >
-                        <FileImage className="h-4 w-4" />
+                        <FileImage />
                       </Button>
-                      {(thumbnailPreviewUrl || field.value) && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={clearThumbnail}
-                          className="text-red-500 hover:bg-red-50"
-                          disabled={isUploading || isSaving}
-                        >
-                          <XCircle className="h-5 w-5" />
+
+                      {(thumbnailFile || field.value) && (
+                        <Button type="button" variant="ghost" onClick={clearThumbnail}>
+                          <XCircle />
                         </Button>
                       )}
                     </div>
                   </FormControl>
-                  <FormDescription>
-                    Leave blank to use default or click icon to upload image.
-                  </FormDescription>
-                  {(thumbnailPreviewUrl) && (
-                    <div className="mt-2 relative w-32 h-20 rounded-md overflow-hidden border">
-                        <Image
-                          src={thumbnailPreviewUrl}
-                          alt="Thumbnail Preview"
-                          className="w-full h-full object-cover"
-                          fill
-                          sizes="128px"
-                        />
+
+                  {thumbnailPreviewUrl && (
+                    <div className="mt-2 relative w-32 h-20 overflow-hidden border rounded">
+                      <Image src={thumbnailPreviewUrl} alt="preview" fill className="object-cover" />
                     </div>
                   )}
+
+                  {field.value && field.value.startsWith("http") && !thumbnailPreviewUrl && (
+                    <div className="mt-2 relative w-32 h-20 overflow-hidden border rounded">
+                      <Image src={field.value} alt="url-thumbnail" fill className="object-cover" />
+                    </div>
+                  )}
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -429,13 +377,8 @@ export function AddLessonModal({
 
             <DialogFooter>
               <Button type="submit" disabled={isUploading || isSaving}>
-                {isSaving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
-                  </>
-                ) : (
-                  "Save Lesson"
-                )}
+                {isSaving ? <Loader2 className="animate-spin mr-2" /> : null}
+                Save Lesson
               </Button>
             </DialogFooter>
           </form>
