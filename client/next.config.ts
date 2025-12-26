@@ -21,7 +21,8 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'learnvista-prod-uploads-2025.s3.eu-north-1.amazonaws.com',
+        // Update this o match your new bucket and region
+        hostname: 'learn-vista-backend-prod.s3.ap-south-1.amazonaws.com',
         port: '',
         pathname: '/**',
       },

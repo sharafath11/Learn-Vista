@@ -104,9 +104,6 @@ export class MentorCourseService implements IMentorCourseService {
      const coures = await this._courseRepo.update(courseId, { isActive: status });
      const users = await this._userRepo.findAll();
    const userIds: string[] = users.map((i) => i.id);
-   const ADMIN_ID = process.env.ADMIN_ID;
-  if (!ADMIN_ID) throwError(Messages.COURSE.FAILED_TO_UPDATE_STATUS);
- userIds.push( ADMIN_ID)
      if (status) {
     await notifyWithSocket({
         notificationService: this._notificationService,
