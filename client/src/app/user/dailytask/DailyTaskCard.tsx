@@ -171,11 +171,14 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
       </CardHeader>
 
       <CardContent className="p-6 bg-gray-50/30">
-        <div className="mb-6 p-4 bg-white rounded-lg border shadow-sm">
-          <p className="text-sm text-gray-600 italic">
-            "{localTask.prompt}"
-          </p>
-        </div>
+        {localTask.type !== "listening" && (
+  <div className="mb-6 p-4 bg-white rounded-lg border shadow-sm">
+    <p className="text-sm text-gray-600 italic">
+      "{localTask.prompt}"
+    </p>
+  </div>
+)}
+
 
         {/* ---------- TASK BODY ---------- */}
 
