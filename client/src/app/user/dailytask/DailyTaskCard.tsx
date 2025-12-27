@@ -197,7 +197,7 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
 
         {!localTask.isCompleted && localTask.type === "listening" && (
           <ListeningTask
-            audioUrl={localTask.audioUrl || ""}
+            audioUrl={localTask.prompt || ""}
             value={answer}
             onChange={setAnswer}
           />

@@ -5,7 +5,7 @@ import { ListeningTaskProps } from "@/src/types/dailyTaskTypes";
 import { Play, Square } from "lucide-react";
 
 export function ListeningTask({
-  audioUrl, // this is TEXT
+  audioUrl, // TEXT from backend (prompt)
   value,
   onChange,
   disabled = false,
@@ -13,78 +13,79 @@ export function ListeningTask({
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   useEffect(() => {
-    console.log("ListeningTask mounted");
-    console.log("audioUrl value:", audioUrl);
-    console.log("speechSynthesis supported:", "speechSynthesis" in window);
+    console.log("[ListeningTask] mounted");
+    console.log("[ListeningTask] audio text:", audioUrl);
+    console.log(
+      "[ListeningTask] speechSynthesis supported:",
+      "speechSynthesis" in window
+    );
+
+    // Chrome voice async load fix
+    speechSynthesis.onvoiceschanged = () => {
+      console.log(
+        "[ListeningTask] voices loaded:",
+        speechSynthesis.getVoices()
+      );
+    };
   }, [audioUrl]);
 
   const speak = () => {
-    console.log("Play button clicked");
-
     if (!audioUrl || typeof audioUrl !== "string") {
-      alert("audioUrl is empty or invalid");
-      console.error("Invalid audioUrl:", audioUrl);
+      console.error("[ListeningTask] Invalid audio text:", audioUrl);
       return;
     }
 
     if (!("speechSynthesis" in window)) {
-      alert("SpeechSynthesis NOT supported in this browser");
+      console.error("[ListeningTask] SpeechSynthesis not supported");
       return;
     }
 
-    // Load voices (CRITICAL for Chrome)
-    const voices = window.speechSynthesis.getVoices();
-    console.log("Available voices:", voices);
-
+    const voices = speechSynthesis.getVoices();
     if (!voices.length) {
-      alert("Voices not loaded yet. Click Play again.");
+      console.warn("[ListeningTask] Voices not ready yet");
       return;
     }
 
-    window.speechSynthesis.cancel();
+    speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(audioUrl);
-    utterance.voice = voices[0]; // force voice
+    utterance.voice = voices[0];
     utterance.lang = "en-US";
     utterance.rate = 1;
     utterance.pitch = 1;
 
     utterance.onstart = () => {
-      console.log("Speech started");
-      alert("Audio started");
+      console.log("[ListeningTask] speech started");
       setIsSpeaking(true);
     };
 
     utterance.onend = () => {
-      console.log("Speech ended");
+      console.log("[ListeningTask] speech ended");
       setIsSpeaking(false);
     };
 
     utterance.onerror = (e) => {
-      console.error("Speech error:", e);
-      alert("Speech error occurred");
+      console.error("[ListeningTask] speech error:", e);
       setIsSpeaking(false);
     };
 
-    console.log("Calling speechSynthesis.speak()");
-    window.speechSynthesis.speak(utterance);
+    speechSynthesis.speak(utterance);
   };
 
   const stop = () => {
-    console.log("Stop button clicked");
-    window.speechSynthesis.cancel();
+    speechSynthesis.cancel();
     setIsSpeaking(false);
   };
 
   return (
     <div className="space-y-4">
-
       <button
         type="button"
         disabled={disabled}
         onClick={isSpeaking ? stop : speak}
         className="flex items-center gap-2 px-4 py-2 rounded-lg
-                   bg-green-600 text-white hover:bg-green-700"
+                   bg-green-600 text-white hover:bg-green-700
+                   disabled:opacity-50"
       >
         {isSpeaking ? <Square size={16} /> : <Play size={16} />}
         {isSpeaking ? "Stop Audio" : "Play Audio"}
@@ -94,8 +95,11 @@ export function ListeningTask({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
         placeholder="Type your answer..."
-        className="w-full p-3 border rounded-lg"
+        className="w-full p-3 border rounded-lg
+                   focus:ring-2 focus:ring-blue-500
+                   disabled:bg-gray-100"
       />
     </div>
   );
