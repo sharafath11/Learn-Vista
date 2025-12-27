@@ -5,67 +5,97 @@ import { ListeningTaskProps } from "@/src/types/dailyTaskTypes";
 import { Play, Square } from "lucide-react";
 
 export function ListeningTask({
-  audioUrl, // this is actually TEXT
+  audioUrl, // this is TEXT
   value,
   onChange,
   disabled = false,
 }: ListeningTaskProps) {
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  const speak = () => {
-    if (!audioUrl) return;
+  useEffect(() => {
+    console.log("ListeningTask mounted");
+    console.log("audioUrl value:", audioUrl);
+    console.log("speechSynthesis supported:", "speechSynthesis" in window);
+  }, [audioUrl]);
 
-    // Stop any existing speech
+  const speak = () => {
+    console.log("Play button clicked");
+
+    if (!audioUrl || typeof audioUrl !== "string") {
+      alert("audioUrl is empty or invalid");
+      console.error("Invalid audioUrl:", audioUrl);
+      return;
+    }
+
+    if (!("speechSynthesis" in window)) {
+      alert("SpeechSynthesis NOT supported in this browser");
+      return;
+    }
+
+    // Load voices (CRITICAL for Chrome)
+    const voices = window.speechSynthesis.getVoices();
+    console.log("Available voices:", voices);
+
+    if (!voices.length) {
+      alert("Voices not loaded yet. Click Play again.");
+      return;
+    }
+
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(audioUrl);
-    utterance.rate = 1; // speed (0.5–2)
-    utterance.pitch = 1; // voice tone
+    utterance.voice = voices[0]; // force voice
     utterance.lang = "en-US";
+    utterance.rate = 1;
+    utterance.pitch = 1;
 
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.onstart = () => {
+      console.log("Speech started");
+      alert("Audio started");
+      setIsSpeaking(true);
+    };
 
-    setIsSpeaking(true);
+    utterance.onend = () => {
+      console.log("Speech ended");
+      setIsSpeaking(false);
+    };
+
+    utterance.onerror = (e) => {
+      console.error("Speech error:", e);
+      alert("Speech error occurred");
+      setIsSpeaking(false);
+    };
+
+    console.log("Calling speechSynthesis.speak()");
     window.speechSynthesis.speak(utterance);
   };
 
   const stop = () => {
+    console.log("Stop button clicked");
     window.speechSynthesis.cancel();
     setIsSpeaking(false);
   };
 
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => window.speechSynthesis.cancel();
-  }, []);
-
   return (
     <div className="space-y-4">
 
-      {/* PLAY / STOP BUTTON */}
       <button
         type="button"
         disabled={disabled}
         onClick={isSpeaking ? stop : speak}
         className="flex items-center gap-2 px-4 py-2 rounded-lg
-                   bg-green-600 text-white hover:bg-green-700
-                   disabled:opacity-50"
+                   bg-green-600 text-white hover:bg-green-700"
       >
         {isSpeaking ? <Square size={16} /> : <Play size={16} />}
         {isSpeaking ? "Stop Audio" : "Play Audio"}
       </button>
 
-      {/* ANSWER INPUT */}
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
         placeholder="Type your answer..."
-        className="w-full p-3 border rounded-lg
-                   focus:ring-2 focus:ring-blue-500
-                   disabled:bg-gray-100"
+        className="w-full p-3 border rounded-lg"
       />
     </div>
   );
