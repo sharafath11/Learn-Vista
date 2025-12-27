@@ -3,40 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Mic, MicOff, Square, Pause, Play, Upload } from "lucide-react";
 import { Button } from "@/src/components/shared/components/ui/button";
-type RecordingState = "idle" | "recording" | "paused" | "completed";
+import { RecordingState, SpeakingTaskProps, SpeechRecognitionInstance } from "@/src/types/dailyTaskTypes";
 
-interface SpeechRecognitionResultItem {
-  transcript: string;
-  confidence: number;
-}
-
-interface SpeechRecognitionResult {
-  isFinal: boolean;
-  length: number;
-  [index: number]: SpeechRecognitionResultItem;
-}
-
-interface SpeechRecognitionEventLike extends Event {
-  resultIndex: number;
-  results: SpeechRecognitionResult[];
-}
-
-interface SpeechRecognitionInstance {
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-  start(): void;
-  stop(): void;
-  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
-  onend: (() => void) | null;
-  onerror: ((event: Event) => void) | null;
-}
-
-interface SpeakingTaskProps {
-  onComplete: (payload: { audio: Blob; transcript: string }) => void;
-}
-
-/* ================= COMPONENT ================= */
 
 export function SpeakingTask({ onComplete }: SpeakingTaskProps) {
   const [state, setState] = useState<RecordingState>("idle");
@@ -184,7 +152,21 @@ export function SpeakingTask({ onComplete }: SpeakingTaskProps) {
   /* ---------- Render ---------- */
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      {/* HEADER */}
+<div className="border-b pb-2 flex items-start gap-2">
+  <Mic className="h-5 w-5 text-blue-600 mt-0.5" />
+  <div>
+    <h3 className="text-base font-semibold text-gray-800">
+      Speaking Task
+    </h3>
+    <p className="text-xs text-gray-500">
+      Speak clearly into your microphone. You can pause, resume, or re-record before submitting.
+    </p>
+  </div>
+</div>
+
+
       {audioUrl && <audio controls src={audioUrl} className="w-full" />}
 
       <textarea
@@ -192,6 +174,7 @@ export function SpeakingTask({ onComplete }: SpeakingTaskProps) {
         onChange={(e) => setTranscript(e.target.value)}
         disabled={state === "recording" || state === "paused"}
         className="w-full h-40 border p-3 rounded"
+        placeholder="Your speech will appear here..."
       />
 
       <div className="flex gap-2">

@@ -46,3 +46,46 @@ export interface IDailyTaskSummaryResponse {
   updatedAt?: string;
   tasks: ITaskSubmissionResponse[];
 }
+export interface ListeningTaskProps {
+  audioUrl: string;
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+}
+export type RecordingState = "idle" | "recording" | "paused" | "completed";
+
+export interface SpeechRecognitionResultItem {
+  transcript: string;
+  confidence: number;
+}
+
+export interface SpeechRecognitionResult {
+  isFinal: boolean;
+  length: number;
+  [index: number]: SpeechRecognitionResultItem;
+}
+
+export interface SpeechRecognitionEventLike extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResult[];
+}
+
+export interface SpeechRecognitionInstance {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onend: (() => void) | null;
+  onerror: ((event: Event) => void) | null;
+}
+
+export interface SpeakingTaskProps {
+  onComplete: (payload: { audio: Blob; transcript: string }) => void;
+}
+
+export interface WritingTaskProps {
+  value: string;
+  onChange: (value: string) => void;
+}
