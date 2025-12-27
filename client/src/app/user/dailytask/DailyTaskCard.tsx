@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Mic,
   PenTool,
@@ -8,7 +8,10 @@ import {
   CheckCircle2,
   Clock,
   Play,
-  RotateCcw, // Added for Re-record icon
+  RotateCcw,
+  Square,
+  Pause,
+  Circle,
 } from "lucide-react";
 import { Badge } from "@/src/components/shared/components/ui/badge";
 import { Button } from "@/src/components/shared/components/ui/button";
@@ -29,6 +32,8 @@ import { handleTextToSpeech, stopTextToSpeech } from "@/src/utils/voice";
 import { ITaskesProps } from "@/src/types/userProps";
 import { WithTooltip } from "@/src/hooks/UseTooltipProps";
 
+type RecordingState = "idle" | "recording" | "paused" | "completed";
+
 const taskIcons = {
   speaking: Mic,
   writing: PenTool,
@@ -36,104 +41,113 @@ const taskIcons = {
 };
 
 const taskColors = {
-  speaking: "from-red-500 to-pink-500",
-  writing: "from-blue-500 to-cyan-500",
+  speaking: "from-blue-500 to-cyan-500",
+  writing: "from-purple-500 to-pink-500",
   listening: "from-green-500 to-emerald-500",
-};
-
-const taskBgColors = {
-  speaking: "bg-red-50 border-red-200",
-  writing: "bg-blue-50 border-blue-200",
-  listening: "bg-green-50 border-green-200",
 };
 
 export function DailyTaskCard({ task, taskId }: ITaskesProps) {
   const [localTask, setLocalTask] = useState(task);
   const [answer, setAnswer] = useState(localTask.userResponse ?? "");
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
+  const [recState, setRecState] = useState<RecordingState>("idle");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
   const recognitionRef = useRef<any>(null);
-
-  const Icon = taskIcons[localTask.type];
+  const audioChunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     setLocalTask(task);
     setAnswer(task.userResponse ?? "");
   }, [task]);
 
-  const startRecording = async () => {
-    // Clear previous recording and transcription
-    setAudioBlob(null);
-    setAnswer("");
+  const initSpeechRecognition = useCallback(() => {
+    if (!("webkitSpeechRecognition" in window)) return null;
 
+    const recognition = new (window as any).webkitSpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onresult = (event: any) => {
+      let finalTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          finalTranscript += event.results[i][0].transcript;
+        }
+      }
+      if (finalTranscript) {
+        setAnswer((prev) => prev + (prev ? " " : "") + finalTranscript.trim());
+      }
+    };
+
+    recognition.onend = () => {
+      if (recState === "recording") {
+        recognition.start();
+      }
+    };
+
+    return recognition;
+  }, [recState]);
+
+  const handleStart = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       audioChunksRef.current = [];
 
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) audioChunksRef.current.push(event.data);
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
       };
 
-      mediaRecorder.onstop = () => {
+      recorder.onstop = () => {
         const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
         setAudioBlob(blob);
       };
 
-      if ("webkitSpeechRecognition" in window) {
-        const recognition = new (window as any).webkitSpeechRecognition();
-        recognitionRef.current = recognition;
-        recognition.lang = "en-US";
-        recognition.continuous = false;
-        recognition.interimResults = false;
-
-        recognition.onresult = (event: any) => {
-          const transcript = event.results[0][0].transcript;
-          setAnswer(transcript);
-        };
-
-        recognition.onerror = (event: any) => {
-          console.warn("Speech recognition error:", event.error);
-          showErrorToast(`Speech recognition error: ${event.error}`);
-        };
-
-        recognition.onend = () => {
-          setIsRecording(false);
-        };
-
-        recognition.start();
-      } else {
-        showInfoToast(
-          "Speech recognition not supported in this browser, only audio will be recorded."
-        );
-      }
-
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (error) {
-      console.error(error);
-      showInfoToast("Microphone access denied or not available.");
+      recorder.start(1000);
+      const recognition = initSpeechRecognition();
+      recognitionRef.current = recognition;
+      recognition?.start();
+      setRecState("recording");
+    } catch (err) {
+      showErrorToast("Microphone access denied.");
     }
   };
 
-  const stopRecording = () => {
+  const handlePause = () => {
+    if (mediaRecorderRef.current?.state === "recording") {
+      mediaRecorderRef.current.pause();
+      recognitionRef.current?.stop();
+      setRecState("paused");
+    }
+  };
+
+  const handleResume = () => {
+    if (mediaRecorderRef.current?.state === "paused") {
+      mediaRecorderRef.current.resume();
+      recognitionRef.current?.start();
+      setRecState("recording");
+    }
+  };
+
+  const handleFinish = () => {
     mediaRecorderRef.current?.stop();
-    if (recognitionRef.current) {
-        recognitionRef.current.stop();
-    }
-    setIsRecording(false);
+    recognitionRef.current?.stop();
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    setRecState("completed");
   };
 
-  const handleRerecord = () => {
+  const handleReset = () => {
     setAudioBlob(null);
     setAnswer("");
-    startRecording();
+    setRecState("idle");
+    audioChunksRef.current = [];
   };
 
   const handleSubmit = async () => {
@@ -164,238 +178,171 @@ export function DailyTaskCard({ task, taskId }: ITaskesProps) {
     }
   };
 
-  const renderFeedback = () => {
-    if (!localTask.isCompleted) return null;
+  const renderSpeakingInterface = () => {
+    if (localTask.isCompleted) return renderFeedback();
+
     return (
-      <div className="p-4 mt-3 bg-gray-50 rounded border border-gray-200 space-y-2">
-        {localTask.type === "listening" && localTask.prompt && (
-          <div>
-            <WithTooltip content="Listen to the prompt audio before answering.">
-              <Button className="w-full" onClick={() => handleTextToSpeech(task.prompt)}>
-                <Play className="h-4 w-4 mr-2" />
-                Play Audio
+      <div className="space-y-4">
+        <div className="flex flex-col gap-3">
+          {recState === "idle" && (
+            <WithTooltip content="Click to begin capturing your voice and auto-transcription.">
+              <Button onClick={handleStart} className="w-full h-12 text-lg">
+                <Mic className="mr-2 h-5 w-5" /> Start Speaking
               </Button>
             </WithTooltip>
-            <WithTooltip content="Stop audio playback.">
-              <Button variant="ghost" className="w-full" onClick={stopTextToSpeech}>
-                Stop Audio
-              </Button>
-            </WithTooltip>
-          </div>
-        )}
+          )}
+
+          {(recState === "recording" || recState === "paused") && (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-center p-4 bg-red-50 rounded-lg animate-pulse mb-2">
+                <Circle className="fill-red-500 text-red-500 h-3 w-3 mr-2" />
+                <span className="text-red-600 font-bold uppercase text-xs tracking-widest">
+                  {recState === "recording" ? "Live Recording" : "Paused"}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <WithTooltip content={recState === "recording" ? "Pause recording temporarily." : "Resume capturing your voice."}>
+                  <Button variant="outline" onClick={recState === "recording" ? handlePause : handleResume}>
+                    {recState === "recording" ? <><Pause className="mr-2 h-4 w-4" /> Pause</> : <><Play className="mr-2 h-4 w-4" /> Resume</>}
+                  </Button>
+                </WithTooltip>
+                <WithTooltip content="Finalize the audio file and stop recording.">
+                  <Button variant="destructive" onClick={handleFinish}>
+                    <Square className="mr-2 h-4 w-4" /> Finish
+                  </Button>
+                </WithTooltip>
+              </div>
+            </div>
+          )}
+
+          {recState === "completed" && audioBlob && (
+            <div className="p-4 bg-gray-50 border rounded-lg space-y-3">
+              <p className="text-sm font-semibold text-gray-600">Review your recording:</p>
+              <audio controls src={URL.createObjectURL(audioBlob)} className="w-full" />
+              <WithTooltip content="Erase current recording and start over.">
+                <Button variant="ghost" onClick={handleReset} className="w-full text-red-500 hover:bg-red-100">
+                  <RotateCcw className="mr-2 h-4 w-4" /> Reset & Re-record
+                </Button>
+              </WithTooltip>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs font-bold text-gray-500 uppercase">Transcript</label>
+          <WithTooltip content="Review and edit the automatic transcription before submitting.">
+            <Textarea
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              disabled={recState === "recording" || recState === "paused"}
+              placeholder="Your speech will appear here..."
+              className="min-h-[150px] bg-white resize-none"
+            />
+          </WithTooltip>
+        </div>
+
+        <WithTooltip content="Submit your recording and transcript for evaluation.">
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={handleSubmit}
+            disabled={isSubmitting || recState !== "completed" || !answer.trim()}
+          >
+            {isSubmitting ? "Uploading..." : "Submit Answer"}
+          </Button>
+        </WithTooltip>
+      </div>
+    );
+  };
+
+  const renderFeedback = () => {
+    return (
+      <div className="p-4 mt-3 bg-white rounded-xl border-2 border-green-100 space-y-4">
         {localTask.userResponse && (
-          <WithTooltip content="This shows the answer you submitted.">
-            <div className="text-sm text-gray-800">
-              <strong>Your Answer:</strong>
-              <br />
-              {localTask.type !== "speaking" ? (
-                localTask.userResponse
+          <div className="text-sm">
+            <strong className="text-gray-500 uppercase text-[10px]">Your Submission</strong>
+            <div className="mt-2">
+              {localTask.type === "speaking" ? (
+                <audio controls src={localTask.userResponse} className="w-full" />
               ) : (
-                <audio controls src={localTask.userResponse} className="mt-2" />
+                <p className="text-gray-800">{localTask.userResponse}</p>
               )}
             </div>
-          </WithTooltip>
+          </div>
         )}
         {localTask.aiFeedback && (
-          <WithTooltip content="AI-generated feedback based on your response.">
-            <p className="text-sm text-gray-800">
-              <strong>AI Feedback:</strong> <br />
-              {localTask.aiFeedback}
-            </p>
-          </WithTooltip>
+          <div className="p-3 bg-blue-50 rounded-lg text-sm border border-blue-100">
+            <strong className="text-blue-700">AI Feedback:</strong>
+            <p className="mt-1 text-blue-900 leading-relaxed">{localTask.aiFeedback}</p>
+          </div>
         )}
-        {typeof localTask.score === "number" && (
-          <WithTooltip content="Your score out of 5 based on AI evaluation.">
-            <p className="text-sm text-gray-800">
-              <strong>Score:</strong> {localTask.score} / 5
-            </p>
-          </WithTooltip>
+        {localTask.score !== undefined && (
+          <div className="flex items-center justify-between pt-2 border-t">
+            <span className="font-bold text-gray-700">Overall Score</span>
+            <span className="text-2xl font-black text-green-600">{localTask.score}/5</span>
+          </div>
         )}
       </div>
     );
   };
 
+  const Icon = taskIcons[localTask.type as keyof typeof taskIcons] || Mic;
+
   return (
-    <Card
-      className={`group hover:shadow-xl transition-all duration-300 border-2 ${
-        localTask.isCompleted
-          ? "bg-green-50 border-green-200"
-          : taskBgColors[localTask.type]
-      }`}
-    >
-      <CardHeader className="pb-4">
-        <div className="flex items-start justify-between">
+    <Card className={`overflow-hidden transition-all duration-300 border-2 ${localTask.isCompleted ? "border-green-200" : "border-gray-100 shadow-sm"}`}>
+      <CardHeader className="bg-white border-b">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div
-              className={`p-2 rounded-lg bg-gradient-to-r ${taskColors[localTask.type]} text-white`}
-            >
+            <div className={`p-2 rounded-lg bg-gradient-to-br ${taskColors[localTask.type as keyof typeof taskColors]} text-white`}>
               <Icon className="h-5 w-5" />
             </div>
-            <div>
-              <CardTitle className="text-lg font-semibold leading-tight">
-                {localTask.title}
-              </CardTitle>
-              <Badge variant="outline" className="mt-1 text-xs capitalize">
-                {localTask.type}
-              </Badge>
-            </div>
+            <CardTitle className="text-base font-bold">{localTask.title}</CardTitle>
           </div>
-          <div>
-            {localTask.isCompleted ? (
-              <Badge className="bg-green-500 hover:bg-green-600">
-                <CheckCircle2 className="h-3 w-3 mr-1" />
-                Done
-              </Badge>
-            ) : (
-              <Badge variant="secondary">
-                <Clock className="h-3 w-3 mr-1" />
-                Pending
-              </Badge>
-            )}
-          </div>
+          {localTask.isCompleted ? (
+            <Badge className="bg-green-500"><CheckCircle2 className="h-3 w-3 mr-1" /> Completed</Badge>
+          ) : (
+            <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" /> Pending</Badge>
+          )}
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        <div className="p-4 bg-white/60 rounded-lg border border-gray-100">
-          <p className="text-sm text-gray-700 leading-relaxed">
-            {localTask.type !== "listening" ? localTask.prompt : ""}
-          </p>
+      <CardContent className="p-6 bg-gray-50/30">
+        <div className="mb-6 p-4 bg-white rounded-lg border shadow-sm">
+          <p className="text-sm text-gray-600 italic">"{localTask.prompt}"</p>
         </div>
 
-        {/* Speaking */}
-        {localTask.type === "speaking" && (
-          <div className="space-y-3">
-            {!localTask.isCompleted && (
+        {localTask.type === "speaking" ? (
+          renderSpeakingInterface()
+        ) : (
+          <div className="space-y-4">
+            {!localTask.isCompleted ? (
               <>
-                {!audioBlob ? (
-                  <WithTooltip content={isRecording ? "Click to stop recording and save your response." : "Click to start recording your answer. Your speech will also be transcribed automatically."}>
-                    <Button
-                      variant={isRecording ? "destructive" : "outline"}
-                      className="w-full"
-                      onClick={isRecording ? stopRecording : startRecording}
-                      disabled={isRecording && !mediaRecorderRef.current} // Disable if recording, but mediaRecorder isn't ready
-                    >
-                      {isRecording ? (
-                        <>
-                          <div className="w-2 h-2 bg-white rounded-full animate-pulse mr-2" />
-                          Stop Recording
-                        </>
-                      ) : (
-                        <>
-                          <Mic className="h-4 w-4 mr-2" />
-                          Start Recording
-                        </>
-                      )}
+                {localTask.type === "listening" && (
+                  <div className="flex gap-2">
+                    <Button onClick={() => handleTextToSpeech(localTask.prompt)} className="flex-1">
+                      <Play className="h-4 w-4 mr-2" /> Play Audio
                     </Button>
-                  </WithTooltip>
-                ) : (
-                  <>
-                    <div className="mt-3 space-y-2">
-                      <p className="text-sm font-medium text-gray-700 mb-1">
-                        Review Recording:
-                      </p>
-                      <audio controls src={URL.createObjectURL(audioBlob)} className="w-full" />
-                      <WithTooltip content="Discard current recording and start a new one.">
-                        <Button
-                          variant="ghost"
-                          className="w-full text-red-500 hover:text-red-600"
-                          onClick={handleRerecord}
-                        >
-                          <RotateCcw className="h-4 w-4 mr-2" />
-                          Re-record
-                        </Button>
-                      </WithTooltip>
-                    </div>
-                  </>
+                    <Button variant="outline" onClick={stopTextToSpeech}>
+                      <Square className="h-4 w-4" />
+                    </Button>
+                  </div>
                 )}
-                
-                <WithTooltip content="Type your transcription here. Copy-paste is disabled.">
+                <WithTooltip content="Type your response here.">
                   <Textarea
-                    placeholder="Your speech transcription will appear here..."
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
-                    onPaste={(e) => e.preventDefault()} 
-                    className="min-h-[100px] resize-none border-red-200 focus:border-red-400"
-                    disabled={isRecording}
-                  />
-                </WithTooltip>
-                <div className="text-xs text-muted-foreground text-right">
-                  {answer.length} characters
-                </div>
-              </>
-            )}
-            {renderFeedback()}
-          </div>
-        )}
-
-        {/* Writing */}
-        {localTask.type === "writing" && (
-          <div className="space-y-3">
-            {!localTask.isCompleted && (
-              <>
-                <WithTooltip content="Type your answer here. Copy-paste is disabled.">
-                  <Textarea
                     placeholder="Write your answer here..."
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    onPaste={(e) => e.preventDefault()} 
-                    className="min-h-[120px] resize-none border-blue-200 focus:border-blue-400"
+                    className="min-h-[150px] bg-white"
                   />
                 </WithTooltip>
-                <div className="text-xs text-muted-foreground text-right">
-                  {answer.length} characters
-                </div>
+                <Button className="w-full" onClick={handleSubmit} disabled={isSubmitting || !answer.trim()}>
+                  {isSubmitting ? "Submitting..." : "Submit Task"}
+                </Button>
               </>
+            ) : (
+              renderFeedback()
             )}
-            {renderFeedback()}
           </div>
-        )}
-
-        {/* Listening */}
-        {localTask.type === "listening" && (
-          <div className="space-y-3">
-            {!localTask.isCompleted && (
-              <>
-                <WithTooltip content="Listen to the audio prompt before answering.">
-                  <Button className="w-full" onClick={() => handleTextToSpeech(localTask.prompt)}>
-                    <Play className="h-4 w-4 mr-2" />
-                    Play Audio
-                  </Button>
-                </WithTooltip>
-                <WithTooltip content="Stop the audio playback.">
-                  <Button variant="ghost" className="w-full" onClick={stopTextToSpeech}>
-                    Stop Audio
-                  </Button>
-                </WithTooltip>
-                <WithTooltip content="Type your answer here. Copy-paste is disabled.">
-                  <Textarea
-                    placeholder="Enter your answer here..."
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                    onPaste={(e) => e.preventDefault()} 
-                    className="min-h-[100px] resize-none border-green-200 focus:border-green-400"
-                  />
-                </WithTooltip>
-                <div className="text-xs text-muted-foreground text-right">
-                  {answer.length} characters
-                </div>
-              </>
-            )}
-            {renderFeedback()}
-          </div>
-        )}
-
-        {!localTask.isCompleted && (
-          <WithTooltip content="Submit your answer for AI evaluation and feedback.">
-            <Button
-              className="w-full"
-              onClick={handleSubmit}
-              disabled={isSubmitting || !answer.trim() || (localTask.type === "speaking" && !audioBlob)}
-            >
-              {isSubmitting ? "Submitting..." : "Submit Task"}
-            </Button>
-          </WithTooltip>
         )}
       </CardContent>
     </Card>
