@@ -73,6 +73,7 @@ export interface IcourseFromResponse {
   title: string,
   mentorPhoto:string
   description: string;
+  totelStudents:number,
   mentorEmail: string,
   Mentorusername: string,
   mentorExpertise: string[],
@@ -85,7 +86,8 @@ export interface IcourseFromResponse {
   endDate: Date,
   tags:string[]
   courseLanguage:string
-  startTime:string
+  startTime: string
+  totelLesson:number
 }
 type SortOrder = 1 | -1;
 

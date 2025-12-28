@@ -104,7 +104,7 @@ const CourseCard = ({ course, index, onDetailsClick }: IUserCourseCardProps) => 
             <WithTooltip content="Number of students currently enrolled.">
               <div className="flex items-center text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg cursor-help">
                 <Users className="h-4 w-4 mr-2 text-blue-500" />
-                <span className="font-medium">{course.students || 0} Students</span>
+                <span className="font-medium">{course.totelStudents || 0} Students</span>
               </div>
             </WithTooltip>
 
@@ -118,7 +118,7 @@ const CourseCard = ({ course, index, onDetailsClick }: IUserCourseCardProps) => 
           <WithTooltip content="Total lessons and course language.">
             <div className="flex items-center text-gray-600 text-sm mb-4 bg-gray-50 px-3 py-2 rounded-lg cursor-help">
               <Clock className="h-4 w-4 mr-2 text-green-500" />
-              <span className="font-medium">{course.sessions} Lessons</span>
+              <span className="font-medium">{course.totelLesson} Lessons</span>
               <span className="mx-3 text-gray-400">•</span>
               <span className="font-medium">{course.courseLanguage}</span>
             </div>
