@@ -70,7 +70,7 @@ export class CourseMapper {
       
     };
   }
- static  toResponseUserCourse(c: IPopulatedCourse,mentorPhoto:string,userId:string): ICourseUserResponseDto {
+ static  toResponseUserCourse(c: IPopulatedCourse,mentorPhoto:string,userId:string,totelLesson:number): ICourseUserResponseDto {
   return {
     id: c._id.toString(),
     title: c.title,
@@ -90,7 +90,8 @@ export class CourseMapper {
     courseLanguage:c.courseLanguage,
     startDate: c.startDate ? new Date(c.startDate) : new Date(),
     endDate: c.endDate ? new Date(c.endDate) : new Date(),
-    startTime: c.startTime ?? ""
+    startTime: c.startTime ?? "",
+    totelLesson
   };
  }
   static toResponseUserCourseProgress(p: IUserCourseProgress): IUserCourseProgressResponse{

@@ -53,15 +53,25 @@ export class UserCourseService implements IUserCourseService {
     };
     
     const { data, total, totalPages } = await this._baseCourseRepo.fetchAllCoursesWithFilters(queryParams);
-         if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
+    if (!data) throwError("Failed to fetch Courses", StatusCode.INTERNAL_SERVER_ERROR);
     const sendData = await convertSignedUrlInArray(data, ["thumbnail"]);
-  
-    const sendDatas = await Promise.all(
+    
+
+const sendDatas = await Promise.all(
   sendData.map(async (i) => {
-    const photo = await getSignedS3Url(i.mentorId.profilePicture as string);
-    return CourseMapper.toResponseUserCourse(i, photo,userId||"");
+    let photo = "";
+    if (i.mentorId && i.mentorId.profilePicture) {
+      try {
+        photo = await getSignedS3Url(i.mentorId.profilePicture as string);
+      } catch (err) {
+        console.error("S3 Signing failed for mentor:", i.mentorId._id, err);
+        photo = "";
+      }
+    }
+    const totelLesson = (await this._lessonRepo.findAll({courseId:i._id})).length;
+    return CourseMapper.toResponseUserCourse(i, photo, userId || "",totelLesson);
   })
-    );
+);
     return {data:sendDatas, total, totalPages };
   }
   

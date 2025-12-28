@@ -42,20 +42,25 @@ export async function deleteFromS3(s3Key: string): Promise<void> {
     throw new Error(`Failed to delete file from S3: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
-
 export async function getSignedS3Url(
   key: string,
   expiresInSeconds: number = 3600
 ): Promise<string> {
+  if (!key || typeof key !== 'string' || key.trim() === "") {
+    return "";
+  }
+
   const command = new GetObjectCommand({
     Bucket: S3_BUCKET_NAME,
     Key: key,
   });
+  
   try {
     const signedUrl = await getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
     return signedUrl;
   } catch (error) {
-    throw new Error(`Failed to generate signed URL: ${error instanceof Error ? error.message : String(error)}`);
+    console.error(`S3 Error for key ${key}:`, error);
+    return ""; 
   }
 }
 

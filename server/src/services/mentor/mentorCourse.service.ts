@@ -16,6 +16,7 @@ import { ICourseMentorResponseDto } from "../../shared/dtos/courses/course-respo
 import { CourseMapper } from "../../shared/dtos/courses/course.mapping";
 import { ICategoryMentorCourseResponse } from "../../shared/dtos/categories/category-response.dto";
 import { CategoryMapper } from "../../shared/dtos/categories/category.mapper";
+import { ILessonsRepository } from "../../core/interfaces/repositories/lessons/ILessonRepository";
 
 @injectable()
 export class MentorCourseService implements IMentorCourseService {
@@ -24,7 +25,7 @@ export class MentorCourseService implements IMentorCourseService {
     @inject(TYPES.CategoriesRepository) private _catRepo: ICategoriesRepository,
     @inject(TYPES.MentorRepository) private _mentorRepo: IMentorRepository,
     @inject(TYPES.NotificationService) private _notificationService: INotificationService,
-    @inject(TYPES.UserRepository) private _userRepo:IUserRepository
+    @inject(TYPES.UserRepository) private _userRepo: IUserRepository,
   ) {}
 
   async getCourses(mentorId: string): Promise<ICourseMentorResponseDto[]> {
