@@ -5,7 +5,7 @@ import { ListeningTaskProps } from "@/src/types/dailyTaskTypes";
 import { Play, Square } from "lucide-react";
 
 export function ListeningTask({
-  audioUrl, // TEXT from backend (prompt)
+  audioUrl, 
   value,
   onChange,
   disabled = false,

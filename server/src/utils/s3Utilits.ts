@@ -161,21 +161,13 @@ export async function signConcernAttachmentUrls(data: IConcern[]): Promise<IConc
   }
   return data;
 }
-
 function extractS3KeyFromUrl(videoUrl: string): string {
   let s3Key = videoUrl;
   const bucketDomain = `${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`;
-  const pathStyleDomain = `s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.AWS_S3_BUCKET_NAME}`;
-
-  if (videoUrl.startsWith(`https://${bucketDomain}/`)) {
-    s3Key = videoUrl.substring(`https://${bucketDomain}/`.length);
-  } else if (videoUrl.startsWith(`https://${pathStyleDomain}/`)) {
-    s3Key = videoUrl.substring(`https://${pathStyleDomain}/`.length);
-  } else {
-    logger.warn("Video URL not in expected S3 URL format. Assuming it's already an S3 Key:", videoUrl);
+  if (videoUrl.includes(bucketDomain)) {
+    s3Key = videoUrl.split(`${bucketDomain}/`)[1];
   }
-
-  return s3Key;
+  return decodeURIComponent(s3Key);
 }
 
 export async function generateSignedUrlForVideo(

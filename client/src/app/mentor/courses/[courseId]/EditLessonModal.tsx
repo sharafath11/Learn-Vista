@@ -113,87 +113,80 @@ export function EditLessonModal({
   }, [selectedLesson, open, form]);
 
   const handleVideoUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = event.target.files?.[0];
+  if (!file) return;
 
-    setIsUploadingVideo(true);
-    setUploadedS3VideoUrl(null);
-    form.setValue("duration", "");
+  setIsUploadingVideo(true);
+  setUploadedS3VideoUrl(null);
+  form.setValue("duration", "");
 
-    try {
-      const res = await MentorAPIMethods.getS3DirectUploadUrl(
-        file.name,
-        file.type
-      );
-      if (!res.ok || !res.data?.signedUploadUrl || !res.data?.publicVideoUrl) {
-        throw new Error(
-          res.error?.message || "Failed to get S3 URLs from backend."
-        );
-      }
-
-      const { signedUploadUrl, publicVideoUrl, signedViewUrl } = res.data;
-
-      const uploadResponse = await fetch(signedUploadUrl, {
-        method: "PUT",
-        body: file,
-        headers: {
-          "Content-Type": file.type,
-        },
-      });
-
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        throw new Error(
-          `Failed to upload file to S3: ${uploadResponse.status} - ${errorText}`
-        );
-      }
-      const tempVideo = document.createElement("video");
-      tempVideo.src = signedViewUrl;
-      tempVideo.preload = "metadata";
-      tempVideo.style.display = "none";
-
-      const handleMetadataLoaded = () => {
-        const durationInSeconds = tempVideo.duration;
-        const formattedDuration = formatDuration(durationInSeconds);
-        form.setValue("duration", formattedDuration, { shouldValidate: true });
-        form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
-        setUploadedS3VideoUrl(publicVideoUrl);
-        showSuccessToast("Video uploaded and duration fetched!");
-        tempVideo.removeEventListener("loadedmetadata", handleMetadataLoaded);
-        tempVideo.removeEventListener("error", handleVideoError);
-        if (document.body.contains(tempVideo)) {
-          document.body.removeChild(tempVideo);
-        }
-      };
-
-      const handleVideoError = () => {
-        showErrorToast(
-          "Could not retrieve video duration. Video might be corrupted or unsupported."
-        );
-        form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
-        setUploadedS3VideoUrl(publicVideoUrl);
-        tempVideo.removeEventListener("loadedmetadata", handleMetadataLoaded);
-        tempVideo.removeEventListener("error", handleVideoError);
-        if (document.body.contains(tempVideo)) {
-          document.body.removeChild(tempVideo);
-        }
-      };
-
-      tempVideo.addEventListener("loadedmetadata", handleMetadataLoaded);
-      tempVideo.addEventListener("error", handleVideoError);
-
-      document.body.appendChild(tempVideo);
-    } catch (error: any) {
-      showErrorToast(`Upload Failed: ${error.message || "Unexpected error."}`);
-      form.setValue("videoUrl", "");
-      form.setValue("duration", "");
-      setUploadedS3VideoUrl(null);
-    } finally {
-      setIsUploadingVideo(false);
+  try {
+    const res = await MentorAPIMethods.getS3DirectUploadUrl(
+      file.name,
+      file.type
+    );
+    
+    if (!res.ok || !res.data?.signedUploadUrl || !res.data?.publicVideoUrl) {
+      throw new Error(res.error?.message || "Failed to get S3 URLs.");
     }
-  };
+
+    const { signedUploadUrl, publicVideoUrl, signedViewUrl } = res.data;
+
+    // FIX 1: Ensure Content-Type matches the signature exactly
+    const uploadResponse = await fetch(signedUploadUrl, {
+      method: "PUT",
+      body: file,
+      headers: {
+        "Content-Type": file.type, // This must be e.g., 'video/mp4'
+      },
+    });
+
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text();
+      throw new Error(`S3 Upload Failed: ${uploadResponse.status}`);
+    }
+
+    // FIX 2: Add crossOrigin to the temporary video element
+    const tempVideo = document.createElement("video");
+    tempVideo.crossOrigin = "anonymous"; // Needed for S3 signed URLs
+    tempVideo.src = signedViewUrl;
+    tempVideo.preload = "metadata";
+
+    const handleMetadataLoaded = () => {
+      const durationInSeconds = tempVideo.duration;
+      form.setValue("duration", formatDuration(durationInSeconds), { shouldValidate: true });
+      form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
+      setUploadedS3VideoUrl(publicVideoUrl);
+      showSuccessToast("Video uploaded and duration fetched!");
+      cleanup();
+    };
+
+    const handleVideoError = () => {
+      showErrorToast("Could not retrieve duration, but video uploaded.");
+      form.setValue("videoUrl", publicVideoUrl, { shouldValidate: true });
+      setUploadedS3VideoUrl(publicVideoUrl);
+      cleanup();
+    };
+
+    const cleanup = () => {
+      tempVideo.removeEventListener("loadedmetadata", handleMetadataLoaded);
+      tempVideo.removeEventListener("error", handleVideoError);
+      if (document.body.contains(tempVideo)) document.body.removeChild(tempVideo);
+    };
+
+    tempVideo.addEventListener("loadedmetadata", handleMetadataLoaded);
+    tempVideo.addEventListener("error", handleVideoError);
+    document.body.appendChild(tempVideo);
+
+  } catch (error: any) {
+    showErrorToast(`Upload Failed: ${error.message}`);
+    setUploadedS3VideoUrl(null);
+  } finally {
+    setIsUploadingVideo(false);
+  }
+};
 
   const handleRemoveVideo = async () => {
     const currentVideoUrl = form.getValues("videoUrl");
