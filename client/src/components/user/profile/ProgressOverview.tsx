@@ -5,8 +5,10 @@ import { BookOpen, TrendingUp, Award, Target } from "lucide-react"
 import { useUserContext } from "@/src/context/userAuthContext"
 import { getCourseProgress } from "@/src/utils/getProgress"
 import { WithTooltip } from "@/src/hooks/UseTooltipProps"
+import { useRouter } from "next/navigation"
 
 export default function ProgressOverview() {
+  const router=useRouter()
   const { progresses, allCourses, user } = useUserContext()
   const progressData = useMemo(() => {
     if (!progresses || !allCourses || !user?.enrolledCourses) {
@@ -81,7 +83,7 @@ export default function ProgressOverview() {
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Start Your Learning Journey</h2>
             <p className="text-gray-600 mb-4">Enroll in courses to see your progress overview here.</p>
-            <div className="inline-flex items-center px-4 py-2 bg-indigo-50 rounded-lg border border-indigo-200">
+            <div className="inline-flex items-center px-4 py-2 bg-indigo-50 rounded-lg border border-indigo-200" onClick={()=>router.push("/courses")}>
               <Target className="h-4 w-4 text-indigo-600 mr-2" />
               <span className="text-sm font-medium text-indigo-600">Ready to begin learning?</span>
             </div>

@@ -104,11 +104,9 @@ export class MentorCourseService implements IMentorCourseService {
  async publishCourse(courseId: string,status:boolean): Promise<void> {
      const coures = await this._courseRepo.update(courseId, { isActive: status });
      const users = await this._userRepo.findAll();
-   const userIds: string[] = users.map((i) => i.id);
      if (status) {
     await notifyWithSocket({
         notificationService: this._notificationService,
-        userIds,
         roles: ["user", "admin"],
         title: Messages.COURSE.PUBLISHED,
         message: Messages.COURSE.PUBLISHED_NOTIFICATION(coures?.title || "Untitled Course"),
