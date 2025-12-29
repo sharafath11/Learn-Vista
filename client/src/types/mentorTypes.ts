@@ -81,25 +81,29 @@ export interface IMentorSignupData {
   expertise?:string[]
   socialLinks?: SocialLink[]
 }
+export interface IMentorSingupFormInputProps {
+  label: string;
+  type: string;
+  id: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+}
+
 export interface MentorSignupOtpProps {
   label: string;
   email: string;
   onChange: (e: { target: { id: string; value: string } }) => void;
   onVerified: () => void;
   onResend?: () => void;
-  emailDisabled?: boolean; 
+  emailDisabled?: boolean;
 }
-export interface IMentorSingupFormInputProps {
-  label: string;
-  type: string;
-  id: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  value?: string;
-  placeholder?: string;
-  required?: boolean;
-  name: string; 
-    disabled?: boolean; 
-};
+
+
 type SortDirection = 1 | -1
 type StudentStatus = "allowed" | "blocked"
 interface StudentFilters {

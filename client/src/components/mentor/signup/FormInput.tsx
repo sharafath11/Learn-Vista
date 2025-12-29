@@ -1,25 +1,29 @@
 "use client";
+
 import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; 
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { IMentorSingupFormInputProps } from "@/src/types/mentorTypes";
 
 export const FormInput = ({
   label,
   type,
   id,
-  name, 
+  name,
   onChange,
   value,
   placeholder,
   required = false,
   disabled = false,
+  readOnly = false,
 }: IMentorSingupFormInputProps) => {
   const isPassword = type === "password";
   const [showPassword, setShowPassword] = useState(false);
-  const inputType = isPassword ? (showPassword ? "text" : "password") : type;
-  const toggleVisibility = () => {
-    setShowPassword(prev => !prev);
-  };
+
+  const inputType = isPassword
+    ? showPassword
+      ? "text"
+      : "password"
+    : type;
 
   return (
     <div className="mb-2">
@@ -28,23 +32,25 @@ export const FormInput = ({
       </label>
       <div className="relative mt-1">
         <input
-          type={inputType} 
+          type={inputType}
           id={id}
           name={name}
-          onChange={onChange}
           value={value}
+          onChange={onChange}
           placeholder={placeholder}
-          className="block w-full rounded-lg border border-gray-300 p-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100 transition-colors pr-10" 
           required={required}
-          disabled={disabled} 
-        />        
+          disabled={disabled}
+          readOnly={readOnly}
+          className={`block w-full rounded-lg border p-2 text-sm pr-10 transition-colors focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-100 ${
+            disabled ? "bg-gray-100 cursor-not-allowed" : ""
+          } ${readOnly ? "bg-gray-50" : ""}`}
+        />
         {isPassword && (
           <button
             type="button"
-            onClick={toggleVisibility}
-            disabled={disabled}
+            onClick={() => setShowPassword((p) => !p)}
+            disabled={disabled || readOnly}
             className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 disabled:opacity-50"
-            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
           </button>
