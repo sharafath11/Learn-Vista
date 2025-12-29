@@ -45,6 +45,8 @@ export default function MentorSignupForm() {
       showErrorToast("Email is required");
       return;
     }
+    const error = validateMentorSignup(mentorData);
+    if (error) return showErrorToast(error);
     const res = await MentorAPIMethods.otpSend(mentorData.email);
     if (res?.ok) {
       setOtpSent(true);
