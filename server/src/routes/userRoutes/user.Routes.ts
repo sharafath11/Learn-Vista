@@ -3,6 +3,7 @@ import { authenticateToken } from "../../middlewares/authenticateToken";
 import upload, { uploadDailyTaskAudio, uploadImage } from "../../middlewares/upload";
 import { authController, profileController, userCertificateController, userController, userCourseController, userDonationController, userLessonsController, userLiveController } from "./userControllers";
 import { checkUserBlock } from "../../middlewares/checkUserBlock";
+import kmatRouter from "./kmat/kmat.Routes";
 
 
 const router = express.Router();
@@ -54,4 +55,6 @@ router
   .post(uploadDailyTaskAudio.single("audioFile"), authenticateToken,checkUserBlock, userController.updateDailyTask.bind(userController));
 
 router.get("/dailyTaks",authenticateToken,checkUserBlock,userController.getAllDailyTask.bind(userController))
+router.use("/kmat", kmatRouter);
+
 export default router;

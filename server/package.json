@@ -61,6 +61,7 @@
     "has-flag": "^3.0.0",
     "ignore-by-default": "^1.0.1",
     "inversify": "^7.5.0",
+    "ioredis": "^5.8.2",
     "is-binary-path": "^2.1.0",
     "is-extglob": "^2.1.1",
     "is-glob": "^4.0.3",

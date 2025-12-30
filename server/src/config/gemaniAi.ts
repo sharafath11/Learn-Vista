@@ -10,39 +10,68 @@ export async function getAIResponse(prompt: string): Promise<string> {
     const result = await model.generateContent(prompt);
     return result.response.text();
   } catch (geminiError) {
-    console.error("⚠️ Gemini failed, switching to NVIDIA/Nemotron:", geminiError);
-
     try {
-      const NEMOTRON_MODEL = "nvidia/nemotron-nano-12b-v2-vl:free";
-      const openRouterResult = await callOpenRouter(NEMOTRON_MODEL, prompt);
-      return openRouterResult;
-    } catch (nemotronError) {
-      console.error("⚠️ NVIDIA/Nemotron failed, switching to Tongyi DeepResearch:", nemotronError);
-
+      return await callOpenRouter(
+        "nvidia/nemotron-nano-12b-v2-vl:free",
+        prompt
+      );
+    } catch {
       try {
-        const TONGYI_MODEL = "alibaba/tongyi-deepresearch-30b-a3b:free";
-        const openRouterResult = await callOpenRouter(TONGYI_MODEL, prompt);
-        return openRouterResult;
-      } catch (tongyiError) {
-        console.error("❌ All three AI services failed:", tongyiError);
+        return await callOpenRouter(
+          "alibaba/tongyi-deepresearch-30b-a3b:free",
+          prompt
+        );
+      } catch {
         throwError(
-          "All AI services are currently unavailable. Please try again later 😮‍💨",
+          "All AI services are currently unavailable. Please try again later.",
           StatusCode.BAD_REQUEST
         );
       }
     }
   }
-
   throwError("AI process completion error.", StatusCode.INTERNAL_SERVER_ERROR);
+}
+
+export async function getAIResponseJSON(prompt: string): Promise<any> {
+  const strictPrompt = `${prompt}
+
+IMPORTANT:
+Respond with ONLY valid JSON.
+No markdown.
+No explanation.
+JSON must be directly parseable.`;
+
+  const text = await getAIResponse(strictPrompt);
+  return extractAndParseJSON(text);
+}
+
+function extractAndParseJSON(text: string): any {
+  const cleaned = text.replace(/```json/gi, "").replace(/```/g, "").trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch {}
+  const firstBrace = cleaned.indexOf("{");
+  const firstBracket = cleaned.indexOf("[");
+  const start =
+    firstBrace === -1
+      ? firstBracket
+      : firstBracket === -1
+      ? firstBrace
+      : Math.min(firstBrace, firstBracket);
+  if (start === -1) {
+    throw new Error("No JSON found in AI response");
+  }
+  const candidate = cleaned.slice(start);
+  return JSON.parse(candidate);
 }
 
 async function callOpenRouter(modelName: string, prompt: string): Promise<string> {
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${process.env.OPEN_ROUTER_KEY}`,
-      "HTTP-Referer": "https://yourapp.com", 
-      "X-Title": "Learn vista",             
+      Authorization: `Bearer ${process.env.OPEN_ROUTER_KEY}`,
+      "HTTP-Referer": "https://learnvista.app",
+      "X-Title": "Learn Vista",
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -50,25 +79,15 @@ async function callOpenRouter(modelName: string, prompt: string): Promise<string
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: prompt,
-            },
-          ],
+          content: [{ type: "text", text: prompt }],
         },
       ],
     }),
   });
-
   if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`OpenRouter API for ${modelName} failed: ${response.statusText}. Details: ${errorBody}`);
+    const err = await response.text();
+    throw new Error(err);
   }
-
   const data = await response.json();
-  const text =
-    data.choices?.[0]?.message?.content ||
-    `No content response from model: ${modelName}.`;
-  return text;
+  return data.choices?.[0]?.message?.content || "";
 }
