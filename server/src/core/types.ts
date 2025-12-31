@@ -27,6 +27,7 @@ export const TYPES = {
   MentorCourseController: Symbol.for("MentorCourseController"),
   AdminCategoryController: Symbol.for("AdminCategoryController"),
   AdminConcernController:Symbol.for("AdminConcernController"),
+  KmatController: Symbol.for('KmatController'),
   
   // Services
   MentorAuthService: Symbol.for('MentorAuthService'),
@@ -54,6 +55,8 @@ export const TYPES = {
   MentorCourseService: Symbol.for("MentorCourseService"),
   AdminCategoryService: Symbol.for("AdminCategoryService"),
   AdminConcernService:Symbol.for("AdminConcernService"),
+  KmatService: Symbol.for('KmatService'),
+  KmatDailyGenerationCron: Symbol.for('KmatDailyGenerationCron'),
   // Repositories
   MentorRepository: Symbol.for('MentorRepository'),
   MentorOtpRepository: Symbol.for('MentorOtpRepository'),
@@ -78,5 +81,11 @@ export const TYPES = {
   UserLessonProgressRepository: Symbol.for("UserLessonProgressReposiory"),
   CertificateRepository: Symbol.for("CertificateRepository"),
   DailyTaskRepository: Symbol.for("DailyTaskRepository"),
-  VoiceNoteRepository:Symbol.for("VoiceNoteRepository")
+  VoiceNoteRepository:Symbol.for("VoiceNoteRepository"),
+  UserKmatStateRepository: Symbol.for('UserKmatStateRepository'),
+  KmatDailyDataRepository: Symbol.for('KmatDailyDataRepository'),
+  KmatQuestionBankRepository: Symbol.for('KmatQuestionBankRepository'),
+  KmatExamAttemptRepository: Symbol.for('KmatExamAttemptRepository'),
+  KmatPracticeAttemptRepository: Symbol.for('KmatPracticeAttemptRepository'),
+  KmatDailyReportRepository: Symbol.for('KmatDailyReportRepository'),
 };

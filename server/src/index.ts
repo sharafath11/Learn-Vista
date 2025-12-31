@@ -70,7 +70,10 @@ app.use(
   }
 );
 
+import { startKmatCron } from "./utils/cron/kmatCron";
+
 connectDb();
+startKmatCron();
 
 const PORT = Number(process.env.PORT) || 4000;
 httpServer.listen(PORT, "0.0.0.0", () => {

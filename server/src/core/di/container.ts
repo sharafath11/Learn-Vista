@@ -151,6 +151,25 @@ import { IVoiceNote } from '../../types/lessons';
 import { VoiceNoteRepository } from '../../repositories/user/voiceNoteRepository';
 import { IVoiceNoteRepository } from '../interfaces/repositories/user/IVoiceNoteRepository';
 
+// KMAT
+import { IKmatController } from '../interfaces/controllers/user/IKmat.controller';
+
+import { IKmatService } from '../interfaces/services/user/IKmatService';
+import { KmatService } from '../../services/user/kmat/kmat.service';
+import { IUserKmatStateRepository } from '../interfaces/repositories/user/kmat/IUserKmatStateRepository';
+import { UserKmatStateRepository } from '../../repositories/user/kmat/userKmatStateRepository';
+import { IKmatDailyDataRepository } from '../interfaces/repositories/user/kmat/IKmatDailyDataRepository';
+import { KmatDailyDataRepository } from '../../repositories/user/kmat/kmatDailyDataRepository';
+import { IKmatQuestionBankRepository } from '../interfaces/repositories/user/kmat/IKmatQuestionBankRepository';
+import { KmatQuestionBankRepository } from '../../repositories/user/kmat/kmatQuestionBankRepository';
+import { IKmatExamAttemptRepository } from '../interfaces/repositories/user/kmat/IKmatExamAttemptRepository';
+import { KmatExamAttemptRepository } from '../../repositories/user/kmat/kmatExamAttemptRepository';
+import { IKmatPracticeAttemptRepository } from '../interfaces/repositories/user/kmat/IKmatPracticeAttemptRepository';
+import { KmatPracticeAttemptRepository } from '../../repositories/user/kmat/kmatPracticeAttemptRepository';
+import { IKmatDailyReportRepository } from '../interfaces/repositories/user/kmat/IKmatDailyReportRepository';
+import { KmatDailyReportRepository } from '../../repositories/user/kmat/kmatDailyReportRepository';
+import { KmatController } from '../../controllers/user/kmat/kmat.controller';
+
 const container = new Container();
 
 // Controller Bindings
@@ -161,25 +180,26 @@ container.bind<IAdminUserController>(TYPES.AdminUserController).to(AdminUserCont
 container.bind<IAdminMentorController>(TYPES.AdminMentorController).to(AdminMentorController);
 container.bind<AuthController>(TYPES.AuthController).to(AuthController);
 container.bind<IProfileController>(TYPES.ProfileController).to(ProfileController);
-container.bind<IAdminAuthController>(TYPES.AdminAuthController).to(AdminAuthController),
-container.bind<IMentorProfileController>(TYPES.MentorProfileController).to(MentorProfileController)
-container.bind<IAdminCourseController>(TYPES.AdminCourseController).to(AdminCourseController)
-container.bind<IMentorStreamController>(TYPES.MentorStreamController).to(MentorStreamController)
+container.bind<IAdminAuthController>(TYPES.AdminAuthController).to(AdminAuthController);
+container.bind<IMentorProfileController>(TYPES.MentorProfileController).to(MentorProfileController);
+container.bind<IAdminCourseController>(TYPES.AdminCourseController).to(AdminCourseController);
+container.bind<IMentorStreamController>(TYPES.MentorStreamController).to(MentorStreamController);
 container.bind<IUserCourseController>(TYPES.UserCourseController).to(UserCourseController);
 container.bind<IUserLiveController>(TYPES.UserLiveCOntroller).to(UserLiveCallController);
 container.bind<IMentorLessonsController>(TYPES.MentorLessonsController).to(MentorLessonsController)
 container.bind<IUserLessonsController>(TYPES.UserLessonsController).to(UserLessonsController)
 container.bind<IMentorStudentsController>(TYPES.MentorStudentsController).to(MentorStudentsController);
-container.bind<IMentorConcernController>(TYPES.mentorConcernController).to(MentorConcernController),
-container.bind<IUserDonationController>(TYPES.UserDonationController).to(UserDonationController),
-container.bind<IAdminDonationController>(TYPES.AdminDonationCOntroller).to(AdminDonationController),
-container.bind<INotificationController>(TYPES.NotificationController).to(NotificationController),
-container.bind<IMentorCommentsController>(TYPES.MentorCommentController).to(MentorCommentController),    
-container.bind<IUserCertificateController>(TYPES.UserCertificateController).to(UserCertificateController)   
-container.bind<ISharedController>(TYPES.SharedController).to(SharedController) 
-container.bind<IMentorCourseController>(TYPES.MentorCourseController).to(MentorCourseController),
+container.bind<IMentorConcernController>(TYPES.mentorConcernController).to(MentorConcernController);
+container.bind<IUserDonationController>(TYPES.UserDonationController).to(UserDonationController);
+container.bind<IAdminDonationController>(TYPES.AdminDonationCOntroller).to(AdminDonationController);
+container.bind<INotificationController>(TYPES.NotificationController).to(NotificationController);
+container.bind<IMentorCommentsController>(TYPES.MentorCommentController).to(MentorCommentController);    
+container.bind<IUserCertificateController>(TYPES.UserCertificateController).to(UserCertificateController);   
+container.bind<ISharedController>(TYPES.SharedController).to(SharedController); 
+container.bind<IMentorCourseController>(TYPES.MentorCourseController).to(MentorCourseController);
 container.bind<IAdminCategoryController>(TYPES.AdminCategoryController).to(AdminCategoryController)
 container.bind<IAdminConcernController>(TYPES.AdminConcernController).to(AdminConcernController)
+container.bind<IKmatController>(TYPES.KmatController).to(KmatController)
 // Service Bindings
 container.bind<IMentorAuthService>(TYPES.MentorAuthService).to(MentorAuthService);
 container.bind<IMentorService>(TYPES.MentorService).to(MentorService);
@@ -206,6 +226,7 @@ container.bind<IUserCertificateService>(TYPES.UserCertificateService).to(UserCer
 container.bind<IMentorCourseService>(TYPES.MentorCourseService).to(MentorCourseService),
 container.bind<IAdminCategoryService>(TYPES.AdminCategoryService).to(AdminCategoryService);
 container.bind<IAdminConcernService>(TYPES.AdminConcernService).to(AdminConcernService);
+container.bind<IKmatService>(TYPES.KmatService).to(KmatService);
     
 // Repository Bindings
 container.bind<IMentorRepository>(TYPES.MentorRepository).to(MentorRepository);
@@ -228,5 +249,13 @@ container.bind<IUserLessonProgressRepository>(TYPES.UserLessonProgressRepository
 container.bind<ICertificateRepository>(TYPES.CertificateRepository).to(CertificateRepository)
 container.bind<IDailyTaskRepository>(TYPES.DailyTaskRepository).to(DailyTaskRepository);
 container.bind<IVoiceNoteRepository>(TYPES.VoiceNoteRepository).to(VoiceNoteRepository)
+
+// KMAT Repositories
+container.bind<IUserKmatStateRepository>(TYPES.UserKmatStateRepository).to(UserKmatStateRepository);
+container.bind<IKmatDailyDataRepository>(TYPES.KmatDailyDataRepository).to(KmatDailyDataRepository);
+container.bind<IKmatQuestionBankRepository>(TYPES.KmatQuestionBankRepository).to(KmatQuestionBankRepository);
+container.bind<IKmatExamAttemptRepository>(TYPES.KmatExamAttemptRepository).to(KmatExamAttemptRepository);
+container.bind<IKmatPracticeAttemptRepository>(TYPES.KmatPracticeAttemptRepository).to(KmatPracticeAttemptRepository);
+container.bind<IKmatDailyReportRepository>(TYPES.KmatDailyReportRepository).to(KmatDailyReportRepository);
 
 export default container;

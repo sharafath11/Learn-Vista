@@ -1,17 +1,17 @@
 import { Router } from 'express';
-import { LearnController } from '../../../controllers/user/kmat/learn.controller';
-import { ExamController } from '../../../controllers/user/kmat/exam.controller';
+import container from '../../../core/di/container';
+import { TYPES } from '../../../core/types';
+import { IKmatController } from '../../../core/interfaces/controllers/user/IKmat.controller';
 // import { userAuthMiddleware } from '../../../middlewares/userAuth.middleware'; 
 
 const kmatRouter = Router();
-const learnController = new LearnController();
-const examController = new ExamController();
+const kmatController = container.get<IKmatController>(TYPES.KmatController);
 
-kmatRouter.post('/learn', learnController.getLearnContent.bind(learnController));
-kmatRouter.post('/practice', learnController.generatePracticeQuestions.bind(learnController));
-kmatRouter.post('/exam/start', (req, res) => { examController.startExam(req, res); });
-kmatRouter.post('/exam/check-answer', (req, res) => { examController.checkAnswer(req, res); });
-kmatRouter.post('/exam/submit', (req, res) => { examController.submitExam(req, res); });
-kmatRouter.get('/result/:id', (req, res) => { examController.getResult(req, res); });
+kmatRouter.get('/daily-data', kmatController.getDailyData.bind(kmatController));
+kmatRouter.post('/exam/start', kmatController.startExam.bind(kmatController));
+kmatRouter.post('/exam/submit', kmatController.submitExam.bind(kmatController));
+kmatRouter.post('/exam/check-answer', kmatController.checkAnswer.bind(kmatController));
+kmatRouter.get('/result', kmatController.getResult.bind(kmatController));
+kmatRouter.post('/report', kmatController.generateReport.bind(kmatController));
 
 export default kmatRouter;
