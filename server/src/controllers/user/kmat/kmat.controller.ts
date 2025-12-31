@@ -55,24 +55,15 @@ export class KmatController implements IKmatController {
     }
   }
 
-  async checkAnswer(req: Request, res: Response) {
-    try {
-      const { sessionId, questionId, userAnswerIndex } = req.body;
-      const result = await this.kmatService.checkAnswer(sessionId, questionId, userAnswerIndex);
-      sendResponse(res, StatusCode.OK, "", true, result);
-    } catch (error: any) {
-        handleControllerError(res, error);
-    }
-  }
-
   async getResult(req: Request, res: Response) {
     try {
         const decoded = verifyAccessToken(req.cookies.token);
-        const { dayNumber } = req.query; 
+        const { id } = req.params; 
         if (!decoded?.id) {
             throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
         }
-        sendResponse(res, StatusCode.OK, "Use daily data to fetch history", true);
+        const result = await this.kmatService.getResult(id);
+        sendResponse(res, StatusCode.OK, "", true, result);
     } catch (error: any) {
         handleControllerError(res, error);
     }
@@ -90,5 +81,32 @@ export class KmatController implements IKmatController {
       } catch (error: any) {
           handleControllerError(res, error);
       }
+  }
+
+  async getHistory(req: Request, res: Response) {
+    try {
+      const decoded = verifyAccessToken(req.cookies.token);
+      if (!decoded?.id) {
+        throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
+      }
+      const history = await this.kmatService.getHistory(decoded.id);
+      sendResponse(res, StatusCode.OK, "", true, history);
+    } catch (error: any) {
+      handleControllerError(res, error);
+    }
+  }
+
+  async submitPractice(req: Request, res: Response) {
+    try {
+      const decoded = verifyAccessToken(req.cookies.token);
+      const { dayNumber, answers } = req.body;
+      if (!decoded?.id) {
+        throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
+      }
+      const result = await this.kmatService.submitPractice(decoded.id, dayNumber, answers);
+      sendResponse(res, StatusCode.OK, "", true, result);
+    } catch (error: any) {
+      handleControllerError(res, error);
+    }
   }
 }

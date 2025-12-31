@@ -1,38 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/src/components/shared/components/ui/card";
 import { Button } from "@/src/components/shared/components/ui/button";
-import { Badge } from "@/src/components/shared/components/ui/badge";
-import { Separator } from "@/src/components/shared/components/ui/separator";
 import { Progress } from "@/src/components/shared/components/ui/progress";
-import { Award, Loader2 } from "lucide-react";
+import { Badge } from "@/src/components/shared/components/ui/badge";
+import { Trophy, ArrowLeft, BarChart3, Clock, AlertCircle, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { kmatApi } from "@/src/services/kmatService";
 import { showErrorToast } from "@/src/utils/Toast";
-import { SECTIONS } from "../data";
 
-export default function KmatResultPage() {
+function ResultContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("id");
-  
-  const [result, setResult] = useState<any | null>(null);
+  const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchResult = async () => {
-      if (!sessionId) {
+    if (!sessionId) {
         setLoading(false);
         return;
-      }
+    }
+    const fetchResult = async () => {
       try {
         const res = await kmatApi.getResult(sessionId);
         if (res.success) {
           setResult(res.data);
         }
       } catch (error) {
-        showErrorToast("Failed to load results.");
+        showErrorToast("Failed to fetch exam result.");
       } finally {
         setLoading(false);
       }
@@ -42,165 +39,149 @@ export default function KmatResultPage() {
 
   if (loading) {
     return (
-      <div className="flex bg-background h-screen w-full items-center justify-center flex-col gap-4">
-        <Loader2 className="w-12 h-12 animate-spin text-primary" />
-        <p className="text-muted-foreground">Analyzing performance...</p>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        <p className="text-muted-foreground animate-pulse">Calculating authorized scores...</p>
       </div>
     );
   }
 
   if (!result) {
     return (
-      <div className="container mx-auto py-20 text-center">
-        <h2 className="text-2xl font-bold mb-4">No Result Found</h2>
-        <Link href="/kmat/exam">
-          <Button>Take Exam</Button>
+      <div className="text-center py-20 px-4">
+        <AlertCircle className="w-12 h-12 mx-auto text-destructive mb-4" />
+        <h3 className="text-xl font-semibold">Result Not Found</h3>
+        <p className="text-muted-foreground mt-2">We couldn't find the result for this session.</p>
+        <Link href="/kmat" className="mt-8 inline-block">
+          <Button variant="outline">Back to Dashboard</Button>
         </Link>
       </div>
     );
   }
 
-  const { totalQuestions, correct, wrong, finalScore, attempted } = result;
-  
-  const accuracy = attempted > 0 
-    ? Math.round((correct / attempted) * 100) 
-    : 0;
+  const scorePercentage = (result.finalScore / (result.totalQuestions * 4)) * 100;
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-5xl">
-       <div className="flex justify-between items-center mb-8">
-         <h1 className="text-3xl font-bold">Exam Analysis</h1>
-         <Link href="/kmat/learn">
-            <Button variant="outline">Back to Dashboard</Button>
-         </Link>
-       </div>
+    <div className="container mx-auto py-10 px-4 max-w-4xl space-y-10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div>
+           <Link href="/kmat" className="text-primary hover:underline flex items-center gap-2 mb-4 group font-medium">
+             <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" /> Back to Dashboard
+           </Link>
+           <h1 className="text-4xl font-extrabold tracking-tight">Exam Analysis</h1>
+           <p className="text-muted-foreground font-medium uppercase tracking-widest text-xs mt-2">
+             Official Result Session: {sessionId?.slice(-8)}
+           </p>
+        </div>
+        <Link href={`/kmat/report?day=${result.dayNumber}`}>
+          <Button className="gap-2 shadow-lg bg-indigo-600 hover:bg-indigo-700" size="lg">
+            <BarChart3 size={20} /> View AI Performance Report
+          </Button>
+        </Link>
+      </div>
 
-       {/* Score Summary */}
-       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-         <Card className="bg-primary/5 border-primary/20">
-            <CardHeader className="pb-2">
-               <CardTitle className="text-sm font-medium text-muted-foreground">Total Score</CardTitle>
-            </CardHeader>
-            <CardContent>
-               <div className="text-4xl font-bold text-primary">{finalScore.toFixed(2)}</div>
-               <p className="text-xs text-muted-foreground">Max possible: {totalQuestions}</p>
-            </CardContent>
-         </Card>
-         
-         <Card>
-            <CardHeader className="pb-2">
-               <CardTitle className="text-sm font-medium text-muted-foreground">Accuracy</CardTitle>
-            </CardHeader>
-            <CardContent>
-               <div className="text-4xl font-bold text-blue-600">{accuracy}%</div>
-               <Progress value={accuracy} className="h-2 mt-2" />
-            </CardContent>
-         </Card>
+      <div className="grid gap-8 md:grid-cols-3">
+        {/* Score Overview */}
+        <Card className="md:col-span-2 shadow-xl border-2 overflow-hidden hover:shadow-2xl transition-all">
+          <CardHeader className="bg-primary pb-10 pt-12 text-primary-foreground relative">
+             <div className="absolute top-0 right-0 p-8 opacity-10">
+                <Trophy size={140} />
+             </div>
+             <CardTitle className="text-2xl font-bold opacity-90 uppercase tracking-tighter">Your Final Standing</CardTitle>
+             <div className="flex items-baseline gap-4 mt-6">
+                <span className="text-7xl font-black">{result.finalScore}</span>
+                <span className="text-2xl opacity-80">/ {result.totalQuestions * 4} Marks</span>
+             </div>
+          </CardHeader>
+          <CardContent className="-mt-6 bg-background rounded-t-3xl pt-10">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              <div className="text-center p-4 bg-green-50 dark:bg-green-900/10 rounded-2xl border border-green-100 dark:border-green-800">
+                <p className="text-xs text-green-600 dark:text-green-400 font-black uppercase mb-1">Correct</p>
+                <p className="text-2xl font-bold text-green-700 dark:text-green-300">{result.correct}</p>
+              </div>
+              <div className="text-center p-4 bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-800">
+                <p className="text-xs text-red-600 dark:text-red-400 font-black uppercase mb-1">Wrong</p>
+                <p className="text-2xl font-bold text-red-700 dark:text-red-300">{result.wrong}</p>
+              </div>
+              <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/10 rounded-2xl border border-yellow-100 dark:border-yellow-800">
+                <p className="text-xs text-yellow-600 dark:text-yellow-400 font-black uppercase mb-1">Skipped</p>
+                <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">{result.unattempted}</p>
+              </div>
+              <div className="text-center p-4 bg-indigo-50 dark:bg-indigo-900/10 rounded-2xl border border-indigo-100 dark:border-indigo-800">
+                <p className="text-xs text-indigo-600 dark:text-indigo-400 font-black uppercase mb-1">Accuracy</p>
+                <p className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">
+                    {result.attempted > 0 ? Math.round((result.correct / result.attempted) * 100) : 0}%
+                </p>
+              </div>
+            </div>
 
-         <Card>
-            <CardHeader className="pb-2">
-               <CardTitle className="text-sm font-medium text-muted-foreground">Attempts</CardTitle>
-            </CardHeader>
-            <CardContent>
-               <div className="text-2xl font-bold">{attempted} <span className="text-sm font-normal text-muted-foreground">/ {totalQuestions}</span></div>
-               <div className="flex gap-2 mt-2 text-xs">
-                 <span className="text-green-600 font-bold">{correct} Correct</span>
-                 <span className="text-red-500 font-bold">{wrong} Wrong</span>
-               </div>
-            </CardContent>
-         </Card>
+            <div className="mt-12 space-y-4">
+              <div className="flex justify-between text-sm font-bold uppercase tracking-wider">
+                <span>Overall Mastery</span>
+                <span>{Math.round(scorePercentage)}%</span>
+              </div>
+              <Progress value={scorePercentage} className="h-4 rounded-full" />
+            </div>
+          </CardContent>
+        </Card>
 
-         <Card className="flex flex-col justify-center items-center bg-secondary/10">
-             <CardContent className="pt-6 text-center">
-                <Award className="w-10 h-10 mx-auto text-yellow-500 mb-2" />
-                <div className="font-semibold text-lg">
-                  {finalScore > totalQuestions * 0.7 ? "Excellent!" : finalScore > totalQuestions * 0.4 ? "Good Job!" : "Needs Improvement"}
+        {/* Breakdown Card */}
+        <Card className="shadow-lg border-2">
+          <CardHeader className="bg-secondary/20">
+            <CardTitle className="text-lg">Sectional Pulse</CardTitle>
+            <CardDescription>Performance across domains</CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-8">
+            {Object.entries(result.sectionWiseScore || {}).map(([section, data]: [string, any]) => (
+              <div key={section} className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-bold capitalize">{section}</span>
+                  <Badge variant="outline" className="font-mono">{data.score} / {data.total * 4}</Badge>
                 </div>
-                <p className="text-sm text-muted-foreground">Keep practicing!</p>
-             </CardContent>
-         </Card>
-       </div>
+                <Progress value={(data.score / (data.total * 4)) * 100} className="h-2" />
+                <div className="flex gap-4 text-[10px] uppercase font-black tracking-tighter">
+                   <span className="text-green-600 flex items-center gap-1"><CheckCircle2 size={10} /> {data.correct} Correct</span>
+                   <span className="text-red-500 flex items-center gap-1"><XCircle size={10} /> {data.wrong} Wrong</span>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
 
-       {/* Detailed Analysis */}
-       <div className="space-y-8">
-          <h2 className="text-xl font-bold">Detailed Solutions</h2>
-          
-          {SECTIONS.map(section => {
-             // Filter answers that belong to this section
-             const sectionAnswers = result.answers.filter((ans: any) => {
-                // Map DB section string to ID for comparison if needed, or check question.section
-                // Result from backend has populated questionId which contains section string.
-                const qSection = ans.questionId.section; 
-                if (section.id === "quantitative") return qSection === "Quantitative Ability";
-                if (section.id === "logical") return qSection === "Logical Reasoning";
-                if (section.id === "verbal") return qSection === "Language Comprehension";
-                if (section.id === "gk") return qSection === "General Knowledge";
-                return false;
-             });
-
-             if (sectionAnswers.length === 0) return null;
-
-             return (
-               <div key={section.id} className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-base px-3 py-1 bg-secondary">{section.label}</Badge>
-                    <Separator className="flex-grow" />
-                  </div>
-                  
-                  <div className="grid gap-4">
-                    {sectionAnswers.map((ans: any) => {
-                       const q = ans.questionId;
-                       const isCorrect = ans.isCorrect;
-                       const isSkipped = ans.userAnswerIndex === null;
-                       const userAnswerText = ans.userAnswerIndex !== null ? q.options[ans.userAnswerIndex] : null;
-                       const correctAnswerText = q.options[q.correctAnswerIndex];
-
-                       return (
-                         <Card key={q._id} className={`border-l-4 ${
-                            isCorrect ? "border-l-green-500" : isSkipped ? "border-l-gray-300" : "border-l-red-500"
-                         }`}>
-                           <CardHeader className="pb-2">
-                             <div className="flex justify-between items-start">
-                               <div className="flex gap-3">
-                                  <span className="font-medium text-lg">{q.question}</span>
-                               </div>
-                               <div>
-                                  {isCorrect && <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-green-200">Correct (+1)</Badge>}
-                                  {!isCorrect && !isSkipped && <Badge variant="destructive" className="bg-red-100 text-red-700 hover:bg-red-200 border-red-200">Wrong (-0.25)</Badge>}
-                                  {isSkipped && <Badge variant="outline">Unattempted</Badge>}
-                               </div>
-                             </div>
-                           </CardHeader>
-                           <CardContent>
-                             <div className="grid md:grid-cols-2 gap-4 mt-2">
-                               <div className="space-y-1">
-                                 <div className="text-sm font-medium text-muted-foreground">Your Answer</div>
-                                 <div className={`p-2 rounded border ${
-                                    isCorrect ? "bg-green-50 border-green-200 text-green-800" : isSkipped ? "bg-secondary text-muted-foreground italic" : "bg-red-50 border-red-200 text-red-800"
-                                 }`}>
-                                    {userAnswerText || "Not Answered"}
-                                 </div>
-                               </div>
-                               <div className="space-y-1">
-                                 <div className="text-sm font-medium text-muted-foreground">Correct Answer</div>
-                                 <div className="p-2 rounded border bg-green-50 border-green-200 text-green-800">
-                                    {correctAnswerText}
-                                 </div>
-                               </div>
-                             </div>
-                             
-                             <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/10 rounded text-sm text-blue-900 dark:text-blue-100">
-                                <span className="font-bold">Explanation: </span> {q.explanation}
-                             </div>
-                           </CardContent>
-                         </Card>
-                       );
-                    })}
-                  </div>
-               </div>
-             );
-          })}
-       </div>
+      <Card className="bg-secondary/10 border-none rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 shadow-inner overflow-hidden relative">
+         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+         <div className="space-y-4 flex-grow">
+            <h3 className="text-2xl font-bold">What's Next?</h3>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+                Your performance in <span className="text-foreground font-bold">Quantitative Ability</span> shows room for growth. 
+                Generate your detailed performance report to see specific topics you should focus on today.
+            </p>
+            <div className="flex flex-wrap gap-4 pt-4">
+               <Link href="/kmat/history">
+                  <Button variant="outline" size="lg" className="rounded-full px-8">Track History</Button>
+               </Link>
+               <Link href="/kmat/practice">
+                  <Button size="lg" className="rounded-full px-8 bg-blue-600 hover:bg-blue-700">Practice Drills</Button>
+               </Link>
+            </div>
+         </div>
+         <div className="hidden md:block w-48 h-48 bg-primary/10 rounded-full flex items-center justify-center border-8 border-background shadow-xl">
+             <BarChart3 className="w-20 h-20 text-primary" />
+         </div>
+      </Card>
     </div>
+  );
+}
+
+export default function KmatResultPage() {
+  return (
+    <Suspense fallback={
+        <div className="flex items-center justify-center min-h-[60vh]">
+            <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        </div>
+    }>
+      <ResultContent />
+    </Suspense>
   );
 }

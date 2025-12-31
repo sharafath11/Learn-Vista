@@ -7,7 +7,7 @@ import { Button } from "@/src/components/shared/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/src/components/shared/components/ui/radio-group";
 import { Label } from "@/src/components/shared/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/src/components/shared/components/ui/tabs";
-import { Flag, Timer, ChevronLeft, ChevronRight, Save, LayoutGrid, Loader2 } from "lucide-react";
+import { Flag, Timer, ChevronLeft, ChevronRight, LayoutGrid, Loader2, AlertTriangle } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,22 +20,27 @@ import {
   AlertDialogTrigger,
 } from "@/src/components/shared/components/ui/alert-dialog";
 import { Badge } from "@/src/components/shared/components/ui/badge";
-import { SECTIONS, SectionId } from "../data";
 import { kmatApi } from "@/src/services/kmatService";
 import { showErrorToast } from "@/src/utils/Toast";
+
+const SECTIONS = [
+  { id: "quantitative", label: "Quantitative" },
+  { id: "logical", label: "Logical" },
+  { id: "verbal", label: "Verbal" },
+  { id: "gk", label: "GK" }
+];
 
 export default function KmatExamPage() {
   const router = useRouter();
   
-  // --- State ---
   const [loading, setLoading] = useState(true);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [questions, setQuestions] = useState<any[]>([]);
-  const [currentSection, setCurrentSection] = useState<SectionId>("quantitative");
-  const [answers, setAnswers] = useState<Record<string, number>>({}); // questionId -> answerIndex
+  const [currentSection, setCurrentSection] = useState<string>("quantitative");
+  const [answers, setAnswers] = useState<Record<string, number>>({}); 
   const [reviewStatus, setReviewStatus] = useState<Record<string, boolean>>({});
   const [visitedStatus, setVisitedStatus] = useState<Record<string, boolean>>({});
-  const [timeLeft, setTimeLeft] = useState(180 * 60); // 180 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 minutes for mock
   const [currentQuestionId, setCurrentQuestionId] = useState<string>("");
 
   useEffect(() => {
@@ -44,18 +49,13 @@ export default function KmatExamPage() {
         const res = await kmatApi.startExam();
         if (res.success && res.data) {
           setSessionId(res.data.sessionId);
-          // Add custom ID for easier internal handling if needed, or just use _id
-           const formatted = res.data.questions.map((q: any) => ({
-             ...q,
-             id: q._id, // Use _id as main ID
-           }));
-           setQuestions(formatted);
-           if (formatted.length > 0) {
-             setCurrentQuestionId(formatted[0].id);
-           }
+          setQuestions(res.data.questions);
+          if (res.data.questions.length > 0) {
+            setCurrentQuestionId(res.data.questions[0]._id);
+          }
         }
       } catch (error) {
-        showErrorToast("Failed to start exam. Please try again.");
+        showErrorToast("Failed to initialize exam environment.");
       } finally {
         setLoading(false);
       }
@@ -63,27 +63,24 @@ export default function KmatExamPage() {
     startExam();
   }, []);
 
-  // Derived state
-  const currentSectionQuestions = questions.filter(q => q.section === (
-    currentSection === "quantitative" ? "Quantitative Ability" : 
-    currentSection === "logical" ? "Logical Reasoning" :
-    currentSection === "verbal" ? "Language Comprehension" : "General Knowledge"
-  ));
+  const currentSectionQuestions = questions.filter(q => {
+      const qSec = q.section.toLowerCase();
+      if (currentSection === "quantitative") return qSec.includes("quantitative");
+      if (currentSection === "logical") return qSec.includes("logical");
+      if (currentSection === "verbal") return qSec.includes("language") || qSec.includes("verbal");
+      if (currentSection === "gk") return qSec.includes("general") || qSec.includes("gk");
+      return false;
+  });
   
-  const currentQuestionIndex = currentSectionQuestions.findIndex(q => q.id === currentQuestionId);
-  const activeQuestion = currentSectionQuestions[currentQuestionIndex !== -1 ? currentQuestionIndex : 0];
-  
-  // Ensure we are always viewing a valid question when section changes
-  useEffect(() => {
-    if (activeQuestion && activeQuestion.id !== currentQuestionId) {
-       setCurrentQuestionId(activeQuestion.id);
-    }
-    if (activeQuestion) {
-      setVisitedStatus(prev => ({ ...prev, [activeQuestion.id]: true }));
-    }
-  }, [currentSection, activeQuestion, currentQuestionId]);
+  const activeQuestion = questions.find(q => q._id === currentQuestionId) || currentSectionQuestions[0];
+  const currentQuestionIdxInTotal = questions.findIndex(q => q._id === currentQuestionId);
 
-  // --- Timer ---
+  useEffect(() => {
+    if (activeQuestion) {
+      setVisitedStatus(prev => ({ ...prev, [activeQuestion._id]: true }));
+    }
+  }, [currentQuestionId, activeQuestion]);
+
   useEffect(() => {
     if (loading) return;
     const timer = setInterval(() => {
@@ -99,44 +96,39 @@ export default function KmatExamPage() {
     return () => clearInterval(timer);
   }, [loading]);
 
-  // --- Handlers ---
   const handleAnswer = (optionIndex: number) => {
-    setAnswers(prev => ({ ...prev, [activeQuestion.id]: optionIndex }));
-  };
-
-  const handleMarkReview = () => {
-    setReviewStatus(prev => ({ ...prev, [activeQuestion.id]: !prev[activeQuestion.id] }));
-  };
-
-  const handleClearResponse = () => {
-     const newAnswers = { ...answers };
-     delete newAnswers[activeQuestion.id];
-     setAnswers(newAnswers);
+    setAnswers(prev => ({ ...prev, [activeQuestion._id]: optionIndex }));
   };
 
   const handleNext = () => {
-    const nextIdx = currentQuestionIndex + 1;
-    if (nextIdx < currentSectionQuestions.length) {
-      setCurrentQuestionId(currentSectionQuestions[nextIdx].id);
+    if (currentQuestionIdxInTotal < questions.length - 1) {
+      setCurrentQuestionId(questions[currentQuestionIdxInTotal + 1]._id);
+      // Auto-switch tab if section changes
+      const nextQ = questions[currentQuestionIdxInTotal + 1];
+      updateSectionTab(nextQ.section);
     }
   };
   
   const handlePrev = () => {
-    const prevIdx = currentQuestionIndex - 1;
-    if (prevIdx >= 0) {
-      setCurrentQuestionId(currentSectionQuestions[prevIdx].id);
+    if (currentQuestionIdxInTotal > 0) {
+      setCurrentQuestionId(questions[currentQuestionIdxInTotal - 1]._id);
+      const prevQ = questions[currentQuestionIdxInTotal - 1];
+      updateSectionTab(prevQ.section);
     }
   };
 
-  const handleSectionChange = (val: string) => {
-     setCurrentSection(val as SectionId);
+  const updateSectionTab = (sectionName: string) => {
+      const qSec = sectionName.toLowerCase();
+      if (qSec.includes("quantitative")) setCurrentSection("quantitative");
+      else if (qSec.includes("logical")) setCurrentSection("logical");
+      else if (qSec.includes("language") || qSec.includes("verbal")) setCurrentSection("verbal");
+      else if (qSec.includes("general") || qSec.includes("gk")) setCurrentSection("gk");
   };
 
   const handleSubmitExam = async () => {
     if (!sessionId) return;
+    setLoading(true);
     try {
-      setLoading(true);
-      // Format answers for backend: [{ questionId, userAnswerIndex }]
       const formattedAnswers = Object.entries(answers).map(([qId, idx]) => ({
         questionId: qId,
         userAnswerIndex: idx
@@ -147,195 +139,199 @@ export default function KmatExamPage() {
         router.push(`/kmat/result?id=${sessionId}`);
       }
     } catch (error) {
-      showErrorToast("Failed to submit exam.");
+      showErrorToast("Critical: Submission failed. Contact support.");
       setLoading(false);
     }
   };
 
-  // --- Format Timer ---
   const formatTime = (seconds: number) => {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
+    const m = Math.floor(seconds / 60);
     const s = seconds % 60;
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
   if (loading) {
     return (
-      <div className="flex bg-background h-screen w-full items-center justify-center flex-col gap-4">
-        <Loader2 className="w-12 h-12 animate-spin text-primary" />
-        <p className="text-muted-foreground animate-pulse">Preparing Exam Environment...</p>
+      <div className="flex bg-background h-screen w-full items-center justify-center flex-col gap-6">
+        <Loader2 className="w-16 h-16 animate-spin text-primary" />
+        <div className="text-center animate-pulse">
+            <p className="text-xl font-bold">Secure Exam Session</p>
+            <p className="text-muted-foreground text-sm">Validating environment and fetching authorized questions...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-4 px-4 h-[calc(100vh-80px)] flex flex-col">
+    <div className="h-screen flex flex-col bg-secondary/5">
       {/* Header Bar */}
-      <div className="flex justify-between items-center bg-card p-4 rounded-lg shadow-sm border mb-4">
-        <div>
-          <h1 className="text-xl font-bold">KMAT Kerala Mock Exam</h1>
-          <p className="text-xs text-muted-foreground">Standard 180 Mins • +1/-0.25 Marking</p>
-        </div>
+      <header className="bg-background border-b px-6 py-4 flex justify-between items-center shadow-sm z-10">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 bg-secondary px-4 py-2 rounded-md font-mono text-lg font-bold text-primary">
-            <Timer className="w-5 h-5" />
-            {formatTime(timeLeft)}
+          <div className="bg-primary/10 p-2 rounded-lg">
+             <LayoutGrid className="text-primary w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold leading-none">KMAT Kerala Mock</h1>
+            <p className="text-xs text-muted-foreground mt-1">Practice Mode • Strict Timing</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 bg-secondary px-6 py-2 rounded-full border shadow-inner">
+            <Timer className={`w-5 h-5 ${timeLeft < 300 ? "text-destructive animate-pulse" : "text-muted-foreground"}`} />
+            <span className={`font-mono text-xl font-bold ${timeLeft < 300 ? "text-destructive" : "text-foreground"}`}>
+                {formatTime(timeLeft)}
+            </span>
           </div>
           
           <AlertDialog>
             <AlertDialogTrigger asChild>
-               <Button variant="destructive">Submit Exam</Button>
+               <Button variant="destructive" className="px-8 shadow-lg">End & Submit</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure you want to submit?</AlertDialogTitle>
+                <AlertDialogTitle className="flex items-center gap-2">
+                    <AlertTriangle className="text-destructive" /> Final Submission
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  You have attempted {Object.keys(answers).length} out of {questions.length} questions. 
-                  Once submitted, you cannot review your answers.
+                  You've attempted {Object.keys(answers).length} of {questions.length} questions.
+                  Are you ready to submit your authorized response for evaluation?
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleSubmitExam}>Submit Exam</AlertDialogAction>
+                <AlertDialogCancel>Keep Working</AlertDialogCancel>
+                <AlertDialogAction onClick={handleSubmitExam} className="bg-destructive hover:bg-destructive/90">Submit Now</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
         </div>
-      </div>
+      </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow overflow-hidden">
-        {/* Main Question Area */}
-        <div className="lg:col-span-3 flex flex-col h-full gap-4">
-          <Tabs value={currentSection} onValueChange={handleSectionChange} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+      <main className="flex-grow grid grid-cols-1 lg:grid-cols-4 overflow-hidden p-6 gap-6">
+        <div className="lg:col-span-3 flex flex-col gap-6 overflow-hidden">
+          <Tabs value={currentSection} onValueChange={setCurrentSection} className="w-full">
+            <TabsList className="grid w-full grid-cols-4 h-12 bg-background border shadow-sm">
               {SECTIONS.map(sec => (
-                <TabsTrigger key={sec.id} value={sec.id} className="text-xs md:text-sm">
+                <TabsTrigger key={sec.id} value={sec.id} className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   {sec.label}
                 </TabsTrigger>
               ))}
             </TabsList>
           </Tabs>
 
-          <Card className="flex-grow flex flex-col">
-             <CardHeader className="pb-2 border-b">
-               <div className="flex justify-between items-center">
-                 <Badge variant="outline">Question {currentQuestionIndex + 1}</Badge>
-                 <div className="flex gap-2">
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <div className="w-2 h-2 rounded-full bg-green-500"></div> +1 Correct 
-                    </span>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <div className="w-2 h-2 rounded-full bg-red-500"></div> -0.25 Wrong
-                    </span>
-                 </div>
-               </div>
-             </CardHeader>
-             <CardContent className="flex-grow pt-6 overflow-y-auto">
+          <Card className="flex-grow flex flex-col shadow-lg border-2 overflow-hidden">
+             <CardContent className="flex-grow p-8 overflow-y-auto bg-background">
                {activeQuestion && (
-                 <>
-                   <p className="text-lg font-medium mb-8 leading-relaxed">
-                     {activeQuestion.question}
-                   </p>
-                   <RadioGroup 
-                      value={answers[activeQuestion.id]?.toString() ?? ""} 
-                      onValueChange={(val) => handleAnswer(parseInt(val))} 
-                      className="space-y-4"
-                   >
-                     {activeQuestion.options.map((opt: string, idx: number) => (
-                       <div key={idx} className={`flex items-center space-x-3 border rounded-lg p-3 hover:bg-secondary/50 transition-colors ${
-                         answers[activeQuestion.id] === idx ? "bg-secondary border-primary/40 shadow-sm" : ""
-                       }`}>
-                         <RadioGroupItem value={idx.toString()} id={`q-${activeQuestion.id}-opt-${idx}`} />
-                         <Label htmlFor={`q-${activeQuestion.id}-opt-${idx}`} className="flex-grow cursor-pointer text-base">
-                           {opt}
-                         </Label>
-                       </div>
-                     ))}
-                   </RadioGroup>
-                 </>
+                 <div className="max-w-3xl mx-auto space-y-10">
+                    <div className="space-y-4">
+                        <Badge variant="outline" className="text-primary tracking-widest uppercase text-[10px] font-bold">
+                            Question {currentQuestionIdxInTotal + 1}
+                        </Badge>
+                        <h2 className="text-2xl font-semibold leading-relaxed">
+                            {activeQuestion.question}
+                        </h2>
+                    </div>
+
+                    <RadioGroup 
+                       value={answers[activeQuestion._id]?.toString() ?? ""} 
+                       onValueChange={(val) => handleAnswer(parseInt(val))} 
+                       className="grid gap-4"
+                    >
+                      {activeQuestion.options.map((opt: string, idx: number) => (
+                        <div key={idx} className={`relative group transition-all`}>
+                          <RadioGroupItem value={idx.toString()} id={`opt-${idx}`} className="sr-only" />
+                          <Label 
+                            htmlFor={`opt-${idx}`} 
+                            className={`flex items-center p-5 rounded-2xl border-2 cursor-pointer transition-all hover:bg-secondary/10 ${
+                                answers[activeQuestion._id] === idx 
+                                ? "border-primary bg-primary/5 shadow-md scale-[1.01]" 
+                                : "border-secondary/40 bg-background"
+                            }`}
+                          >
+                            <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center mr-4 shrink-0 transition-colors ${
+                                answers[activeQuestion._id] === idx ? "bg-primary border-primary text-primary-foreground" : "border-secondary"
+                            }`}>
+                                {String.fromCharCode(65 + idx)}
+                            </div>
+                            <span className="text-lg font-medium">{opt}</span>
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                 </div>
                )}
              </CardContent>
-             <CardFooter className="border-t pt-4 flex justify-between bg-secondary/10">
-                <div className="flex gap-2">
-                   <Button variant="ghost" onClick={handleMarkReview} className={reviewStatus[activeQuestion?.id || ""] ? "text-yellow-600 bg-yellow-50" : ""}>
-                      <Flag size={16} className="mr-2" /> 
-                      {reviewStatus[activeQuestion?.id || ""] ? "Unmark" : "Review"}
-                   </Button>
-                   <Button variant="ghost" onClick={handleClearResponse} disabled={answers[activeQuestion?.id || ""] === undefined}>
-                      Clear
+             <CardFooter className="border-t p-6 flex justify-between bg-secondary/5">
+                <div className="flex gap-4">
+                   <Button 
+                    variant="outline" 
+                    onClick={() => setReviewStatus(prev => ({ ...prev, [activeQuestion._id]: !prev[activeQuestion._id] }))} 
+                    className={reviewStatus[activeQuestion?._id] ? "bg-yellow-100 border-yellow-400 text-yellow-700" : ""}
+                   >
+                      <Flag size={18} className="mr-2" /> 
+                      {reviewStatus[activeQuestion?._id] ? "Flagged" : "Flag for Review"}
                    </Button>
                 </div>
-                <div className="flex gap-2">
-                   <Button variant="outline" onClick={handlePrev} disabled={currentQuestionIndex === 0}>
-                     <ChevronLeft size={16} className="mr-1" /> Prev
+                <div className="flex gap-4">
+                   <Button variant="ghost" onClick={handlePrev} disabled={currentQuestionIdxInTotal === 0} size="lg">
+                     <ChevronLeft size={20} className="mr-2" /> Previous
                    </Button>
-                   <Button onClick={handleNext} disabled={currentQuestionIndex === currentSectionQuestions.length - 1} className="w-28">
-                     Next <ChevronRight size={16} className="ml-1" />
+                   <Button onClick={handleNext} disabled={currentQuestionIdxInTotal === questions.length - 1} size="lg" className="px-10">
+                     Next <ChevronRight size={20} className="ml-2" />
                    </Button>
                 </div>
              </CardFooter>
           </Card>
         </div>
 
-        {/* Question Palette Sidebar */}
-        <Card className="hidden lg:flex flex-col h-full bg-secondary/5 border-l">
-          <CardHeader className="pb-2 border-b bg-card">
-            <CardTitle className="flex items-center gap-2 text-md">
-              <LayoutGrid size={18} /> Question Palette
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex-grow overflow-y-auto pt-4">
-             <div className="grid grid-cols-5 gap-2">
-                {questions.map((q, idx) => {
-                  const isAnswered = answers[q.id] !== undefined;
-                  const isReview = !!reviewStatus[q.id];
-                  const isCurrent = q.id === currentQuestionId;
-                  const isVisited = !!visitedStatus[q.id];
-                  
-                  // Determine Color
-                  let variantClass = "bg-secondary text-secondary-foreground hover:bg-secondary/80"; // Not Visited
-                  if (isCurrent) variantClass = "ring-2 ring-primary ring-offset-2";
-                  
-                  if (isReview) {
-                    variantClass = "bg-yellow-500 text-white hover:bg-yellow-600";
-                  } else if (isAnswered) {
-                    variantClass = "bg-green-600 text-white hover:bg-green-700";
-                  } else if (isVisited && !isAnswered) {
-                    variantClass = "bg-red-500 text-white hover:bg-red-600"; // Visited but not answered
-                  }
+        {/* Sidebar */}
+        <div className="hidden lg:flex flex-col gap-6 h-full overflow-hidden">
+             <Card className="flex-grow flex flex-col shadow-lg border-2 overflow-hidden bg-background">
+                <CardHeader className="border-b bg-secondary/10 px-6 py-4">
+                    <CardTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                        <LayoutGrid size={16} /> Question Matrix
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow overflow-y-auto p-4 custom-scrollbar">
+                    <div className="grid grid-cols-4 gap-2">
+                        {questions.map((q, idx) => {
+                            const isAnswered = answers[q._id] !== undefined;
+                            const isReview = !!reviewStatus[q._id];
+                            const isCurrent = q._id === currentQuestionId;
+                            const isVisited = !!visitedStatus[q._id];
+                            
+                            let statusClass = "bg-secondary/30 text-muted-foreground border-transparent";
+                            if (isCurrent) statusClass = "ring-2 ring-primary ring-offset-2 border-primary text-primary";
+                            else if (isReview) statusClass = "bg-yellow-500 text-white border-yellow-600";
+                            else if (isAnswered) statusClass = "bg-green-600 text-white border-green-700";
+                            else if (isVisited) statusClass = "bg-destructive/10 text-destructive border-destructive/20";
 
-                  return (
-                    <button
-                      key={q.id}
-                      onClick={() => {
-                        // Map Section string back to ID
-                        const secId = 
-                           q.section === "Quantitative Ability" ? "quantitative" : 
-                           q.section === "Logical Reasoning" ? "logical" :
-                           q.section === "Language Comprehension" ? "verbal" : "gk";
-
-                        setCurrentSection(secId);
-                        setCurrentQuestionId(q.id);
-                      }}
-                      className={`h-9 w-9 text-xs font-bold rounded-md flex items-center justify-center transition-all ${variantClass}`}
-                    >
-                      {idx + 1}
-                    </button>
-                  );
-                })}
-             </div>
-             
-             <div className="mt-8 space-y-2 text-xs text-muted-foreground p-3 bg-card rounded border">
-                <div className="flex items-center gap-2"><div className="w-3 h-3 bg-green-600 rounded"></div> Answered</div>
-                <div className="flex items-center gap-2"><div className="w-3 h-3 bg-red-500 rounded"></div> Not Answered</div>
-                <div className="flex items-center gap-2"><div className="w-3 h-3 bg-yellow-500 rounded"></div> Mark for Review</div>
-                <div className="flex items-center gap-2"><div className="w-3 h-3 bg-secondary border rounded"></div> Not Visited</div>
-             </div>
-          </CardContent>
-        </Card>
-      </div>
+                            return (
+                                <button
+                                    key={q._id}
+                                    onClick={() => {
+                                        setCurrentQuestionId(q._id);
+                                        updateSectionTab(q.section);
+                                    }}
+                                    className={`h-10 w-full text-xs font-bold rounded-xl border flex items-center justify-center transition-all hover:scale-105 ${statusClass}`}
+                                >
+                                    {(idx + 1).toString().padStart(2, '0')}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </CardContent>
+                <CardFooter className="bg-secondary/10 p-4 border-t">
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-full text-[10px] font-bold uppercase tracking-tighter">
+                        <div className="flex items-center gap-2"><div className="w-3 h-3 bg-green-600 rounded-sm shadow-sm"></div> Answered</div>
+                        <div className="flex items-center gap-2"><div className="w-3 h-3 bg-destructive/20 border border-destructive/30 rounded-sm shadow-sm"></div> Skipped</div>
+                        <div className="flex items-center gap-2"><div className="w-3 h-3 bg-yellow-500 rounded-sm shadow-sm"></div> Flagged</div>
+                        <div className="flex items-center gap-2"><div className="w-3 h-3 bg-secondary rounded-sm shadow-sm"></div> Not Seen</div>
+                    </div>
+                </CardFooter>
+             </Card>
+        </div>
+      </main>
     </div>
   );
 }
-

@@ -170,12 +170,6 @@ export class KmatService implements IKmatService {
     return { sessionId, questions: safeQuestions };
   }
 
-  async checkAnswer(sessionId: string, questionId: string, userAnswerIndex: number | null) {
-      // This might need userId for key lookup if we follow the strict key pattern
-      // Skipping userId for now or assuming it's part of sessionId if encoded
-      throw new Error("Method not implemented for direct individual check in this lifecycle. Use submitExam.");
-  }
-
   async submitExam(userId: string, dayNumber: number, sessionId: string, answers: any[]) {
     const redisKey = `kmat:answers:${userId}:${sessionId}`;
     const cached = await redis.get(redisKey);
@@ -270,5 +264,50 @@ export class KmatService implements IKmatService {
               console.error(`Retry failed for user ${data.userId}:`, e);
           }
       }
+  }
+
+  async getHistory(userId: string) {
+    const dailyData = await this.dailyDataRepo.findAll({ userId });
+    const exams = await this.examRepo.findAll({ userId });
+    const reports = await this.reportRepo.findAll({ userId });
+
+    return dailyData.map(day => {
+      const exam = exams.find(e => e.dayNumber === day.dayNumber);
+      const report = reports.find(r => r.dayNumber === day.dayNumber);
+      return {
+        dayNumber: day.dayNumber,
+        date: day.date,
+        status: day.status,
+        score: exam?.finalScore || null,
+        reportAvailable: !!report
+      };
+    });
+  }
+
+  async submitPractice(userId: string, dayNumber: number, answers: any[]) {
+    const today = this.getTodayDate();
+    const dailyData = await this.dailyDataRepo.findByUserAndDate(userId, today);
+    if (!dailyData) throw new Error("Daily data not found for session evaluation.");
+
+    const results = [];
+    for (const answer of answers) {
+      const question = dailyData.practiceSet.find((q: any) => q._id.toString() === answer.questionId);
+      if (question) {
+        const isCorrect = question.correctAnswerIndex === answer.userAnswerIndex;
+        const record = await this.practiceRepo.create({
+          userId: new mongoose.Types.ObjectId(userId) as any,
+          dayNumber,
+          questionId: new mongoose.Types.ObjectId(answer.questionId) as any,
+          isCorrect,
+          attemptedAt: new Date()
+        });
+        results.push(record);
+      }
+    }
+    return results;
+  }
+
+  async getResult(id: string) {
+    return await this.examRepo.findById(id);
   }
 }
