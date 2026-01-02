@@ -30,6 +30,7 @@ const NAV_ITEMS: NavItem[] = [
   { name: "Donation", path: "/user/donation", icon: Heart },
   { name: "Certificate", path: "/user/certificate", icon: BadgeCheck },
   { name: "Daily Task", path: "/user/dailytask", icon: ClipboardList },
+  {name:"KMAT",path:"/user/kmat",icon:Video}
 ]
 
 export const Header = () => {
