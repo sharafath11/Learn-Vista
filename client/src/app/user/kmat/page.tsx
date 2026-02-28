@@ -77,12 +77,12 @@ export default function KmatDashboard() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Link href="/kmat/history">
+          <Link href="/user/kmat/history">
             <Button variant="outline" className="gap-2">
               <History size={18} /> History
             </Button>
           </Link>
-          <Link href="/kmat/report">
+          <Link href={`/user/kmat/report?day=${data.dayNumber}`}>
             <Button variant="outline" className="gap-2">
               <BarChart3 size={18} /> Daily Analysis
             </Button>
@@ -127,7 +127,7 @@ export default function KmatDashboard() {
                     </ul>
                 </CardContent>
                 <CardFooter>
-                    <Link href="/kmat/learn" className="w-full">
+                    <Link href="/user/kmat/learn" className="w-full">
                         <Button className="w-full gap-2">
                             <PlayCircle size={18} /> Start Learning
                         </Button>
@@ -153,7 +153,7 @@ export default function KmatDashboard() {
                     </p>
                 </CardContent>
                 <CardFooter>
-                    <Link href="/kmat/practice" className="w-full">
+                    <Link href="/user/kmat/practice" className="w-full">
                         <Button variant="outline" className="w-full">Start Practice</Button>
                     </Link>
                 </CardFooter>
@@ -185,7 +185,7 @@ export default function KmatDashboard() {
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Link href="/kmat/exam" className="w-full">
+                    <Link href="/user/kmat/exam" className="w-full">
                         <Button variant="default" className="w-full bg-orange-600 hover:bg-orange-700">Attempt Mock</Button>
                     </Link>
                 </CardFooter>

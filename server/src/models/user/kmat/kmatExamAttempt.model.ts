@@ -16,6 +16,7 @@ export interface IKmatExamAttempt extends Document {
     score: number;
     correct: number;
     wrong: number;
+    total: number;
   }[];
 }
 
@@ -34,7 +35,8 @@ const KmatExamAttemptSchema: Schema = new Schema({
     section: String,
     score: Number,
     correct: Number,
-    wrong: Number
+    wrong: Number,
+    total: Number
   }],
 }, { timestamps: true });
 

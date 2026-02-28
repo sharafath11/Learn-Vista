@@ -51,7 +51,7 @@ export default function KmatHistoryPage() {
     <div className="container mx-auto py-10 px-4 max-w-4xl space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-           <Link href="/kmat" className="text-primary hover:underline flex items-center gap-2 mb-4 group font-medium">
+           <Link href="/user/kmat" className="text-primary hover:underline flex items-center gap-2 mb-4 group font-medium">
              <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" /> Back to Dashboard
            </Link>
            <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
@@ -69,7 +69,7 @@ export default function KmatHistoryPage() {
                 <p className="text-muted-foreground max-w-sm">
                     Keep showing up every day. Your preparation history will appear here once you start completing daily tasks.
                 </p>
-                <Link href="/kmat">
+                <Link href="/user/kmat">
                     <Button>Start Today's Prep</Button>
                 </Link>
             </CardContent>
@@ -117,20 +117,20 @@ export default function KmatHistoryPage() {
 
                                     <div className="flex flex-col gap-2 flex-grow md:flex-grow-0 min-w-[140px]">
                                         {entry.reportAvailable ? (
-                                            <Link href={`/kmat/report?day=${entry.dayNumber}`} className="w-full">
+                                            <Link href={`/user/kmat/report?day=${entry.dayNumber}`} className="w-full">
                                                 <Button size="sm" variant="outline" className="w-full gap-2 border-primary/20 hover:bg-primary/5 text-primary">
                                                     <BarChart3 size={14} /> Performance Report
                                                 </Button>
                                             </Link>
                                         ) : entry.score !== null ? (
-                                            <Link href={`/kmat/report?day=${entry.dayNumber}`} className="w-full">
+                                            <Link href={`/user/kmat/report?day=${entry.dayNumber}`} className="w-full">
                                                 <Button size="sm" variant="secondary" className="w-full gap-2">
                                                     <BarChart3 size={14} /> Generate Report
                                                 </Button>
                                             </Link>
                                         ) : null}
                                         
-                                        <Link href={entry.status === "generated" ? "/kmat/learn" : "/kmat"} className="w-full">
+                                        <Link href={entry.status === "generated" ? "/user/kmat/learn" : "/user/kmat"} className="w-full">
                                             <Button size="sm" variant="ghost" className="w-full gap-2 group/btn">
                                                 Review Material <ChevronRight size={14} className="transition-transform group-hover/btn:translate-x-1" />
                                             </Button>

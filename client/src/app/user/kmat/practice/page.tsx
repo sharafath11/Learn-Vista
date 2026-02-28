@@ -42,13 +42,14 @@ export default function KmatPracticePage() {
 
   const currentQuestion = questions[currentIndex];
   const isLastQuestion = currentIndex === questions.length - 1;
+  const getQuestionId = (question: any) => (question?._id || question?.id || "").toString();
 
   const handleNext = () => {
     if (selectedOption === null) return;
     
     // Collect answer
     const newAnswers = [...userAnswers, { 
-        questionId: currentQuestion._id, 
+        questionId: getQuestionId(currentQuestion), 
         userAnswerIndex: selectedOption 
     }];
     setUserAnswers(newAnswers);
@@ -90,7 +91,7 @@ export default function KmatPracticePage() {
       <div className="text-center py-20 bg-secondary/10 rounded-2xl mx-4">
         <Bookmark className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
         <h3 className="text-xl font-semibold">No practice questions available for today yet.</h3>
-        <Link href="/kmat" className="mt-6 inline-block">
+        <Link href="/user/kmat" className="mt-6 inline-block">
             <Button variant="outline">Back to Dashboard</Button>
         </Link>
       </div>
@@ -119,10 +120,10 @@ export default function KmatPracticePage() {
             </p>
           </CardContent>
           <CardFooter className="justify-center gap-4 bg-secondary/10 py-6">
-             <Link href="/kmat">
+             <Link href="/user/kmat">
                 <Button variant="outline" size="lg">Dashboard</Button>
              </Link>
-             <Link href="/kmat/exam">
+             <Link href="/user/kmat/exam">
                 <Button size="lg" className="bg-orange-600 hover:bg-orange-700">Attempt Mock</Button>
              </Link>
           </CardFooter>

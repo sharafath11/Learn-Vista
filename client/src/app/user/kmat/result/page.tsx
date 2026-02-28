@@ -52,20 +52,23 @@ function ResultContent() {
         <AlertCircle className="w-12 h-12 mx-auto text-destructive mb-4" />
         <h3 className="text-xl font-semibold">Result Not Found</h3>
         <p className="text-muted-foreground mt-2">We couldn't find the result for this session.</p>
-        <Link href="/kmat" className="mt-8 inline-block">
+        <Link href="/user/kmat" className="mt-8 inline-block">
           <Button variant="outline">Back to Dashboard</Button>
         </Link>
       </div>
     );
   }
 
-  const scorePercentage = (result.finalScore / (result.totalQuestions * 4)) * 100;
+  const scorePercentage = (result.finalScore / (result.totalQuestions || 1)) * 100;
+  const sectionWise = Array.isArray(result.sectionWiseScore)
+    ? result.sectionWiseScore
+    : Object.values(result.sectionWiseScore || {});
 
   return (
     <div className="container mx-auto py-10 px-4 max-w-4xl space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-           <Link href="/kmat" className="text-primary hover:underline flex items-center gap-2 mb-4 group font-medium">
+           <Link href="/user/kmat" className="text-primary hover:underline flex items-center gap-2 mb-4 group font-medium">
              <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" /> Back to Dashboard
            </Link>
            <h1 className="text-4xl font-extrabold tracking-tight">Exam Analysis</h1>
@@ -73,7 +76,7 @@ function ResultContent() {
              Official Result Session: {sessionId?.slice(-8)}
            </p>
         </div>
-        <Link href={`/kmat/report?day=${result.dayNumber}`}>
+        <Link href={`/user/kmat/report?day=${result.dayNumber}`}>
           <Button className="gap-2 shadow-lg bg-indigo-600 hover:bg-indigo-700" size="lg">
             <BarChart3 size={20} /> View AI Performance Report
           </Button>
@@ -132,13 +135,13 @@ function ResultContent() {
             <CardDescription>Performance across domains</CardDescription>
           </CardHeader>
           <CardContent className="pt-6 space-y-8">
-            {Object.entries(result.sectionWiseScore || {}).map(([section, data]: [string, any]) => (
-              <div key={section} className="space-y-3">
+            {sectionWise.map((data: any, index: number) => (
+              <div key={data.section || index} className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm font-bold capitalize">{section}</span>
-                  <Badge variant="outline" className="font-mono">{data.score} / {data.total * 4}</Badge>
+                  <span className="text-sm font-bold capitalize">{data.section}</span>
+                  <Badge variant="outline" className="font-mono">{data.score} / {data.total || 0}</Badge>
                 </div>
-                <Progress value={(data.score / (data.total * 4)) * 100} className="h-2" />
+                <Progress value={((data.score || 0) / (data.total || 1)) * 100} className="h-2" />
                 <div className="flex gap-4 text-[10px] uppercase font-black tracking-tighter">
                    <span className="text-green-600 flex items-center gap-1"><CheckCircle2 size={10} /> {data.correct} Correct</span>
                    <span className="text-red-500 flex items-center gap-1"><XCircle size={10} /> {data.wrong} Wrong</span>
@@ -158,10 +161,10 @@ function ResultContent() {
                 Generate your detailed performance report to see specific topics you should focus on today.
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
-               <Link href="/kmat/history">
+               <Link href="/user/kmat/history">
                   <Button variant="outline" size="lg" className="rounded-full px-8">Track History</Button>
                </Link>
-               <Link href="/kmat/practice">
+               <Link href="/user/kmat/practice">
                   <Button size="lg" className="rounded-full px-8 bg-blue-600 hover:bg-blue-700">Practice Drills</Button>
                </Link>
             </div>

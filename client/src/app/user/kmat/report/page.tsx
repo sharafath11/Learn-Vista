@@ -29,13 +29,19 @@ function ReportContent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!day) {
-        setLoading(false);
-        return;
-    }
     const fetchReport = async () => {
       try {
-        const res = await kmatApi.generateReport(parseInt(day));
+        let dayNumber = day ? parseInt(day) : NaN;
+        if (!Number.isInteger(dayNumber) || dayNumber <= 0) {
+          const daily = await kmatApi.getDailyData();
+          dayNumber = daily?.data?.dayNumber;
+        }
+        if (!Number.isInteger(dayNumber) || dayNumber <= 0) {
+          setLoading(false);
+          return;
+        }
+
+        const res = await kmatApi.generateReport(dayNumber);
         if (res.success) {
           setReport(res.data);
         }
@@ -71,7 +77,7 @@ function ReportContent() {
         <AlertTriangle className="w-12 h-12 mx-auto text-destructive mb-4" />
         <h3 className="text-xl font-semibold">Report Unavailable</h3>
         <p className="text-muted-foreground mt-2">We need at least one mock exam session for this day to generate a report.</p>
-        <Link href="/kmat" className="mt-8 inline-block">
+        <Link href="/user/kmat" className="mt-8 inline-block">
           <Button variant="outline">Back to Dashboard</Button>
         </Link>
       </div>
@@ -82,7 +88,7 @@ function ReportContent() {
     <div className="container mx-auto py-10 px-4 max-w-5xl space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-           <Link href="/kmat/history" className="text-primary hover:underline flex items-center gap-2 mb-4 group font-medium text-sm">
+           <Link href="/user/kmat/history" className="text-primary hover:underline flex items-center gap-2 mb-4 group font-medium text-sm">
              <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" /> View Prep History
            </Link>
            <h1 className="text-4xl font-black tracking-tight flex items-center gap-4">
@@ -98,7 +104,7 @@ function ReportContent() {
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => window.print()} className="shadow-sm">Save as PDF</Button>
-          <Link href="/kmat/practice">
+          <Link href="/user/kmat/practice">
             <Button className="shadow-lg">Back to Drills</Button>
           </Link>
         </div>

@@ -10,7 +10,6 @@ import { IKmatDailyReportRepository } from "../../../core/interfaces/repositorie
 import {
   buildKMATLearnPrompt,
   buildKMATPracticePrompt,
-  buildKMATExamPrompt,
   buildKMATAnalysisPrompt
 } from "../../../utils/rportprompt";
 import { getAIResponseJSON } from "../../../config/gemaniAi";
@@ -30,6 +29,46 @@ export class KmatService implements IKmatService {
 
   private getTodayDate(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  private getQuestionId(question: any): string {
+    return (question?._id || question?.id || "").toString();
+  }
+
+  private async getOrGenerateSectionQuestions(section: string, count: number) {
+    const existing = await this.questionRepo.getRandomQuestions(section, count);
+    if (existing.length >= count) return existing;
+
+    const missing = count - existing.length;
+    const prompt = buildKMATPracticePrompt(section, "Mock Exam", "Medium", missing);
+    const generated = await getAIResponseJSON(prompt);
+    const generatedList = Array.isArray(generated) ? generated : [];
+
+    const created: any[] = [];
+    for (const q of generatedList.slice(0, missing)) {
+      if (!q?.question || !Array.isArray(q?.options) || q.options.length !== 4) {
+        continue;
+      }
+      if (typeof q.correctAnswerIndex !== "number" || q.correctAnswerIndex < 0 || q.correctAnswerIndex > 3) {
+        continue;
+      }
+      const saved = await this.questionRepo.create({
+        section,
+        topic: "Mock Exam",
+        difficulty: "Medium",
+        question: q.question,
+        options: q.options,
+        correctAnswerIndex: q.correctAnswerIndex,
+        explanation: q.explanation
+      });
+      created.push(saved);
+    }
+
+    const merged = [...existing, ...created].slice(0, count);
+    if (merged.length < count) {
+      throw new Error(`Insufficient question bank for section: ${section}`);
+    }
+    return merged;
   }
 
   async initializeUserKmat(userId: string) {
@@ -63,7 +102,9 @@ export class KmatService implements IKmatService {
 
     try {
       const state = await this.initializeUserKmat(userId);
-      const day = state.currentDay;
+      const day = state.lastGeneratedDate && state.lastGeneratedDate !== today
+        ? state.currentDay + 1
+        : state.currentDay;
 
       // Generate content via AI
       const sections = ["Quantitative Ability", "Logical Reasoning", "Language Comprehension", "General Knowledge"];
@@ -88,17 +129,23 @@ export class KmatService implements IKmatService {
 
       // Update state
       await this.stateRepo.update(state._id as string, { lastGeneratedDate: today });
+      if (day !== state.currentDay) {
+        await this.stateRepo.update(state._id as string, { currentDay: day });
+      }
 
       return dailyData;
     } catch (error) {
       // Create failed record for CRON a retry
       const state = await this.stateRepo.findByUserId(userId);
-      await this.dailyDataRepo.create({
-        userId: new mongoose.Types.ObjectId(userId) as any,
-        dayNumber: state?.currentDay || 1,
-        date: today,
-        status: 'failed'
-      });
+      const existing = await this.dailyDataRepo.findByUserAndDate(userId, today);
+      if (!existing) {
+        await this.dailyDataRepo.create({
+          userId: new mongoose.Types.ObjectId(userId) as any,
+          dayNumber: state?.currentDay || 1,
+          date: today,
+          status: 'failed'
+        });
+      }
       throw error;
     } finally {
       await redis.del(lockKey);
@@ -107,7 +154,18 @@ export class KmatService implements IKmatService {
 
   private async getAIContent(section: string, topic: string) {
     const prompt = buildKMATLearnPrompt(section, topic);
-    return getAIResponseJSON(prompt);
+    const content = await getAIResponseJSON(prompt);
+    if (content && typeof content === "object") {
+      return content;
+    }
+    return {
+      section,
+      topic,
+      concept: "Content is being refined. Please revisit this topic shortly.",
+      solvedExamples: [],
+      commonMistakes: [],
+      examTips: []
+    };
   }
 
   private async generateDailyPractice(sections: string[]) {
@@ -116,8 +174,15 @@ export class KmatService implements IKmatService {
     for (const section of sections) {
         const prompt = buildKMATPracticePrompt(section, "Daily Drill", "Medium", 2);
         const generated = await getAIResponseJSON(prompt);
+        const generatedList = Array.isArray(generated) ? generated : [];
         // Save to question bank
-        for (const q of generated) {
+        for (const q of generatedList) {
+            if (!q?.question || !Array.isArray(q?.options) || q.options.length !== 4) {
+              continue;
+            }
+            if (typeof q.correctAnswerIndex !== "number" || q.correctAnswerIndex < 0 || q.correctAnswerIndex > 3) {
+              continue;
+            }
             const saved = await this.questionRepo.create({
                 section,
                 topic: "Daily Drill",
@@ -127,13 +192,17 @@ export class KmatService implements IKmatService {
                 correctAnswerIndex: q.correctAnswerIndex,
                 explanation: q.explanation
             });
-            questions.push({ ...q, id: (saved as any)._id });
+            const questionId = (saved as any)._id.toString();
+            questions.push({ ...q, _id: questionId, id: questionId });
         }
+    }
+    if (questions.length === 0) {
+      throw new Error("Unable to generate practice questions at this time.");
     }
     return questions;
   }
 
-  async startExam(userId: string, dayNumber: number) {
+  async startExam(userId: string, _dayNumber?: number) {
     const today = this.getTodayDate();
     const dailyData = await this.dailyDataRepo.findByUserAndDate(userId, today);
     if (!dailyData || dailyData.status !== 'generated') {
@@ -142,10 +211,13 @@ export class KmatService implements IKmatService {
 
     // Get random questions for mock
     const sections = ["Quantitative Ability", "Logical Reasoning", "Language Comprehension", "General Knowledge"];
-    let examQuestions: any[] = [];
+    const examQuestions: any[] = [];
     for (const section of sections) {
-        const qs = await this.questionRepo.getRandomQuestions(section, 5);
+        const qs = await this.getOrGenerateSectionQuestions(section, 5);
         examQuestions.push(...qs);
+    }
+    if (examQuestions.length < 20) {
+      throw new Error("Unable to generate a complete exam right now.");
     }
 
     const sessionId = new mongoose.Types.ObjectId().toString();
@@ -167,10 +239,10 @@ export class KmatService implements IKmatService {
       options: q.options
     }));
 
-    return { sessionId, questions: safeQuestions };
+    return { sessionId, dayNumber: dailyData.dayNumber, questions: safeQuestions };
   }
 
-  async submitExam(userId: string, dayNumber: number, sessionId: string, answers: any[]) {
+  async submitExam(userId: string, dayNumber: number | undefined, sessionId: string, answers: any[]) {
     const redisKey = `kmat:answers:${userId}:${sessionId}`;
     const cached = await redis.get(redisKey);
     if (!cached) throw new Error("Session expired.");
@@ -184,13 +256,17 @@ export class KmatService implements IKmatService {
     const questions = await this.questionRepo.findAll({ _id: { $in: questionIds } });
     const questionMap = new Map(questions.map(q => [(q as any)._id.toString(), q]));
 
-    const sectionWise: Record<string, { section: string; score: number; correct: number; wrong: number }> = {};
+    const sectionWise: Record<string, { section: string; score: number; correct: number; wrong: number; total: number }> = {};
+    for (const q of questions as any[]) {
+      sectionWise[q.section] ??= { section: q.section, score: 0, correct: 0, wrong: 0, total: 0 };
+      sectionWise[q.section].total += 1;
+    }
 
     for (const ans of answers) {
         const q = questionMap.get(ans.questionId);
         if (!q) continue;
 
-        sectionWise[q.section] ??= { section: q.section, score: 0, correct: 0, wrong: 0 };
+        sectionWise[q.section] ??= { section: q.section, score: 0, correct: 0, wrong: 0, total: 0 };
 
         const correctIndex = answersMap[ans.questionId];
         const isCorrect = ans.userAnswerIndex === correctIndex;
@@ -206,15 +282,22 @@ export class KmatService implements IKmatService {
         }
     }
 
+    const attempted = answers.filter(a => a.userAnswerIndex !== null && a.userAnswerIndex !== undefined).length;
+    let resolvedDayNumber = dayNumber;
+    if (!resolvedDayNumber) {
+      const dailyData = await this.dailyDataRepo.findByUserAndDate(userId, this.getTodayDate());
+      resolvedDayNumber = dailyData?.dayNumber || 1;
+    }
+
     const result = await this.examRepo.create({
         userId: new mongoose.Types.ObjectId(userId) as any,
-        dayNumber,
+        dayNumber: resolvedDayNumber,
         date: this.getTodayDate(),
         totalQuestions: Object.keys(answersMap).length,
-        attempted: answers.filter(a => a.userAnswerIndex !== null).length,
+        attempted,
         correct,
         wrong,
-        unattempted: Object.keys(answersMap).length - answers.filter(a => a.userAnswerIndex !== null).length,
+        unattempted: Object.keys(answersMap).length - attempted,
         negativeMarks: wrong * 0.25,
         finalScore: correct - (wrong * 0.25),
         sectionWiseScore: Object.values(sectionWise)
@@ -225,9 +308,8 @@ export class KmatService implements IKmatService {
   }
 
   async generateDailyReport(userId: string, dayNumber: number) {
-      const today = this.getTodayDate();
-      const exam = await this.examRepo.findOne({ userId, date: today });
-      if (!exam) throw new Error("No exam found for today.");
+      const exam = await this.examRepo.findOne({ userId, dayNumber });
+      if (!exam) throw new Error("No exam found for this day.");
 
       const prompt = buildKMATAnalysisPrompt({
           totalQuestions: exam.totalQuestions,
@@ -241,15 +323,20 @@ export class KmatService implements IKmatService {
           wrongQuestions: [] // Fetch from practice attempts if needed
       });
 
+      const existing = await this.reportRepo.findOne({ userId, dayNumber });
+      if (existing) {
+        return existing;
+      }
+
       const analysis = await getAIResponseJSON(prompt);
       return this.reportRepo.create({
           userId: new mongoose.Types.ObjectId(userId) as any,
           dayNumber,
-          date: today,
-          strengths: analysis.strengths,
-          weaknesses: analysis.weaknesses,
-          negativeMarkingImpact: analysis.negativeMarkingImpact,
-          nextSteps: analysis.nextSteps
+          date: this.getTodayDate(),
+          strengths: Array.isArray(analysis?.strengths) ? analysis.strengths : [],
+          weaknesses: Array.isArray(analysis?.weaknesses) ? analysis.weaknesses : [],
+          negativeMarkingImpact: typeof analysis?.negativeMarkingImpact === "string" ? analysis.negativeMarkingImpact : "No significant negative marking pattern detected.",
+          nextSteps: Array.isArray(analysis?.nextSteps) ? analysis.nextSteps : []
       });
   }
 
@@ -271,7 +358,9 @@ export class KmatService implements IKmatService {
     const exams = await this.examRepo.findAll({ userId });
     const reports = await this.reportRepo.findAll({ userId });
 
-    return dailyData.map(day => {
+    return dailyData
+      .sort((a, b) => b.dayNumber - a.dayNumber)
+      .map(day => {
       const exam = exams.find(e => e.dayNumber === day.dayNumber);
       const report = reports.find(r => r.dayNumber === day.dayNumber);
       return {
@@ -287,17 +376,19 @@ export class KmatService implements IKmatService {
   async submitPractice(userId: string, dayNumber: number, answers: any[]) {
     const today = this.getTodayDate();
     const dailyData = await this.dailyDataRepo.findByUserAndDate(userId, today);
-    if (!dailyData) throw new Error("Daily data not found for session evaluation.");
+    if (!dailyData || dailyData.status !== "generated") throw new Error("Daily data not found for session evaluation.");
 
     const results = [];
     for (const answer of answers) {
-      const question = dailyData.practiceSet.find((q: any) => q._id.toString() === answer.questionId);
+      const question = dailyData.practiceSet.find((q: any) => this.getQuestionId(q) === answer.questionId);
       if (question) {
         const isCorrect = question.correctAnswerIndex === answer.userAnswerIndex;
+        const questionId = this.getQuestionId(question);
+        if (!mongoose.Types.ObjectId.isValid(questionId)) continue;
         const record = await this.practiceRepo.create({
           userId: new mongoose.Types.ObjectId(userId) as any,
           dayNumber,
-          questionId: new mongoose.Types.ObjectId(answer.questionId) as any,
+          questionId: new mongoose.Types.ObjectId(questionId) as any,
           isCorrect,
           attemptedAt: new Date()
         });
@@ -307,7 +398,7 @@ export class KmatService implements IKmatService {
     return results;
   }
 
-  async getResult(id: string) {
-    return await this.examRepo.findById(id);
+  async getResult(userId: string, id: string) {
+    return await this.examRepo.findOne({ _id: id, userId });
   }
 }

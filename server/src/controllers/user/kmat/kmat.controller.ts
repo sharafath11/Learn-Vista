@@ -7,6 +7,7 @@ import { StatusCode } from '../../../enums/statusCode.enum';
 import { verifyAccessToken } from '../../../utils/jwtToken';
 import { handleControllerError, sendResponse, throwError } from '../../../utils/resAndError';
 import { Messages } from '../../../constants/messages';
+import mongoose from 'mongoose';
 
 @injectable()
 export class KmatController implements IKmatController {
@@ -34,6 +35,9 @@ export class KmatController implements IKmatController {
       if (!decoded?.id) {
         throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
       }
+      if (dayNumber !== undefined && (!Number.isInteger(dayNumber) || dayNumber <= 0)) {
+        throwError("Invalid dayNumber.", StatusCode.BAD_REQUEST);
+      }
       const result = await this.kmatService.startExam(decoded.id, dayNumber);
       sendResponse(res, StatusCode.CREATED, "", true, result);
     } catch (error: any) {
@@ -47,6 +51,15 @@ export class KmatController implements IKmatController {
       const { dayNumber, sessionId, answers } = req.body;
       if (!decoded?.id) {
         throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
+      }
+      if (dayNumber !== undefined && (!Number.isInteger(dayNumber) || dayNumber <= 0)) {
+        throwError("Invalid dayNumber.", StatusCode.BAD_REQUEST);
+      }
+      if (!sessionId || typeof sessionId !== "string") {
+        throwError("Invalid sessionId.", StatusCode.BAD_REQUEST);
+      }
+      if (!Array.isArray(answers)) {
+        throwError("Answers must be an array.", StatusCode.BAD_REQUEST);
       }
       const result = await this.kmatService.submitExam(decoded.id, dayNumber, sessionId, answers);
       sendResponse(res, StatusCode.OK, "", true, result);
@@ -62,7 +75,13 @@ export class KmatController implements IKmatController {
         if (!decoded?.id) {
             throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
         }
-        const result = await this.kmatService.getResult(id);
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+          throwError("Invalid result id.", StatusCode.BAD_REQUEST);
+        }
+        const result = await this.kmatService.getResult(decoded.id, id);
+        if (!result) {
+          throwError("Result not found.", StatusCode.NOT_FOUND);
+        }
         sendResponse(res, StatusCode.OK, "", true, result);
     } catch (error: any) {
         handleControllerError(res, error);
@@ -75,6 +94,9 @@ export class KmatController implements IKmatController {
           const { dayNumber } = req.body;
           if (!decoded?.id) {
               throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
+          }
+          if (!Number.isInteger(dayNumber) || dayNumber <= 0) {
+            throwError("Invalid dayNumber.", StatusCode.BAD_REQUEST);
           }
           const report = await this.kmatService.generateDailyReport(decoded.id, dayNumber);
           sendResponse(res, StatusCode.OK, "", true, report);
@@ -102,6 +124,12 @@ export class KmatController implements IKmatController {
       const { dayNumber, answers } = req.body;
       if (!decoded?.id) {
         throwError(Messages.COMMON.UNAUTHORIZED, StatusCode.UNAUTHORIZED);
+      }
+      if (!Number.isInteger(dayNumber) || dayNumber <= 0) {
+        throwError("Invalid dayNumber.", StatusCode.BAD_REQUEST);
+      }
+      if (!Array.isArray(answers)) {
+        throwError("Answers must be an array.", StatusCode.BAD_REQUEST);
       }
       const result = await this.kmatService.submitPractice(decoded.id, dayNumber, answers);
       sendResponse(res, StatusCode.OK, "", true, result);

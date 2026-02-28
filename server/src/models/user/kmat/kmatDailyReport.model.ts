@@ -20,4 +20,6 @@ const KmatDailyReportSchema: Schema = new Schema({
   nextSteps: [{ type: String }],
 }, { timestamps: true });
 
+KmatDailyReportSchema.index({ userId: 1, dayNumber: 1 }, { unique: true });
+
 export const KmatDailyReport = mongoose.model<IKmatDailyReport>('KmatDailyReport', KmatDailyReportSchema);

@@ -42,6 +42,7 @@ export default function KmatExamPage() {
   const [visitedStatus, setVisitedStatus] = useState<Record<string, boolean>>({});
   const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 minutes for mock
   const [currentQuestionId, setCurrentQuestionId] = useState<string>("");
+  const [dayNumber, setDayNumber] = useState<number | null>(null);
 
   useEffect(() => {
     const startExam = async () => {
@@ -49,6 +50,7 @@ export default function KmatExamPage() {
         const res = await kmatApi.startExam();
         if (res.success && res.data) {
           setSessionId(res.data.sessionId);
+          setDayNumber(res.data.dayNumber ?? null);
           setQuestions(res.data.questions);
           if (res.data.questions.length > 0) {
             setCurrentQuestionId(res.data.questions[0]._id);
@@ -97,6 +99,7 @@ export default function KmatExamPage() {
   }, [loading]);
 
   const handleAnswer = (optionIndex: number) => {
+    if (!activeQuestion) return;
     setAnswers(prev => ({ ...prev, [activeQuestion._id]: optionIndex }));
   };
 
@@ -134,9 +137,9 @@ export default function KmatExamPage() {
         userAnswerIndex: idx
       }));
 
-      const res = await kmatApi.submitExam(sessionId, formattedAnswers);
+      const res = await kmatApi.submitExam(sessionId, formattedAnswers, dayNumber ?? undefined);
       if (res.success) {
-        router.push(`/kmat/result?id=${sessionId}`);
+        router.push(`/user/kmat/result?id=${sessionId}`);
       }
     } catch (error) {
       showErrorToast("Critical: Submission failed. Contact support.");
@@ -163,7 +166,7 @@ export default function KmatExamPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-secondary/5">
+      <div className="h-screen flex flex-col bg-secondary/5">
       {/* Header Bar */}
       <header className="bg-background border-b px-6 py-4 flex justify-between items-center shadow-sm z-10">
         <div className="flex items-center gap-4">
@@ -265,6 +268,7 @@ export default function KmatExamPage() {
                 <div className="flex gap-4">
                    <Button 
                     variant="outline" 
+                    disabled={!activeQuestion}
                     onClick={() => setReviewStatus(prev => ({ ...prev, [activeQuestion._id]: !prev[activeQuestion._id] }))} 
                     className={reviewStatus[activeQuestion?._id] ? "bg-yellow-100 border-yellow-400 text-yellow-700" : ""}
                    >

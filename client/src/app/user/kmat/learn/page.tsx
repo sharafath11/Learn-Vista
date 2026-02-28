@@ -51,7 +51,7 @@ export default function KmatLearnPage() {
       <div className="text-center py-20 px-4">
         <h3 className="text-xl font-semibold">Content is still being prepared.</h3>
         <p className="text-muted-foreground mt-2">Please check back in a minute.</p>
-        <Link href="/kmat" className="mt-6 inline-block">
+        <Link href="/user/kmat" className="mt-6 inline-block">
           <Button variant="outline">Back to Dashboard</Button>
         </Link>
       </div>
@@ -77,10 +77,10 @@ export default function KmatLearnPage() {
           </p>
         </div>
         <div className="flex gap-3">
-           <Link href="/kmat/exam">
+           <Link href="/user/kmat/exam">
              <Button variant="outline" className="gap-2">Take Full Mock</Button>
            </Link>
-           <Link href="/kmat/practice">
+           <Link href="/user/kmat/practice">
              <Button className="gap-2 shadow-sm">Start Practice</Button>
            </Link>
         </div>
@@ -154,7 +154,7 @@ export default function KmatLearnPage() {
                  <h3 className="text-xl font-bold text-primary">Mastered {sectionName}?</h3>
                  <p className="text-muted-foreground">Test your understanding with handpicked problems.</p>
                </div>
-               <Link href="/kmat/practice">
+               <Link href="/user/kmat/practice">
                  <Button size="lg" className="px-8 shadow-md">
                    Start {sectionName} Drills
                  </Button>
