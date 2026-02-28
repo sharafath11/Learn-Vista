@@ -14,6 +14,10 @@ let activeRequests = 0;
 const { start, stop } = useLoading.getState();
 
 axiosInstance.interceptors.request.use(config => {
+  if (typeof config.url === "string") {
+    // Prevent accidental duplicate "/api/api/..." paths when baseURL already ends with "/api".
+    config.url = config.url.replace(/^\/api\/api\//, "/api/");
+  }
 
   if (activeRequests === 0) start();
   activeRequests++;
